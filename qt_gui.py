@@ -29,21 +29,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.interaction = QtInteraction()
 
-        RunPart().init(self)
-        PicturePart().init(self)
-        DirTree().init(self)
-        Training().init(self)
-        Checked().init(self)
+        Recognition(self)
+        Picture(self)
+        DirTree(self)
+        Training(self)
+        Checked(self)
 
 
-class RunPart(object):
-    def __init__(self):
+class Recognition(object):
+    def __init__(self, mw):
         for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            if func_name != 'init':
-                setattr(MainWindow, func_name, getattr(self, func_name))
-
-    @staticmethod
-    def init(mw):
+            setattr(MainWindow, func_name, getattr(self, func_name))
         mw.run_state = RunState.stop
         mw.ui.recogniButton.clicked.connect(mw.run)
         mw.ui.pausecontinueButton.clicked.connect(mw.pause_or_continue)
@@ -93,14 +89,10 @@ class RunPart(object):
                     rcn_info_label_dict[key].setText(str(value))
 
 
-class PicturePart(object):
-    def __init__(self):
+class Picture(object):
+    def __init__(self, mw):
         for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            if func_name != 'init':
-                setattr(MainWindow, func_name, getattr(self, func_name))
-
-    @staticmethod
-    def init(mw):
+            setattr(MainWindow, func_name, getattr(self, func_name))
         mw.radio_map = {'all_pic_radioButton': 1,
                         'part_recognition_radioButton': 2,
                         'all_recognition_radioButton': 3}
@@ -177,13 +169,9 @@ class PicturePart(object):
 
 
 class DirTree(object):
-    def __init__(self):
+    def __init__(self, mw):
         for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            if func_name != 'init':
-                setattr(MainWindow, func_name, getattr(self, func_name))
-
-    @staticmethod
-    def init(mw):
+            setattr(MainWindow, func_name, getattr(self, func_name))
         mw.current_work_path = ''
         mw.volume_dict = {}
         mw.ui.dirpushButton.clicked.connect(mw.display_dir)
@@ -251,13 +239,9 @@ class DirTree(object):
 
 
 class Training(object):
-    def __init__(self):
+    def __init__(self, mw):
         for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            if func_name != 'init':
-                setattr(MainWindow, func_name, getattr(self, func_name))
-
-    @staticmethod
-    def init(mw):
+            setattr(MainWindow, func_name, getattr(self, func_name))
         mw.ui.train_pushButton.clicked.connect(mw.set_training_params)
 
     @staticmethod
@@ -270,13 +254,9 @@ class Training(object):
 
 
 class Checked(object):
-    def __init__(self):
+    def __init__(self, mw):
         for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            if func_name != 'init':
-                setattr(MainWindow, func_name, getattr(self, func_name))
-
-    @staticmethod
-    def init(mw):
+            setattr(MainWindow, func_name, getattr(self, func_name))
         mw.ui.verifycheckBox.stateChanged.connect(mw.checked)
 
     @staticmethod
