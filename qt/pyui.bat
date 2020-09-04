@@ -1,0 +1,1 @@
+pyuic5 mainwindow.ui>qt_ui.py
