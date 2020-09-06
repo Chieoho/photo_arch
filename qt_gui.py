@@ -22,6 +22,18 @@ class RunState(object):
     pause = 2
 
 
+def catch_exception(func):
+    def wrapper(*args):
+        try:
+            sign = inspect.signature(func)
+            return func(*args[0: len(sign.parameters)])
+        except Exception as e:
+            _ = e
+            import traceback
+            print(traceback.format_exc())
+    return wrapper
+
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
@@ -48,6 +60,7 @@ class Recognition(object):
         mw.update_timer.start(2000)
 
     @staticmethod
+    @catch_exception
     def run(mw):
         mw.ui.tabWidget.setCurrentIndex(0)
         mw.ui.pausecontinueButton.setText('停止')
@@ -57,6 +70,7 @@ class Recognition(object):
             mw.interaction.start()
 
     @staticmethod
+    @catch_exception
     def pause_or_continue(mw):
         mw.ui.tabWidget.setCurrentIndex(0)
         if mw.run_state == RunState.running:
@@ -73,6 +87,7 @@ class Recognition(object):
             pass
 
     @staticmethod
+    @catch_exception
     def periodic_update(mw):
         if mw.run_state == RunState.running:
             if mw.ui.tabWidget.currentIndex() == 0:
@@ -111,6 +126,7 @@ class Picture(object):
         mw.ui.all_recognition_radioButton.setEnabled(False)
 
     @staticmethod
+    @catch_exception
     def pic_choose(mw):
         mw.ui.tabWidget.setCurrentIndex(1)
         pic_info_list = mw.interaction.get_pics_info(pic_type=mw.radio_map[mw.sender().objectName()])
@@ -120,18 +136,21 @@ class Picture(object):
         mw.display_recognizable()
 
     @staticmethod
+    @catch_exception
     def pre_pic(mw):
         if mw.current_pic_id > 0:
             mw.current_pic_id -= 1
             mw.display_recognizable()
 
     @staticmethod
+    @catch_exception
     def next_pic(mw):
         if mw.current_pic_id < len(mw.pic_list) - 1:
             mw.current_pic_id += 1
             mw.display_recognizable()
 
     @staticmethod
+    @catch_exception
     def display_recognizable(mw):
         pic_path = mw.pic_list[mw.current_pic_id]
         face_coordinates_list = json.loads(mw.pic_info_dict.get(pic_path).get('faces'))
@@ -155,6 +174,7 @@ class Picture(object):
         mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
 
     @staticmethod
+    @catch_exception
     def mark_face(mw, name, coordinate):
         x, y, l, h = coordinate
         painter = QPainter(mw.pix_map)
@@ -180,6 +200,7 @@ class DirTree(object):
         mw.ui.cancel_folder_btn.clicked.connect(mw.cancel_folder_item)
 
     @staticmethod
+    @catch_exception
     def generate_tree_data(mw, root_volume_path):
         _, volume_name = os.path.split(root_volume_path)
         mw.ui.treeWidget.setColumnWidth(0, 150)  # 设置列宽
@@ -199,6 +220,7 @@ class DirTree(object):
         return volume_name
 
     @staticmethod
+    @catch_exception
     def display_dir(mw):
         mw.ui.tabWidget.setCurrentIndex(2)
         current_work_path = QFileDialog.getExistingDirectory(mw.ui.treeWidget, "选择文件夹",
@@ -210,6 +232,7 @@ class DirTree(object):
         mw.ui.all_recognition_radioButton.setEnabled(True)
 
     @staticmethod
+    @catch_exception
     def select_folder_item(mw, item):
         path = item.text(0)
         mw.volume_dict[path] = item.text(1)
@@ -217,6 +240,7 @@ class DirTree(object):
             mw.volume_dict.pop(path, None)
 
     @staticmethod
+    @catch_exception
     def cancel_folder_item(mw):
         item = QTreeWidgetItemIterator(mw.ui.treeWidget)
         child_count = item.value().childCount()
@@ -225,6 +249,7 @@ class DirTree(object):
                 item.value().child(i).setCheckState(0, Qt.Unchecked)
 
     @staticmethod
+    @catch_exception
     def add_folder_item(mw):
         arch_num_info = {
             "root": {},
@@ -245,6 +270,7 @@ class Training(object):
         mw.ui.train_pushButton.clicked.connect(mw.set_training_params)
 
     @staticmethod
+    @catch_exception
     def set_training_params(mw):
         training_params = {
             "threshold": mw.ui.thresh_lineEdit.text(),
@@ -260,8 +286,9 @@ class Checked(object):
         mw.ui.verifycheckBox.stateChanged.connect(mw.checked)
 
     @staticmethod
+    @catch_exception
     def checked(mw):
-        if mw.ui.verifycheckBox.isChecked():
+        if mw.ui.verifycheckBox.isChecked() and mw.pic_list:
             name_list = []
             for row in range(mw.ui.tableWidget.rowCount()):
                 id_ = mw.ui.tableWidget.item(row, 0).text()
