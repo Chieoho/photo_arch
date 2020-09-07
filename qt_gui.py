@@ -53,18 +53,30 @@ class Recognition(object):
         for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
             setattr(MainWindow, func_name, getattr(self, func_name))
         mw.run_state = RunState.stop
+        mw.dot_max_num = 3
+        mw.dot_cnt = 0
+        mw.dot_text = ''
+        mw.rcn_info_label_dict = {
+            "recognition_rate": mw.ui.recognition_rate_label,
+            "recognized_face_num": mw.ui.recognized_face_label,
+            "part_recognized_pic_num": mw.ui.part_recognized_pic_label,
+            "all_recognized_pic_num": mw.ui.all_recognized_pic_label,
+            "handled_pic_num": mw.ui.handled_pic_label,
+            "unhandled_pic_num": mw.ui.unhandled_pic_label
+        }
         mw.ui.recogniButton.clicked.connect(mw.run)
         mw.ui.pausecontinueButton.clicked.connect(mw.pause_or_continue)
         mw.update_timer = QTimer()
         mw.update_timer.timeout.connect(mw.periodic_update)
-        mw.update_timer.start(2000)
+        mw.update_timer.start(1000)
 
     @staticmethod
     @catch_exception
     def run(mw):
         mw.ui.tabWidget.setCurrentIndex(0)
         mw.ui.pausecontinueButton.setText('停止')
-        mw.ui.run_state_label.setText("运行中...")
+        mw.ui.run_state_label.setText('运行中' + ' ' * mw.dot_max_num)
+        mw.dot_cnt = mw.dot_max_num
         if mw.run_state != RunState.running:
             mw.run_state = RunState.running
             mw.interaction.start()
@@ -80,7 +92,7 @@ class Recognition(object):
             mw.interaction.pause()
         elif mw.run_state == RunState.pause:
             mw.ui.pausecontinueButton.setText('停止')
-            mw.ui.run_state_label.setText("运行中...")
+            mw.ui.run_state_label.setText('运行中' + mw.dot_text)
             mw.run_state = RunState.running
             mw.interaction.continue_run()
         else:
@@ -92,16 +104,11 @@ class Recognition(object):
         if mw.run_state == RunState.running:
             if mw.ui.tabWidget.currentIndex() == 0:
                 recognition_info = mw.interaction.get_recognition_info()
-                rcn_info_label_dict = {
-                    "recognition_rate": mw.ui.recognition_rate_label,
-                    "recognized_face_num": mw.ui.recognized_face_label,
-                    "part_recognized_pic_num": mw.ui.part_recognized_pic_label,
-                    "all_recognized_pic_num": mw.ui.all_recognized_pic_label,
-                    "handled_pic_num": mw.ui.handled_pic_label,
-                    "unhandled_pic_num": mw.ui.unhandled_pic_label
-                }
                 for key, value in recognition_info.items():
-                    rcn_info_label_dict[key].setText(str(value))
+                    mw.rcn_info_label_dict[key].setText(str(value))
+                mw.dot_cnt = mw.dot_cnt + 1 if mw.dot_cnt < mw.dot_max_num else 0
+                mw.dot_text = '.' * mw.dot_cnt + ' ' * (mw.dot_max_num - mw.dot_cnt)
+                mw.ui.run_state_label.setText('运行中' + mw.dot_text)
 
 
 class Picture(object):
@@ -166,7 +173,7 @@ class Picture(object):
                 item = QTableWidgetItem(item)
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 mw.ui.tableWidget.setItem(row, col, item)
-            mw.mark_face(name, coordinate)
+            mw.mark_face(id_, name, coordinate)
         mw.ui.arch_num_lineEdit.setText(mw.pic_info_dict.get(pic_path).get('archival_num'))
         mw.ui.theme_textEdit.setText(mw.pic_info_dict.get(pic_path).get('subject'))
         mw.ui.pic_view.setPixmap(mw.pix_map)
@@ -175,13 +182,13 @@ class Picture(object):
 
     @staticmethod
     @catch_exception
-    def mark_face(mw, name, coordinate):
+    def mark_face(mw, id_, name, coordinate):
         x, y, l, h = coordinate
         painter = QPainter(mw.pix_map)
         pen = QPen(QtCore.Qt.blue)
         painter.setPen(pen)
         pos = QPoint(x, y+h+15)
-        painter.drawText(pos, name)
+        painter.drawText(pos, f'{id_} {name}')
         pen = QPen(QtCore.Qt.red)
         pen.setWidth(2)
         painter.setPen(pen)
