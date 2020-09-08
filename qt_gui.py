@@ -76,9 +76,11 @@ class Recognition(object):
         mw.ui.run_state_label.setText('运行中...')
         if Recognition.run_state != RunState.running:
             Recognition.run_state = RunState.running
+            thresh = mw.ui.thresh_lineEdit.text()
+            distance = mw.ui.distance_lineEdit.text()
             params = {
-                "threshold": float(mw.ui.thresh_lineEdit.text()),
-                "distance": float(mw.ui.distance_lineEdit.text())
+                "threshold": float(thresh) if thresh else 0.8,
+                "distance": float(distance) if distance else 0.8
             }
             mw.interaction.start(params)
 
