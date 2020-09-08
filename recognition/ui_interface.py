@@ -10,9 +10,10 @@ from abc import ABCMeta, abstractmethod
 
 class UiInterface(metaclass=ABCMeta):
     @abstractmethod
-    def start(self) -> dict:
+    def start(self, params: dict) -> dict:
         """
         开始运行
+        :param params: 识别参数 {"threshold": 0.8, "distance": 1}
         :return: {"res": True, "msg": "xxx"}
         """
 
@@ -64,11 +65,18 @@ class UiInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def set_training_params(self, params: dict) -> bool:
+    def get_archival_number(self, path) -> dict:
         """
-        设置训练参数
-        :param params: 训练参数。如：{"threshold": 80, "distance": 100}
-        :return: True of False
+        获取档号信息
+        :param path: 路径
+        :return: 档号信息。如：{"root": {"root_path": "1"}, "children": {"path1": "1001", "path2": "1002"}}
+        """
+
+    @abstractmethod
+    def start_training(self) -> dict:
+        """
+        开始训练
+        :return: 返回训练后模型信息，如：{"model_acc": 0.8}
         """
 
     @abstractmethod

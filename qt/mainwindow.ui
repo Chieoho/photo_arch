@@ -21,6 +21,16 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
+    <item row="2" column="3" colspan="2">
+     <widget class="QRadioButton" name="all_recognition_radioButton">
+      <property name="text">
+       <string>显示全部识别图片</string>
+      </property>
+      <property name="shortcut">
+       <string>Alt+E</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label">
       <property name="font">
@@ -34,39 +44,6 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="lineEdit">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QPushButton" name="dirpushButton">
-      <property name="font">
-       <font>
-        <family>新宋体</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>打开</string>
-      </property>
-      <property name="shortcut">
-       <string>Ctrl+O</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3" colspan="2">
-     <widget class="QRadioButton" name="all_pic_radioButton">
-      <property name="text">
-       <string>显示所有图片</string>
-      </property>
-      <property name="shortcut">
-       <string>Alt+Q</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="3" colspan="2">
      <widget class="QRadioButton" name="part_recognition_radioButton">
       <property name="text">
@@ -77,238 +54,10 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="3" colspan="2">
-     <widget class="QRadioButton" name="all_recognition_radioButton">
-      <property name="text">
-       <string>显示全部识别图片</string>
-      </property>
-      <property name="shortcut">
-       <string>Alt+E</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="3" colspan="3">
-     <widget class="QFrame" name="frame">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QLabel" name="label_2">
-       <property name="geometry">
-        <rect>
-         <x>1</x>
-         <y>4</y>
-         <width>40</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>档号：</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="arch_num_lineEdit">
-       <property name="geometry">
-        <rect>
-         <x>52</x>
-         <y>4</y>
-         <width>201</width>
-         <height>24</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item row="4" column="3">
-     <widget class="QLabel" name="label_3">
-      <property name="maximumSize">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>新宋体</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>主题：</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="3" colspan="3">
-     <widget class="QTextEdit" name="theme_textEdit">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>120</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="3" colspan="3">
-     <widget class="QTableWidget" name="tableWidget">
-      <property name="font">
-       <font>
-        <family>新宋体</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">   QHeaderView::section{
-            border-top:0px solid #D8D8D8;
-            border-left:0px solid #D8D8D8;
-            border-right:1px solid #D8D8D8;
-            border-bottom: 1px solid #D8D8D8;
-            background-color:white;
-            padding:4px;
-        }
-        QTableCornerButton::section{
-            border-top:0px solid #D8D8D8;
-            border-left:0px solid #D8D8D8;
-            border-right:1px solid #D8D8D8;
-            border-bottom: 1px solid #D8D8D8;
-            background-color:white;
-        }</string>
-      </property>
-      <property name="showGrid">
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="readOnly">
        <bool>true</bool>
-      </property>
-      <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>89</number>
-      </attribute>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string>编号</string>
-       </property>
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>姓名</string>
-       </property>
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>编辑</string>
-       </property>
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-      </column>
-     </widget>
-    </item>
-    <item row="7" column="3">
-     <widget class="QCheckBox" name="verifycheckBox">
-      <property name="font">
-       <font>
-        <family>新宋体</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>已核验</string>
-      </property>
-      <property name="shortcut">
-       <string>Ctrl+S</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="3">
-     <widget class="QPushButton" name="preButton">
-      <property name="font">
-       <font>
-        <family>新宋体</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>&lt;- 上一张</string>
-      </property>
-      <property name="shortcut">
-       <string>Left</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="4">
-     <widget class="QLabel" name="pic_index_label">
-      <property name="maximumSize">
-       <size>
-        <width>600</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Agency FB</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="5">
-     <widget class="QPushButton" name="nextButton">
-      <property name="font">
-       <font>
-        <family>新宋体</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>下一张 -&gt;</string>
-      </property>
-      <property name="shortcut">
-       <string>Right</string>
       </property>
      </widget>
     </item>
@@ -581,14 +330,7 @@
        <attribute name="title">
         <string>模型训练</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="2" column="2">
-         <widget class="QPushButton" name="train_pushButton">
-          <property name="text">
-           <string>开始训练</string>
-          </property>
-         </widget>
-        </item>
+       <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
          <widget class="QLabel" name="label_4">
           <property name="text">
@@ -609,6 +351,42 @@
         <item row="1" column="1">
          <widget class="QLineEdit" name="distance_lineEdit"/>
         </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_12">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>模型精度：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="model_acc_label">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="train_pushButton">
+          <property name="text">
+           <string>开始训练</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -628,6 +406,257 @@
       </property>
       <property name="textFormat">
        <enum>Qt::AutoText</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="3" colspan="3">
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="font">
+       <font>
+        <family>新宋体</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">   QHeaderView::section{
+            border-top:0px solid #D8D8D8;
+            border-left:0px solid #D8D8D8;
+            border-right:1px solid #D8D8D8;
+            border-bottom: 1px solid #D8D8D8;
+            background-color:white;
+            padding:4px;
+        }
+        QTableCornerButton::section{
+            border-top:0px solid #D8D8D8;
+            border-left:0px solid #D8D8D8;
+            border-right:1px solid #D8D8D8;
+            border-bottom: 1px solid #D8D8D8;
+            background-color:white;
+        }</string>
+      </property>
+      <property name="showGrid">
+       <bool>true</bool>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>89</number>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>编号</string>
+       </property>
+       <property name="font">
+        <font>
+         <family>新宋体</family>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>姓名</string>
+       </property>
+       <property name="font">
+        <font>
+         <family>新宋体</family>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>编辑</string>
+       </property>
+       <property name="font">
+        <font>
+         <family>新宋体</family>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+      </column>
+     </widget>
+    </item>
+    <item row="4" column="3">
+     <widget class="QLabel" name="label_3">
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>新宋体</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>主题：</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="3" colspan="3">
+     <widget class="QTextEdit" name="theme_textEdit">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>120</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="4">
+     <widget class="QLabel" name="pic_index_label">
+      <property name="maximumSize">
+       <size>
+        <width>600</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Agency FB</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3" colspan="3">
+     <widget class="QFrame" name="frame">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>1</x>
+         <y>4</y>
+         <width>40</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>40</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>新宋体</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>档号：</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="arch_num_lineEdit">
+       <property name="geometry">
+        <rect>
+         <x>52</x>
+         <y>4</y>
+         <width>201</width>
+         <height>24</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item row="8" column="3">
+     <widget class="QPushButton" name="preButton">
+      <property name="font">
+       <font>
+        <family>新宋体</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>&lt;- 上一张</string>
+      </property>
+      <property name="shortcut">
+       <string>Left</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="5">
+     <widget class="QPushButton" name="nextButton">
+      <property name="font">
+       <font>
+        <family>新宋体</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>下一张 -&gt;</string>
+      </property>
+      <property name="shortcut">
+       <string>Right</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="dirpushButton">
+      <property name="font">
+       <font>
+        <family>新宋体</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>打开</string>
+      </property>
+      <property name="shortcut">
+       <string>Ctrl+O</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="3">
+     <widget class="QCheckBox" name="verifycheckBox">
+      <property name="font">
+       <font>
+        <family>新宋体</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>已核验</string>
+      </property>
+      <property name="shortcut">
+       <string>Ctrl+S</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3" colspan="2">
+     <widget class="QRadioButton" name="all_pic_radioButton">
+      <property name="text">
+       <string>显示所有图片</string>
+      </property>
+      <property name="shortcut">
+       <string>Alt+Q</string>
       </property>
      </widget>
     </item>

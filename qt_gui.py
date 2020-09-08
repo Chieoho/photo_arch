@@ -76,7 +76,11 @@ class Recognition(object):
         mw.ui.run_state_label.setText('运行中...')
         if Recognition.run_state != RunState.running:
             Recognition.run_state = RunState.running
-            mw.interaction.start()
+            params = {
+                "threshold": float(mw.ui.thresh_lineEdit.text()),
+                "distance": float(mw.ui.distance_lineEdit.text())
+            }
+            mw.interaction.start(params)
 
     @staticmethod
     @catch_exception
@@ -118,13 +122,16 @@ class Picture(object):
         mw.ui.all_recognition_radioButton.toggled.connect(self.pic_choose)
         mw.ui.preButton.clicked.connect(self.pre_pic)
         mw.ui.nextButton.clicked.connect(self.next_pic)
+
         mw.ui.all_pic_radioButton.setEnabled(False)
         mw.ui.part_recognition_radioButton.setEnabled(False)
         mw.ui.all_recognition_radioButton.setEnabled(False)
 
     @staticmethod
     @catch_exception
-    def pic_choose():
+    def pic_choose(check_state):
+        if check_state is False:
+            return
         mw.ui.tabWidget.setCurrentIndex(1)
         pic_info_list = mw.interaction.get_pics_info(pic_type=Picture.radio_map[mw.sender().objectName()])
         mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
@@ -149,6 +156,8 @@ class Picture(object):
     @staticmethod
     @catch_exception
     def _display_recognizable():
+        if not mw.pic_list:
+            return
         pic_path = mw.pic_list[mw.current_pic_id]
         face_coordinates_list = json.loads(mw.pic_info_dict.get(pic_path).get('faces'))
         for row in range(mw.ui.tableWidget.rowCount(), -1, -1):
@@ -198,23 +207,39 @@ class DirTree(object):
 
     @staticmethod
     @catch_exception
-    def _generate_tree_data(root_volume_path):
-        _, volume_name = os.path.split(root_volume_path)
-        mw.ui.treeWidget.setColumnWidth(0, 150)  # 设置列宽
+    def _generate_dir_tree(root_arch_info, file_arch_list):
+        root_path, root_arch_num = root_arch_info
+        _, volume_name = os.path.split(root_path)
+        mw.ui.treeWidget.setColumnWidth(0, 300)  # 设置列宽
         mw.ui.treeWidget.clear()
         root = QTreeWidgetItem(mw.ui.treeWidget)
-        root.setText(0, root_volume_path)
-        root.setText(1, "编辑")
+        root.setText(0, root_path)
+        root.setText(1, root_arch_num)
         root.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsUserCheckable)  # 设为可编辑
-        list_file = os.listdir(root_volume_path)
-        for name in list_file:
+        for name, arch_num in file_arch_list:
             child1 = QTreeWidgetItem(root)
             child1.setText(0, name)
-            child1.setText(1, "编辑")
+            child1.setText(1, arch_num)
             child1.setCheckState(0, Qt.Checked)
             child1.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsUserCheckable)  # 设为可编辑
         mw.ui.treeWidget.expandAll()
-        return volume_name
+
+    @staticmethod
+    @catch_exception
+    def _generate_tree_by_path(root_path):
+        file_list = os.listdir(root_path)
+        root_arch_info = (root_path, '编辑')
+        file_arch_list = [(fp, '编辑') for fp in file_list]
+        DirTree._generate_dir_tree(root_arch_info, file_arch_list)
+
+    @staticmethod
+    @catch_exception
+    def _generate_tree_by_data(arch_num_info):
+        root_arch_info = list(arch_num_info['root'].items())[0]
+        file_arch_list = list(arch_num_info['children'].items())
+        root_path = root_arch_info[0]
+        arch_list = [(fp[len(root_path)+1:], an) for fp, an in file_arch_list]
+        DirTree._generate_dir_tree(root_arch_info, arch_list)
 
     @staticmethod
     @catch_exception
@@ -223,7 +248,12 @@ class DirTree(object):
         current_work_path = QFileDialog.getExistingDirectory(mw.ui.treeWidget, "选择文件夹",
                                                              options=QFileDialog.ShowDirsOnly)
         DirTree.current_work_path = os.path.abspath(current_work_path)
-        DirTree._generate_tree_data(DirTree.current_work_path)
+        arch_num_info = mw.interaction.get_archival_number(DirTree.current_work_path)
+        if arch_num_info:
+            DirTree._generate_tree_by_data(arch_num_info)
+        else:
+            DirTree._generate_tree_by_path(DirTree.current_work_path)
+
         mw.ui.all_pic_radioButton.setEnabled(True)
         mw.ui.part_recognition_radioButton.setEnabled(True)
         mw.ui.all_recognition_radioButton.setEnabled(True)
@@ -262,16 +292,13 @@ class DirTree(object):
 
 class Training(object):
     def __init__(self):
-        mw.ui.train_pushButton.clicked.connect(self.set_training_params)
+        mw.ui.train_pushButton.clicked.connect(self.start_training)
 
     @staticmethod
     @catch_exception
-    def set_training_params():
-        training_params = {
-            "threshold": mw.ui.thresh_lineEdit.text(),
-            "distance": mw.ui.distance_lineEdit.text()
-        }
-        mw.interaction.set_training_params(training_params)
+    def start_training():
+        training_info = mw.interaction.start_training()
+        mw.ui.model_acc_label.setText(str(training_info.get('model_acc')))
 
 
 class Checked(object):

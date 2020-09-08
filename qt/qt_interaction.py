@@ -10,8 +10,12 @@ import os
 
 
 class QtInteraction(UiInterface):
-    def start(self) -> bool:
+    def __init__(self):
+        self.arch_num_info = {}
+
+    def start(self, params) -> bool:
         print('start')
+        print(params)
         return True
 
     def continue_run(self) -> bool:
@@ -65,14 +69,22 @@ class QtInteraction(UiInterface):
             3: [0, 1, 1, 1]
         }
         return [e for i, e in enumerate(pic_info_list) if filter_dict[pic_type][i]]
+        # return []
 
     def set_archival_number(self, arch_num_info) -> bool:
         print(arch_num_info)
+        self.arch_num_info = arch_num_info
         return True
 
-    def set_training_params(self, params) -> bool:
-        print(params)
-        return True
+    def get_archival_number(self, path) -> dict:
+        print(path)
+        if self.arch_num_info and list(self.arch_num_info.get('root').keys())[0] == path:
+            return self.arch_num_info
+        return {}
+
+    def start_training(self) -> dict:
+        model_info = {"model_acc": 0.8}
+        return model_info
 
     def checked(self, checked_info) -> bool:
         print(checked_info)

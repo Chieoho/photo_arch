@@ -15,7 +15,7 @@ class QtInteraction(UiInterface):
     def __init__(self):
         self._rcn = Recognition()
 
-    def start(self) -> bool:
+    def start(self, params) -> bool:
         self._rcn.recognition()
         return True
 
@@ -34,7 +34,10 @@ class QtInteraction(UiInterface):
     def set_archival_number(self, arch_num_info) -> bool:
         pass
 
-    def set_training_params(self, params) -> bool:
+    def get_archival_number(self, path) -> dict:
+        pass
+
+    def start_training(self) -> dict:
         pass
 
     def checked(self, checked_info) -> bool:
