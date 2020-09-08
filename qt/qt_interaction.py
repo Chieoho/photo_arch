@@ -13,18 +13,18 @@ class QtInteraction(UiInterface):
     def __init__(self):
         self.arch_num_info = {}
 
-    def start(self, params) -> bool:
+    def start(self, params) -> dict:
         print('start')
         print(params)
-        return True
+        return {"res": True, "msg": "xxx"}
 
-    def continue_run(self) -> bool:
+    def continue_run(self) -> dict:
         print('continue')
-        return True
+        return {"res": True, "msg": "xxx"}
 
-    def pause(self) -> bool:
+    def pause(self) -> dict:
         print('pause')
-        return True
+        return {"res": True, "msg": "xxx"}
 
     def get_recognition_info(self) -> dict:
         recognition_info = {

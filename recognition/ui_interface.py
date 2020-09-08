@@ -18,14 +18,14 @@ class UiInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def pause(self) -> bool:
+    def pause(self) -> dict:
         """
         暂停
         :return: {"res": True, "msg": "xxx"}
         """
 
     @abstractmethod
-    def continue_run(self) -> bool:
+    def continue_run(self) -> dict:
         """
         继续运行
         :return: {"res": True, "msg": "xxx"}

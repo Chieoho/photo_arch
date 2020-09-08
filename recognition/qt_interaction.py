@@ -15,14 +15,14 @@ class QtInteraction(UiInterface):
     def __init__(self):
         self._rcn = Recognition()
 
-    def start(self, params) -> bool:
+    def start(self, params) -> dict:
         self._rcn.recognition()
-        return True
+        return {"res": True, "msg": "xxx"}
 
-    def continue_run(self) -> bool:
+    def continue_run(self) -> dict:
         pass
 
-    def pause(self) -> bool:
+    def pause(self) -> dict:
         pass
 
     def get_recognition_info(self) -> dict:
