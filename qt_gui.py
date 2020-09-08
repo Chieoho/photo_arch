@@ -14,6 +14,10 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from qt.qt_ui import Ui_MainWindow
+if (len(sys.argv) > 1) and (sys.argv[1] in ('-t', '--test')):
+    from qt.qt_interaction import QtInteraction
+else:
+    from recognition.qt_interaction import QtInteraction
 
 
 class RunState(object):
@@ -41,129 +45,115 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.interaction = QtInteraction()
 
-        Recognition(self)
-        Picture(self)
-        DirTree(self)
-        Training(self)
-        Checked(self)
+        self.pic_list = []
+        self.current_pic_id = 0
+        self.pic_info_dict = {}
 
 
 class Recognition(object):
-    def __init__(self, mw):
-        for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            setattr(MainWindow, func_name, getattr(self, func_name))
-        mw.run_state = RunState.stop
-        mw.dot_max_num = 3
-        mw.dot_cnt = 0
-        mw.dot_text = ''
-        mw.rcn_info_label_dict = {
-            "recognition_rate": mw.ui.recognition_rate_label,
-            "recognized_face_num": mw.ui.recognized_face_label,
-            "part_recognized_pic_num": mw.ui.part_recognized_pic_label,
-            "all_recognized_pic_num": mw.ui.all_recognized_pic_label,
-            "handled_pic_num": mw.ui.handled_pic_label,
-            "unhandled_pic_num": mw.ui.unhandled_pic_label
-        }
-        mw.ui.recogniButton.clicked.connect(mw.run)
-        mw.ui.pausecontinueButton.clicked.connect(mw.pause_or_continue)
-        mw.update_timer = QTimer()
-        mw.update_timer.timeout.connect(mw.periodic_update)
-        mw.update_timer.start(1000)
+    run_state = RunState.stop
+    rcn_info_label_dict = {
+     "recognition_rate": 'recognition_rate_label',
+     "recognized_face_num": 'recognized_face_label',
+     "part_recognized_pic_num": 'part_recognized_pic_label',
+     "all_recognized_pic_num": 'all_recognized_pic_label',
+     "handled_pic_num": 'handled_pic_label',
+     "unhandled_pic_num": 'unhandled_pic_label'
+    }
+    update_timer = QTimer()
+
+    def __init__(self):
+        mw.ui.recogniButton.clicked.connect(self.run)
+        mw.ui.pausecontinueButton.clicked.connect(self.pause_or_continue)
+        Recognition.update_timer.timeout.connect(self.periodic_update)
+        Recognition.update_timer.start(1000)
 
     @staticmethod
     @catch_exception
-    def run(mw):
+    def run():
         mw.ui.tabWidget.setCurrentIndex(0)
         mw.ui.pausecontinueButton.setText('停止')
-        mw.ui.run_state_label.setText('运行中' + ' ' * mw.dot_max_num)
-        mw.dot_cnt = mw.dot_max_num
-        if mw.run_state != RunState.running:
-            mw.run_state = RunState.running
+        mw.ui.run_state_label.setText('运行中...')
+        if Recognition.run_state != RunState.running:
+            Recognition.run_state = RunState.running
             mw.interaction.start()
 
     @staticmethod
     @catch_exception
-    def pause_or_continue(mw):
+    def pause_or_continue():
         mw.ui.tabWidget.setCurrentIndex(0)
-        if mw.run_state == RunState.running:
+        if Recognition.run_state == RunState.running:
             mw.ui.pausecontinueButton.setText('继续')
             mw.ui.run_state_label.setText("暂停")
-            mw.run_state = RunState.pause
+            Recognition.run_state = RunState.pause
             mw.interaction.pause()
-        elif mw.run_state == RunState.pause:
+        elif Recognition.run_state == RunState.pause:
             mw.ui.pausecontinueButton.setText('停止')
-            mw.ui.run_state_label.setText('运行中' + mw.dot_text)
-            mw.run_state = RunState.running
+            mw.ui.run_state_label.setText('运行中...')
+            Recognition.run_state = RunState.running
             mw.interaction.continue_run()
         else:
             pass
 
     @staticmethod
     @catch_exception
-    def periodic_update(mw):
-        if mw.run_state == RunState.running:
+    def periodic_update():
+        if Recognition.run_state == RunState.running:
             if mw.ui.tabWidget.currentIndex() == 0:
                 recognition_info = mw.interaction.get_recognition_info()
                 for key, value in recognition_info.items():
-                    mw.rcn_info_label_dict[key].setText(str(value))
-                mw.dot_cnt = mw.dot_cnt + 1 if mw.dot_cnt < mw.dot_max_num else 0
-                mw.dot_text = '.' * mw.dot_cnt + ' ' * (mw.dot_max_num - mw.dot_cnt)
-                mw.ui.run_state_label.setText('运行中' + mw.dot_text)
+                    getattr(mw.ui, Recognition.rcn_info_label_dict[key]).setText(str(value))
 
 
 class Picture(object):
-    def __init__(self, mw):
-        for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            setattr(MainWindow, func_name, getattr(self, func_name))
-        mw.radio_map = {'all_pic_radioButton': 1,
-                        'part_recognition_radioButton': 2,
-                        'all_recognition_radioButton': 3}
-        mw.pix_map = None
-        mw.pic_list = []
-        mw.pic_info_dict = {}
-        mw.current_pic_id = 0
+    radio_map = {'all_pic_radioButton': 1,
+                 'part_recognition_radioButton': 2,
+                 'all_recognition_radioButton': 3}
+    pix_map = None
+
+    def __init__(self):
         mw.ui.pic_view.setScaledContents(True)
-        mw.ui.all_pic_radioButton.toggled.connect(mw.pic_choose)
-        mw.ui.part_recognition_radioButton.toggled.connect(mw.pic_choose)
-        mw.ui.all_recognition_radioButton.toggled.connect(mw.pic_choose)
-        mw.ui.preButton.clicked.connect(mw.pre_pic)
-        mw.ui.nextButton.clicked.connect(mw.next_pic)
+        mw.ui.all_pic_radioButton.toggled.connect(self.pic_choose)
+        mw.ui.part_recognition_radioButton.toggled.connect(self.pic_choose)
+        mw.ui.all_recognition_radioButton.toggled.connect(self.pic_choose)
+        mw.ui.preButton.clicked.connect(self.pre_pic)
+        mw.ui.nextButton.clicked.connect(self.next_pic)
         mw.ui.all_pic_radioButton.setEnabled(False)
         mw.ui.part_recognition_radioButton.setEnabled(False)
         mw.ui.all_recognition_radioButton.setEnabled(False)
 
     @staticmethod
     @catch_exception
-    def pic_choose(mw):
+    def pic_choose():
         mw.ui.tabWidget.setCurrentIndex(1)
-        pic_info_list = mw.interaction.get_pics_info(pic_type=mw.radio_map[mw.sender().objectName()])
+        pic_info_list = mw.interaction.get_pics_info(pic_type=Picture.radio_map[mw.sender().objectName()])
         mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
         mw.pic_info_dict = {d['img_path']: d for d in pic_info_list}
         mw.current_pic_id = 0
-        mw.display_recognizable()
+        Picture._display_recognizable()
 
     @staticmethod
     @catch_exception
-    def pre_pic(mw):
+    def pre_pic():
         if mw.current_pic_id > 0:
             mw.current_pic_id -= 1
-            mw.display_recognizable()
+            Picture._display_recognizable()
 
     @staticmethod
     @catch_exception
-    def next_pic(mw):
+    def next_pic():
         if mw.current_pic_id < len(mw.pic_list) - 1:
             mw.current_pic_id += 1
-            mw.display_recognizable()
+            Picture._display_recognizable()
 
     @staticmethod
     @catch_exception
-    def display_recognizable(mw):
+    def _display_recognizable():
         pic_path = mw.pic_list[mw.current_pic_id]
         face_coordinates_list = json.loads(mw.pic_info_dict.get(pic_path).get('faces'))
         for row in range(mw.ui.tableWidget.rowCount(), -1, -1):
             mw.ui.tableWidget.removeRow(row)
-        mw.pix_map = QPixmap(mw.pic_list[mw.current_pic_id])
+        Picture.pix_map = QPixmap(mw.pic_list[mw.current_pic_id])
         for row, face_info in enumerate(face_coordinates_list):
             mw.ui.tableWidget.insertRow(row)
             id_ = str(face_info.get('id'))
@@ -173,42 +163,42 @@ class Picture(object):
                 item = QTableWidgetItem(item)
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 mw.ui.tableWidget.setItem(row, col, item)
-            mw.mark_face(id_, name, coordinate)
+            Picture._mark_face(id_, coordinate)
         mw.ui.arch_num_lineEdit.setText(mw.pic_info_dict.get(pic_path).get('archival_num'))
         mw.ui.theme_textEdit.setText(mw.pic_info_dict.get(pic_path).get('subject'))
-        mw.ui.pic_view.setPixmap(mw.pix_map)
+        mw.ui.pic_view.setPixmap(Picture.pix_map)
         mw.ui.pic_index_label.setText('{}/{}'.format(mw.current_pic_id + 1, len(mw.pic_list)))
         mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
 
     @staticmethod
     @catch_exception
-    def mark_face(mw, id_, name, coordinate):
-        x, y, l, h = coordinate
-        painter = QPainter(mw.pix_map)
-        pen = QPen(QtCore.Qt.blue)
+    def _mark_face(id_, coordinate):
+        x1, y1, x2, y2 = coordinate
+        x, y, w, h = x1, y1, (x2 - x1), (y2 - y1)
+        painter = QPainter(Picture.pix_map)
+        pen = QPen(QtCore.Qt.yellow)
         painter.setPen(pen)
-        pos = QPoint(x, y+h+15)
-        painter.drawText(pos, f'{id_} {name}')
+        pos = QPoint(x + 5, y + 10)
+        painter.drawText(pos, f'{id_}')
         pen = QPen(QtCore.Qt.red)
         pen.setWidth(2)
         painter.setPen(pen)
-        painter.drawRect(x, y, l, h)
+        painter.drawRect(x, y, w, h)
 
 
 class DirTree(object):
-    def __init__(self, mw):
-        for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            setattr(MainWindow, func_name, getattr(self, func_name))
-        mw.current_work_path = ''
-        mw.volume_dict = {}
-        mw.ui.dirpushButton.clicked.connect(mw.display_dir)
-        mw.ui.treeWidget.itemChanged.connect(mw.select_folder_item)
-        mw.ui.add_folder_btn.clicked.connect(mw.add_folder_item)
-        mw.ui.cancel_folder_btn.clicked.connect(mw.cancel_folder_item)
+    current_work_path = ''
+    volume_dict = {}
+
+    def __init__(self):
+        mw.ui.dirpushButton.clicked.connect(self.display_dir)
+        mw.ui.treeWidget.itemChanged.connect(self.select_folder_item)
+        mw.ui.add_folder_btn.clicked.connect(self.add_folder_item)
+        mw.ui.cancel_folder_btn.clicked.connect(self.cancel_folder_item)
 
     @staticmethod
     @catch_exception
-    def generate_tree_data(mw, root_volume_path):
+    def _generate_tree_data(root_volume_path):
         _, volume_name = os.path.split(root_volume_path)
         mw.ui.treeWidget.setColumnWidth(0, 150)  # 设置列宽
         mw.ui.treeWidget.clear()
@@ -228,27 +218,27 @@ class DirTree(object):
 
     @staticmethod
     @catch_exception
-    def display_dir(mw):
+    def display_dir():
         mw.ui.tabWidget.setCurrentIndex(2)
         current_work_path = QFileDialog.getExistingDirectory(mw.ui.treeWidget, "选择文件夹",
                                                              options=QFileDialog.ShowDirsOnly)
-        mw.current_work_path = os.path.abspath(current_work_path)
-        mw.generate_tree_data(mw.current_work_path)
+        DirTree.current_work_path = os.path.abspath(current_work_path)
+        DirTree._generate_tree_data(DirTree.current_work_path)
         mw.ui.all_pic_radioButton.setEnabled(True)
         mw.ui.part_recognition_radioButton.setEnabled(True)
         mw.ui.all_recognition_radioButton.setEnabled(True)
 
     @staticmethod
     @catch_exception
-    def select_folder_item(mw, item):
+    def select_folder_item(item):
         path = item.text(0)
-        mw.volume_dict[path] = item.text(1)
-        if (item.checkState(0) == Qt.Unchecked) and (path != mw.current_work_path):
-            mw.volume_dict.pop(path, None)
+        DirTree.volume_dict[path] = item.text(1)
+        if (item.checkState(0) == Qt.Unchecked) and (path != DirTree.current_work_path):
+            DirTree.volume_dict.pop(path, None)
 
     @staticmethod
     @catch_exception
-    def cancel_folder_item(mw):
+    def cancel_folder_item():
         item = QTreeWidgetItemIterator(mw.ui.treeWidget)
         child_count = item.value().childCount()
         for i in range(child_count):
@@ -257,28 +247,26 @@ class DirTree(object):
 
     @staticmethod
     @catch_exception
-    def add_folder_item(mw):
+    def add_folder_item():
         arch_num_info = {
             "root": {},
             "children": {}
         }
-        for path, num in mw.volume_dict.items():
+        for path, num in DirTree.volume_dict.items():
             if os.sep in path:
                 arch_num_info["root"].update({path: num})
             else:
-                arch_num_info["children"].update({os.path.join(mw.current_work_path, path): num})
+                arch_num_info["children"].update({os.path.join(DirTree.current_work_path, path): num})
         mw.interaction.set_archival_number(arch_num_info)
 
 
 class Training(object):
-    def __init__(self, mw):
-        for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            setattr(MainWindow, func_name, getattr(self, func_name))
-        mw.ui.train_pushButton.clicked.connect(mw.set_training_params)
+    def __init__(self):
+        mw.ui.train_pushButton.clicked.connect(self.set_training_params)
 
     @staticmethod
     @catch_exception
-    def set_training_params(mw):
+    def set_training_params():
         training_params = {
             "threshold": mw.ui.thresh_lineEdit.text(),
             "distance": mw.ui.distance_lineEdit.text()
@@ -287,14 +275,12 @@ class Training(object):
 
 
 class Checked(object):
-    def __init__(self, mw):
-        for func_name, _ in inspect.getmembers(self, predicate=inspect.isfunction):
-            setattr(MainWindow, func_name, getattr(self, func_name))
-        mw.ui.verifycheckBox.stateChanged.connect(mw.checked)
+    def __init__(self):
+        mw.ui.verifycheckBox.stateChanged.connect(self.checked)
 
     @staticmethod
     @catch_exception
-    def checked(mw):
+    def checked():
         if mw.ui.verifycheckBox.isChecked() and mw.pic_list:
             name_list = []
             for row in range(mw.ui.tableWidget.rowCount()):
@@ -312,13 +298,17 @@ class Checked(object):
             mw.interaction.checked(checked_info)
 
 
-if __name__ == "__main__":
-    if (len(sys.argv) > 1) and (sys.argv[1] in ('-t', '--test')):
-        from qt.qt_interaction import QtInteraction
-    else:
-        from recognition.qt_interaction import QtInteraction
+def init_parts():
+    Recognition()
+    Picture()
+    DirTree()
+    Training()
+    Checked()
 
+
+if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
+    mw = MainWindow()
+    init_parts()
+    mw.show()
     sys.exit(app.exec_())
