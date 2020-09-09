@@ -17,14 +17,17 @@ class QtInteraction(UiInterface):
         print('start')
         print(params)
         return {"res": True, "msg": "xxx"}
+        # return {"res": False, "msg": "参数错误"}
 
     def continue_run(self) -> dict:
         print('continue')
         return {"res": True, "msg": "xxx"}
+        # return {"res": False, "msg": "继续失败"}
 
     def pause(self) -> dict:
         print('pause')
         return {"res": True, "msg": "xxx"}
+        # return {"res": False, "msg": "暂停失败"}
 
     def get_recognition_info(self) -> dict:
         recognition_info = {

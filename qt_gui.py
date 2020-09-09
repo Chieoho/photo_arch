@@ -49,6 +49,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.current_pic_id = 0
         self.pic_info_dict = {}
 
+    def msg_box(self, msg: str):
+        QMessageBox.warning(self, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
+
 
 class Recognition(object):
     run_state = RunState.stop
@@ -72,32 +75,42 @@ class Recognition(object):
     @catch_exception
     def run():
         mw.ui.tabWidget.setCurrentIndex(0)
-        mw.ui.pausecontinueButton.setText('停止')
-        mw.ui.run_state_label.setText('运行中...')
         if Recognition.run_state != RunState.running:
-            Recognition.run_state = RunState.running
             thresh = mw.ui.thresh_lineEdit.text()
             distance = mw.ui.distance_lineEdit.text()
             params = {
                 "threshold": float(thresh) if thresh else 0.8,
                 "distance": float(distance) if distance else 0.8
             }
-            mw.interaction.start(params)
+            result = mw.interaction.start(params)
+            if result.get('res') is True:
+                Recognition.run_state = RunState.running
+                mw.ui.pausecontinueButton.setText('停止')
+                mw.ui.run_state_label.setText('运行中...')
+            else:
+                mw.msg_box(result.get('msg'))
 
     @staticmethod
     @catch_exception
     def pause_or_continue():
         mw.ui.tabWidget.setCurrentIndex(0)
         if Recognition.run_state == RunState.running:
-            mw.ui.pausecontinueButton.setText('继续')
-            mw.ui.run_state_label.setText("暂停")
-            Recognition.run_state = RunState.pause
-            mw.interaction.pause()
+            result = mw.interaction.pause()
+            if result.get('res'):
+                Recognition.run_state = RunState.pause
+                mw.ui.pausecontinueButton.setText('继续')
+                mw.ui.run_state_label.setText("暂停")
+            else:
+                mw.msg_box(result.get('msg'))
+
         elif Recognition.run_state == RunState.pause:
-            mw.ui.pausecontinueButton.setText('停止')
-            mw.ui.run_state_label.setText('运行中...')
-            Recognition.run_state = RunState.running
-            mw.interaction.continue_run()
+            result = mw.interaction.continue_run()
+            if result.get('res'):
+                Recognition.run_state = RunState.running
+                mw.ui.pausecontinueButton.setText('停止')
+                mw.ui.run_state_label.setText('运行中...')
+            else:
+                mw.msg_box(result.get('msg'))
         else:
             pass
 
