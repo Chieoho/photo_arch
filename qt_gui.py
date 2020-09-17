@@ -142,8 +142,8 @@ class Recognition(object):
                     label = mw.rcn_info_label_dict.get(key)
                     if label:
                         label.setText(str(value))
-                handled_pic_num = recognition_info.get('handled_pic_num')
-                unhandled_pic_num = recognition_info.get('unhandled_pic_num')
+                handled_pic_num = recognition_info.get('handled_pic_num', 0)
+                unhandled_pic_num = recognition_info.get('unhandled_pic_num', 1)
                 step = int(handled_pic_num / (handled_pic_num + unhandled_pic_num) * 100)
                 mw.ui.progressBar.setValue(step)
                 if step >= 100:
