@@ -61,7 +61,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.run_state = RunState.stop
 
     def msg_box(self, msg: str):
-        QMessageBox.warning(self, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
+        QMessageBox().warning(self, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
 
     @staticmethod
     @catch_exception
@@ -228,11 +228,7 @@ class Picture(object):
     @staticmethod
     @catch_exception
     def _create_button(name, ico_path):
-        button = QPushButton(name)
-        icon = QIcon()
-        pixmap = QPixmap(ico_path)
-        icon.addPixmap(pixmap)
-        button.setIcon(icon)
+        button = QtWidgets.QPushButton(QIcon(QPixmap(ico_path)), name, mw.ui.tableWidget)
         return button
 
     @staticmethod
