@@ -5,8 +5,12 @@
 @author: Jaden Wu
 @time: 2020/9/3 10:13
 """
-from recognition.ui_interface import UiInterface
 import os
+from pprint import pprint
+from recognition.ui_interface import UiInterface
+
+handled_pic_num = 0
+unhandled_pic_num = 500
 
 
 class QtInteraction(UiInterface):
@@ -16,6 +20,9 @@ class QtInteraction(UiInterface):
     def start(self, params) -> dict:
         print('start')
         print(params)
+        global handled_pic_num, unhandled_pic_num
+        handled_pic_num = 0
+        unhandled_pic_num = 500
         return {"res": True, "msg": "xxx"}
         # return {"res": False, "msg": "参数错误"}
 
@@ -30,13 +37,16 @@ class QtInteraction(UiInterface):
         # return {"res": False, "msg": "暂停失败"}
 
     def get_recognition_info(self) -> dict:
+        global handled_pic_num, unhandled_pic_num
+        handled_pic_num += 10
+        unhandled_pic_num -= 10
         recognition_info = {
             "recognition_rate": 90,
             "recognized_face_num": 1000,
             "part_recognized_pic_num": 200,
             "all_recognized_pic_num": 300,
-            "handled_pic_num": 400,
-            "unhandled_pic_num": 100
+            "handled_pic_num": handled_pic_num,
+            "unhandled_pic_num": unhandled_pic_num
         }
         return recognition_info
 
@@ -75,12 +85,12 @@ class QtInteraction(UiInterface):
         # return []
 
     def set_archival_number(self, arch_num_info) -> bool:
-        print(arch_num_info)
+        pprint(arch_num_info)
         self.arch_num_info = arch_num_info
         return True
 
     def get_archival_number(self, path) -> dict:
-        print(path)
+        # print(path)
         if self.arch_num_info and list(self.arch_num_info.get('root').keys())[0] == path:
             return self.arch_num_info
         return {}
@@ -90,5 +100,5 @@ class QtInteraction(UiInterface):
         return model_info
 
     def checked(self, checked_info) -> bool:
-        print(checked_info)
+        pprint(checked_info)
         return True
