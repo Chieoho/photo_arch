@@ -61,7 +61,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.run_state = RunState.stop
 
     def msg_box(self, msg: str):
-        QMessageBox().warning(self, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
+        QMessageBox().warning(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
 
     @staticmethod
     @catch_exception
@@ -77,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 class Recognition(object):
-    update_timer = QTimer()
+    update_timer = QtCore.QTimer()
 
     def __init__(self):
         mw.ui.recogniButton.clicked.connect(self.run)
