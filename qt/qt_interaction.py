@@ -102,3 +102,6 @@ class QtInteraction(UiInterface):
     def checked(self, checked_info) -> bool:
         pprint(checked_info)
         return True
+
+    def get_untrained_pic_num(self) -> int:
+        return 10

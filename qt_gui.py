@@ -59,7 +59,15 @@ class MainWindow(QtWidgets.QMainWindow):
             "unhandled_pic_num": self.ui.unhandled_pic_label
         }
         self.run_state = RunState.stop
+        self.ui.tabWidget.currentChanged.connect(self.tab_change)
 
+    @catch_exception
+    def tab_change(self, tab_id):
+        if tab_id == 3:
+            untrained_pic_num = self.interaction.get_untrained_pic_num()
+            self.ui.untrained_num_label.setText(str(untrained_pic_num))
+
+    @catch_exception
     def msg_box(self, msg: str):
         QMessageBox().warning(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
 
@@ -90,14 +98,11 @@ class Recognition(object):
     @staticmethod
     @catch_exception
     def run():
-        mw.ui.tabWidget.setCurrentIndex(0)
         if mw.run_state != RunState.running:
             thresh = mw.ui.thresh_lineEdit.text()
-            distance = mw.ui.distance_lineEdit.text()
             size = mw.ui.pic_view.size()
             params = {
                 "threshold": float(thresh) if thresh else 0.9,
-                "distance": float(distance) if distance else 0.73,
                 "label_size": (size.width(), size.height())
             }
             result = mw.interaction.start(params)
@@ -111,7 +116,6 @@ class Recognition(object):
     @staticmethod
     @catch_exception
     def pause_or_continue():
-        mw.ui.tabWidget.setCurrentIndex(0)
         if mw.run_state == RunState.running:
             result = mw.interaction.pause()
             if result.get('res'):
@@ -136,7 +140,7 @@ class Recognition(object):
     @catch_exception
     def periodic_update():
         if mw.run_state == RunState.running:
-            if mw.ui.tabWidget.currentIndex() == 0:
+            if mw.ui.tabWidget.currentIndex() == 1:
                 recognition_info = mw.interaction.get_recognition_info()
                 for key, value in recognition_info.items():
                     label = mw.rcn_info_label_dict.get(key)
@@ -150,6 +154,9 @@ class Recognition(object):
                     mw.run_state = RunState.stop
                     mw.ui.pausecontinueButton.setText('停止')
                     mw.ui.run_state_label.setText("停止")
+                    pic_info_list = mw.interaction.get_pics_info(Picture.pic_type)
+                    mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
+                    mw.pic_info_dict = {d['img_path']: d for d in pic_info_list}
 
 
 class Picture(object):
@@ -160,6 +167,7 @@ class Picture(object):
     tmp_info = {}
     add_icon_path = 'icon/add.png'
     del_icon_path = 'icon/cancel.png'
+    pic_type = 1
 
     def __init__(self):
         # mw.ui.pic_view.setScaledContents(True)
@@ -196,18 +204,20 @@ class Picture(object):
     def pic_choose(check_state):
         if check_state is False:
             return
-        mw.ui.tabWidget.setCurrentIndex(1)
-        pic_info_list = mw.interaction.get_pics_info(pic_type=Picture.radio_map[mw.sender().objectName()])
+        mw.ui.tabWidget.setCurrentIndex(2)
+        Picture.pic_type = Picture.radio_map[mw.sender().objectName()]
+        pic_info_list = mw.interaction.get_pics_info(Picture.pic_type)
         mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
         mw.pic_info_dict = {d['img_path']: d for d in pic_info_list}
+        Picture.tmp_info = {}
         mw.current_pic_id = 0
         Picture._display_recognizable()
 
     @staticmethod
     @catch_exception
     def pre_pic():
-        if mw.ui.tabWidget.currentIndex() != 1:
-            mw.ui.tabWidget.setCurrentIndex(1)
+        if mw.ui.tabWidget.currentIndex() != 2:
+            mw.ui.tabWidget.setCurrentIndex(2)
             return
         Picture.tmp_info[mw.pic_list[mw.current_pic_id]] = mw.get_name_info()
         if mw.current_pic_id > 0:
@@ -217,8 +227,8 @@ class Picture(object):
     @staticmethod
     @catch_exception
     def next_pic():
-        if mw.ui.tabWidget.currentIndex() != 1:
-            mw.ui.tabWidget.setCurrentIndex(1)
+        if mw.ui.tabWidget.currentIndex() != 2:
+            mw.ui.tabWidget.setCurrentIndex(2)
             return
         Picture.tmp_info[mw.pic_list[mw.current_pic_id]] = mw.get_name_info()
         if mw.current_pic_id < len(mw.pic_list) - 1:
@@ -229,6 +239,7 @@ class Picture(object):
     @catch_exception
     def _create_button(name, ico_path):
         button = QtWidgets.QPushButton(QIcon(QPixmap(ico_path)), name, mw.ui.tableWidget)
+        button.setFlat(True)
         return button
 
     @staticmethod
@@ -252,12 +263,14 @@ class Picture(object):
     @staticmethod
     @catch_exception
     def delete(row):
+        mw.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         mw.ui.tableWidget.removeRow(row)
         for r in range(row, mw.ui.tableWidget.rowCount() - 1):
             mw.ui.tableWidget.cellWidget(r, 2).clicked.disconnect()
             Picture.connect(mw.ui.tableWidget.cellWidget(r, 2), r)
         mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         mw.check_state_dict[mw.pic_list[mw.current_pic_id]] = Qt.Unchecked
+        mw.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.CurrentChanged)
 
     @staticmethod
     @catch_exception
@@ -274,7 +287,7 @@ class Picture(object):
     @catch_exception
     def _display_recognizable():
         if not mw.pic_list:
-            mw.msg_box('没有图片可显示')
+            mw.ui.pic_view.setText('没有照片可显示')
             return
         pic_path = mw.pic_list[mw.current_pic_id]
         Picture.pix_map = QPixmap(pic_path)
@@ -384,7 +397,7 @@ class DirTree(object):
                                                              options=QFileDialog.ShowDirsOnly)
         if not current_work_path:
             return
-        mw.ui.tabWidget.setCurrentIndex(2)
+        mw.ui.tabWidget.setCurrentIndex(0)
         DirTree.current_work_path = os.path.abspath(current_work_path)
         mw.ui.dir_lineEdit.setText(DirTree.current_work_path)
         arch_num_info = mw.interaction.get_archival_number(DirTree.current_work_path)
@@ -441,6 +454,8 @@ class DirTree(object):
             "children": {}
         }
         root_item = mw.ui.treeWidget.invisibleRootItem().child(0)
+        if root_item is None:
+            return
         root_path = root_item.text(0)
         root_line_edit = mw.ui.treeWidget.itemWidget(root_item, 1)
         root_arch_num = root_line_edit.text()
@@ -459,11 +474,13 @@ class DirTree(object):
     @staticmethod
     @catch_exception
     def cancel_folder_item():
-        item = QTreeWidgetItemIterator(mw.ui.treeWidget)
-        child_count = item.value().childCount()
+        item_value = QTreeWidgetItemIterator(mw.ui.treeWidget).value()
+        if item_value is None:
+            return
+        child_count = item_value.childCount()
         for i in range(child_count):
-            if item.value().child(i).checkState(0) == Qt.Checked:
-                item.value().child(i).setCheckState(0, Qt.Unchecked)
+            if item_value.child(i).checkState(0) == Qt.Checked:
+                item_value.child(i).setCheckState(0, Qt.Unchecked)
 
     @staticmethod
     @catch_exception
@@ -572,6 +589,10 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     mw = MainWindow()
     mw.resize(1200, 800)
+    desktop = app.desktop()
+    ax = int((desktop.width() - mw.width()) / 2)
+    ay = int((desktop.height() - mw.height()) / 2) - 30
+    mw.move(ax, ay)
     init_parts()
     mw.show()
     sys.exit(app.exec_())

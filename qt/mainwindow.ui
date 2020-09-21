@@ -17,7 +17,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>档案人脸识别系统</string>
+   <string>图片档案著录辅助系统</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -121,6 +121,189 @@ QTabBar::tab:selected{
             <height>24</height>
            </size>
           </property>
+          <widget class="QWidget" name="archcodeTab">
+           <attribute name="icon">
+            <iconset>
+             <normaloff>../icon/dirtree.png</normaloff>../icon/dirtree.png</iconset>
+           </attribute>
+           <attribute name="title">
+            <string>预设档号</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QTreeWidget" name="treeWidget">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <column>
+               <property name="text">
+                <string notr="true">文件夹</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>新宋体</family>
+                 <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>档号</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>新宋体</family>
+                 <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+              </column>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QFrame" name="frame_3">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_7">
+               <item row="0" column="3">
+                <widget class="QPushButton" name="cancel_folder_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>120</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>新宋体</family>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">padding:8px;  </string>
+                 </property>
+                 <property name="text">
+                  <string>取消</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../icon/cancel.png</normaloff>../icon/cancel.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <spacer name="horizontalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPushButton" name="add_folder_btn">
+                 <property name="minimumSize">
+                  <size>
+                   <width>120</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>新宋体</family>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">padding:8px;  </string>
+                 </property>
+                 <property name="text">
+                  <string>添加</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../icon/add_file.png</normaloff>../icon/add_file.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="0" column="4">
+                <spacer name="horizontalSpacer_6">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
           <widget class="QWidget" name="recognitionTab">
            <attribute name="icon">
             <iconset>
@@ -476,6 +659,12 @@ QTabBar::tab:selected{
             </item>
             <item row="10" column="0" colspan="4">
              <widget class="QFrame" name="frame_2">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="frameShape">
                <enum>QFrame::StyledPanel</enum>
               </property>
@@ -620,186 +809,15 @@ QTabBar::tab:selected{
            <layout class="QGridLayout" name="gridLayout_5">
             <item row="0" column="0">
              <widget class="QLabel" name="pic_view">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="archcodeTab">
-           <attribute name="icon">
-            <iconset>
-             <normaloff>../icon/dirtree.png</normaloff>../icon/dirtree.png</iconset>
-           </attribute>
-           <attribute name="title">
-            <string>预设档号</string>
-           </attribute>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="0" column="0">
-             <widget class="QTreeWidget" name="treeWidget">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
               </property>
-              <property name="styleSheet">
-               <string notr="true"/>
+              <property name="text">
+               <string/>
               </property>
-              <column>
-               <property name="text">
-                <string notr="true">文件夹</string>
-               </property>
-               <property name="font">
-                <font>
-                 <family>新宋体</family>
-                 <pointsize>14</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>档号</string>
-               </property>
-               <property name="font">
-                <font>
-                 <family>新宋体</family>
-                 <pointsize>14</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-              </column>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QFrame" name="frame_3">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_7">
-               <item row="0" column="3">
-                <widget class="QPushButton" name="cancel_folder_btn">
-                 <property name="minimumSize">
-                  <size>
-                   <width>120</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <family>新宋体</family>
-                   <pointsize>14</pointsize>
-                  </font>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">padding:8px;  </string>
-                 </property>
-                 <property name="text">
-                  <string>取消</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../icon/cancel.png</normaloff>../icon/cancel.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>24</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <spacer name="horizontalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="0" column="1">
-                <widget class="QPushButton" name="add_folder_btn">
-                 <property name="minimumSize">
-                  <size>
-                   <width>120</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <family>新宋体</family>
-                   <pointsize>14</pointsize>
-                  </font>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">padding:8px;  </string>
-                 </property>
-                 <property name="text">
-                  <string>添加</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../icon/add_file.png</normaloff>../icon/add_file.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>24</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <spacer name="horizontalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="0" column="4">
-                <spacer name="horizontalSpacer_6">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
              </widget>
             </item>
            </layout>
@@ -826,12 +844,28 @@ QTabBar::tab:selected{
               </property>
              </spacer>
             </item>
-            <item row="2" column="1">
+            <item row="1" column="1">
              <widget class="QLabel" name="label_5">
-              <property name="minimumSize">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>识别准确度：</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLineEdit" name="thresh_lineEdit">
+              <property name="maximumSize">
                <size>
-                <width>0</width>
-                <height>35</height>
+                <width>400</width>
+                <height>16777215</height>
                </size>
               </property>
               <property name="font">
@@ -841,27 +875,26 @@ QTabBar::tab:selected{
                </font>
               </property>
               <property name="text">
-               <string>欧氏距离：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               <string>0.9</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="3">
-             <spacer name="horizontalSpacer_7">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+            <item row="2" column="1" colspan="2">
+             <widget class="QLabel" name="label_14">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+               </font>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
+              <property name="contextMenuPolicy">
+               <enum>Qt::CustomContextMenu</enum>
               </property>
-             </spacer>
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#868686;&quot;&gt;识别准确度：确认是某某人的概率有多大，概率越大表示是某人的几率就越大，默认值不小于90%。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
             </item>
-            <item row="1" column="0">
+            <item row="3" column="0">
              <spacer name="horizontalSpacer_8">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -875,6 +908,54 @@ QTabBar::tab:selected{
              </spacer>
             </item>
             <item row="3" column="1">
+             <widget class="QLabel" name="label_4">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>未训练照片：</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QLabel" name="untrained_num_label">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3">
+             <spacer name="horizontalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="1">
              <widget class="QLabel" name="label_12">
               <property name="minimumSize">
                <size>
@@ -902,7 +983,7 @@ QTabBar::tab:selected{
               </property>
              </widget>
             </item>
-            <item row="3" column="2">
+            <item row="4" column="2">
              <widget class="QLabel" name="model_acc_label">
               <property name="maximumSize">
                <size>
@@ -924,67 +1005,19 @@ QTabBar::tab:selected{
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
-             <widget class="QLineEdit" name="thresh_lineEdit">
-              <property name="maximumSize">
-               <size>
-                <width>400</width>
-                <height>16777215</height>
-               </size>
-              </property>
+            <item row="5" column="1" colspan="2">
+             <widget class="QLabel" name="label_15">
               <property name="font">
                <font>
                 <family>新宋体</family>
-                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
-               <string>0.9</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#868686;&quot;&gt;如果模型精度小于0.9，建议进一步强化训练。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_4">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>35</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>识别阈值：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QLineEdit" name="distance_lineEdit">
-              <property name="maximumSize">
-               <size>
-                <width>400</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>0.73</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
+            <item row="6" column="1">
              <spacer name="verticalSpacer_4">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -997,18 +1030,12 @@ QTabBar::tab:selected{
               </property>
              </spacer>
             </item>
-            <item row="5" column="2">
-             <widget class="QPushButton" name="train_pushButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
+            <item row="7" column="0" colspan="4">
+             <widget class="QFrame" name="frame_5">
+              <property name="minimumSize">
                <size>
-                <width>150</width>
-                <height>16777215</height>
+                <width>0</width>
+                <height>0</height>
                </size>
               </property>
               <property name="font">
@@ -1017,25 +1044,55 @@ QTabBar::tab:selected{
                 <pointsize>14</pointsize>
                </font>
               </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
               </property>
-              <property name="styleSheet">
-               <string notr="true">padding:8px;  </string>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
               </property>
-              <property name="text">
-               <string>开始训练</string>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>../icon/start_training.png</normaloff>../icon/start_training.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
+              <layout class="QGridLayout" name="gridLayout_12">
+               <item row="0" column="0">
+                <widget class="QPushButton" name="train_pushButton">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>150</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>新宋体</family>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">padding:8px;  </string>
+                 </property>
+                 <property name="text">
+                  <string>开始训练</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../icon/start_training.png</normaloff>../icon/start_training.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -1132,6 +1189,9 @@ QTabBar::tab:selected{
             border-bottom: 1px solid #D8D8D8;
             background-color:white;
         }</string>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::CurrentChanged</set>
           </property>
           <property name="showGrid">
            <bool>true</bool>

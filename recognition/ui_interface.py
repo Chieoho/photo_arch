@@ -89,3 +89,9 @@ class UiInterface(metaclass=ABCMeta):
         "table_widget": [{"name": "张三", "id": "001"}]}
         :return: True or False
         """
+    @abstractmethod
+    def get_untrained_pic_num(self) -> int:
+        """
+        获取未训练图片数量
+        :return:
+        """
