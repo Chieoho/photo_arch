@@ -41,7 +41,7 @@ class QtInteraction(UiInterface):
         handled_pic_num += 10
         unhandled_pic_num -= 10
         recognition_info = {
-            "recognition_rate": 90,
+            "recognition_rate": 0.9,
             "recognized_face_num": 1000,
             "part_recognized_pic_num": 200,
             "all_recognized_pic_num": 300,

@@ -862,6 +862,12 @@ QTabBar::tab:selected{
             </item>
             <item row="1" column="2">
              <widget class="QLineEdit" name="thresh_lineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>400</width>
@@ -899,6 +905,9 @@ QTabBar::tab:selected{
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
@@ -931,6 +940,12 @@ QTabBar::tab:selected{
             </item>
             <item row="3" column="2">
              <widget class="QLabel" name="untrained_num_label">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -985,6 +1000,12 @@ QTabBar::tab:selected{
             </item>
             <item row="4" column="2">
              <widget class="QLabel" name="model_acc_label">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>

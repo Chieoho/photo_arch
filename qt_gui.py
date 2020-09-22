@@ -303,7 +303,6 @@ class Picture(object):
         Picture._mark_face(coordinate_list)
         mw.ui.arch_num_lineEdit.setText(mw.pic_info_dict.get(pic_path).get('archival_num'))
         mw.ui.theme_textEdit.setText(mw.pic_info_dict.get(pic_path).get('subject'))
-        # mw.ui.pic_view.setPixmap(Picture.pix_map)
         pix_map = Picture.pix_map.scaled(mw.ui.pic_view.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         mw.ui.pic_view.setPixmap(pix_map)
         mw.ui.pic_index_label.setText('{}/{}'.format(mw.current_pic_id + 1, len(mw.pic_list)))
