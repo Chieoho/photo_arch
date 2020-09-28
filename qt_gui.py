@@ -9,6 +9,7 @@ import os
 import sys
 import json
 import inspect
+import time
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -154,6 +155,7 @@ class Recognition(object):
                     mw.run_state = RunState.stop
                     mw.ui.pausecontinueButton.setText('停止')
                     mw.ui.run_state_label.setText("停止")
+                    time.sleep(1)
                     pic_info_list = mw.interaction.get_pics_info(Picture.pic_type)
                     mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
                     mw.pic_info_dict = {d['img_path']: d for d in pic_info_list}
@@ -294,12 +296,12 @@ class Picture(object):
         faces_data = mw.pic_info_dict.get(pic_path).get('faces')
         name_info_list, coordinate_list = Picture._conversion_data(faces_data)
         tmp_name_info_list = Picture.tmp_info.get(pic_path)
+        mw.ui.tableWidget.itemChanged.disconnect()
         if tmp_name_info_list is None:
             Picture._update_table_widget(name_info_list)
         else:
-            mw.ui.tableWidget.itemChanged.disconnect()
             Picture._update_table_widget(tmp_name_info_list)
-            mw.ui.tableWidget.itemChanged.connect(Picture.table_item_changed)
+        mw.ui.tableWidget.itemChanged.connect(Picture.table_item_changed)
         Picture._mark_face(coordinate_list)
         mw.ui.arch_num_lineEdit.setText(mw.pic_info_dict.get(pic_path).get('archival_num'))
         mw.ui.theme_textEdit.setText(mw.pic_info_dict.get(pic_path).get('subject'))
@@ -351,7 +353,16 @@ class Picture(object):
     @staticmethod
     @catch_exception
     def _set_verify_checkbox(pic_path):
-        current_check_state = mw.check_state_dict.get(pic_path, Qt.Unchecked)
+        pic_info = mw.pic_info_dict.get(pic_path)
+        if pic_info:
+            verify_state_code = pic_info.get('verify_state', 0)
+            if verify_state_code == 1:
+                original_verify_state = Qt.Checked
+            else:
+                original_verify_state = Qt.Unchecked
+        else:
+            original_verify_state = Qt.Unchecked
+        current_check_state = mw.check_state_dict.get(pic_path, original_verify_state)
         if current_check_state == Qt.Checked:
             mw.ui.verifycheckBox.stateChanged.disconnect()
             mw.ui.verifycheckBox.setCheckState(Qt.Checked)
@@ -551,6 +562,8 @@ class Training(object):
             mw.msg_box('数据只有一类标签，至少需要两类标签')
         else:
             mw.ui.model_acc_label.setText(str(model_acc))
+        untrained_pic_num = mw.interaction.get_untrained_pic_num()
+        mw.ui.untrained_num_label.setText(str(untrained_pic_num))
 
 
 class Checked(object):

@@ -6,7 +6,7 @@
 @time: 2020/9/3 10:14
 """
 from recognition.ui_interface import UiInterface
-from recognition.business_example import Recognition
+from recognition.business_recognition import Recognition
 
 __all__ = ['QtInteraction']
 
@@ -16,29 +16,44 @@ class QtInteraction(UiInterface):
         self._rcn = Recognition()
 
     def start(self, params) -> dict:
-        self._rcn.recognition()
-        return {"res": True, "msg": "xxx"}
+        threshold = params['threshold']
+        if threshold == '':
+            return {"res": False, "msg": "阈值不能设置为空字符串."}
+        if float(threshold) < 0.8:
+            return {"res": False, "msg": "阈值必须大于等于0.8."}
+
+        self._rcn.recognition(params)
+        return {"res": True, "msg": ""}
 
     def continue_run(self) -> dict:
-        pass
+        self._rcn.continueRecognition()
+        return {"res": True, "msg": ""}
 
     def pause(self) -> dict:
-        pass
+        self._rcn.pauseRecognition()
+        return {"res": True, "msg": ""}
 
     def get_recognition_info(self) -> dict:
-        pass
+        return self._rcn.updateRecognitionInfo()
 
     def get_pics_info(self, pic_type) -> list:
-        pass
+        return  self._rcn.get_recognized_face_info(pic_type)
 
     def set_archival_number(self, arch_num_info) -> bool:
-        pass
+        ret = self._rcn.add_folderItem(arch_num_info)
+        return ret
 
     def get_archival_number(self, path) -> dict:
-        pass
+        return self._rcn.get_archival_number(path)
 
     def start_training(self) -> dict:
-        pass
+        return self._rcn.trainModel()
 
     def checked(self, checked_info) -> bool:
-        pass
+        if len(checked_info) == 0 or checked_info['path'] == '' or len(eval(checked_info['faces'])) == 0  or len(checked_info['table_widget']) == 0:
+            return False
+        self._rcn.checke_faces_info(checked_info)
+        return True
+
+    def get_untrained_pic_num(self) -> int:
+        return 10
