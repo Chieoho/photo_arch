@@ -50,7 +50,7 @@ class QtInteraction(UiInterface):
         }
         return recognition_info
 
-    def get_pics_info(self, pic_type) -> list:
+    def get_pics_info(self, pic_type, dir_type) -> list:
         pic_info_list = [
             {'archival_num': '社保局-2019-0001',
              'faces': '[]',

@@ -39,10 +39,11 @@ class UiInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def get_pics_info(self, pic_type: int) -> list:
+    def get_pics_info(self, pic_type: int, dir_type: int) -> list:
         """
-        获取所有图片或部分识别图片或未识别图片的信息，
+        获取图片的信息
         :param pic_type: 图片类型，1代表所有图片，2代表部分识别图片，3代表未识别图片
+        :param dir_type: 目录类型，1代表本次识别目录，2代表当前所有目录
         :return:
         [{'archival_num': '社保局-2019-0001',
           'faces': '[{"id": 0, "box": "[93, 81, 182, 192]", "name": ""}]',

@@ -36,8 +36,8 @@ class QtInteraction(UiInterface):
     def get_recognition_info(self) -> dict:
         return self._rcn.updateRecognitionInfo()
 
-    def get_pics_info(self, pic_type) -> list:
-        return  self._rcn.get_recognized_face_info(pic_type)
+    def get_pics_info(self, pic_type, dir_type) -> list:
+        return self._rcn.get_recognized_face_info(pic_type, dir_type)
 
     def set_archival_number(self, arch_num_info) -> bool:
         ret = self._rcn.add_folderItem(arch_num_info)

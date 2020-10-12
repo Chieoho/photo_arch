@@ -1171,7 +1171,38 @@ QTabBar::tab:selected{
         </size>
        </property>
        <layout class="QGridLayout" name="gridLayout_8">
-        <item row="1" column="0" colspan="2">
+        <item row="8" column="0">
+         <widget class="QCheckBox" name="verifycheckBox">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>已核验(Ctrl+S)</string>
+          </property>
+          <property name="shortcut">
+           <string>Ctrl+S</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0" colspan="3">
+         <widget class="QTextEdit" name="theme_textEdit">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>120</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
          <widget class="QRadioButton" name="part_recognition_radioButton">
           <property name="font">
            <font>
@@ -1179,14 +1210,14 @@ QTabBar::tab:selected{
            </font>
           </property>
           <property name="text">
-           <string>显示部分识别图片(Alt+W)</string>
+           <string>显示本次识别部分识别图片(Alt+W)</string>
           </property>
           <property name="shortcut">
            <string>Alt+W</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="0" colspan="3">
+        <item row="7" column="0" colspan="3">
          <widget class="QTableWidget" name="tableWidget">
           <property name="font">
            <font>
@@ -1267,7 +1298,7 @@ QTabBar::tab:selected{
           </column>
          </widget>
         </item>
-        <item row="3" column="0" colspan="3">
+        <item row="4" column="0" colspan="3">
          <widget class="QFrame" name="frame">
           <property name="enabled">
            <bool>true</bool>
@@ -1325,7 +1356,7 @@ QTabBar::tab:selected{
           </layout>
          </widget>
         </item>
-        <item row="8" column="0" colspan="3">
+        <item row="9" column="0" colspan="3">
          <widget class="QFrame" name="frame_4">
           <property name="minimumSize">
            <size>
@@ -1468,22 +1499,7 @@ QTabBar::tab:selected{
           </layout>
          </widget>
         </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QRadioButton" name="all_pic_radioButton">
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>显示所有图片(Alt+Q)</string>
-          </property>
-          <property name="shortcut">
-           <string>Alt+Q</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
+        <item row="3" column="0" colspan="2">
          <widget class="QRadioButton" name="all_recognition_radioButton">
           <property name="font">
            <font>
@@ -1491,14 +1507,14 @@ QTabBar::tab:selected{
            </font>
           </property>
           <property name="text">
-           <string>显示全部识别图片(Alt+E)</string>
+           <string>显示本次识别全部识别图片(Alt+E)</string>
           </property>
           <property name="shortcut">
            <string>Alt+E</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
+        <item row="5" column="0">
          <widget class="QLabel" name="label_3">
           <property name="maximumSize">
            <size>
@@ -1517,35 +1533,70 @@ QTabBar::tab:selected{
           </property>
          </widget>
         </item>
-        <item row="5" column="0" colspan="3">
-         <widget class="QTextEdit" name="theme_textEdit">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>120</height>
-           </size>
-          </property>
+        <item row="1" column="0" colspan="2">
+         <widget class="QRadioButton" name="all_pic_radioButton">
           <property name="font">
            <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
-         <widget class="QCheckBox" name="verifycheckBox">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
             <pointsize>14</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>已核验(Ctrl+S)</string>
+           <string>显示本次识别所有图片(Alt+Q)</string>
           </property>
           <property name="shortcut">
-           <string>Ctrl+S</string>
+           <string>Alt+Q</string>
           </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="3">
+         <widget class="QFrame" name="frame_6">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_13">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="select_dir_radioButton">
+             <property name="text">
+              <string>本次识别</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QRadioButton" name="current_dir_radioButton">
+             <property name="text">
+              <string>当前目录</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <spacer name="horizontalSpacer_11">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>50</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>

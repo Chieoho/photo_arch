@@ -122,7 +122,7 @@ class Recognition(object):
             if result.get('res'):
                 mw.run_state = RunState.pause
                 mw.ui.pausecontinueButton.setText('继续')
-                mw.ui.run_state_label.setText("停止")
+                mw.ui.run_state_label.setText("暂停")
             else:
                 mw.msg_box(result.get('msg'))
 
@@ -154,22 +154,29 @@ class Recognition(object):
                 if step >= 100:
                     mw.run_state = RunState.stop
                     mw.ui.pausecontinueButton.setText('停止')
-                    mw.ui.run_state_label.setText("停止")
+                    mw.ui.run_state_label.setText("完成")
                     time.sleep(1)
-                    pic_info_list = mw.interaction.get_pics_info(Picture.pic_type)
+                    pic_info_list = mw.interaction.get_pics_info(Picture.pic_type, Picture.dir_type)
                     mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
                     mw.pic_info_dict = {d['img_path']: d for d in pic_info_list}
 
 
 class Picture(object):
-    radio_map = {'all_pic_radioButton': 1,
-                 'part_recognition_radioButton': 2,
-                 'all_recognition_radioButton': 3}
+    pic_radio_map = {
+        'all_pic_radioButton': 1,
+        'part_recognition_radioButton': 2,
+        'all_recognition_radioButton': 3
+    }
+    dir_radio_map = {
+        'select_dir_radioButton': ('本次识别', 1),
+        'current_dir_radioButton': ('当前目录', 2)
+    }
     pix_map = None
     tmp_info = {}
     add_icon_path = 'icon/add.png'
     del_icon_path = 'icon/cancel.png'
     pic_type = 1
+    dir_type = 1
 
     def __init__(self):
         # mw.ui.pic_view.setScaledContents(True)
@@ -183,6 +190,8 @@ class Picture(object):
         mw.ui.preButton.clicked.connect(self.pre_pic)
         mw.ui.nextButton.clicked.connect(self.next_pic)
         mw.ui.tableWidget.itemChanged.connect(self.table_item_changed)
+        mw.ui.select_dir_radioButton.toggled.connect(self.dir_choose)
+        mw.ui.current_dir_radioButton.toggled.connect(self.dir_choose)
 
         mw.ui.all_pic_radioButton.setEnabled(False)
         mw.ui.part_recognition_radioButton.setEnabled(False)
@@ -207,13 +216,23 @@ class Picture(object):
         if check_state is False:
             return
         mw.ui.tabWidget.setCurrentIndex(2)
-        Picture.pic_type = Picture.radio_map[mw.sender().objectName()]
-        pic_info_list = mw.interaction.get_pics_info(Picture.pic_type)
+        Picture.pic_type = Picture.pic_radio_map[mw.sender().objectName()]
+        pic_info_list = mw.interaction.get_pics_info(Picture.pic_type, Picture.dir_type)
         mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
         mw.pic_info_dict = {d['img_path']: d for d in pic_info_list}
         Picture.tmp_info = {}
         mw.current_pic_id = 0
         Picture._display_recognizable()
+
+    @staticmethod
+    @catch_exception
+    def dir_choose(check_state):
+        if check_state is False:
+            return
+        dir_scope, Picture.dir_type = Picture.dir_radio_map[mw.sender().objectName()]
+        mw.ui.all_pic_radioButton.setText(f'显示{dir_scope}所有图片(Alt+Q)')
+        mw.ui.part_recognition_radioButton.setText(f'显示{dir_scope}部分识别图片(Alt+Q)')
+        mw.ui.all_recognition_radioButton.setText(f'显示{dir_scope}全部识别图片(Alt+Q)')
 
     @staticmethod
     @catch_exception
@@ -480,6 +499,7 @@ class DirTree(object):
                 arch_num = line_edit.text()
                 arch_num_info["children"].update({os.path.join(DirTree.current_work_path, path): arch_num})
         mw.interaction.set_archival_number(arch_num_info)
+        DirTree._reset_state()
 
     @staticmethod
     @catch_exception
