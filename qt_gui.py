@@ -15,10 +15,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from qt.qt_ui import Ui_MainWindow
-if (len(sys.argv) > 1) and (sys.argv[1] in ('-t', '--test')):
-    from qt.qt_interaction import QtInteraction
-else:
-    from recognition.qt_interaction import QtInteraction
+
+
+SCALE = 0.8  # 初始窗体宽高和屏幕分辨率的比例
 
 
 class RunState(object):
@@ -39,12 +38,26 @@ def catch_exception(func):
     return wrapper
 
 
+class InitRecognition(QtCore.QThread):
+    def __init__(self, mw_instance):
+        self.mw_instance = mw_instance
+        super().__init__()
+
+    def run(self) -> None:
+        if (len(sys.argv) > 1) and (sys.argv[1] in ('-t', '--test')):
+            from qt.qt_interaction import QtInteraction
+        else:
+            from recognition.qt_interaction import QtInteraction
+        self.mw_instance.interaction = QtInteraction()
+
+
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, dt_width, dt_height):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.interaction = QtInteraction()
+        self.init_recognition = InitRecognition(self)
+        self.init_recognition.start()
 
         self.pic_list = []
         self.current_pic_id = 0
@@ -61,10 +74,19 @@ class MainWindow(QtWidgets.QMainWindow):
         }
         self.run_state = RunState.stop
         self.ui.tabWidget.currentChanged.connect(self.tab_change)
+        self.ui.tabWidget.setCurrentIndex(2)
+        self.ui.tabWidget.setCurrentIndex(0)
+
+        self.dt_width = dt_width
+        self.dt_height = dt_height
+        self.button_style_sheet = "padding-left: {0}px;" \
+                                  "padding-right:{0}px;" \
+                                  "padding-top:8px; " \
+                                  "padding-bottom: 8px;".format(int(30*dt_width/1920))
 
     @catch_exception
     def tab_change(self, tab_id):
-        if tab_id == 3:
+        if tab_id == 3 and hasattr(self, 'interaction'):
             untrained_pic_num = self.interaction.get_untrained_pic_num()
             self.ui.untrained_num_label.setText(str(untrained_pic_num))
 
@@ -89,12 +111,13 @@ class Recognition(object):
     update_timer = QtCore.QTimer()
 
     def __init__(self):
-        mw.ui.recogniButton.clicked.connect(self.run)
-        mw.ui.pausecontinueButton.clicked.connect(self.pause_or_continue)
+        mw.ui.recogni_btn.clicked.connect(self.run)
+        mw.ui.pausecontinue_btn.clicked.connect(self.pause_or_continue)
         Recognition.update_timer.timeout.connect(self.periodic_update)
         Recognition.update_timer.start(1000)
-
-        mw.ui.recogniButton.setEnabled(False)
+        mw.ui.recogni_btn.setEnabled(False)
+        mw.ui.recogni_btn.setStyleSheet(mw.button_style_sheet)
+        mw.ui.pausecontinue_btn.setStyleSheet(mw.button_style_sheet)
 
     @staticmethod
     @catch_exception
@@ -109,7 +132,7 @@ class Recognition(object):
             result = mw.interaction.start(params)
             if result.get('res') is True:
                 mw.run_state = RunState.running
-                mw.ui.pausecontinueButton.setText('停止')
+                mw.ui.pausecontinue_btn.setText('停止')
                 mw.ui.run_state_label.setText('识别中...')
             else:
                 mw.msg_box(result.get('msg'))
@@ -121,7 +144,7 @@ class Recognition(object):
             result = mw.interaction.pause()
             if result.get('res'):
                 mw.run_state = RunState.pause
-                mw.ui.pausecontinueButton.setText('继续')
+                mw.ui.pausecontinue_btn.setText('继续')
                 mw.ui.run_state_label.setText("暂停")
             else:
                 mw.msg_box(result.get('msg'))
@@ -130,7 +153,7 @@ class Recognition(object):
             result = mw.interaction.continue_run()
             if result.get('res'):
                 mw.run_state = RunState.running
-                mw.ui.pausecontinueButton.setText('停止')
+                mw.ui.pausecontinue_btn.setText('停止')
                 mw.ui.run_state_label.setText('识别中...')
             else:
                 mw.msg_box(result.get('msg'))
@@ -153,7 +176,7 @@ class Recognition(object):
                 mw.ui.progressBar.setValue(step)
                 if step >= 100:
                     mw.run_state = RunState.stop
-                    mw.ui.pausecontinueButton.setText('停止')
+                    mw.ui.pausecontinue_btn.setText('停止')
                     mw.ui.run_state_label.setText("完成")
                     time.sleep(1)
                     pic_info_list = mw.interaction.get_pics_info(Picture.pic_type, Picture.dir_type)
@@ -187,11 +210,13 @@ class Picture(object):
         mw.ui.all_pic_radioButton.toggled.connect(self.pic_choose)
         mw.ui.part_recognition_radioButton.toggled.connect(self.pic_choose)
         mw.ui.all_recognition_radioButton.toggled.connect(self.pic_choose)
-        mw.ui.preButton.clicked.connect(self.pre_pic)
-        mw.ui.nextButton.clicked.connect(self.next_pic)
+        mw.ui.pre_btn.clicked.connect(self.pre_pic)
+        mw.ui.next_btn.clicked.connect(self.next_pic)
         mw.ui.tableWidget.itemChanged.connect(self.table_item_changed)
         mw.ui.select_dir_radioButton.toggled.connect(self.dir_choose)
+        mw.ui.select_dir_radioButton.setToolTip('显示本次识别所选目录下的图片')
         mw.ui.current_dir_radioButton.toggled.connect(self.dir_choose)
+        mw.ui.current_dir_radioButton.setToolTip('显示当前工作目录下的图片')
 
         mw.ui.all_pic_radioButton.setEnabled(False)
         mw.ui.part_recognition_radioButton.setEnabled(False)
@@ -199,6 +224,9 @@ class Picture(object):
 
         mw.ui.pic_view.resizeEvent = self.resize_image
         mw.ui.pic_view.setAlignment(QtCore.Qt.AlignCenter)
+
+        mw.ui.pre_btn.setStyleSheet(mw.button_style_sheet)
+        mw.ui.next_btn.setStyleSheet(mw.button_style_sheet)
 
     @staticmethod
     @catch_exception
@@ -231,8 +259,11 @@ class Picture(object):
             return
         dir_scope, Picture.dir_type = Picture.dir_radio_map[mw.sender().objectName()]
         mw.ui.all_pic_radioButton.setText(f'显示{dir_scope}所有图片(Alt+Q)')
-        mw.ui.part_recognition_radioButton.setText(f'显示{dir_scope}部分识别图片(Alt+Q)')
-        mw.ui.all_recognition_radioButton.setText(f'显示{dir_scope}全部识别图片(Alt+Q)')
+        mw.ui.part_recognition_radioButton.setText(f'显示{dir_scope}部分识别图片(Alt+W)')
+        mw.ui.all_recognition_radioButton.setText(f'显示{dir_scope}全部识别图片(Alt+E)')
+        mw.ui.all_pic_radioButton.setShortcut('Alt+Q')
+        mw.ui.part_recognition_radioButton.setShortcut('Alt+W')
+        mw.ui.all_recognition_radioButton.setShortcut('Alt+E')
 
     @staticmethod
     @catch_exception
@@ -413,11 +444,14 @@ class DirTree(object):
     line_edit_prefix = '__line_edit__'
 
     def __init__(self):
-        mw.ui.treeWidget.setStyleSheet('#treeWidget::item{height:35px;}')
-        mw.ui.dirpushButton.clicked.connect(self.display_dir)
+        height = int(mw.dt_height*30/1080)
+        mw.ui.treeWidget.setStyleSheet('#treeWidget::item{height:%spx;}' % (height + 5))
+        mw.ui.open_dir_btn.clicked.connect(self.display_dir)
         mw.ui.treeWidget.itemClicked.connect(self.item_click)
         mw.ui.add_folder_btn.clicked.connect(self.add_folder_item)
         mw.ui.cancel_folder_btn.clicked.connect(self.cancel_folder_item)
+        mw.ui.add_folder_btn.setStyleSheet(mw.button_style_sheet)
+        mw.ui.cancel_folder_btn.setStyleSheet(mw.button_style_sheet)
 
     @staticmethod
     @catch_exception
@@ -429,6 +463,11 @@ class DirTree(object):
         mw.ui.tabWidget.setCurrentIndex(0)
         DirTree.current_work_path = os.path.abspath(current_work_path)
         mw.ui.dir_lineEdit.setText(DirTree.current_work_path)
+        while 1:
+            if hasattr(mw, 'interaction'):
+                break
+            else:
+                QApplication.processEvents()
         arch_num_info = mw.interaction.get_archival_number(DirTree.current_work_path)
         if arch_num_info and arch_num_info.get('root'):
             DirTree._generate_tree_by_data(arch_num_info)
@@ -447,7 +486,7 @@ class DirTree(object):
             rb.setChecked(False)
             rb.setAutoExclusive(True)
 
-        mw.ui.recogniButton.setEnabled(True)
+        mw.ui.recogni_btn.setEnabled(True)
 
         for label in mw.rcn_info_label_dict.values():
             label.clear()
@@ -460,7 +499,7 @@ class DirTree(object):
         mw.ui.pic_index_label.clear()
 
         mw.run_state = RunState.stop
-        mw.ui.pausecontinueButton.setText('停止')
+        mw.ui.pausecontinue_btn.setText('停止')
         mw.ui.run_state_label.setText("停止")
 
         mw.ui.verifycheckBox.setCheckState(False)
@@ -517,7 +556,7 @@ class DirTree(object):
     def _generate_dir_tree(root_arch_info, file_arch_list):
         root_path, root_arch_num = root_arch_info
         _, volume_name = os.path.split(root_path)
-        mw.ui.treeWidget.setColumnWidth(0, 300)  # 设置列宽
+        mw.ui.treeWidget.setColumnWidth(0, int(300*mw.dt_width/1920))  # 设置列宽
         mw.ui.treeWidget.clear()
         root = QTreeWidgetItem(mw.ui.treeWidget)
         root.setText(0, root_path)
@@ -537,7 +576,7 @@ class DirTree(object):
     def _set_line_edit(name, text):
         line_edit = QLineEdit(mw.ui.treeWidget)
         line_edit.setObjectName(DirTree.line_edit_prefix + name)
-        line_edit.setMaximumHeight(30)
+        line_edit.setMaximumHeight(int(mw.dt_height*30/1080))
         line_edit.setMaximumWidth(800)
         font = QFont()
         font.setFamily("新宋体")
@@ -569,7 +608,8 @@ class DirTree(object):
 
 class Training(object):
     def __init__(self):
-        mw.ui.train_pushButton.clicked.connect(self.start_training)
+        mw.ui.train_btn.clicked.connect(self.start_training)
+        mw.ui.train_btn.setStyleSheet(mw.button_style_sheet)
 
     @staticmethod
     @catch_exception
@@ -619,12 +659,10 @@ def init_parts():
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    mw = MainWindow()
-    mw.resize(1200, 800)
     desktop = app.desktop()
-    ax = int((desktop.width() - mw.width()) / 2)
-    ay = int((desktop.height() - mw.height()) / 2) - 30
-    mw.move(ax, ay)
+    dt_width_, dt_height_ = desktop.width(), desktop.height()
+    mw = MainWindow(dt_width_, dt_height_)
+    mw.resize(int(dt_width_*SCALE), int(dt_height_*SCALE))
     init_parts()
     mw.show()
     sys.exit(app.exec_())

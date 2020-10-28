@@ -19,11 +19,14 @@ class QtInteraction(UiInterface):
         threshold = params['threshold']
         if threshold == '':
             return {"res": False, "msg": "阈值不能设置为空字符串."}
-        if float(threshold) < 0.8:
-            return {"res": False, "msg": "阈值必须大于等于0.8."}
+        if float(threshold) < 0.9:
+            return {"res": False, "msg": "阈值必须大于等于0.9."}
 
-        self._rcn.recognition(params)
-        return {"res": True, "msg": ""}
+        ret = self._rcn.recognition(params)
+        if ret == 0:
+            return {"res": True, "msg": ""}
+        else:
+            return {"res": True, "msg": "已完成全部核验."}
 
     def continue_run(self) -> dict:
         self._rcn.continueRecognition()
@@ -50,10 +53,11 @@ class QtInteraction(UiInterface):
         return self._rcn.trainModel()
 
     def checked(self, checked_info) -> bool:
-        if len(checked_info) == 0 or checked_info['path'] == '' or len(eval(checked_info['faces'])) == 0  or len(checked_info['table_widget']) == 0:
+        if len(checked_info) == 0 or checked_info['path'] == '' or len(eval(checked_info['faces'])) == 0 or \
+                len(checked_info['table_widget']) == 0:
             return False
         self._rcn.checke_faces_info(checked_info)
         return True
 
     def get_untrained_pic_num(self) -> int:
-        return 10
+        return self._rcn.get_untrained_pic_num()

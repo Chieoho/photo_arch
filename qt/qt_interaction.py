@@ -96,7 +96,7 @@ class QtInteraction(UiInterface):
         return {}
 
     def start_training(self) -> dict:
-        model_info = {"model_acc": 0.8}
+        model_info = {"model_acc": 0.9}
         return model_info
 
     def checked(self, checked_info) -> bool:
