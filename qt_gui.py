@@ -10,6 +10,7 @@ import sys
 import json
 import inspect
 import time
+from threading import Thread
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -17,7 +18,7 @@ from PyQt5.QtWidgets import *
 from qt.qt_ui import Ui_MainWindow
 
 
-SCALE = 0.8  # 初始窗体宽高和屏幕分辨率的比例
+SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
 
 
 class RunState(object):
@@ -38,7 +39,7 @@ def catch_exception(func):
     return wrapper
 
 
-class InitRecognition(QtCore.QThread):
+class InitRecognition(Thread):
     def __init__(self, mw_instance):
         self.mw_instance = mw_instance
         super().__init__()
@@ -49,6 +50,35 @@ class InitRecognition(QtCore.QThread):
         else:
             from recognition.qt_interaction import QtInteraction
         self.mw_instance.interaction = QtInteraction()
+
+
+class Overlay(QWidget):
+    def __init__(self, parent, text, dynamic=True, max_dot_num=3):
+        QWidget.__init__(self, parent)
+        self.setWindowFlag(Qt.WindowStaysOnTopHint)
+        self.resize(parent.size())
+        if dynamic:
+            self.ori_text = text
+            self.text = text + ' ' * max_dot_num
+            self.timer = QtCore.QTimer()
+            self.timer.timeout.connect(self.change_text)
+            self.timer.start(1000)
+        else:
+            self.text = text
+        self.counter = 0
+        self.max_dot_num = max_dot_num
+
+    def change_text(self):
+        self.counter += 1
+        if self.counter > self.max_dot_num:
+            self.counter = 0
+        self.text = self.ori_text + '.' * self.counter + ' ' * (self.max_dot_num - self.counter)
+        self.update()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setFont(QFont('新宋体', 15))
+        painter.drawText(self.rect(), Qt.AlignCenter, self.text)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -202,7 +232,6 @@ class Picture(object):
     dir_type = 1
 
     def __init__(self):
-        # mw.ui.pic_view.setScaledContents(True)
         mw.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         mw.ui.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
         mw.ui.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
@@ -354,7 +383,6 @@ class Picture(object):
         mw.ui.tableWidget.itemChanged.connect(Picture.table_item_changed)
         Picture._mark_face(coordinate_list)
         mw.ui.arch_num_lineEdit.setText(mw.pic_info_dict.get(pic_path).get('archival_num'))
-        mw.ui.theme_textEdit.setText(mw.pic_info_dict.get(pic_path).get('subject'))
         pix_map = Picture.pix_map.scaled(mw.ui.pic_view.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         mw.ui.pic_view.setPixmap(pix_map)
         mw.ui.pic_index_label.setText('{}/{}'.format(mw.current_pic_id + 1, len(mw.pic_list)))
@@ -463,11 +491,14 @@ class DirTree(object):
         mw.ui.tabWidget.setCurrentIndex(0)
         DirTree.current_work_path = os.path.abspath(current_work_path)
         mw.ui.dir_lineEdit.setText(DirTree.current_work_path)
+        overlay = Overlay(mw.ui.treeWidget, '初始化中', dynamic=True)
+        overlay.show()
         while 1:
             if hasattr(mw, 'interaction'):
                 break
             else:
                 QApplication.processEvents()
+        overlay.hide()
         arch_num_info = mw.interaction.get_archival_number(DirTree.current_work_path)
         if arch_num_info and arch_num_info.get('root'):
             DirTree._generate_tree_by_data(arch_num_info)
@@ -492,7 +523,6 @@ class DirTree(object):
             label.clear()
         mw.ui.progressBar.setValue(0)
         mw.ui.arch_num_lineEdit.clear()
-        mw.ui.theme_textEdit.clear()
         mw.ui.pic_view.clear()
         for row in range(mw.ui.tableWidget.rowCount(), -1, -1):
             mw.ui.tableWidget.removeRow(row)
@@ -640,7 +670,6 @@ class Checked(object):
             checked_info = {
                 "path": pic_path,
                 "arch_num": mw.ui.arch_num_lineEdit.text(),
-                "theme": mw.ui.theme_textEdit.toPlainText(),
                 "faces": mw.pic_info_dict.get(pic_path).get('faces'),
                 "table_widget": [{'id': i, 'name': n} for i, n in name_list],
                 "label_size": (size.width(), size.height())
