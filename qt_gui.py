@@ -52,9 +52,9 @@ class InitRecognition(Thread):
         self.mw_instance.interaction = QtInteraction()
 
 
-class Overlay(QWidget):
+class Overlay(QtWidgets.QWidget):
     def __init__(self, parent, text, dynamic=True, max_dot_num=3):
-        QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         self.setWindowFlag(Qt.WindowStaysOnTopHint)
         self.resize(parent.size())
         if dynamic:
