@@ -497,6 +497,12 @@ padding-bottom: 8px;</string>
             </item>
             <item row="2" column="2">
              <widget class="QLabel" name="label_16">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>门类代码</string>
               </property>
@@ -512,6 +518,12 @@ padding-bottom: 8px;</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
@@ -549,6 +561,12 @@ padding-bottom: 8px;</string>
             </item>
             <item row="3" column="2">
              <widget class="QLabel" name="label_17">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>年度</string>
               </property>
@@ -564,6 +582,12 @@ padding-bottom: 8px;</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
@@ -601,6 +625,12 @@ padding-bottom: 8px;</string>
             </item>
             <item row="4" column="2">
              <widget class="QLabel" name="label_20">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>组号</string>
               </property>
@@ -616,6 +646,12 @@ padding-bottom: 8px;</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
@@ -653,6 +689,12 @@ padding-bottom: 8px;</string>
             </item>
             <item row="5" column="2">
              <widget class="QLabel" name="label_22">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>组说明</string>
               </property>
@@ -668,6 +710,12 @@ padding-bottom: 8px;</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
@@ -705,6 +753,12 @@ padding-bottom: 8px;</string>
             </item>
             <item row="6" column="2">
              <widget class="QLabel" name="label_24">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>文件大小</string>
               </property>
@@ -720,6 +774,12 @@ padding-bottom: 8px;</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
@@ -757,6 +817,12 @@ padding-bottom: 8px;</string>
             </item>
             <item row="7" column="2">
              <widget class="QLabel" name="label_26">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>拍摄时间</string>
               </property>
@@ -772,6 +838,12 @@ padding-bottom: 8px;</string>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
@@ -1047,7 +1119,7 @@ padding-bottom: 8px;</string>
                   </font>
                  </property>
                  <property name="text">
-                  <string>A1-ZP·2020-Y-0001</string>
+                  <string>A1-ZP·2020-Y-0002</string>
                  </property>
                 </widget>
                </item>

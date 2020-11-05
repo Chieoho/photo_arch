@@ -15,7 +15,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from qt.qt_ui import Ui_MainWindow
+from photo_arch.infrastructures.gui.qt.qt_ui import Ui_MainWindow
 
 
 SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
@@ -46,9 +46,9 @@ class InitRecognition(Thread):
 
     def run(self) -> None:
         if (len(sys.argv) > 1) and (sys.argv[1] in ('-t', '--test')):
-            from qt.qt_interaction import QtInteraction
+            from photo_arch.infrastructures.gui.qt.qt_interaction import QtInteraction
         else:
-            from recognition.qt_interaction import QtInteraction
+            from photo_arch.infrastructures.face_recognition.recognition.qt_interaction import QtInteraction
         self.mw_instance.interaction = QtInteraction()
 
 

@@ -5,8 +5,8 @@
 @author: Jaden Wu
 @time: 2020/9/3 10:14
 """
-from recognition.ui_interface import UiInterface
-from recognition.business_recognition import Recognition
+from photo_arch.infrastructures.face_recognition.recognition.ui_interface import UiInterface
+from photo_arch.infrastructures.face_recognition.recognition.business_recognition import Recognition
 
 __all__ = ['QtInteraction']
 
