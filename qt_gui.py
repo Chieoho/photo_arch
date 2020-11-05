@@ -348,7 +348,7 @@ class Picture(object):
         mw.ui.tableWidget.removeRow(row)
         for r in range(row, mw.ui.tableWidget.rowCount() - 1):
             mw.ui.tableWidget.cellWidget(r, 2).clicked.disconnect()
-            Picture.connect(mw.ui.tableWidget.cellWidget(r, 2), r)
+            Picture._connect(mw.ui.tableWidget.cellWidget(r, 2), r)
         mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         mw.check_state_dict[mw.pic_list[mw.current_pic_id]] = Qt.Unchecked
         mw.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.CurrentChanged)
@@ -361,7 +361,7 @@ class Picture(object):
 
     @staticmethod
     @catch_exception
-    def connect(button, row):
+    def _connect(button, row):
         button.clicked.connect(lambda: Picture.delete(row))
 
     @staticmethod
@@ -417,7 +417,7 @@ class Picture(object):
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 mw.ui.tableWidget.setItem(row, col, item)
             del_button = Picture._create_button('删除', Picture.del_icon_path)
-            Picture.connect(del_button, row)
+            Picture._connect(del_button, row)
             mw.ui.tableWidget.setCellWidget(row, 2, del_button)
         mw.ui.tableWidget.insertRow(row+1)
         for col in range(2):
@@ -470,6 +470,7 @@ class Picture(object):
 class DirTree(object):
     current_work_path = ''
     line_edit_prefix = '__line_edit__'
+    type_in_icon_path = 'icon/type_in.png'
 
     def __init__(self):
         height = int(mw.dt_height*30/1080)
@@ -509,13 +510,13 @@ class DirTree(object):
     @staticmethod
     @catch_exception
     def _reset_state():
+        mw.ui.radio_btn_group.setExclusive(False)
         for rb in [mw.ui.all_pic_radioButton,
                    mw.ui.part_recognition_radioButton,
                    mw.ui.all_recognition_radioButton]:
             rb.setEnabled(True)
-            rb.setAutoExclusive(False)
             rb.setChecked(False)
-            rb.setAutoExclusive(True)
+        mw.ui.radio_btn_group.setExclusive(True)
 
         mw.ui.recogni_btn.setEnabled(True)
 
@@ -586,17 +587,23 @@ class DirTree(object):
     def _generate_dir_tree(root_arch_info, file_arch_list):
         root_path, root_arch_num = root_arch_info
         _, volume_name = os.path.split(root_path)
-        mw.ui.treeWidget.setColumnWidth(0, int(300*mw.dt_width/1920))  # 设置列宽
+        mw.ui.treeWidget.setColumnWidth(0, int(270*mw.dt_width/1920))  # 设置列宽
+        mw.ui.treeWidget.setColumnWidth(1, int(270*mw.dt_width/1920))  # 设置列宽
         mw.ui.treeWidget.clear()
         root = QTreeWidgetItem(mw.ui.treeWidget)
         root.setText(0, root_path)
         line_edit = DirTree._set_line_edit(root_path, root_arch_num)
         mw.ui.treeWidget.setItemWidget(root, 1, line_edit)
+        record_btn = DirTree._gen_record_btn()
+        mw.ui.treeWidget.setItemWidget(root, 2, record_btn)
         for name, arch_num in file_arch_list:
             child = QTreeWidgetItem(root)
             child.setText(0, name)
             line_edit = DirTree._set_line_edit(name, arch_num)
             mw.ui.treeWidget.setItemWidget(child, 1, line_edit)
+            record_btn = DirTree._gen_record_btn()
+            DirTree._connect(record_btn, root_path + '\\' + name)
+            mw.ui.treeWidget.setItemWidget(child, 2, record_btn)
             child.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
             child.setCheckState(0, Qt.Checked)
         mw.ui.treeWidget.expandAll()
@@ -614,6 +621,27 @@ class DirTree(object):
         line_edit.setFont(font)
         line_edit.setText(text)
         return line_edit
+
+    @staticmethod
+    @catch_exception
+    def _gen_record_btn():
+        record_btn = QtWidgets.QPushButton(
+            QIcon(QPixmap(DirTree.type_in_icon_path)),
+            '著录',
+            mw.ui.treeWidget
+        )
+        font = QFont()
+        font.setFamily("新宋体")
+        font.setPointSize(14)
+        record_btn.setFont(font)
+        record_btn.setStyleSheet("text-align: left; padding-left: 18px;")
+        record_btn.setFlat(True)
+        return record_btn
+
+    @staticmethod
+    @catch_exception
+    def _connect(button, path):
+        button.clicked.connect(lambda: mw.ui.photo_group_path_label.setText(path))
 
     @staticmethod
     @catch_exception
