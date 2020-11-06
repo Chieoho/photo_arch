@@ -7,6 +7,7 @@
 """
 import os
 from pprint import pprint
+import time
 from photo_arch.infrastructures.face_recognition.recognition.ui_interface import UiInterface
 
 handled_pic_num = 0
@@ -16,6 +17,7 @@ unhandled_pic_num = 500
 class QtInteraction(UiInterface):
     def __init__(self):
         self.arch_num_info = {}
+        time.sleep(5)
 
     def start(self, params) -> dict:
         print('start')

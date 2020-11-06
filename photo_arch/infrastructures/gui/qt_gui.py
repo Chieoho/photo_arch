@@ -11,14 +11,13 @@ import json
 import inspect
 import time
 from threading import Thread
+import typing
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from photo_arch.infrastructures.gui.qt.qt_ui import Ui_MainWindow
-
-
-SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
+from photo_arch.infrastructures.face_recognition.recognition.ui_interface import UiInterface
 
 
 class RunState(object):
@@ -82,10 +81,11 @@ class Overlay(QtWidgets.QWidget):
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, dt_width, dt_height):
+    def __init__(self, app):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.interaction: UiInterface = typing.Any
         self.init_recognition = InitRecognition(self)
         self.init_recognition.start()
 
@@ -107,16 +107,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.tabWidget.setCurrentIndex(2)
         self.ui.tabWidget.setCurrentIndex(0)
 
-        self.dt_width = dt_width
-        self.dt_height = dt_height
+        desktop = app.desktop()
+        self.dt_width, self.dt_height = desktop.width(), desktop.height()
         self.button_style_sheet = "padding-left: {0}px;" \
                                   "padding-right:{0}px;" \
                                   "padding-top:8px; " \
-                                  "padding-bottom: 8px;".format(int(30*dt_width/1920))
+                                  "padding-bottom: 8px;".format(int(30*self.dt_width/1920))
 
     @catch_exception
     def tab_change(self, tab_id):
-        if tab_id == 3 and hasattr(self, 'interaction'):
+        if (tab_id == 3) and (self.interaction != typing.Any):
             untrained_pic_num = self.interaction.get_untrained_pic_num()
             self.ui.untrained_num_label.setText(str(untrained_pic_num))
 
@@ -135,6 +135,9 @@ class MainWindow(QtWidgets.QMainWindow):
             name = item_1.text() if item_1 else ''
             name_list.append((id_, name))
         return name_list
+
+
+mw: MainWindow = typing.Any
 
 
 class Recognition(object):
@@ -495,7 +498,7 @@ class DirTree(object):
         overlay = Overlay(mw.ui.treeWidget, '初始化中', dynamic=True)
         overlay.show()
         while 1:
-            if hasattr(mw, 'interaction'):
+            if mw.interaction != typing.Any:
                 break
             else:
                 QApplication.processEvents()
@@ -712,14 +715,3 @@ def init_parts():
     DirTree()
     Training()
     Checked()
-
-
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    desktop = app.desktop()
-    dt_width_, dt_height_ = desktop.width(), desktop.height()
-    mw = MainWindow(dt_width_, dt_height_)
-    mw.resize(int(dt_width_*SCALE), int(dt_height_*SCALE))
-    init_parts()
-    mw.show()
-    sys.exit(app.exec_())

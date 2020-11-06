@@ -6,15 +6,17 @@
 @time: 2020/11/5 16:43
 """
 import sys
-from photo_arch.infrastructures.gui.qt_gui import QtWidgets, MainWindow, SCALE, init_parts
+from photo_arch.infrastructures.gui.qt_gui import QtWidgets, MainWindow, init_parts
+from photo_arch.infrastructures.gui import qt_gui
+
+
+SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
 
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    desktop = app.desktop()
-    dt_width_, dt_height_ = desktop.width(), desktop.height()
-    mw = MainWindow(dt_width_, dt_height_)
-    mw.resize(int(dt_width_*SCALE), int(dt_height_*SCALE))
+    mw = qt_gui.mw = MainWindow(app)
+    mw.resize(int(mw.dt_width*SCALE), int(mw.dt_height*SCALE))
     init_parts()
     mw.show()
     sys.exit(app.exec_())
