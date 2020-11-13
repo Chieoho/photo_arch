@@ -56,25 +56,25 @@ class QtInteraction(UiInterface):
         pic_info_list = [
             {'archival_num': '社保局-2019-0001',
              'faces': '[]',
-             'img_path': os.path.abspath(r'.\qt\pic1.jpg'),
+             'img_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic1.jpg'),
              'subject': '社保局主题1',
              'verify_state': 0},
             {'archival_num': '社保局-2019-0002',
              'faces': '[{"id": 1, "box": "[240, 60, 320, 140]", "name": "刘德华"}, '
                       '{"id": 2, "box": "[370, 80, 450, 160]", "name": "梅艳芳"}]',
-             'img_path': os.path.abspath(r'.\qt\pic2.jpg'),
+             'img_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic2.jpg'),
              'subject': '社保局主题2',
              'verify_state': 0},
             {'archival_num': '社保局-2019-0003',
              'faces': '[{"id": 1, "box": "[120, 60, 210, 160]", "name": "林志颖"}, '
                       '{"id": 2, "box": "[280, 100, 370, 200]", "name": "郭德纲"}]',
-             'img_path': os.path.abspath(r'.\qt\pic3.jpg'),
+             'img_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic3.jpg'),
              'subject': '社保局主题3',
              'verify_state': 0},
             {'archival_num': '社保局-2019-0004',
              'faces': '[{"id": 1, "box": "[90, 35, 210, 170]", "name": "杨幂"}, '
                       '{"id": 2, "box": "[280, 30, 400, 160]", "name": "迪丽热巴"}]',
-             'img_path': os.path.abspath(r'.\qt\pic4.png'),
+             'img_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic4.png'),
              'subject': '社保局主题4',
              'verify_state': 1}
         ]
