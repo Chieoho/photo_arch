@@ -16,8 +16,9 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from photo_arch.adapters.controller import Controller, GroupInputData
 from photo_arch.infrastructures.gui.qt.qt_ui import Ui_MainWindow
-from photo_arch.infrastructures.face_recognition.recognition.ui_interface import UiInterface
+from photo_arch.infrastructures.gui.ui_interface import UiInterface
 
 
 class RunState(object):
@@ -47,7 +48,7 @@ class InitRecognition(Thread):
         if (len(sys.argv) > 1) and (sys.argv[1] in ('-t', '--test')):
             from photo_arch.infrastructures.gui.qt.qt_interaction import QtInteraction
         else:
-            from photo_arch.infrastructures.face_recognition.recognition.qt_interaction import QtInteraction
+            from recognition.qt_interaction import QtInteraction
         self.mw_instance.interaction = QtInteraction()
 
 
@@ -80,12 +81,24 @@ class Overlay(QtWidgets.QWidget):
         painter.drawText(self.rect(), Qt.AlignCenter, self.text)
 
 
+def get_controller():
+    from photo_arch.adapters.sql.repo import Repo
+    from photo_arch.adapters.presenter import Presenter, ViewModel
+    from photo_arch.infrastructures.databases.db_setting import init_db
+
+    repo = Repo(init_db())
+    presenter = Presenter(ViewModel())
+    controller = Controller(repo, presenter)
+    return controller
+
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, app):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.interaction: UiInterface = typing.Any
+        self.controller = get_controller()
         self.init_recognition = InitRecognition(self)
         self.init_recognition.start()
 
@@ -138,6 +151,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 mw: MainWindow = typing.Any
+
+
+class View(object):
+    @staticmethod
+    def display_group(group_info):
+        pass
+
+    @staticmethod
+    def display_photo(photo_info):
+        pass
+
+    @staticmethod
+    def display_face(face_info):
+        pass
 
 
 class Recognition(object):
@@ -482,8 +509,21 @@ class DirTree(object):
         mw.ui.treeWidget.itemClicked.connect(self.item_click)
         mw.ui.add_folder_btn.clicked.connect(self.add_folder_item)
         mw.ui.cancel_folder_btn.clicked.connect(self.cancel_folder_item)
+        mw.ui.save_group_btn.clicked.connect(self.save_group)
+
         mw.ui.add_folder_btn.setStyleSheet(mw.button_style_sheet)
         mw.ui.cancel_folder_btn.setStyleSheet(mw.button_style_sheet)
+        mw.ui.save_group_btn.setStyleSheet(mw.button_style_sheet)
+
+    @staticmethod
+    @catch_exception
+    def save_group():
+        group_in = GroupInputData()
+        for k in group_in.__dict__.keys():
+            line_edit = getattr(mw.ui, k+'_lineedit')
+            value = line_edit.text()
+            setattr(group_in, k, value)
+        mw.controller.save_group(group_in)
 
     @staticmethod
     @catch_exception

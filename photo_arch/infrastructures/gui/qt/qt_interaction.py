@@ -8,7 +8,7 @@
 import os
 from pprint import pprint
 import time
-from photo_arch.infrastructures.face_recognition.recognition.ui_interface import UiInterface
+from photo_arch.infrastructures.gui.ui_interface import UiInterface
 
 handled_pic_num = 0
 unhandled_pic_num = 500
