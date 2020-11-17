@@ -701,10 +701,10 @@ class GroupDescription(object):
     @catch_exception
     def group_info_view(path=None):
         if path:
-            mw.controller.get_group(path)
+            group_name = os.path.split(path)[1]
+            mw.controller.get_group(group_name)
+            mw.ui.group_path_in_group.setText(group_name)
         View.display_group(mw.view_model.group_info)
-        if path:
-            mw.ui.group_path_in_group.setText(os.path.split(path)[1])
 
     @staticmethod
     @catch_exception

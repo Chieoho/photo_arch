@@ -144,13 +144,31 @@ class RepoGeneral(RepoGeneralIf):
         query_obj = self.session.query(model).filter(and_(*condition))
         return query_obj
 
-    def query(self, table: str, cond: Dict[str, list], ret_columns: Tuple[str] = ()) -> List[dict]:
+    def query(self, table: str, cond: Dict[str, list],
+              ret_columns: Tuple[str] = ()) -> List[dict]:
         model = table_model_dict.get(table)
         if model:
             row2dict = partial(self._row2dict, col_names=ret_columns)
             query_obj = self._query(model, cond)
             results = list(map(row2dict, query_obj))
             return results
+        return []
+
+    def join_query(self, tables: Tuple[str, str], cond: Tuple[str, str],
+                   ret_columns: List[list]) -> List[dict]:
+        if len(tables) == 2:
+            t1, t2 = tables
+            m1 = table_model_dict.get(t1)
+            m2 = table_model_dict.get(t2)
+            if m1 and m2:
+                k1, k2 = cond
+                cl1, cl2 = ret_columns
+                kl1 = [getattr(m1, k) for k in cl1]
+                kl2 = [getattr(m2, k) for k in cl2]
+                query_obj = self.session.query(*(kl1 + kl2))\
+                    .join(m2, getattr(m1, k1) == getattr(m2, k2))
+                results = list(self._row2dict(query_obj))
+                return results
         return []
 
     def update(self, table: str, cond: Dict[str, list], new_info: dict) -> bool:

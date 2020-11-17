@@ -43,7 +43,7 @@ class RepoGeneralIf(metaclass=ABCMeta):
     def query(self,
               table: str,
               cond: Dict[str, list],
-              ret_columns: Tuple[str] = ()
+              ret_columns: Tuple = ()
               ) -> List[dict]:
         """
         返回table中符合条件的记录
@@ -51,6 +51,22 @@ class RepoGeneralIf(metaclass=ABCMeta):
         :param cond: 条件  如： {"year": ["2001", "2002"], "security_classification": [1]}
                                表示年度为2001或2002且密级为1的记录
         :param ret_columns: 指定返回列，为空时返回全部列  如：("verify_state", "recog_state")
+        :return: 记录列表
+        """
+
+    @abstractmethod
+    def join_query(self,
+                   tables: Tuple[str, str],
+                   cond: Tuple[str, str],
+                   ret_columns: List[list]
+                   ) -> List[dict]:
+        """
+        联表查询
+        :param tables: 表名元组 如：("face", "photo")
+        :param cond: 相等字段元组，与table元组对应 如： ("photo_path", "photo_path")
+                               表示face.photo_path=photo.photo_path
+        :param ret_columns: 返回指定表的指定列，为空时返回全部列 如：[["photo_archival_code", "verify_state"],
+                            ["arch_code", "peoples"]]
         :return: 记录列表
         """
 

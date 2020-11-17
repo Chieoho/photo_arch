@@ -33,5 +33,5 @@ if __name__ == '__main__':
     # repo.add('face', [{'verify_state': 3}])
     # print(repo.query('face', {'verify_state': [3, 4]}, ('face_id',)))
     # repo.delete('face', {'verify_state': [4]})
-    repo.update('face', {'verify_state': [3]}, {'verify_state': 4})
+    # repo.update('face', {'verify_state': [3]}, {'verify_state': 4})
 

@@ -42,7 +42,6 @@ class PhotoInputData(object):
 
 @dataclass
 class GroupOutputData(object):
-    group_path: str = ''
     arch_code: str = ''
     fonds_code: str = ''
     arch_category_code: str = ''
