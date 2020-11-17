@@ -6,12 +6,12 @@
 @time: 2020/11/5 14:32
 """
 from photo_arch.domains.photo_group import PhotoGroup, Photo
-from photo_arch.use_cases.interfaces.use_cases_if import UseCaseIf, PhotoInputData
+from photo_arch.use_cases.interfaces.dataset import PhotoInputData
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
 from photo_arch.use_cases.interfaces.presenter_if import PresenterIf
 
 
-class PhotoDescription(UseCaseIf):
+class PhotoDescription(object):
     def __init__(self, repo: RepoIf, pres: PresenterIf):
         self.repo = repo
         self.pres = pres

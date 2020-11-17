@@ -17,6 +17,7 @@ from photo_arch.use_cases.interfaces.repo_general_if import RepoGeneralIf
 class PhotoGroupModel(Base):
     __tablename__ = 'photo_group'
     group_id = Column(Integer, primary_key=True)
+    group_path = Column(String(2048))
     arch_code = Column(String(64))
     fonds_code = Column(String(64))
     arch_category_code = Column(String(64))
@@ -40,6 +41,7 @@ class PhotoGroupModel(Base):
 class PhotoModel(Base):
     __tablename__ = 'photo'
     photo_id = Column(Integer, primary_key=True)
+    photo_path = Column(String(2048))
     arch_code = Column(String(64))
     photo_code = Column(String(64))
     peoples = Column(String(8192))
@@ -58,12 +60,12 @@ class PhotoModel(Base):
 class FaceModel(Base):
     __tablename__ = 'face'
     face_id = Column(Integer, primary_key=True)
-    piece_path = Column(String(64))
-    piece_archival_code = Column(String(64))
+    photo_path = Column(String(2048))
+    photo_archival_code = Column(String(64))
     faces = Column(String(64))
     recog_state = Column(Integer)
     verify_state = Column(Integer)
-    parent_path = Column(String(64))
+    parent_path = Column(String(2048))
 
 
 class Repo(RepoIf):
@@ -80,8 +82,10 @@ class Repo(RepoIf):
         self.session.commit()
         return True
 
-    def query_group(self, arch_code: str) -> List[dict]:
-        pass
+    def query_group(self, group_path: str) -> List[dict]:
+        repo_general = RepoGeneral(self.session)
+        group_list = repo_general.query('photo_group', cond={'group_path': [group_path]})
+        return group_list
 
     def add_photo(self, photo: Photo):
         photo_dict = photo.to_dict()

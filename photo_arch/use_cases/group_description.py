@@ -6,20 +6,26 @@
 @time: 2020/11/12 13:28
 """
 from photo_arch.domains.photo_group import PhotoGroup
-from photo_arch.use_cases.interfaces.use_cases_if import UseCaseIf, GroupInputData
+from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
 from photo_arch.use_cases.interfaces.presenter_if import PresenterIf
 
 
-class GroupDescription(UseCaseIf):
+class GroupDescription(object):
     def __init__(self, repo: RepoIf, pres: PresenterIf):
         self.repo = repo
         self.pres = pres
 
-    def execute(self, input_data: GroupInputData):
+    def save_group(self, input_data: GroupInputData) -> bool:
         photo_group = PhotoGroup(**input_data.__dict__)
         add_res = self.repo.add_group(photo_group)
-        if add_res is True:
-            self.pres.set_group_info(photo_group)
-            return True
-        return False
+        return add_res
+
+    def get_group(self, group_path: str) -> bool:
+        group_list = self.repo.query_group(group_path)
+        if group_list:
+            group_info = group_list[-1]
+        else:
+            group_info = GroupOutputData().__dict__
+        self.pres.set_group_info(group_info)
+        return True

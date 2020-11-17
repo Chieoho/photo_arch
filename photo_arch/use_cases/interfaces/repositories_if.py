@@ -22,15 +22,15 @@ class RepoIf(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def add_photo(self, photo: Photo) -> bool:
+    def query_group(self, group_path: str) -> List[dict]:
         """
-        :param photo:
+        :param group_path:
         :return:
         """
 
     @abstractmethod
-    def query_group(self, arch_code: str) -> List[dict]:
+    def add_photo(self, photo: Photo) -> bool:
         """
-        :param arch_code:
+        :param photo:
         :return:
         """

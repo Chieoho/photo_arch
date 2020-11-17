@@ -1,1 +1,1 @@
-pyuic5 .\qt\mainwindow.ui>.\qt\qt_ui.py
+pyuic5 .\qt\mainwindow.ui > .\qt\qt_ui.py

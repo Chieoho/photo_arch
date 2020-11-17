@@ -11,5 +11,5 @@ from tests.use_cases import repo, presenter
 
 def test_group_description():
     photo_description = GroupDescription(repo, presenter)
-    exe_res = photo_description.execute(GroupInputData())
+    exe_res = photo_description.save_group(GroupInputData())
     assert exe_res is True
