@@ -1939,7 +1939,7 @@ class Ui_MainWindow(object):
         self.action.setObjectName("action")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tabWidget, self.dir_lineEdit)
         MainWindow.setTabOrder(self.dir_lineEdit, self.open_dir_btn)
@@ -1998,7 +1998,7 @@ class Ui_MainWindow(object):
         self.security_classification_in_group.setItemText(2, _translate("MainWindow", "秘密"))
         self.security_classification_in_group.setItemText(3, _translate("MainWindow", "机密"))
         self.security_classification_in_group.setItemText(4, _translate("MainWindow", "绝密"))
-        self.label_2.setText(_translate("MainWindow", "组路径："))
+        self.label_2.setText(_translate("MainWindow", "组名："))
         self.label_47.setText(_translate("MainWindow", "档号："))
         self.label_23.setText(_translate("MainWindow", "组题名"))
         self.retention_period_in_group.setItemText(0, _translate("MainWindow", "10年"))

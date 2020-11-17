@@ -703,7 +703,8 @@ class GroupDescription(object):
         if path:
             mw.controller.get_group(path)
         View.display_group(mw.view_model.group_info)
-        mw.ui.group_path_in_group.setText(path)
+        if path:
+            mw.ui.group_path_in_group.setText(os.path.split(path)[1])
 
     @staticmethod
     @catch_exception
