@@ -17,12 +17,17 @@ class GroupDescription(object):
         self.pres = pres
 
     def save_group(self, input_data: GroupInputData) -> bool:
-        photo_group = PhotoGroup(**input_data.__dict__)
-        add_res = self.repo.add_group(photo_group)
-        return add_res
+        group = PhotoGroup(**input_data.__dict__)
+        group_path = group.group_path
+        group_list = self.repo.query_group_by_path(group_path)
+        if group_list:
+            save_res = self.repo.update_group(group)
+        else:
+            save_res = self.repo.add_group(group)
+        return save_res
 
     def get_group(self, group_path: str) -> bool:
-        group_list = self.repo.query_group(group_path)
+        group_list = self.repo.query_group_by_path(group_path)
         if group_list:
             group_info = group_list[-1]
         else:

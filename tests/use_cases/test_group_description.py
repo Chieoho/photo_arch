@@ -8,8 +8,16 @@
 from photo_arch.use_cases.group_description import GroupDescription, GroupInputData
 from tests.use_cases import repo, presenter
 
+group_description = GroupDescription(repo, presenter)
 
-def test_group_description():
-    photo_description = GroupDescription(repo, presenter)
-    exe_res = photo_description.save_group(GroupInputData())
-    assert exe_res is True
+
+def test_save_group():
+    save_res = group_description.save_group(GroupInputData())
+    assert save_res is True
+
+
+def test_get_group():
+    group_input_data = GroupInputData(group_path='test')
+    group_description.save_group(group_input_data)
+    get_res = group_description.get_group(group_path='test')
+    assert get_res is True

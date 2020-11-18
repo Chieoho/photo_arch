@@ -16,7 +16,7 @@ unhandled_pic_num = 500
 
 class QtInteraction(UiInterface):
     def __init__(self):
-        self.arch_num_info = {}
+        self.arch_code_info = {}
         time.sleep(5)
 
     def start(self, params) -> dict:
@@ -56,25 +56,25 @@ class QtInteraction(UiInterface):
         pic_info_list = [
             {'archival_num': '社保局-2019-0001',
              'faces': '[]',
-             'img_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic1.jpg'),
+             'photo_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic1.jpg'),
              'subject': '社保局主题1',
              'verify_state': 0},
             {'archival_num': '社保局-2019-0002',
              'faces': '[{"id": 1, "box": "[240, 60, 320, 140]", "name": "刘德华"}, '
                       '{"id": 2, "box": "[370, 80, 450, 160]", "name": "梅艳芳"}]',
-             'img_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic2.jpg'),
+             'photo_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic2.jpg'),
              'subject': '社保局主题2',
              'verify_state': 0},
             {'archival_num': '社保局-2019-0003',
              'faces': '[{"id": 1, "box": "[120, 60, 210, 160]", "name": "林志颖"}, '
                       '{"id": 2, "box": "[280, 100, 370, 200]", "name": "郭德纲"}]',
-             'img_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic3.jpg'),
+             'photo_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic3.jpg'),
              'subject': '社保局主题3',
              'verify_state': 0},
             {'archival_num': '社保局-2019-0004',
              'faces': '[{"id": 1, "box": "[90, 35, 210, 170]", "name": "杨幂"}, '
                       '{"id": 2, "box": "[280, 30, 400, 160]", "name": "迪丽热巴"}]',
-             'img_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic4.png'),
+             'photo_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\pic4.png'),
              'subject': '社保局主题4',
              'verify_state': 1}
         ]
@@ -86,15 +86,15 @@ class QtInteraction(UiInterface):
         return [e for i, e in enumerate(pic_info_list) if filter_dict[pic_type][i]]
         # return []
 
-    def set_archival_number(self, arch_num_info) -> bool:
-        pprint(arch_num_info)
-        self.arch_num_info = arch_num_info
+    def set_archival_number(self, arch_code_info) -> bool:
+        pprint(arch_code_info)
+        self.arch_code_info = arch_code_info
         return True
 
     def get_archival_number(self, path) -> dict:
         # print(path)
-        if self.arch_num_info and list(self.arch_num_info.get('root').keys())[0] == path:
-            return self.arch_num_info
+        if self.arch_code_info and list(self.arch_code_info.get('root').keys())[0] == path:
+            return self.arch_code_info
         return {}
 
     def start_training(self) -> dict:

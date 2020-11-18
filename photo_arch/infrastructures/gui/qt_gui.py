@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import *
 from photo_arch.adapters.controller import Controller, GroupInputData
 from photo_arch.adapters.sql.repo import Repo
 from photo_arch.adapters.presenter import Presenter, ViewModel
-from photo_arch.infrastructures.databases.db_setting import init_db
+from photo_arch.infrastructures.databases.db_setting import engine, make_session
 from photo_arch.infrastructures.gui.qt.qt_ui import Ui_MainWindow
 from photo_arch.infrastructures.gui.ui_interface import UiInterface
 
@@ -85,7 +85,7 @@ class Overlay(QtWidgets.QWidget):
 
 
 def get_controller(view_model):
-    repo = Repo(init_db())
+    repo = Repo(make_session(engine))
     presenter = Presenter(view_model)
     controller = Controller(repo, presenter)
     return controller
@@ -248,8 +248,8 @@ class Recognition(object):
                     mw.ui.run_state_label.setText("完成")
                     time.sleep(1)
                     pic_info_list = mw.interaction.get_pics_info(PhotoDescription.pic_type, PhotoDescription.dir_type)
-                    mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
-                    mw.pic_info_dict = {d['img_path']: d for d in pic_info_list}
+                    mw.pic_list = list(map(lambda d: d['photo_path'], pic_info_list))
+                    mw.pic_info_dict = {d['photo_path']: d for d in pic_info_list}
 
 
 class PhotoDescription(object):
@@ -315,8 +315,8 @@ class PhotoDescription(object):
         mw.ui.tabWidget.setCurrentIndex(2)
         PhotoDescription.pic_type = PhotoDescription.pic_radio_map[mw.sender().objectName()]
         pic_info_list = mw.interaction.get_pics_info(PhotoDescription.pic_type, PhotoDescription.dir_type)
-        mw.pic_list = list(map(lambda d: d['img_path'], pic_info_list))
-        mw.pic_info_dict = {d['img_path']: d for d in pic_info_list}
+        mw.pic_list = list(map(lambda d: d['photo_path'], pic_info_list))
+        mw.pic_info_dict = {d['photo_path']: d for d in pic_info_list}
         PhotoDescription.tmp_info = {}
         mw.current_pic_id = 0
         PhotoDescription._display_recognizable()
@@ -515,7 +515,7 @@ class PhotoDescription(object):
             size = mw.ui.pic_view.size()
             checked_info = {
                 "path": pic_path,
-                "arch_num": mw.ui.arch_code_in_photo.text(),
+                "arch_code": mw.ui.arch_code_in_photo.text(),
                 "faces": mw.pic_info_dict.get(pic_path).get('faces'),
                 "table_widget": [{'id': i, 'name': n} for i, n in name_list],
                 "label_size": (size.width(), size.height())
@@ -577,9 +577,9 @@ class GroupDescription(object):
             else:
                 QApplication.processEvents()
         overlay.hide()
-        arch_num_info = mw.interaction.get_archival_number(GroupDescription.current_work_path)
-        if arch_num_info and arch_num_info.get('root'):
-            GroupDescription._generate_tree_by_data(arch_num_info)
+        arch_code_info = mw.interaction.get_archival_number(GroupDescription.current_work_path)
+        if arch_code_info and arch_code_info.get('root'):
+            GroupDescription._generate_tree_by_data(arch_code_info)
         else:
             GroupDescription._generate_tree_by_path(GroupDescription.current_work_path)
         GroupDescription._reset_state()
@@ -625,7 +625,7 @@ class GroupDescription(object):
     @staticmethod
     @catch_exception
     def add_folder_item():
-        arch_num_info = {
+        arch_code_info = {
             "root": {},
             "children": {}
         }
@@ -639,9 +639,9 @@ class GroupDescription(object):
             if item.checkState(0) == Qt.Checked:
                 path = item.text(0)
                 line_edit = mw.ui.treeWidget.itemWidget(item, 1)
-                arch_num = line_edit.text()
-                arch_num_info["children"].update({os.path.join(GroupDescription.current_work_path, path): arch_num})
-        mw.interaction.set_archival_number(arch_num_info)
+                arch_code = line_edit.text()
+                arch_code_info["children"].update({os.path.join(GroupDescription.current_work_path, path): arch_code})
+        mw.interaction.set_archival_number(arch_code_info)
         GroupDescription._reset_state()
 
     @staticmethod
@@ -658,7 +658,7 @@ class GroupDescription(object):
     @staticmethod
     @catch_exception
     def _generate_dir_tree(root_arch_info, file_arch_list):
-        root_path, root_arch_num = root_arch_info
+        root_path, root_arch_code = root_arch_info
         _, volume_name = os.path.split(root_path)
         mw.ui.treeWidget.setColumnWidth(0, int(520*mw.dt_width/1920))  # 设置列宽
         # mw.ui.treeWidget.setColumnWidth(1, int(60*mw.dt_width/1920))  # 设置列宽
@@ -667,7 +667,7 @@ class GroupDescription(object):
         root.setText(0, root_path)
         # record_btn = GroupDescription._gen_record_btn()
         # mw.ui.treeWidget.setItemWidget(root, 1, record_btn)
-        for name, arch_num in file_arch_list:
+        for name, arch_code in file_arch_list:
             child = QTreeWidgetItem(root)
             child.setText(0, name)
             record_btn = GroupDescription._gen_record_btn()
@@ -716,13 +716,13 @@ class GroupDescription(object):
 
     @staticmethod
     @catch_exception
-    def _generate_tree_by_data(arch_num_info):
-        root_arch = arch_num_info['root']
+    def _generate_tree_by_data(arch_code_info):
+        root_arch = arch_code_info['root']
         root_arch_info = list(root_arch.items())[0]
         root_path = root_arch_info[0]
         children_arch = {p: '' for p in filter(lambda p: os.path.isdir(os.path.join(root_path, p)),
                                                os.listdir(root_path))}
-        children_arch.update({(fp[len(root_path)+1:], an) for fp, an in arch_num_info['children'].items()})
+        children_arch.update({(fp[len(root_path)+1:], an) for fp, an in arch_code_info['children'].items()})
         arch_list = children_arch.items()
         GroupDescription._generate_dir_tree(root_arch_info, arch_list)
 

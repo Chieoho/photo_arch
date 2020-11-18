@@ -71,6 +71,7 @@ class FaceModel(Base):
 class Repo(RepoIf):
     def __init__(self, session):
         self.session = session
+        self.repo_general = RepoGeneral(session)
 
     def __del__(self):
         self.session.close()
@@ -82,9 +83,19 @@ class Repo(RepoIf):
         self.session.commit()
         return True
 
-    def query_group(self, group_path: str) -> List[dict]:
+    def update_group(self, group: PhotoGroup) -> bool:
+        path = group.group_path
+        group_dict = group.to_dict()
+        self.repo_general.update('photo_group', {'group_path': [path]}, group_dict)
+        return True
+
+    def query_group_by_path(self, group_path: str) -> List[dict]:
+        group_list = self.repo_general.query('photo_group', cond={'group_path': [group_path]})
+        return group_list
+
+    def get_all_groups(self) -> List[dict]:
         repo_general = RepoGeneral(self.session)
-        group_list = repo_general.query('photo_group', cond={'group_path': [group_path]})
+        group_list = repo_general.query('photo_group', cond={})
         return group_list
 
     def add_photo(self, photo: Photo):
@@ -139,13 +150,16 @@ class RepoGeneral(RepoGeneralIf):
         return condition
 
     def _query(self, model, cond):
+        for v in cond.values():
+            if isinstance(v, list) is False:
+                raise Exception('dict value in cond should be list')
         key_column_list = [(col, getattr(model, col)) for col in cond.keys()]
         condition = self._gen_query_condition(cond, key_column_list)
         query_obj = self.session.query(model).filter(and_(*condition))
         return query_obj
 
     def query(self, table: str, cond: Dict[str, list],
-              ret_columns: Tuple[str] = ()) -> List[dict]:
+              ret_columns: Tuple = ()) -> List[dict]:
         model = table_model_dict.get(table)
         if model:
             row2dict = partial(self._row2dict, col_names=ret_columns)
@@ -165,9 +179,8 @@ class RepoGeneral(RepoGeneralIf):
                 cl1, cl2 = ret_columns
                 kl1 = [getattr(m1, k) for k in cl1]
                 kl2 = [getattr(m2, k) for k in cl2]
-                query_obj = self.session.query(*(kl1 + kl2))\
-                    .join(m2, getattr(m1, k1) == getattr(m2, k2))
-                results = list(self._row2dict(query_obj))
+                query_res = self.session.query(*(kl1 + kl2)).join(m2, getattr(m1, k1) == getattr(m2, k2)).all()
+                results = [dict(zip(cl1+cl2, r)) for r in query_res]
                 return results
         return []
 

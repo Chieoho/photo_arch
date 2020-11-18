@@ -22,9 +22,22 @@ class RepoIf(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def query_group(self, group_path: str) -> List[dict]:
+    def update_group(self, group: PhotoGroup) -> bool:
+        """
+        :param group:
+        :return:
+        """
+
+    @abstractmethod
+    def query_group_by_path(self, group_path: str) -> List[dict]:
         """
         :param group_path:
+        :return:
+        """
+
+    @abstractmethod
+    def get_all_groups(self) -> List[dict]:
+        """
         :return:
         """
 

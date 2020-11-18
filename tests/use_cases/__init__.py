@@ -14,11 +14,14 @@ class Repo(RepoIf):
     def add_group(self, group) -> bool:
         return True
 
-    def query_group(self, arch_code: str) -> List[dict]:
-        return [{'group_code': '0001'}]
+    def query_group_by_path(self, group_path: str) -> List[dict]:
+        return [{'group_path': 'test'}]
 
     def add_photo(self, photo) -> bool:
         return True
+
+    def get_all_groups(self) -> List[dict]:
+        pass
 
 
 class Presenter(PresenterIf):

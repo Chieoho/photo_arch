@@ -5,14 +5,16 @@
 @author: Jaden Wu
 @time: 2020/11/5 15:15
 """
+from typing import Dict
 from photo_arch.use_cases.interfaces.presenter_if import PresenterIf
 from photo_arch.use_cases.interfaces.dataset import GroupOutputData, PhotoOutputData
 
 
 class ViewModel(object):
     def __init__(self):
-        self.group_info = GroupOutputData().__dict__
-        self.photo_info = PhotoOutputData().__dict__
+        self.group_info: dict = GroupOutputData().__dict__
+        self.photo_info: dict = PhotoOutputData().__dict__
+        self.arch_info: Dict[str, GroupOutputData] = {}
 
 
 class Presenter(PresenterIf):
