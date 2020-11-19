@@ -12,6 +12,7 @@ import inspect
 import time
 from threading import Thread
 import typing
+from collections import defaultdict
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -84,7 +85,10 @@ class Overlay(QtWidgets.QWidget):
         painter.drawText(self.rect(), Qt.AlignCenter, self.text)
 
 
-def get_controller(view_model):
+view_model = ViewModel()
+
+
+def get_controller():
     repo = Repo(make_session(engine))
     presenter = Presenter(view_model)
     controller = Controller(repo, presenter)
@@ -97,23 +101,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.interaction: UiInterface = typing.Any
-        self.view_model = ViewModel()
-        self.controller = get_controller(self.view_model)
+        self.controller = get_controller()
+        self.view = View()
         self.init_recognition = InitRecognition(self)
         self.init_recognition.start()
 
-        self.pic_list = []
-        self.current_pic_id = 0
-        self.pic_info_dict = {}
+        self.photo_list = []
+        self.current_photo_id = 0
+        self.photo_info_dict = {}
         self.check_state_dict = {}
 
         self.rcn_info_label_dict = {
             "recognition_rate": self.ui.recognition_rate_label,
             "recognized_face_num": self.ui.recognized_face_label,
-            "part_recognized_pic_num": self.ui.part_recognized_pic_label,
-            "all_recognized_pic_num": self.ui.all_recognized_pic_label,
-            "handled_pic_num": self.ui.handled_pic_label,
-            "unhandled_pic_num": self.ui.unhandled_pic_label
+            "part_recognized_photo_num": self.ui.part_recognized_photo_label,
+            "all_recognized_photo_num": self.ui.all_recognized_photo_label,
+            "handled_photo_num": self.ui.handled_photo_label,
+            "unhandled_photo_num": self.ui.unhandled_photo_label
         }
         self.run_state = RunState.stop
         self.ui.tabWidget.currentChanged.connect(self.tab_change)
@@ -129,9 +133,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @catch_exception
     def tab_change(self, tab_id):
-        if (tab_id == 3) and (self.interaction != typing.Any):
-            untrained_pic_num = self.interaction.get_untrained_pic_num()
-            self.ui.untrained_num_label.setText(str(untrained_pic_num))
+        if tab_id == 3:  # 选中“模型训练”tab
+            if self.interaction != typing.Any:
+                untrained_photo_num = self.interaction.get_untrained_photo_num()
+                self.ui.untrained_num_label.setText(str(untrained_photo_num))
+        elif tab_id == 4:  # 选中“档案浏览”tab
+            self.controller.browse_arch()
+            self.view.display_arch()
+        else:
+            pass
 
     @catch_exception
     def msg_box(self, msg: str):
@@ -154,9 +164,11 @@ mw: MainWindow = typing.Any
 
 
 class View(object):
-    @staticmethod
-    def display_group(group_info: dict):
-        for k, v in group_info.items():
+    def __init__(self):
+        self.view_model = view_model
+
+    def display_group(self):
+        for k, v in self.view_model.group.items():
             widget = getattr(mw.ui, k + '_in_group')
             if isinstance(widget, QComboBox):
                 if v:
@@ -167,12 +179,50 @@ class View(object):
                 widget.setText(v)
 
     @staticmethod
-    def display_photo(photo_info):
-        pass
+    def display_photo(photo_path):
+        model_keys = [
+            'arch_code',
+            'photo_code',
+            'peoples',
+            'format',
+            'fonds_code',
+            'arch_category_code',
+            'year',
+            'group_code',
+            'photographer',
+            'taken_time',
+            'taken_locations',
+            'security_classification',
+            'reference_code'
+        ]
+        for k in model_keys:
+            widget = getattr(mw.ui, f'{k}_in_photo')
+            widget.setText(mw.photo_info_dict.get(photo_path).get(k, ''))
 
-    @staticmethod
-    def display_face(face_info):
-        pass
+    def fill_model_from_dict(self, parent, d):
+        if isinstance(d, dict):
+            for k, v in d.items():
+                child = QStandardItem(str(k))
+                parent.appendRow(child)
+                self.fill_model_from_dict(child, v)
+        elif isinstance(d, list):
+            for v in d:
+                self.fill_model_from_dict(parent, v)
+        else:
+            parent.appendRow(QStandardItem(str(d)))
+
+    def display_arch(self):
+        data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+        for gi in self.view_model.arch:
+            fc = gi.get('fonds_code')
+            ye = gi.get('year')
+            rp = gi.get('retention_period')
+            gp = gi.get('group_path')
+            data[fc][ye][rp].append(gp)
+        model = QStandardItemModel()
+        model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
+        self.fill_model_from_dict(model.invisibleRootItem(), data)
+        mw.ui.arch_tree_view.setModel(model)
 
 
 class Recognition(object):
@@ -192,7 +242,7 @@ class Recognition(object):
     def run():
         if mw.run_state != RunState.running:
             thresh = mw.ui.thresh_lineEdit.text()
-            size = mw.ui.pic_view.size()
+            size = mw.ui.photo_view.size()
             params = {
                 "threshold": float(thresh) if thresh else 0.9,
                 "label_size": (size.width(), size.height())
@@ -238,23 +288,24 @@ class Recognition(object):
                     label = mw.rcn_info_label_dict.get(key)
                     if label:
                         label.setText(str(value))
-                handled_pic_num = recognition_info.get('handled_pic_num', 0)
-                unhandled_pic_num = recognition_info.get('unhandled_pic_num', 1)
-                step = int(handled_pic_num / (handled_pic_num + unhandled_pic_num) * 100)
+                handled_photo_num = recognition_info.get('handled_photo_num', 0)
+                unhandled_photo_num = recognition_info.get('unhandled_photo_num', 1)
+                step = int(handled_photo_num / (handled_photo_num + unhandled_photo_num) * 100)
                 mw.ui.progressBar.setValue(step)
                 if step >= 100:
                     mw.run_state = RunState.stop
                     mw.ui.pausecontinue_btn.setText('停止')
                     mw.ui.run_state_label.setText("完成")
                     time.sleep(1)
-                    pic_info_list = mw.interaction.get_pics_info(PhotoDescription.pic_type, PhotoDescription.dir_type)
-                    mw.pic_list = list(map(lambda d: d['photo_path'], pic_info_list))
-                    mw.pic_info_dict = {d['photo_path']: d for d in pic_info_list}
+                    photo_info_list = mw.interaction.get_photos_info(PhotoDescription.photo_type,
+                                                                     PhotoDescription.dir_type)
+                    mw.photo_list = list(map(lambda d: d['photo_path'], photo_info_list))
+                    mw.photo_info_dict = {d['photo_path']: d for d in photo_info_list}
 
 
 class PhotoDescription(object):
-    pic_radio_map = {
-        'all_pic_radioButton': 1,
+    photo_radio_map = {
+        'all_photo_radioButton': 1,
         'part_recognition_radioButton': 2,
         'all_recognition_radioButton': 3
     }
@@ -266,7 +317,7 @@ class PhotoDescription(object):
     tmp_info = {}
     add_icon_path = 'icon/add.png'
     del_icon_path = 'icon/cancel.png'
-    pic_type = 1
+    photo_type = 1
     dir_type = 1
 
     def __init__(self):
@@ -274,23 +325,23 @@ class PhotoDescription(object):
         mw.ui.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
         mw.ui.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
 
-        mw.ui.all_pic_radioButton.toggled.connect(self.pic_choose)
-        mw.ui.part_recognition_radioButton.toggled.connect(self.pic_choose)
-        mw.ui.all_recognition_radioButton.toggled.connect(self.pic_choose)
-        mw.ui.pre_btn.clicked.connect(self.pre_pic)
-        mw.ui.next_btn.clicked.connect(self.next_pic)
+        mw.ui.all_photo_radioButton.toggled.connect(self.photo_choose)
+        mw.ui.part_recognition_radioButton.toggled.connect(self.photo_choose)
+        mw.ui.all_recognition_radioButton.toggled.connect(self.photo_choose)
+        mw.ui.pre_btn.clicked.connect(self.pre_photo)
+        mw.ui.next_btn.clicked.connect(self.next_photo)
         mw.ui.tableWidget.itemChanged.connect(self.table_item_changed)
         mw.ui.select_dir_radioButton.toggled.connect(self.dir_choose)
-        mw.ui.select_dir_radioButton.setToolTip('显示本次识别所选目录下的图片')
+        mw.ui.select_dir_radioButton.setToolTip('显示本次识别所选目录下的照片')
         mw.ui.current_dir_radioButton.toggled.connect(self.dir_choose)
-        mw.ui.current_dir_radioButton.setToolTip('显示当前工作目录下的图片')
+        mw.ui.current_dir_radioButton.setToolTip('显示当前工作目录下的照片')
 
-        mw.ui.all_pic_radioButton.setEnabled(False)
+        mw.ui.all_photo_radioButton.setEnabled(False)
         mw.ui.part_recognition_radioButton.setEnabled(False)
         mw.ui.all_recognition_radioButton.setEnabled(False)
 
-        mw.ui.pic_view.resizeEvent = self.resize_image
-        mw.ui.pic_view.setAlignment(QtCore.Qt.AlignCenter)
+        mw.ui.photo_view.resizeEvent = self.resize_image
+        mw.ui.photo_view.setAlignment(QtCore.Qt.AlignCenter)
 
         mw.ui.pre_btn.setStyleSheet(mw.button_style_sheet)
         mw.ui.next_btn.setStyleSheet(mw.button_style_sheet)
@@ -305,20 +356,20 @@ class PhotoDescription(object):
         size = event.size()
         w, h = size.width() - 1, size.height() - 1  # wow
         pix_map = PhotoDescription.pix_map.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        mw.ui.pic_view.setPixmap(pix_map)
+        mw.ui.photo_view.setPixmap(pix_map)
 
     @staticmethod
     @catch_exception
-    def pic_choose(check_state):
+    def photo_choose(check_state):
         if check_state is False:
             return
         mw.ui.tabWidget.setCurrentIndex(2)
-        PhotoDescription.pic_type = PhotoDescription.pic_radio_map[mw.sender().objectName()]
-        pic_info_list = mw.interaction.get_pics_info(PhotoDescription.pic_type, PhotoDescription.dir_type)
-        mw.pic_list = list(map(lambda d: d['photo_path'], pic_info_list))
-        mw.pic_info_dict = {d['photo_path']: d for d in pic_info_list}
+        PhotoDescription.photo_type = PhotoDescription.photo_radio_map[mw.sender().objectName()]
+        photo_info_list = mw.interaction.get_photos_info(PhotoDescription.photo_type, PhotoDescription.dir_type)
+        mw.photo_list = list(map(lambda d: d['photo_path'], photo_info_list))
+        mw.photo_info_dict = {d['photo_path']: d for d in photo_info_list}
         PhotoDescription.tmp_info = {}
-        mw.current_pic_id = 0
+        mw.current_photo_id = 0
         PhotoDescription._display_recognizable()
 
     @staticmethod
@@ -327,33 +378,33 @@ class PhotoDescription(object):
         if check_state is False:
             return
         dir_scope, PhotoDescription.dir_type = PhotoDescription.dir_radio_map[mw.sender().objectName()]
-        mw.ui.all_pic_radioButton.setText(f'显示{dir_scope}所有图片(Alt+Q)')
-        mw.ui.part_recognition_radioButton.setText(f'显示{dir_scope}部分识别图片(Alt+W)')
-        mw.ui.all_recognition_radioButton.setText(f'显示{dir_scope}全部识别图片(Alt+E)')
-        mw.ui.all_pic_radioButton.setShortcut('Alt+Q')
+        mw.ui.all_photo_radioButton.setText(f'显示{dir_scope}所有照片(Alt+Q)')
+        mw.ui.part_recognition_radioButton.setText(f'显示{dir_scope}部分识别照片(Alt+W)')
+        mw.ui.all_recognition_radioButton.setText(f'显示{dir_scope}全部识别照片(Alt+E)')
+        mw.ui.all_photo_radioButton.setShortcut('Alt+Q')
         mw.ui.part_recognition_radioButton.setShortcut('Alt+W')
         mw.ui.all_recognition_radioButton.setShortcut('Alt+E')
 
     @staticmethod
     @catch_exception
-    def pre_pic():
+    def pre_photo():
         if mw.ui.tabWidget.currentIndex() != 2:
             mw.ui.tabWidget.setCurrentIndex(2)
             return
-        PhotoDescription.tmp_info[mw.pic_list[mw.current_pic_id]] = mw.get_name_info()
-        if mw.current_pic_id > 0:
-            mw.current_pic_id -= 1
+        PhotoDescription.tmp_info[mw.photo_list[mw.current_photo_id]] = mw.get_name_info()
+        if mw.current_photo_id > 0:
+            mw.current_photo_id -= 1
             PhotoDescription._display_recognizable()
 
     @staticmethod
     @catch_exception
-    def next_pic():
+    def next_photo():
         if mw.ui.tabWidget.currentIndex() != 2:
             mw.ui.tabWidget.setCurrentIndex(2)
             return
-        PhotoDescription.tmp_info[mw.pic_list[mw.current_pic_id]] = mw.get_name_info()
-        if mw.current_pic_id < len(mw.pic_list) - 1:
-            mw.current_pic_id += 1
+        PhotoDescription.tmp_info[mw.photo_list[mw.current_photo_id]] = mw.get_name_info()
+        if mw.current_photo_id < len(mw.photo_list) - 1:
+            mw.current_photo_id += 1
             PhotoDescription._display_recognizable()
 
     @staticmethod
@@ -379,7 +430,7 @@ class PhotoDescription(object):
             mw.ui.tableWidget.setItem(row+1, col, item)
         mw.ui.tableWidget.setCellWidget(row+1, 2, add_button)
         mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
-        mw.check_state_dict[mw.pic_list[mw.current_pic_id]] = Qt.Unchecked
+        mw.check_state_dict[mw.photo_list[mw.current_photo_id]] = Qt.Unchecked
 
     @staticmethod
     @catch_exception
@@ -390,14 +441,14 @@ class PhotoDescription(object):
             mw.ui.tableWidget.cellWidget(r, 2).clicked.disconnect()
             PhotoDescription._connect(mw.ui.tableWidget.cellWidget(r, 2), r)
         mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
-        mw.check_state_dict[mw.pic_list[mw.current_pic_id]] = Qt.Unchecked
+        mw.check_state_dict[mw.photo_list[mw.current_photo_id]] = Qt.Unchecked
         mw.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.CurrentChanged)
 
     @staticmethod
     @catch_exception
     def table_item_changed():
         mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
-        mw.check_state_dict[mw.pic_list[mw.current_pic_id]] = Qt.Unchecked
+        mw.check_state_dict[mw.photo_list[mw.current_photo_id]] = Qt.Unchecked
 
     @staticmethod
     @catch_exception
@@ -407,14 +458,14 @@ class PhotoDescription(object):
     @staticmethod
     @catch_exception
     def _display_recognizable():
-        if not mw.pic_list:
-            mw.ui.pic_view.setText('没有照片可显示')
+        if not mw.photo_list:
+            mw.ui.photo_view.setText('没有照片可显示')
             return
-        pic_path = mw.pic_list[mw.current_pic_id]
-        PhotoDescription.pix_map = QPixmap(pic_path)
-        faces_data = mw.pic_info_dict.get(pic_path).get('faces')
+        photo_path = mw.photo_list[mw.current_photo_id]
+        PhotoDescription.pix_map = QPixmap(photo_path)
+        faces_data = mw.photo_info_dict.get(photo_path).get('faces')
         name_info_list, coordinate_list = PhotoDescription._conversion_data(faces_data)
-        tmp_name_info_list = PhotoDescription.tmp_info.get(pic_path)
+        tmp_name_info_list = PhotoDescription.tmp_info.get(photo_path)
         mw.ui.tableWidget.itemChanged.disconnect()
         if tmp_name_info_list is None:
             PhotoDescription._update_table_widget(name_info_list)
@@ -422,11 +473,12 @@ class PhotoDescription(object):
             PhotoDescription._update_table_widget(tmp_name_info_list)
         mw.ui.tableWidget.itemChanged.connect(PhotoDescription.table_item_changed)
         PhotoDescription._mark_face(coordinate_list)
-        mw.ui.arch_code_in_photo.setText(mw.pic_info_dict.get(pic_path).get('archival_num'))
-        pix_map = PhotoDescription.pix_map.scaled(mw.ui.pic_view.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        mw.ui.pic_view.setPixmap(pix_map)
-        mw.ui.pic_index_label.setText('{}/{}'.format(mw.current_pic_id + 1, len(mw.pic_list)))
-        PhotoDescription._set_verify_checkbox(pic_path)
+        pix_map = PhotoDescription.pix_map.scaled(mw.ui.photo_view.size(), Qt.KeepAspectRatio,
+                                                  Qt.SmoothTransformation)
+        mw.ui.photo_view.setPixmap(pix_map)
+        mw.ui.photo_index_label.setText('{}/{}'.format(mw.current_photo_id + 1, len(mw.photo_list)))
+        PhotoDescription._set_verify_checkbox(photo_path)
+        mw.view.display_photo(photo_path)
 
     @staticmethod
     @catch_exception
@@ -470,17 +522,17 @@ class PhotoDescription(object):
 
     @staticmethod
     @catch_exception
-    def _set_verify_checkbox(pic_path):
-        pic_info = mw.pic_info_dict.get(pic_path)
-        if pic_info:
-            verify_state_code = pic_info.get('verify_state', 0)
+    def _set_verify_checkbox(photo_path):
+        photo_info = mw.photo_info_dict.get(photo_path)
+        if photo_info:
+            verify_state_code = photo_info.get('verify_state', 0)
             if verify_state_code == 1:
                 original_verify_state = Qt.Checked
             else:
                 original_verify_state = Qt.Unchecked
         else:
             original_verify_state = Qt.Unchecked
-        current_check_state = mw.check_state_dict.get(pic_path, original_verify_state)
+        current_check_state = mw.check_state_dict.get(photo_path, original_verify_state)
         if current_check_state == Qt.Checked:
             mw.ui.verifycheckBox.stateChanged.disconnect()
             mw.ui.verifycheckBox.setCheckState(Qt.Checked)
@@ -509,19 +561,19 @@ class PhotoDescription(object):
     @staticmethod
     @catch_exception
     def checked():
-        if mw.ui.verifycheckBox.isChecked() and mw.pic_list:
+        if mw.ui.verifycheckBox.isChecked() and mw.photo_list:
             name_list = mw.get_name_info()
-            pic_path = mw.pic_list[mw.current_pic_id]
-            size = mw.ui.pic_view.size()
+            photo_path = mw.photo_list[mw.current_photo_id]
+            size = mw.ui.photo_view.size()
             checked_info = {
-                "path": pic_path,
+                "path": photo_path,
                 "arch_code": mw.ui.arch_code_in_photo.text(),
-                "faces": mw.pic_info_dict.get(pic_path).get('faces'),
+                "faces": mw.photo_info_dict.get(photo_path).get('faces'),
                 "table_widget": [{'id': i, 'name': n} for i, n in name_list],
                 "label_size": (size.width(), size.height())
             }
             mw.interaction.checked(checked_info)
-            mw.check_state_dict[pic_path] = Qt.Checked
+            mw.check_state_dict[photo_path] = Qt.Checked
 
 
 class GroupDescription(object):
@@ -542,7 +594,7 @@ class GroupDescription(object):
         mw.ui.cancel_folder_btn.setStyleSheet(mw.button_style_sheet)
         mw.ui.save_group_btn.setStyleSheet(mw.button_style_sheet)
 
-        self.group_info_view()
+        self.display_group()
 
     @staticmethod
     @catch_exception
@@ -577,7 +629,7 @@ class GroupDescription(object):
             else:
                 QApplication.processEvents()
         overlay.hide()
-        arch_code_info = mw.interaction.get_archival_number(GroupDescription.current_work_path)
+        arch_code_info = mw.interaction.get_arch_code(GroupDescription.current_work_path)
         if arch_code_info and arch_code_info.get('root'):
             GroupDescription._generate_tree_by_data(arch_code_info)
         else:
@@ -588,7 +640,7 @@ class GroupDescription(object):
     @catch_exception
     def _reset_state():
         mw.ui.radio_btn_group.setExclusive(False)
-        for rb in [mw.ui.all_pic_radioButton,
+        for rb in [mw.ui.all_photo_radioButton,
                    mw.ui.part_recognition_radioButton,
                    mw.ui.all_recognition_radioButton]:
             rb.setEnabled(True)
@@ -601,10 +653,10 @@ class GroupDescription(object):
             label.clear()
         mw.ui.progressBar.setValue(0)
         mw.ui.arch_code_in_photo.clear()
-        mw.ui.pic_view.clear()
+        mw.ui.photo_view.clear()
         for row in range(mw.ui.tableWidget.rowCount(), -1, -1):
             mw.ui.tableWidget.removeRow(row)
-        mw.ui.pic_index_label.clear()
+        mw.ui.photo_index_label.clear()
 
         mw.run_state = RunState.stop
         mw.ui.pausecontinue_btn.setText('停止')
@@ -641,7 +693,7 @@ class GroupDescription(object):
                 line_edit = mw.ui.treeWidget.itemWidget(item, 1)
                 arch_code = line_edit.text()
                 arch_code_info["children"].update({os.path.join(GroupDescription.current_work_path, path): arch_code})
-        mw.interaction.set_archival_number(arch_code_info)
+        mw.interaction.set_arch_code(arch_code_info)
         GroupDescription._reset_state()
 
     @staticmethod
@@ -665,46 +717,46 @@ class GroupDescription(object):
         mw.ui.treeWidget.clear()
         root = QTreeWidgetItem(mw.ui.treeWidget)
         root.setText(0, root_path)
-        # record_btn = GroupDescription._gen_record_btn()
-        # mw.ui.treeWidget.setItemWidget(root, 1, record_btn)
+        # description_btn = GroupDescription._gen_description_btn()
+        # mw.ui.treeWidget.setItemWidget(root, 1, description_btn)
         for name, arch_code in file_arch_list:
             child = QTreeWidgetItem(root)
             child.setText(0, name)
-            record_btn = GroupDescription._gen_record_btn()
-            GroupDescription._connect(record_btn, root_path + '\\' + name)
-            mw.ui.treeWidget.setItemWidget(child, 1, record_btn)
+            description_btn = GroupDescription._gen_description_btn()
+            GroupDescription._connect(description_btn, root_path + '\\' + name)
+            mw.ui.treeWidget.setItemWidget(child, 1, description_btn)
             child.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
             child.setCheckState(0, Qt.Checked)
         mw.ui.treeWidget.expandAll()
 
     @staticmethod
     @catch_exception
-    def _gen_record_btn():
-        record_btn = QtWidgets.QPushButton(
+    def _gen_description_btn():
+        description_btn = QtWidgets.QPushButton(
             ' ',
             mw.ui.treeWidget
         )
         font = QFont()
         font.setFamily("新宋体")
         font.setPointSize(14)
-        record_btn.setFont(font)
-        record_btn.setStyleSheet("text-align: left; padding-left: 18px;")
-        record_btn.setFlat(True)
-        return record_btn
+        description_btn.setFont(font)
+        description_btn.setStyleSheet("text-align: left; padding-left: 18px;")
+        description_btn.setFlat(True)
+        return description_btn
 
     @staticmethod
     @catch_exception
     def _connect(button, path):
-        button.clicked.connect(lambda: GroupDescription.group_info_view(path))
+        button.clicked.connect(lambda: GroupDescription.display_group(path))
 
     @staticmethod
     @catch_exception
-    def group_info_view(path=None):
+    def display_group(path=None):
         if path:
             group_name = os.path.split(path)[1]
             mw.controller.get_group(group_name)
             mw.ui.group_path_in_group.setText(group_name)
-        View.display_group(mw.view_model.group_info)
+        mw.view.display_group()
 
     @staticmethod
     @catch_exception
@@ -743,12 +795,13 @@ class Training(object):
             mw.msg_box('数据只有一类标签，至少需要两类标签')
         else:
             mw.ui.model_acc_label.setText(str(model_acc))
-        untrained_pic_num = mw.interaction.get_untrained_pic_num()
-        mw.ui.untrained_num_label.setText(str(untrained_pic_num))
+        untrained_photo_num = mw.interaction.get_untrained_photo_num()
+        mw.ui.untrained_num_label.setText(str(untrained_photo_num))
 
 
 class ArchBrowser(object):
     pix_map = None
+    group_name = None
 
     def __init__(self):
         list_widget = mw.ui.photo_list_widget
@@ -760,8 +813,7 @@ class ArchBrowser(object):
 
         mw.ui.photo_view_in_arch.resizeEvent = self.resize_image
         mw.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
-
-        self.list_photo_thumb()
+        mw.ui.arch_tree_view.clicked.connect(self.list_photo_thumb)
 
     @staticmethod
     @catch_exception
@@ -777,9 +829,10 @@ class ArchBrowser(object):
 
     @staticmethod
     @catch_exception
-    def list_photo_thumb():
+    def list_photo_thumb(index):
+        ArchBrowser.group_name = index.data()
         for i in range(1, 7):
-            path = f'.\\training_data\\2018年深圳市长陈如桂一行视察恒裕前海金融中心\\000{i}.jpg'
+            path = f'.\\training_data\\{ArchBrowser.group_name}\\000{i}.jpg'
             item = QListWidgetItem(QIcon(path), f'000{i}.jpg')
             mw.ui.photo_list_widget.addItem(item)
 
@@ -787,7 +840,7 @@ class ArchBrowser(object):
     @catch_exception
     def display_photo(item):
         photo_name = item.text()
-        path = f'.\\training_data\\2018年深圳市长陈如桂一行视察恒裕前海金融中心\\{photo_name}'
+        path = f'.\\training_data\\{ArchBrowser.group_name}\\{photo_name}'
         ArchBrowser.pix_map = QPixmap(path)
         pix_map = ArchBrowser.pix_map.scaled(mw.ui.photo_view_in_arch.size(),
                                              Qt.KeepAspectRatio,

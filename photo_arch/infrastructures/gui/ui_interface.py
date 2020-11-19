@@ -35,14 +35,14 @@ class UiInterface(metaclass=ABCMeta):
     def get_recognition_info(self) -> dict:
         """
         获取整体识别率、已识别图片等识别信息，
-        :return: {"recognition_rate": 90, "recognized_pic_num": 1000, ...}
+        :return: {"recognition_rate": 90, "recognized_photo_num": 1000, ...}
         """
 
     @abstractmethod
-    def get_pics_info(self, pic_type: int, dir_type: int) -> list:
+    def get_photos_info(self, photo_type: int, dir_type: int) -> list:
         """
         获取图片的信息
-        :param pic_type: 图片类型，1代表所有图片，2代表部分识别图片，3代表未识别图片
+        :param photo_type: 图片类型，1代表所有图片，2代表部分识别图片，3代表未识别图片
         :param dir_type: 目录类型，1代表本次识别目录，2代表当前所有目录
         :return:
         [{'archival_num': '社保局-2019-0001',
@@ -58,7 +58,7 @@ class UiInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def set_archival_number(self, arch_num_info: dict) -> bool:
+    def set_arch_code(self, arch_num_info: dict) -> bool:
         """
         预设档号
         :param arch_num_info: 档号信息。如：{"root": {"root_path": "1"}, "children": {"path1": "1001", "path2": "1002"}}
@@ -66,7 +66,7 @@ class UiInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def get_archival_number(self, path) -> dict:
+    def get_arch_code(self, path) -> dict:
         """
         获取档号信息
         :param path: 路径
@@ -91,7 +91,7 @@ class UiInterface(metaclass=ABCMeta):
         :return: True or False
         """
     @abstractmethod
-    def get_untrained_pic_num(self) -> int:
+    def get_untrained_photo_num(self) -> int:
         """
         获取未训练图片数量
         :return:

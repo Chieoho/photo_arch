@@ -32,5 +32,5 @@ class GroupDescription(object):
             group_info = group_list[-1]
         else:
             group_info = GroupOutputData().__dict__
-        self.pres.set_group_info(group_info)
+        self.pres.update_group_model(group_info)
         return True

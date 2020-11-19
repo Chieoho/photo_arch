@@ -10,15 +10,15 @@ from abc import ABCMeta, abstractmethod
 
 class PresenterIf(metaclass=ABCMeta):
     @abstractmethod
-    def set_group_info(self, photo_info) -> bool:
+    def update_group_model(self, group_info) -> bool:
         """
-        :param photo_info:
+        :param group_info:
         :return:
         """
 
     @abstractmethod
-    def set_photo_info(self, photo_info) -> bool:
+    def update_arch_model(self, group_info_list) -> bool:
         """
-        :param photo_info:
+        :param group_info_list:
         :return:
         """

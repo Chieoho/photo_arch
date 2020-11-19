@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="iconSize">
        <size>
@@ -1641,7 +1641,7 @@ padding-bottom: 8px;</string>
          </widget>
         </item>
         <item row="7" column="2">
-         <widget class="QLabel" name="handled_pic_label">
+         <widget class="QLabel" name="handled_photo_label">
           <property name="font">
            <font>
             <family>新宋体</family>
@@ -1654,7 +1654,7 @@ padding-bottom: 8px;</string>
          </widget>
         </item>
         <item row="6" column="2">
-         <widget class="QLabel" name="all_recognized_pic_label">
+         <widget class="QLabel" name="all_recognized_photo_label">
           <property name="font">
            <font>
             <family>新宋体</family>
@@ -1689,7 +1689,7 @@ padding-bottom: 8px;</string>
          </widget>
         </item>
         <item row="5" column="2">
-         <widget class="QLabel" name="part_recognized_pic_label">
+         <widget class="QLabel" name="part_recognized_photo_label">
           <property name="font">
            <font>
             <family>新宋体</family>
@@ -1702,7 +1702,7 @@ padding-bottom: 8px;</string>
          </widget>
         </item>
         <item row="8" column="2">
-         <widget class="QLabel" name="unhandled_pic_label">
+         <widget class="QLabel" name="unhandled_photo_label">
           <property name="font">
            <font>
             <family>新宋体</family>
@@ -1860,7 +1860,7 @@ padding-bottom: 8px;</string>
              <number>12</number>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="pic_view">
+             <widget class="QLabel" name="photo_view">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -2197,7 +2197,7 @@ padding-bottom: 8px;</string>
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLabel" name="pic_index_label">
+                <widget class="QLabel" name="photo_index_label">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -2472,7 +2472,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="1" column="0" colspan="4">
-             <widget class="QRadioButton" name="all_pic_radioButton">
+             <widget class="QRadioButton" name="all_photo_radioButton">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -3145,18 +3145,16 @@ padding-bottom: 8px;</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_19">
              <item row="0" column="0">
-              <widget class="QTreeWidget" name="arch_tree_widget">
+              <widget class="QTreeView" name="arch_tree_view">
                <property name="font">
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
                 </font>
                </property>
-               <column>
-                <property name="text">
-                 <string notr="true">1</string>
-                </property>
-               </column>
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
               </widget>
              </item>
             </layout>
@@ -4009,7 +4007,7 @@ padding-bottom: 8px;</string>
   <tabstop>tableWidget</tabstop>
   <tabstop>verifycheckBox</tabstop>
   <tabstop>thresh_lineEdit</tabstop>
-  <tabstop>all_pic_radioButton</tabstop>
+  <tabstop>all_photo_radioButton</tabstop>
   <tabstop>arch_category_code_in_photo</tabstop>
   <tabstop>select_dir_radioButton</tabstop>
   <tabstop>part_recognition_radioButton</tabstop>

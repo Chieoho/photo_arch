@@ -5,8 +5,9 @@
 @author: Jaden Wu
 @time: 2020/9/3 10:14
 """
-from photo_arch.infrastructures.gui.ui_interface import UiInterface
 from recognition.business_recognition import Recognition
+
+from photo_arch.infrastructures.gui.ui_interface import UiInterface
 
 __all__ = ['QtInteraction']
 
@@ -28,7 +29,6 @@ class QtInteraction(UiInterface):
         else:
             return {"res": True, "msg": "已完成全部核验."}
 
-
     def continue_run(self) -> dict:
         self._rcn.continueRecognition()
         return {"res": True, "msg": ""}
@@ -40,24 +40,25 @@ class QtInteraction(UiInterface):
     def get_recognition_info(self) -> dict:
         return self._rcn.updateRecognitionInfo()
 
-    def get_pics_info(self, pic_type, dir_type) -> list:
-        return  self._rcn.get_recognized_face_info(pic_type, dir_type)
+    def get_photos_info(self, pic_type, dir_type) -> list:
+        return self._rcn.get_recognized_face_info(pic_type, dir_type)
 
-    def set_archival_number(self, arch_num_info) -> bool:
+    def set_arch_code(self, arch_num_info) -> bool:
         ret = self._rcn.add_folderItem(arch_num_info)
         return ret
 
-    def get_archival_number(self, path) -> dict:
+    def get_arch_code(self, path) -> dict:
         return self._rcn.get_archival_number(path)
 
     def start_training(self) -> dict:
         return self._rcn.trainModel()
 
     def checked(self, checked_info) -> bool:
-        if len(checked_info) == 0 or checked_info['path'] == '' or len(eval(checked_info['faces'])) == 0  or len(checked_info['table_widget']) == 0:
+        if len(checked_info) == 0 or checked_info['path'] == '' or len(eval(checked_info['faces'])) == 0\
+                or len(checked_info['table_widget']) == 0:
             return False
         self._rcn.checke_faces_info(checked_info)
         return True
 
-    def get_untrained_pic_num(self) -> int:
+    def get_untrained_photo_num(self) -> int:
         return self._rcn.get_untrained_pic_num()

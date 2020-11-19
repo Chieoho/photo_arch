@@ -19,92 +19,78 @@ from keras.models import load_model
 from mtcnn import MTCNN
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
+from multiprocessing import Process, Event, Queue, Manager
 
-from recognition.SQL import *
 from recognition.utils import *
+
 from photo_arch.adapters.sql.repo import RepoGeneral
-from photo_arch.infrastructures.databases.db_setting import init_db
-sql_repo = RepoGeneral(init_db())
+from photo_arch.infrastructures.databases.db_setting import engine, make_session
 
-recognizedInfoDict = {}
-verifyed_img_list = []
-part_recog_img_list = []
-all_recog_img_list = []
 
-class RecognizeThread(threading.Thread):
+
+class RecognizeProcess(Process):
+    graph = None
+    mtcnn_detector = None
+    facenet_model = None
     margin = 32
-    facesNum = 0 # 统计检测出的人脸总数
-    faceRecNum = 0 # 统计识别出的人脸总数
-    processedImg = 0 # 统计已处理的图片
-    partRecFaceImg = 0 # 统计部分识别出人脸的照片
-    noRecFaceImg = 0  # 统计没有识别出人脸的照片
+
     faceProp = 0.0
     euclideanDist = 0.79
     canvasW = 0
     canvasH = 0
-    pending_imgs_list = []
-    pending_dirs_list = []
 
+    def __init__(self, done_queue):
+        super(RecognizeProcess, self).__init__()
+        self.event = Event()
+        self.event.set() # 设置为True
+        self.done_queue = done_queue # 写入返回数据
 
-    def __init__(self, mtcnn_detector, graph, facenet_model, sql_faces, sql_volume):
-        super().__init__()
-        self.mtcnn_detector =  mtcnn_detector
-        self.graph = graph
-        self.facenet_model = facenet_model
-        self.sql_faces = sql_faces
-        self.sql_volume = sql_volume
-        self.event = threading.Event()
-        self.event.set() # 设置为True, wait函数不会阻塞
-
-
+    def updataData(self, data_queue):
+        self.data_queue =data_queue
 
     def pause(self):
         if self.is_alive():
-            print("线程休眠")
-            self.event.clear()  # 设置为False, 让线程阻塞
+            print("子进程休眠")
+            self.event.clear()  # 设置为False, 让进程阻塞
         else:
-            print("线程已结束")
-
+            print("子进程结束")
 
     def resume(self):
         if self.is_alive():
-            print("线程唤醒")
-            self.event.set()  # 设置为True, 让线程唤醒
+            self.event.set()  # 设置为True, 进程唤醒
+            print("子进程唤醒")
         else:
-            print("线程已结束")
-
-
-    def updateData(self, pending_imgs_list, pending_dirs_list, params):
-        self.pending_imgs_list = pending_imgs_list
-        self.pending_dirs_list = pending_dirs_list
-        self.faceProp = params['threshold']
-        self.canvasW = params['label_size'][0]
-        self.canvasH = params['label_size'][1]
-
-
-    def initialize(self):
-        recognizedInfoDict.clear()
-        self.facesNum = 0
-        self.faceRecNum = 0
-        self.processedImg = 0
-        self.partRecFaceImg = 0
-        self.noRecFaceImg = 0
+            print("子进程结束")
 
 
     def run(self):
-        faceDbData = []
-        pendingImgsTotalNum = len(self.pending_imgs_list)
-        for imgPath in self.pending_imgs_list:
-            self.event.wait()
+        if self.graph == None:
+            self.graph = tf.get_default_graph()
+            print('######:graph')
+        with self.graph.as_default():
+            if self.mtcnn_detector == None:
+                self.mtcnn_detector = MTCNN()
+                print('######:mtcnn_detector')
+            if self.facenet_model == None:
+                self.facenet_model = load_model('model/facenet_keras.h5')
+                print('######:load model')
 
-            print('#####:', imgPath)
+        engine.dispose()
+        sql_repo = RepoGeneral(make_session(engine))
+
+        while 1:
+            if self.data_queue.empty() == True:
+                print('####:队列空,子进程暂停')
+                self.pause()
+            self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
+
+            imgPath = self.data_queue.get()
+            print('#####:pid=%d, imgPath=%s' %(os.getpid(), imgPath))
             det = []
             rectangles = []
             # cf = []
             tupFData = []
-            self.processedImg += 1
-            # statement = "SELECT count(*) from {} WHERE img_path='{}'".format(self.sql_faces.tableName, imgPath)
-            # itemNum = self.sql_faces.isExistCurrentRecord(statement)
+
             scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
             img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
             (h, w) = img.shape[:2]
@@ -112,7 +98,6 @@ class RecognizeThread(threading.Thread):
             (h, w) = test_img.shape[:2]
             with self.graph.as_default():
                 detect_faces = self.mtcnn_detector.detect_faces(test_img)
-
 
             for face in detect_faces:
                 confidence = face['confidence']
@@ -141,7 +126,6 @@ class RecognizeThread(threading.Thread):
             rectanglesExd = rectangles_array.tolist()
             squareRect = rect2square(np.array(rectanglesExd)) # 将长方形调整为正方形
             face_nums = len(det)
-            self.facesNum += face_nums # 统计本次识别中，有多少张人脸
             src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
                 # src_det_x1 = np.asarray(det)[:, 0].tolist()
@@ -149,7 +133,9 @@ class RecognizeThread(threading.Thread):
                 # cf_arr = rank_confidence(src_det_x1, det_arr, cf)
 
                 faces = []
-                curFaceRecNum = 0 # 当前图片里面的人脸数
+                peoples = []
+                curFaceRecNum = 0  # 当前图片里面的人脸数
+                faceRecNum = 0
                 for j, box in enumerate(det_arr):
                     (startX, startY, endX, endY) = box.astype("int")
                     bb = np.zeros(4, dtype=np.int32)
@@ -162,354 +148,406 @@ class RecognizeThread(threading.Thread):
                     # scaled = alignFace(test_img, rectangles, squareRect, box)
                     scaled = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
                     # cv2.imwrite("./align/align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
+                    # cv2.rectangle(test_img, (startX, startY), (endX, endY), (0,255,0), 2)
                     with self.graph.as_default():
                         unknown_embedding = get_embedding(self.facenet_model, scaled)
                     who_name = get_name_by_embedding(unknown_embedding, self.faceProp, self.euclideanDist)
                     if who_name != '':
-                        self.faceRecNum += 1
+                        faceRecNum += 1
                         curFaceRecNum += 1
                     faces.append({
-                        'id':j,
-                        'box':str([startX/scale, startY/scale, endX/scale, endY/scale]),
-                        'name':who_name,
+                        'id': j,
+                        'box': str([startX / scale, startY / scale, endX / scale, endY / scale]),
+                        'name': who_name
                         # 'embedding':str(list(unknown_embedding))
-                    })# box和embedding如果不转换成str,json.dumps就会报错(目前没有找到解决方法)
+                    })  # box和embedding如果不转换成str,json.dumps就会报错(目前没有找到解决方法)
+
+                    peoples.append({
+                        'id': j,
+                        'name': who_name
+                    })
+
 
                 if curFaceRecNum == face_nums:
-                    face_recog_state = 1 # 全部识别
-                    all_recog_img_list.append(imgPath)
+                    face_recog_state = 1  # 全部识别
                 else:
-                    face_recog_state = 0 # 部分识别
-                    self.partRecFaceImg += 1
-                    part_recog_img_list.append(imgPath)
+                    face_recog_state = 0  # 部分识别
 
                 jsonFaces = json.dumps(faces, ensure_ascii=False)
+                jsonPeoples = json.dumps(peoples, ensure_ascii=False)
             else:
-                face_recog_state = 2 # 没有检测出脸
+                face_recog_state = 2  # 没有检测出脸
                 jsonFaces = ''
-                self.noRecFaceImg += 1
+                jsonPeoples = ''
 
-            tupFData.append(jsonFaces) # faces
-            tupFData.append(face_recog_state) # face_recog_state
-            tupFData.append(0) # verify_state
-            tupFData.append(imgPath) # img_path
-            faceDbData.append(tuple(tupFData))
+            # cv2.imwrite("img_{}.jpg".format(time.time()), cv2.cvtColor(test_img, cv2.COLOR_RGB2BGR))
+            recognizedResultInfo = {'face_nums': face_nums, 'face_recog_state': face_recog_state, 'faceRecNum': faceRecNum, 'img_path': imgPath}
+            self.done_queue.put(json.dumps(recognizedResultInfo, ensure_ascii=False))
 
-            recRatio = round(self.faceRecNum / self.facesNum, 3) # 识别出的人脸/总的人脸
-            unprocessedImg = len(self.pending_imgs_list) - self.processedImg # 未处理的图片
-            allRecFaceImg = self.processedImg - self.partRecFaceImg - self.noRecFaceImg # 全部识别出人脸的图片的总数
-
-            recognizedInfoDict['recognition_rate'] = recRatio # 识别率
-            recognizedInfoDict['recognized_face_num'] = self.faceRecNum # 已识别人脸
-            recognizedInfoDict['part_recognized_pic_num'] = self.partRecFaceImg # 部分识别出人脸的图片的总数
-            recognizedInfoDict['all_recognized_pic_num'] = allRecFaceImg # 全部识别出人脸的图片的总数
-            recognizedInfoDict['handled_pic_num'] = self.processedImg # 已处理图片
-            recognizedInfoDict['unhandled_pic_num'] = unprocessedImg # 未处理的图片
-
-        if len(faceDbData) > 0:
-            self.sql_faces.connectDB()
-            sql = "update facesRecgnizeInfo set faces=?, face_recog_state=?, verify_state=?  where img_path=?"
-            self.sql_faces.executeManyStatement(sql, faceDbData)
-            self.sql_faces.closeDB()
-
-        tupDirData = []
-        dirDbData = []
-        for dirPath in self.pending_dirs_list:
-            tupDirData.append(1)
-            tupDirData.append(dirPath)
-        dirDbData.append(tuple(tupDirData))
-        if len(dirDbData) > 0:
-            self.sql_volume.connectDB()
-            sql = "update volumeInfo set volume_recog_state=?  where volume_path=?"
-            self.sql_volume.executeManyStatement(sql, dirDbData)
-            self.sql_volume.closeDB()
+            # 更新数据库photo_path为imgPath的记录
+            sql_repo.update('face', {"photo_path": [imgPath]},
+                                new_info={'faces': jsonFaces, 'recog_state': face_recog_state,
+                                     'parent_path': os.path.abspath(imgPath + os.path.sep + "..")})
+            sql_repo.update('photo', {"photo_path": [imgPath]}, new_info={'peoples': jsonPeoples})
 
 
-class VerifyThread(threading.Thread):
-    item = []
+class VerifyProcess(Process):
+    graph = None
+    mtcnn_detector = None
+    facenet_model = None
     margin = 32
-    archivalNum = ''
-    subject = ''
     img_path = ''
     faces_list = []
     table_widget = []
     canvasW = 0
     canvasH = 0
 
-    def __init__(self, graph, facenet_model, sql_faces):
-        super(VerifyThread, self).__init__()
-        self.graph = graph
-        self.sql_faces = sql_faces
-        self.facenet_model = facenet_model
+
+    def __init__(self):
+        super(VerifyProcess, self).__init__()
+        self.event = Event()
+        self.event.set()  # 设置为True
 
 
-    def updataData(self, checked_info):
-        self.img_path = checked_info['path']
-        self.faces_list = eval(checked_info['faces'])
-        self.archivalNum = checked_info['arch_num']
-        self.subject = checked_info['theme']
-        self.table_widget = checked_info['table_widget']
-        self.canvasW = checked_info['label_size'][0]
-        self.canvasH = checked_info['label_size'][1]
+    def updataData(self, verify_queue):
+        self.verify_queue =verify_queue
+
+
+    def pause(self):
+        if self.is_alive():
+            print("核验子进程休眠")
+            self.event.clear()  # 设置为False, 让进程阻塞
+        else:
+            print("核验子进程结束")
+
+    def resume(self):
+        if self.is_alive():
+            self.event.set()  # 设置为True, 进程唤醒
+            print("核验子进程唤醒")
+        else:
+            print("核验子进程结束")
 
 
     def run(self):
-        faces_name = []
-        faces_embedding = []
+        if self.graph == None:
+            self.graph = tf.get_default_graph()
+            print('###### VerifyProcess:graph')
+        with self.graph.as_default():
+            if self.facenet_model == None:
+                self.facenet_model = load_model('model/facenet_keras.h5')
+                print('###### VerifyProcess:load model')
 
-        new_faces = []
-        new_faces_name = []
-        new_faces_id = []
+        engine.dispose()
+        sql_repo = RepoGeneral(make_session(engine))
 
-        # img_path = self.item['img_path']
-        # faces_list = eval(self.item['faces'])
-        orig_faces_id = list(range(len(self.faces_list)))
+        while 1:
+            if self.verify_queue.empty() == True:
+                self.pause()
+                print('#### VerifyProcess :队列空,子进程暂停')
+            self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
-        scale = calculate_img_scaling(self.img_path, self.canvasH, self.canvasW)
-        img = cv2.cvtColor(cv2.imdecode(np.fromfile(self.img_path, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
-        (h, w) = img.shape[:2]
-        test_img = cv2.resize(img, (int(w*scale), int(h*scale)))
-        (h, w) = test_img.shape[:2]
+            checkedInfoDict = self.verify_queue.get()
+            checkedInfoDict = eval(checkedInfoDict)
 
-        for item in self.table_widget:
-            if item['id'] == '':
-                continue
-            new_faces_id.append(int(item['id']))
-            new_faces_name.append(item['name'])
-
-
-        for id in orig_faces_id:
-            if id in new_faces_id: # 没有删除
-                index = new_faces_id.index(id)
-                name = new_faces_name[index]
-            else:
-                name = '已删除'
-
-            new_faces.append({
-                'id':id,
-                'box':self.faces_list[id]['box'],
-                'name': name
-            })
-
-            if name != '':
-                (startX, startY, endX, endY) = eval(self.faces_list[id]['box'])
-                (startX, startY, endX, endY) = startX*scale, startY*scale, endX*scale, endY*scale
-                bb = np.zeros(4, dtype=np.int32)
-                bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
-                bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
-                bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
-                bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
-                cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
-                scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
-                with self.graph.as_default():
-                    embedding = get_embedding(self.facenet_model, scaled)
-
-                faces_embedding.append(embedding)
-                faces_name.append(name)
-            else:
-                print('核验---id:{},name:{}'.format(id, name))
-
-        saveData('data/data.npz', faces_name, faces_embedding)
-        verifyed_img_list.append(self.img_path)
-
-        self.sql_faces.connectDB()
-        jsonFaces = json.dumps(new_faces, ensure_ascii=False)
-        verifyState = 1
-        updateStatement = "UPDATE {} SET faces='{}', verify_state={}, archival_num='{}', subject='{}' WHERE img_path='{}'".format(self.sql_faces.tableName, jsonFaces, verifyState, self.archivalNum, self.subject ,self.img_path)
-        self.sql_faces.executeStatement(updateStatement)
-        self.sql_faces.closeDB()
+            self.img_path = checkedInfoDict['path']
+            self.faces_list = eval(checkedInfoDict['faces'])
+            # self.archivalNum = checkedInfoDict['arch_num']
+            # self.subject = checkedInfoDict['theme']
+            self.table_widget = checkedInfoDict['table_widget']
+            self.canvasW = checkedInfoDict['label_size'][0]
+            self.canvasH = checkedInfoDict['label_size'][1]
 
 
+            faces_name = []
+            faces_embedding = []
+
+            new_faces = []
+            new_people = []
+            new_faces_name = []
+            new_faces_id = []
+
+            orig_faces_id = list(range(len(self.faces_list)))
+
+            scale = calculate_img_scaling(self.img_path, self.canvasH, self.canvasW)
+            img = cv2.cvtColor(cv2.imdecode(np.fromfile(self.img_path, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+            (h, w) = img.shape[:2]
+            test_img = cv2.resize(img, (int(w*scale), int(h*scale)))
+            (h, w) = test_img.shape[:2]
+
+            for item in self.table_widget:
+                if item['id'] == '':
+                    continue
+                new_faces_id.append(int(item['id']))
+                new_faces_name.append(item['name'])
+
+
+            for id in orig_faces_id:
+                if id in new_faces_id: # 没有删除
+                    index = new_faces_id.index(id)
+                    name = new_faces_name[index]
+                else:
+                    name = '已删除'
+
+                new_faces.append({
+                    'id':id,
+                    'box':self.faces_list[id]['box'],
+                    'name': name
+                })
+                new_people.append({
+                    'id': id,
+                    'name': name
+                })
+
+                if name != '':
+                    (startX, startY, endX, endY) = eval(self.faces_list[id]['box'])
+                    (startX, startY, endX, endY) = startX*scale, startY*scale, endX*scale, endY*scale
+                    bb = np.zeros(4, dtype=np.int32)
+                    bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
+                    bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
+                    bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
+                    bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
+                    cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
+                    scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
+                    with self.graph.as_default():
+                        embedding = get_embedding(self.facenet_model, scaled)
+
+                    faces_embedding.append(embedding)
+                    faces_name.append(name)
+                else:
+                    print('核验---id:{},name:{}'.format(id, name))
+
+            saveData('data/data.npz', faces_name, faces_embedding)
+            jsonFaces = json.dumps(new_faces, ensure_ascii=False)
+            jsonPeople = json.dumps(new_people, ensure_ascii=False)
+            verifyState = 1
+            sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})
+            sql_repo.update('photo', {"photo_path": [self.img_path]}, new_info={'peoples': jsonPeople})
 
 
 class Recognition(object):
     def __init__(self):
         os.makedirs('data', exist_ok=True)
-        self.rootVolumePath = ''
-        self.rootVolumeName = ''  # 根文件夹的名字
-        self.rootVolumeNum = ''  # 根文件夹的档号
         self.volume_dict = {}  # 用来填充选择的文件夹
-        self.default_select_dirPath = 'D:/'
         self.pending_dirs_list = []
-        self.pending_imgs_list = []
-        self.margin = 32
-        self.faceProp = ''
-        self.last_verifyed_img_nums = 0
 
-        self.graph = tf.get_default_graph()
-        with self.graph.as_default():
-            self.mtcnn_detector = MTCNN() # steps_threshold = [0.5,0.7,0.9]
-            self.facenet_model = load_model('model/facenet_keras.h5')
+        self.data_queue = Queue() # 点击“添加”按钮的时候,用来写入图片路径
+        self.verify_queue = Queue()  # 用来填充核验信息
+        self.done_queue = Manager().Queue() # 返回识别结果信息
+        self.jobs_proc = []   # 将进程对象放进list
+        self.pendingTotalImgsNum = 0 #待处理的图片总数量
+
+        # 返回UI层的识别结果信息
+        self.noRecFaceImg = 0 # 没有识别出人脸的图片的总数
+        self.facesNum = 0  # 总的检测到的所有人脸
+        self.recognized_face_num = 0 # 已识别人脸的总数
+        self.part_recognized_pic_num = 0 # 部分识别出人脸的图片的总数
+        self.all_recognized_pic_num = 0  # 全部识别出人脸的图片的总数
+        self.handled_pic_num = 0 # 已处理图片的总数
+
+        # 用于本次识别
+        self.part_recog_img_list = []
+        self.all_recog_img_list = []
+
+        self.sql_repo = RepoGeneral(make_session(engine))
+
+        # 实例化识别子进程
+        for _ in range(os.cpu_count()):
+            proc = RecognizeProcess(self.done_queue)
+            proc.daemon = True
+            self.jobs_proc.append(proc)
+
+        # 开启核验子进程
+        self.verifyProc = VerifyProcess()
+        self.verifyProc.daemon = True
+        self.verifyProc.updataData(self.verify_queue)
+        self.verifyProc.start()
 
 
-        dbName_faces = './data/faces_recgnize.db'
-        tableName_faces = 'facesRecgnizeInfo'
-        facesColumns = 'id integer primary key, img_path text UNIQUE, archival_num text,faces text, face_recog_state integer, verify_state integer, src_dir text, subject text'
-        dbName_volume = './data/volume.db'
-        tableName_volume = 'volumeInfo'
-        volumeColums = 'id integer primary key, volume_path text UNIQUE, volume_name text, volume_num text, volume_recog_state integer, root_volume_path text, root_volume_num text'
-
-        self.sql_faces = SQL_method(dbName_faces, tableName_faces, facesColumns)
-        self.sql_volume = SQL_method(dbName_volume, tableName_volume, volumeColums)
-
-        try:
-            # 创建数据库文件
-            self.sql_faces.connectDB()
-            self.sql_faces.creatTable()
-            print(">>> facesRecgnizeInfo表创建成功！")
-        except:
-            print(">>> facesRecgnizeInfo表已创建！")
-        finally:
-            self.sql_faces.closeDB()
-
-        try:
-            # 创建数据库文件
-            self.sql_volume.connectDB()
-            self.sql_volume.creatTable()
-            print(">>> volumeInfo表创建成功！")
-        except:
-            print(">>> volumeInfo表已创建！")
-        finally:
-            self.sql_volume.closeDB()
-
+    def initRecognitionInfo(self):
+        self.noRecFaceImg = 0
+        self.facesNum = 0
+        self.recognized_face_num = 0
+        self.part_recognized_pic_num = 0
+        self.all_recognized_pic_num = 0
+        self.handled_pic_num = 0
+        self.all_recog_img_list.clear()
+        self.part_recog_img_list.clear()
 
 
     def recognition(self, params):
         ret = 0
-        self.last_verifyed_img_nums = len(verifyed_img_list)
-        not_verifyed_img_list = [x for x in self.pending_imgs_list if x not in verifyed_img_list]
-        if len(not_verifyed_img_list) > 0:
-            self.pending_imgs_list = not_verifyed_img_list
-        else: #所有图片已经核验完了
-            ret = 1
-            return ret
+        self.initRecognitionInfo()
+        # 再次识别前的数据处理(即预设档号的目录没有变)
+        if self.data_queue.qsize() == 0: # 队列已被取空,说明已经识别完了,这里将未核验的图片数据再次取出进行识别
+            img_path_list = []
+            for dirPath in self.pending_dirs_list:
+                img_path_list += self.sql_repo.query('face', {"parent_path": [dirPath], "verify_state":[0]}, ('photo_path'))
 
-        # 再次识别的时候，将图片存入两个list中
-        part_recog_img_list.clear()
-        all_recog_img_list.clear()
+            if len(img_path_list) > 0 :
+                for elem in img_path_list:
+                    self.data_queue.put(elem['photo_path'])
+                self.pendingTotalImgsNum = self.data_queue.qsize()
+            else: # 所有图片已经核验完了
+                ret = 1
+                return ret
 
-        self.recognizeThread = RecognizeThread(self.mtcnn_detector, self.graph, self.facenet_model, self.sql_faces, self.sql_volume)
-        self.recognizeThread.initialize()
-        self.recognizeThread.updateData(self.pending_imgs_list, self.pending_dirs_list, params)
-        self.recognizeThread.start()
+        for job in self.jobs_proc:
+            if not job.is_alive():
+                print('### pid will start')
+                job.updataData(self.data_queue)
+                job.start()
+            else:
+                job.resume()
+                print('### pid will resume')
+
         return ret
 
 
     def pauseRecognition(self):
-        self.recognizeThread.pause()
+        for job in self.jobs_proc:
+            job.pause()
 
 
     def continueRecognition(self):
-        self.recognizeThread.resume()
+        for job in self.jobs_proc:
+            job.resume()
 
 
     def add_folderItem(self, arch_num_info):
-        print(arch_num_info)
         ret = True
+        photoDbData = []
         faceDbData = []
-        volumeDbData = []
-        self.pending_imgs_list.clear()
         self.pending_dirs_list.clear()
-        verifyed_img_list.clear()
-        part_recog_img_list.clear()
-        all_recog_img_list.clear()
 
-        if len(arch_num_info['root']) == 0 or len(arch_num_info['children']) == 0:
+        if len(arch_num_info['children']) == 0:
             return False
 
-        self.rootVolumePath = list(arch_num_info['root'].keys())[0]
-        self.rootVolumeNum = list(arch_num_info['root'].values())[0]
         self.volume_dict = arch_num_info['children']
 
-        self.sql_volume.connectDB()
         for volume_name, volume_num in self.volume_dict.items():  # 取绝对路径,数据才会保持一样的形式. 例如 'D:\\深圳市社保局联谊活动\\合影\\0.jpg',否则'D:/深圳市社保局联谊活动\\合影'
-            volume_name = volume_name.split('\\')[-1]
-            fileData = glob.glob(os.path.abspath(os.path.join(self.rootVolumePath, volume_name, '*.*[jpg,png]')))
+            fileData = glob.glob(os.path.abspath(os.path.join(volume_name, '*.*[jpg,png]')))
+            print(fileData)
             for i, path in enumerate(fileData):
-                tupFList = []
-                tupFList.append(path)  # img_path
-                tupFList.append(volume_num + '-{0:0>4}'.format(i + 1))  # archival_num
-                tupFList.append(os.path.abspath(os.path.join(path, "..")))  # src_dir
-                tupFList.append(self.rootVolumePath.split('\\')[-1])  # subject
-                faceDbData.append(tuple(tupFList))
-            self.pending_imgs_list.extend(fileData)
-            self.pending_dirs_list.append(os.path.abspath(os.path.join(self.rootVolumePath, volume_name)))
+                self.data_queue.put(path)
+                photoInfo = {}
+                faceInfo = {}
+                photoInfo['arch_code'] = 'A1_lzd_{}'.format(i)
+                photoInfo['photo_path'] = path
+                photoInfo['group_code'] = 'A1_anyun'
+                photoInfo['fonds_code'] = 'A1'
+                photoInfo['arch_category_code'] = 'ZP'
+                photoInfo['year'] = '2020'
+                photoInfo['group_code'] = '0001'
+                photoInfo['photo_code'] = '{0:0>4}'.format(i + 1)
+                photoInfo['format'] ='JPGE'
+                photoInfo['photographer'] = 'lzd'
+                photoInfo['taken_time'] = '20201116'
+                photoInfo['taken_locations'] = '深圳'
+                photoInfo['security_classification'] = '公开'
+                photoInfo['reference_code'] = '深字001'
+                photoDbData.append(photoInfo)
+                faceInfo['photo_path'] = path
+                faceInfo['photo_archival_code'] = 'A1_lzd_{}'.format(i)
+                faceInfo['recog_state'] = 0
+                faceInfo['verify_state'] = 0
+                faceInfo['parent_path'] = volume_name
+                faceDbData.append(faceInfo)
+            self.pending_dirs_list.append(os.path.abspath(os.path.join(volume_name)))
 
-            tupVList = []
-            volume_path = os.path.abspath(os.path.join(self.rootVolumePath, volume_name))
-            tupVList.append(volume_path)  # volume_path
-            tupVList.append(volume_name)  # volume_name
-            tupVList.append(volume_num)  # volume_num
-            volume_recog_state = 0
-            selectStatement = "select volume_recog_state from volumeInfo where volume_path='{}'".format(volume_path)
-            recogStateList = self.sql_volume.getAllData(selectStatement)
-            if len(recogStateList) > 0 :
-                volume_recog_state = recogStateList[0]['volume_recog_state']
-            tupVList.append(volume_recog_state)  # volume_recog_state
-            tupVList.append(self.rootVolumePath)  # root_volume_path
-            tupVList.append(self.rootVolumeNum)  # root_volume_num
-            volumeDbData.append(tuple(tupVList))
-        self.sql_volume.closeDB()
-
-        self.sql_faces.connectDB()
-        sql = "insert or ignore into facesRecgnizeInfo(img_path, archival_num, src_dir, subject) values(?,?,?,?)"
-        self.sql_faces.executeManyStatement(sql, faceDbData)
-        self.sql_faces.closeDB()
-
-        self.sql_volume.connectDB()
-        sql = "insert or replace into volumeInfo(volume_path, volume_name, volume_num, volume_recog_state, root_volume_path, root_volume_num) values(?,?,?,?,?,?)"
-        self.sql_volume.executeManyStatement(sql, volumeDbData)
-        self.sql_volume.closeDB()
+        self.pendingTotalImgsNum = self.data_queue.qsize()
+        self.sql_repo.add('photo', photoDbData)
+        self.sql_repo.add('face', faceDbData)
 
         return ret
 
 
     def updateRecognitionInfo(self):
-        return recognizedInfoDict
+        recognizedResultInfo = {}
+        self.handled_pic_num += self.done_queue.qsize()  # 已处理图片的数量
+        for _ in range(self.done_queue.qsize()):
+            subProcRecognizedResultInfo = self.done_queue.get()
+            subProcRecognizedResultInfo = eval(subProcRecognizedResultInfo)
+            self.facesNum += subProcRecognizedResultInfo['face_nums'] # 总的检测到的所有人脸
+
+            if subProcRecognizedResultInfo['face_recog_state'] == 0:  # 部分识别
+                self.part_recognized_pic_num += 1 # 部分识别出人脸的图片的总数
+                self.part_recog_img_list.append(subProcRecognizedResultInfo['img_path'])
+            elif subProcRecognizedResultInfo['face_recog_state'] == 2:  # 没有识别出来
+                self.noRecFaceImg += 1            # 没有识别出人脸的图片的总数
+            else:
+                self.all_recog_img_list.append(subProcRecognizedResultInfo['img_path'])
+
+            self.recognized_face_num += subProcRecognizedResultInfo['faceRecNum']  # 已识别人脸的总数
+
+        # 全部识别出人脸的图片的总数
+        # self.all_recognized_pic_num = (self.handled_pic_num - self.part_recognized_pic_num -self.noRecFaceImg)
+        self.all_recognized_pic_num = len(self.all_recog_img_list)
+        # print('self.handled_pic_num:', self.handled_pic_num, 'self.part_recognized_pic_num:',
+        #       self.part_recognized_pic_num, 'self.noRecFaceImg:', self.noRecFaceImg, 'self.all_recognized_pic_num:',
+        #       self.all_recognized_pic_num)
+        if self.facesNum > 0 :
+            recRatio = round(self.recognized_face_num / self.facesNum, 3)  # 识别出的人脸/总的人脸
+        else:
+            recRatio = 0.0
+        unprocessedImg = self.pendingTotalImgsNum - self.handled_pic_num
+        recognizedResultInfo['recognition_rate'] = recRatio  # 识别率
+        recognizedResultInfo['recognized_face_num'] = self.recognized_face_num  # 已识别人脸
+        recognizedResultInfo['part_recognized_pic_num'] = self.part_recognized_pic_num  # 部分识别出人脸的图片的总数
+        recognizedResultInfo['all_recognized_pic_num'] = self.all_recognized_pic_num  # 全部识别出人脸的图片的总数
+        recognizedResultInfo['handled_pic_num'] = self.handled_pic_num  # 已处理图片
+        recognizedResultInfo['unhandled_pic_num'] = unprocessedImg  # 未处理的图片
+
+        return recognizedResultInfo
 
 
     def get_recognized_face_info(self, pic_type, dir_type):
         browse_img_list = []
-        for dirPath in self.pending_dirs_list:
-            if pic_type == 1 : # 所有图片
-                selectStatement = "SELECT img_path, archival_num, subject, faces, verify_state FROM {} WHERE face_recog_state in (0, 1) and src_dir='{}'".format(
-                    self.sql_faces.tableName, dirPath)
-            else:
-                if  pic_type == 2: # 代表部分识别图片
-                    faceRecState = 0
-                else: # 3代表全部识别图片
-                    faceRecState = 1
 
-                selectStatement = "SELECT img_path, archival_num, subject, faces, verify_state FROM {} WHERE face_recog_state={} and src_dir='{}'".format(
-                    self.sql_faces.tableName, faceRecState, dirPath)
+        if dir_type == 1: # 代表本次识别
+            if pic_type == 1: # 所有图片
+                total_img_list = self.part_recog_img_list + self.all_recog_img_list
+                recog_state = [0, 1]
+            elif pic_type == 2: # 代表部分识别图片
+                total_img_list = self.part_recog_img_list
+                recog_state = [0]
+            else:  # 3代表全部识别图片
+                total_img_list = self.all_recog_img_list
+                recog_state = [1]
 
-            self.sql_faces.connectDB()
-            data = self.sql_faces.getAllData(selectStatement)
-            self.sql_faces.closeDB()
+            for img in total_img_list:
+                face_dict = self.sql_repo.query('face', {"photo_path": [img], "recog_state": recog_state}, ('faces', 'verify_state'))
+                photo_dict = self.sql_repo.query('photo', {"photo_path": [img]}, (
+                    'photo_path', 'arch_code', 'photo_code', 'peoples', 'format', 'fonds_code',
+                    'arch_category_code', 'year', 'group_code', 'photographer', 'taken_time',
+                    'taken_locations', 'security_classification', 'reference_code'))
+                browse_img_list.append(dict(photo_dict[0], **face_dict[0]))
 
-            if dir_type == 1: # 代表本次识别
-                total_img_list = part_recog_img_list + all_recog_img_list
-                if len(total_img_list) > 0 and (len(verifyed_img_list) - self.last_verifyed_img_nums) < len(total_img_list): # 进行过识别.并且还没识别完
-                    if pic_type == 1:
-                        dataTmp = [item for item in data if item['img_path'] in total_img_list]
-                    elif pic_type == 2:
-                        dataTmp = [item for item in data if item['img_path'] in part_recog_img_list]
-                    else:  # 3代表全部识别图片
-                        dataTmp = [item for item in data if item['img_path'] in all_recog_img_list]
+        else: # 2代表所选目录的识别情况
+            for dirPath in self.pending_dirs_list:
+                if pic_type == 1 : # 所有图片
+                    recog_state = [0, 1]
+                elif pic_type == 2: # 代表部分识别图片
+                    recog_state = [0]
+                else:  # 3代表全部识别图片
+                    recog_state = [1]
 
-                    browse_img_list.extend(dataTmp)
-                else: #没进行识别，先查看数据库的数据
-                    browse_img_list.extend(data)
-            else: # 2代表所选目录的识别情况
-                browse_img_list.extend(data)
+                photo_path_dict = self.sql_repo.query('face', {"parent_path": [dirPath], "recog_state": recog_state}, ('photo_path'))
+                for img in photo_path_dict:
+                    face_dict = self.sql_repo.query('face', {"photo_path": [img['photo_path']], "recog_state": recog_state},
+                                               ('faces', 'verify_state'))
+                    photo_dict = self.sql_repo.query('photo', {"photo_path": [img['photo_path']]}, (
+                        'photo_path', 'arch_code', 'photo_code', 'peoples', 'format', 'fonds_code',
+                        'arch_category_code', 'year', 'group_code', 'photographer', 'taken_time',
+                        'taken_locations', 'security_classification', 'reference_code'))
+                    browse_img_list.append(dict(photo_dict[0], **face_dict[0]))
 
         return browse_img_list
 
 
     def checke_faces_info(self, checked_info):
-        self.verifyThread = VerifyThread(self.graph, self.facenet_model, self.sql_faces)
-        self.verifyThread.updataData(checked_info)
-        self.verifyThread.start()
+        if self.verify_queue.empty() == True:
+            self.verifyProc.resume()
+        self.verify_queue.put(json.dumps(checked_info, ensure_ascii=False))
 
 
     def get_archival_number(self, path):
@@ -517,11 +555,8 @@ class Recognition(object):
             "root": {},
             "children": {}
         }
-        self.sql_volume.connectDB()
-        selectStatement = "select volume_path, volume_num, root_volume_num from volumeInfo  where root_volume_path='{}'".format(path)
-        dataList = self.sql_volume.getAllData(selectStatement)
-        self.sql_volume.closeDB()
 
+        dataList = []
         if dataList:
             for ele in dataList:
                 arch_num_info["root"].update({path: ele['root_volume_num']})

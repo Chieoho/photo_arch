@@ -43,6 +43,7 @@ class PhotoInputData(object):
 @dataclass
 class GroupOutputData(object):
     arch_code: str = ''
+    group_path: str = ''
     fonds_code: str = ''
     arch_category_code: str = ''
     retention_period: str = ''

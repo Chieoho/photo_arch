@@ -449,7 +449,7 @@ def warp_im(img_im, orgi_landmarks,tar_landmarks):
 def alignFace2(img, rectangles, rectanglesExd, squareRect, box):
     index = selectedRectIndex(rectangles, box)
     margin = int((rectanglesExd[index][0] - squareRect[index][0]) / 2)
-    print('#### alignFace2:', margin)
+    # print('#### alignFace2:', margin)
     imgSize = [160, 160 + margin]
     face_landmarks = np.reshape(rectanglesExd[index][5:15], (5, 2)).tolist()
     warpImg = warp_im(img, face_landmarks, std_landmark)

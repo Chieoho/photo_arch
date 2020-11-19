@@ -6,29 +6,43 @@
 @time: 2020/11/12 9:53
 """
 from typing import List
-from photo_arch.use_cases.interfaces.repositories_if import RepoIf
-from photo_arch.use_cases.interfaces.presenter_if import PresenterIf
 
 
-class Repo(RepoIf):
-    def add_group(self, group) -> bool:
+class Repo:
+    @staticmethod
+    def add_group(group) -> bool:
+        _ = group
         return True
 
-    def query_group_by_path(self, group_path: str) -> List[dict]:
+    @staticmethod
+    def query_group_by_path(group_path) -> List[dict]:
+        _ = group_path
         return [{'group_path': 'test'}]
 
-    def add_photo(self, photo) -> bool:
+    @staticmethod
+    def add_photo(photo) -> bool:
+        _ = photo
         return True
 
-    def get_all_groups(self) -> List[dict]:
-        pass
+    @staticmethod
+    def get_all_groups() -> List[dict]:
+        return []
 
-
-class Presenter(PresenterIf):
-    def set_photo_info(self, photo_info) -> bool:
+    @staticmethod
+    def update_group(group) -> bool:
+        _ = group
         return True
 
-    def set_group_info(self, photo_info) -> bool:
+
+class Presenter:
+    @staticmethod
+    def update_group_model(group_info) -> bool:
+        _ = group_info
+        return True
+
+    @staticmethod
+    def update_arch_model(group_info_list) -> bool:
+        _ = group_info_list
         return True
 
 
