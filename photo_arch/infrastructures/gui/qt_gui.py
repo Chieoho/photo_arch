@@ -13,6 +13,7 @@ import time
 from threading import Thread
 import typing
 from collections import defaultdict
+import glob
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -167,16 +168,24 @@ class View(object):
     def __init__(self):
         self.view_model = view_model
 
-    def display_group(self):
+    def _display_group(self, widget_suffix):
         for k, v in self.view_model.group.items():
-            widget = getattr(mw.ui, k + '_in_group')
-            if isinstance(widget, QComboBox):
-                if v:
-                    widget.setCurrentText(v)
+            widget_name = k + widget_suffix
+            if hasattr(mw.ui, widget_name):
+                widget = getattr(mw.ui, widget_name)
+                if isinstance(widget, QComboBox):
+                    if v:
+                        widget.setCurrentText(v)
+                    else:
+                        widget.setCurrentIndex(-1)
                 else:
-                    widget.setCurrentIndex(-1)
-            else:
-                widget.setText(v)
+                    widget.setText(v)
+
+    def display_group_in_description(self):
+        self._display_group('_in_group')
+
+    def display_group_in_arch_browse(self):
+        self._display_group('_in_group_arch')
 
     @staticmethod
     def display_photo(photo_path):
@@ -751,12 +760,14 @@ class GroupDescription(object):
 
     @staticmethod
     @catch_exception
-    def display_group(path=None):
+    def display_group(path=''):
         if path:
             group_name = os.path.split(path)[1]
             mw.controller.get_group(group_name)
-            mw.ui.group_path_in_group.setText(group_name)
-        mw.view.display_group()
+        else:
+            group_name = ''
+        mw.view.display_group_in_description()
+        mw.ui.group_path_in_group.setText(group_name)
 
     @staticmethod
     @catch_exception
@@ -802,6 +813,7 @@ class Training(object):
 class ArchBrowser(object):
     pix_map = None
     group_name = None
+    path = r'.\training_data'
 
     def __init__(self):
         list_widget = mw.ui.photo_list_widget
@@ -813,7 +825,7 @@ class ArchBrowser(object):
 
         mw.ui.photo_view_in_arch.resizeEvent = self.resize_image
         mw.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
-        mw.ui.arch_tree_view.clicked.connect(self.list_photo_thumb)
+        mw.ui.arch_tree_view.clicked.connect(self.show_group)
 
     @staticmethod
     @catch_exception
@@ -829,18 +841,27 @@ class ArchBrowser(object):
 
     @staticmethod
     @catch_exception
-    def list_photo_thumb(index):
+    def show_group(index):
         ArchBrowser.group_name = index.data()
-        for i in range(1, 7):
-            path = f'.\\training_data\\{ArchBrowser.group_name}\\000{i}.jpg'
-            item = QListWidgetItem(QIcon(path), f'000{i}.jpg')
+        ArchBrowser._list_photo_thumb()
+        mw.controller.get_group(ArchBrowser.group_name)
+        mw.view.display_group_in_arch_browse()
+        mw.ui.photo_view_in_arch.clear()
+
+    @staticmethod
+    @catch_exception
+    def _list_photo_thumb():
+        mw.ui.photo_list_widget.clear()
+        path = os.path.join(ArchBrowser.path, ArchBrowser.group_name, '*.*')
+        for fp in glob.iglob(path):
+            item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1])
             mw.ui.photo_list_widget.addItem(item)
 
     @staticmethod
     @catch_exception
     def display_photo(item):
         photo_name = item.text()
-        path = f'.\\training_data\\{ArchBrowser.group_name}\\{photo_name}'
+        path = os.path.join(ArchBrowser.path, ArchBrowser.group_name, photo_name)
         ArchBrowser.pix_map = QPixmap(path)
         pix_map = ArchBrowser.pix_map.scaled(mw.ui.photo_view_in_arch.size(),
                                              Qt.KeepAspectRatio,
