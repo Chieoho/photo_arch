@@ -138,7 +138,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.interaction != typing.Any:
                 untrained_photo_num = self.interaction.get_untrained_photo_num()
                 self.ui.untrained_num_label.setText(str(untrained_photo_num))
-        elif tab_id == 4:  # 选中“档案浏览”tab
+        elif tab_id in (4, 5):  # 选中“档案浏览”或“档案移交”tab
             self.controller.browse_arch()
             self.view.display_arch()
         else:
@@ -208,30 +208,36 @@ class View(object):
             widget = getattr(mw.ui, f'{k}_in_photo')
             widget.setText(mw.photo_info_dict.get(photo_path).get(k, ''))
 
-    def fill_model_from_dict(self, parent, d):
+    def _fill_model_from_dict(self, parent, d):
         if isinstance(d, dict):
             for k, v in d.items():
                 child = QStandardItem(str(k))
                 parent.appendRow(child)
-                self.fill_model_from_dict(child, v)
+                self._fill_model_from_dict(child, v)
         elif isinstance(d, list):
             for v in d:
-                self.fill_model_from_dict(parent, v)
+                self._fill_model_from_dict(parent, v)
         else:
             parent.appendRow(QStandardItem(str(d)))
 
-    def display_arch(self):
+    def display_arch(self, priority_key='年度'):
         data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
         for gi in self.view_model.arch:
             fc = gi.get('fonds_code')
             ye = gi.get('year')
             rp = gi.get('retention_period')
             gp = gi.get('group_path')
-            data[fc][ye][rp].append(gp)
+            if priority_key == '年度':
+                data[fc][ye][rp].append(gp)
+            else:
+                data[fc][rp][ye].append(gp)
         model = QStandardItemModel()
         model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
-        self.fill_model_from_dict(model.invisibleRootItem(), data)
-        mw.ui.arch_tree_view.setModel(model)
+        self._fill_model_from_dict(model.invisibleRootItem(), data)
+        mw.ui.arch_tree_view_browse.setModel(model)
+        mw.ui.arch_tree_view_browse.expandAll()
+        mw.ui.arch_tree_view_transfer.setModel(model)
+        mw.ui.arch_tree_view_transfer.expandAll()
 
 
 class Recognition(object):
@@ -341,9 +347,7 @@ class PhotoDescription(object):
         mw.ui.next_btn.clicked.connect(self.next_photo)
         mw.ui.tableWidget.itemChanged.connect(self.table_item_changed)
         mw.ui.select_dir_radioButton.toggled.connect(self.dir_choose)
-        mw.ui.select_dir_radioButton.setToolTip('显示本次识别所选目录下的照片')
         mw.ui.current_dir_radioButton.toggled.connect(self.dir_choose)
-        mw.ui.current_dir_radioButton.setToolTip('显示当前工作目录下的照片')
 
         mw.ui.all_photo_radioButton.setEnabled(False)
         mw.ui.part_recognition_radioButton.setEnabled(False)
@@ -813,7 +817,6 @@ class Training(object):
 class ArchBrowser(object):
     pix_map = None
     group_name = None
-    path = r'.\training_data'
 
     def __init__(self):
         list_widget = mw.ui.photo_list_widget
@@ -825,7 +828,8 @@ class ArchBrowser(object):
 
         mw.ui.photo_view_in_arch.resizeEvent = self.resize_image
         mw.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
-        mw.ui.arch_tree_view.clicked.connect(self.show_group)
+        mw.ui.arch_tree_view_browse.clicked.connect(self.show_group)
+        mw.ui.order_combobox_browse.currentTextChanged.connect(self.display_arch)
 
     @staticmethod
     @catch_exception
@@ -842,31 +846,91 @@ class ArchBrowser(object):
     @staticmethod
     @catch_exception
     def show_group(index):
+        if index.child(0, 0).data():  # 点击的不是组名则返回
+            return
         ArchBrowser.group_name = index.data()
-        ArchBrowser._list_photo_thumb()
         mw.controller.get_group(ArchBrowser.group_name)
         mw.view.display_group_in_arch_browse()
         mw.ui.photo_view_in_arch.clear()
+        ArchBrowser._list_photo_thumb()
 
     @staticmethod
     @catch_exception
     def _list_photo_thumb():
         mw.ui.photo_list_widget.clear()
-        path = os.path.join(ArchBrowser.path, ArchBrowser.group_name, '*.*')
+        path = os.path.join(Setting.path, ArchBrowser.group_name, '*.*')
         for fp in glob.iglob(path):
             item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1])
             mw.ui.photo_list_widget.addItem(item)
+            QApplication.processEvents()
 
     @staticmethod
     @catch_exception
     def display_photo(item):
         photo_name = item.text()
-        path = os.path.join(ArchBrowser.path, ArchBrowser.group_name, photo_name)
+        path = os.path.join(Setting.path, ArchBrowser.group_name, photo_name)
         ArchBrowser.pix_map = QPixmap(path)
         pix_map = ArchBrowser.pix_map.scaled(mw.ui.photo_view_in_arch.size(),
                                              Qt.KeepAspectRatio,
                                              Qt.SmoothTransformation)
         mw.ui.photo_view_in_arch.setPixmap(pix_map)
+
+    @staticmethod
+    @catch_exception
+    def display_arch(text):
+        mw.ui.order_combobox_transfer.setCurrentText(text)
+        mw.view.display_arch(text)
+
+
+class ArchTransfer(object):
+    selected_arch_list = []
+
+    def __init__(self):
+        list_widget = mw.ui.selected_arch_list_widget
+        list_widget.setViewMode(QListWidget.IconMode)
+        list_widget.setIconSize(QSize(200, 150))
+        list_widget.setResizeMode(QListWidget.Adjust)
+        list_widget.itemDoubleClicked.connect(self.unselect_arch)
+
+        mw.ui.order_combobox_transfer.currentTextChanged.connect(self.display_arch)
+        mw.ui.arch_tree_view_transfer.doubleClicked.connect(self.select_arch)
+
+    @staticmethod
+    @catch_exception
+    def display_arch(text):
+        mw.ui.order_combobox_browse.setCurrentText(text)
+        mw.view.display_arch(text)
+
+    @staticmethod
+    @catch_exception
+    def select_arch(index):
+        if index.child(0, 0).data():  # 点击的不是组名则返回
+            return
+        group_name = index.data()
+        if group_name in ArchTransfer.selected_arch_list:
+            return
+        path = os.path.join(Setting.path, group_name, '*.*')
+        for fp in glob.iglob(path):
+            item = QListWidgetItem(QIcon(fp), group_name)
+            mw.ui.selected_arch_list_widget.addItem(item)
+            break
+        ArchTransfer.selected_arch_list.append(group_name)
+
+    @staticmethod
+    @catch_exception
+    def unselect_arch(item):
+        row = mw.ui.selected_arch_list_widget.row(item)
+        mw.ui.selected_arch_list_widget.takeItem(row)
+        item_text = item.text()
+        if item_text in ArchTransfer.selected_arch_list:
+            ArchTransfer.selected_arch_list.remove(item_text)
+
+
+class Setting(object):
+    path = r'.\已著录'
+
+    def __init__(self):
+        pass
 
 
 def init_parts():
@@ -875,3 +939,5 @@ def init_parts():
     GroupDescription()
     Training()
     ArchBrowser()
+    ArchTransfer()
+    Setting()
