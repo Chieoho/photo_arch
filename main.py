@@ -17,7 +17,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     mw = qt_gui.mw = MainWindow(app)
     mw.resize(int(mw.dt_width*SCALE), int(mw.dt_height*SCALE))
-    init_parts()
+    init_parts(mw)
     mw.show()
     sys.exit(app.exec_())
 

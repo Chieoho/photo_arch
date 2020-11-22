@@ -794,24 +794,29 @@ class GroupDescription(object):
         GroupDescription._generate_dir_tree(root_arch_info, arch_list)
 
 
-class Training(object):
-    def __init__(self):
-        mw.ui.train_btn.clicked.connect(self.start_training)
-        mw.ui.train_btn.setStyleSheet(mw.button_style_sheet)
+def static(method):
+    sign = inspect.signature(method)
+    return lambda *a: method(*a[0: len(sign.parameters)])
 
-    @staticmethod
+
+class Training(object):
+    def __init__(self, mw_: MainWindow):
+        self.mw = mw_
+        self.mw.ui.train_btn.clicked.connect(static(self.start_training))
+        self.mw.ui.train_btn.setStyleSheet(self.mw.button_style_sheet)
+
     @catch_exception
-    def start_training():
-        training_info = mw.interaction.start_training()
+    def start_training(self):
+        training_info = self.mw.interaction.start_training()
         model_acc = training_info.get('model_acc')
         if model_acc == -1:
-            mw.msg_box('训练数据不存在，请核验人脸信息，收集数据')
+            self.mw.msg_box('训练数据不存在，请核验人脸信息，收集数据')
         elif model_acc == -2:
-            mw.msg_box('数据只有一类标签，至少需要两类标签')
+            self.mw.msg_box('数据只有一类标签，至少需要两类标签')
         else:
-            mw.ui.model_acc_label.setText(str(model_acc))
-        untrained_photo_num = mw.interaction.get_untrained_photo_num()
-        mw.ui.untrained_num_label.setText(str(untrained_photo_num))
+            self.mw.ui.model_acc_label.setText(str(model_acc))
+        untrained_photo_num = self.mw.interaction.get_untrained_photo_num()
+        self.mw.ui.untrained_num_label.setText(str(untrained_photo_num))
 
 
 class ArchBrowser(object):
@@ -933,11 +938,11 @@ class Setting(object):
         pass
 
 
-def init_parts():
+def init_parts(mw_):
     Recognition()
     PhotoDescription()
     GroupDescription()
-    Training()
+    Training(mw_)
     ArchBrowser()
     ArchTransfer()
     Setting()
