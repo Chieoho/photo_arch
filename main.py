@@ -13,11 +13,11 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
     Recognition,
     PhotoDescription,
     GroupDescription,
-    ArchBrowser,
-    ArchTransfer,
-    Setting
 )
 from photo_arch.infrastructures.user_interface.qt.interaction.training import Training
+from photo_arch.infrastructures.user_interface.qt.interaction.arch_transfer import ArchTransfer
+from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
+from photo_arch.infrastructures.user_interface.qt.interaction.arch_browser import ArchBrowser
 
 SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
 
@@ -27,8 +27,8 @@ def init_modules(mw_):
     PhotoDescription()
     GroupDescription()
     Training(mw_)
-    ArchBrowser()
-    ArchTransfer()
+    ArchBrowser(mw_)
+    ArchTransfer(mw_)
     Setting()
 
 

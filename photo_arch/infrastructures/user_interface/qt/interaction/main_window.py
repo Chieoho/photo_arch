@@ -13,7 +13,6 @@ import time
 from threading import Thread
 import typing
 from collections import defaultdict
-import glob
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -30,6 +29,11 @@ class RunState(object):
     stop = 0
     running = 1
     pause = 2
+
+
+def static(method):
+    sign = inspect.signature(method)
+    return lambda *a: method(*a[0: len(sign.parameters)])
 
 
 def catch_exception(func):
@@ -793,148 +797,3 @@ class GroupDescription(object):
         children_arch.update({(fp[len(root_path)+1:], an) for fp, an in arch_code_info['children'].items()})
         arch_list = children_arch.items()
         GroupDescription._generate_dir_tree(root_arch_info, arch_list)
-
-
-def static(method):
-    sign = inspect.signature(method)
-    return lambda *a: method(*a[0: len(sign.parameters)])
-
-
-class Training(object):
-    def __init__(self, mw_: MainWindow):
-        self.mw = mw_
-        self.mw.ui.train_btn.clicked.connect(static(self.start_training))
-        self.mw.ui.train_btn.setStyleSheet(self.mw.button_style_sheet)
-
-    @catch_exception
-    def start_training(self):
-        training_info = self.mw.interaction.start_training()
-        model_acc = training_info.get('model_acc')
-        if model_acc == -1:
-            self.mw.msg_box('训练数据不存在，请核验人脸信息，收集数据')
-        elif model_acc == -2:
-            self.mw.msg_box('数据只有一类标签，至少需要两类标签')
-        else:
-            self.mw.ui.model_acc_label.setText(str(model_acc))
-        untrained_photo_num = self.mw.interaction.get_untrained_photo_num()
-        self.mw.ui.untrained_num_label.setText(str(untrained_photo_num))
-
-
-class ArchBrowser(object):
-    pix_map = None
-    group_name = None
-
-    def __init__(self):
-        list_widget = mw.ui.photo_list_widget
-        list_widget.setViewMode(QListWidget.IconMode)
-        list_widget.setIconSize(QSize(200, 150))
-        # list_widget.setFixedHeight(235)
-        list_widget.setWrapping(False)  # 只一行显示
-        list_widget.itemClicked.connect(self.display_photo)
-
-        mw.ui.photo_view_in_arch.resizeEvent = self.resize_image
-        mw.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
-        mw.ui.arch_tree_view_browse.clicked.connect(self.show_group)
-        mw.ui.order_combobox_browse.currentTextChanged.connect(self.display_arch)
-        mw.ui.add_list_btn.setStyleSheet(mw.button_style_sheet)
-
-    @staticmethod
-    @catch_exception
-    def resize_image(event):
-        if not ArchBrowser.pix_map:
-            return
-        size = event.size()
-        w, h = size.width() - 1, size.height() - 1  # wow
-        pix_map = ArchBrowser.pix_map.scaled(w, h,
-                                             Qt.KeepAspectRatio,
-                                             Qt.SmoothTransformation)
-        mw.ui.photo_view_in_arch.setPixmap(pix_map)
-
-    @staticmethod
-    @catch_exception
-    def show_group(index):
-        if index.child(0, 0).data():  # 点击的不是组名则返回
-            return
-        ArchBrowser.group_name = index.data()
-        mw.controller.get_group(ArchBrowser.group_name)
-        mw.view.display_group_in_arch_browse()
-        mw.ui.photo_view_in_arch.clear()
-        ArchBrowser._list_photo_thumb()
-
-    @staticmethod
-    @catch_exception
-    def _list_photo_thumb():
-        mw.ui.photo_list_widget.clear()
-        path = os.path.join(Setting.path, ArchBrowser.group_name, '*.*')
-        for fp in glob.iglob(path):
-            item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1])
-            mw.ui.photo_list_widget.addItem(item)
-            QApplication.processEvents()
-
-    @staticmethod
-    @catch_exception
-    def display_photo(item):
-        photo_name = item.text()
-        path = os.path.join(Setting.path, ArchBrowser.group_name, photo_name)
-        ArchBrowser.pix_map = QPixmap(path)
-        pix_map = ArchBrowser.pix_map.scaled(mw.ui.photo_view_in_arch.size(),
-                                             Qt.KeepAspectRatio,
-                                             Qt.SmoothTransformation)
-        mw.ui.photo_view_in_arch.setPixmap(pix_map)
-
-    @staticmethod
-    @catch_exception
-    def display_arch(text):
-        mw.ui.order_combobox_transfer.setCurrentText(text)
-        mw.view.display_arch(text)
-
-
-class ArchTransfer(object):
-    selected_arch_list = []
-
-    def __init__(self):
-        list_widget = mw.ui.selected_arch_list_widget
-        list_widget.setViewMode(QListWidget.IconMode)
-        list_widget.setIconSize(QSize(200, 150))
-        list_widget.setResizeMode(QListWidget.Adjust)
-        list_widget.itemDoubleClicked.connect(self.unselect_arch)
-
-        mw.ui.order_combobox_transfer.currentTextChanged.connect(self.display_arch)
-        mw.ui.arch_tree_view_transfer.doubleClicked.connect(self.select_arch)
-
-    @staticmethod
-    @catch_exception
-    def display_arch(text):
-        mw.ui.order_combobox_browse.setCurrentText(text)
-        mw.view.display_arch(text)
-
-    @staticmethod
-    @catch_exception
-    def select_arch(index):
-        if index.child(0, 0).data():  # 点击的不是组名则返回
-            return
-        group_name = index.data()
-        if group_name in ArchTransfer.selected_arch_list:
-            return
-        path = os.path.join(Setting.path, group_name, '*.*')
-        for fp in glob.iglob(path):
-            item = QListWidgetItem(QIcon(fp), group_name)
-            mw.ui.selected_arch_list_widget.addItem(item)
-            break
-        ArchTransfer.selected_arch_list.append(group_name)
-
-    @staticmethod
-    @catch_exception
-    def unselect_arch(item):
-        row = mw.ui.selected_arch_list_widget.row(item)
-        mw.ui.selected_arch_list_widget.takeItem(row)
-        item_text = item.text()
-        if item_text in ArchTransfer.selected_arch_list:
-            ArchTransfer.selected_arch_list.remove(item_text)
-
-
-class Setting(object):
-    path = r'.\已著录'
-
-    def __init__(self):
-        pass
