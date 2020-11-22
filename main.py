@@ -6,18 +6,40 @@
 @time: 2020/11/5 16:43
 """
 import sys
-from photo_arch.infrastructures.gui.qt_gui import QtWidgets, MainWindow, init_parts
-from photo_arch.infrastructures.gui import qt_gui
-
+from photo_arch.infrastructures.user_interface.qt.interaction import main_window
+from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
+    QtWidgets,
+    MainWindow,
+    Recognition,
+    PhotoDescription,
+    GroupDescription,
+    ArchBrowser,
+    ArchTransfer,
+    Setting
+)
+from photo_arch.infrastructures.user_interface.qt.interaction.training import Training
 
 SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
 
 
+def init_modules(mw_):
+    Recognition()
+    PhotoDescription()
+    GroupDescription()
+    Training(mw_)
+    ArchBrowser()
+    ArchTransfer()
+    Setting()
+
+
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    mw = qt_gui.mw = MainWindow(app)
+    mw = main_window.mw = MainWindow(app)
     mw.resize(int(mw.dt_width*SCALE), int(mw.dt_height*SCALE))
-    init_parts(mw)
+    ax = int((mw.dt_width - mw.width()) / 2)
+    ay = int((mw.dt_height - mw.height()) / 2) - 100
+    mw.move(ax, ay)
+    init_modules(mw)
     mw.show()
     sys.exit(app.exec_())
 

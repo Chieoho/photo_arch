@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\qt\mainwindow.ui'
+# Form implementation generated from reading ui file '.\ui\mainwindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.0
 #
@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         font.setPointSize(14)
         MainWindow.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(".\\qt\\../icon/face.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(".\\ui\\../icon/face.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("")
         MainWindow.setIconSize(QtCore.QSize(24, 24))
@@ -98,7 +98,7 @@ class Ui_MainWindow(object):
         self.open_dir_btn.setFont(font)
         self.open_dir_btn.setStyleSheet("padding:8px;  ")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(".\\qt\\../icon/open.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(".\\ui\\../icon/open.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.open_dir_btn.setIcon(icon1)
         self.open_dir_btn.setIconSize(QtCore.QSize(24, 24))
         self.open_dir_btn.setObjectName("open_dir_btn")
@@ -150,7 +150,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(".\\qt\\../icon/cancel.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(".\\ui\\../icon/cancel.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.cancel_folder_btn.setIcon(icon2)
         self.cancel_folder_btn.setIconSize(QtCore.QSize(24, 24))
         self.cancel_folder_btn.setObjectName("cancel_folder_btn")
@@ -175,7 +175,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(".\\qt\\../icon/add_file.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(".\\ui\\../icon/add_file.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.add_folder_btn.setIcon(icon3)
         self.add_folder_btn.setIconSize(QtCore.QSize(24, 24))
         self.add_folder_btn.setObjectName("add_folder_btn")
@@ -289,7 +289,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(".\\qt\\../icon/save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(".\\ui\\../icon/save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.save_group_btn.setIcon(icon4)
         self.save_group_btn.setIconSize(QtCore.QSize(24, 24))
         self.save_group_btn.setObjectName("save_group_btn")
@@ -617,7 +617,7 @@ class Ui_MainWindow(object):
         self.gridLayout_8.addWidget(self.arch_category_code_in_group, 2, 3, 1, 1)
         self.gridLayout_5.addWidget(self.splitter, 0, 0, 1, 1)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(".\\qt\\../icon/dirtree.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(".\\ui\\../icon/dirtree.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tabWidget.addTab(self.group_tab, icon5, "")
         self.recognition_tab = QtWidgets.QWidget()
         font = QtGui.QFont()
@@ -657,7 +657,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(".\\qt\\../icon/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(".\\ui\\../icon/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pausecontinue_btn.setIcon(icon6)
         self.pausecontinue_btn.setIconSize(QtCore.QSize(24, 24))
         self.pausecontinue_btn.setObjectName("pausecontinue_btn")
@@ -682,7 +682,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(".\\qt\\../icon/run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap(".\\ui\\../icon/run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.recogni_btn.setIcon(icon7)
         self.recogni_btn.setIconSize(QtCore.QSize(24, 24))
         self.recogni_btn.setObjectName("recogni_btn")
@@ -1036,7 +1036,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(".\\qt\\../icon/previous.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon8.addPixmap(QtGui.QPixmap(".\\ui\\../icon/previous.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pre_btn.setIcon(icon8)
         self.pre_btn.setIconSize(QtCore.QSize(24, 24))
         self.pre_btn.setObjectName("pre_btn")
@@ -1075,7 +1075,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(".\\qt\\../icon/next.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon9.addPixmap(QtGui.QPixmap(".\\ui\\../icon/next.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.next_btn.setIcon(icon9)
         self.next_btn.setIconSize(QtCore.QSize(24, 24))
         self.next_btn.setObjectName("next_btn")
@@ -1337,7 +1337,7 @@ class Ui_MainWindow(object):
         self.gridLayout_15.addWidget(self.reference_code_in_photo, 10, 1, 1, 1)
         self.gridLayout_9.addWidget(self.splitter_2, 0, 0, 1, 1)
         icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(".\\qt\\../icon/picture.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon10.addPixmap(QtGui.QPixmap(".\\ui\\../icon/picture.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tabWidget.addTab(self.photo_tab, icon10, "")
         self.modeltrain_tab = QtWidgets.QWidget()
         font = QtGui.QFont()
@@ -1456,7 +1456,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(".\\qt\\../icon/start_training.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon11.addPixmap(QtGui.QPixmap(".\\ui\\../icon/start_training.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.train_btn.setIcon(icon11)
         self.train_btn.setIconSize(QtCore.QSize(24, 24))
         self.train_btn.setObjectName("train_btn")
@@ -1473,7 +1473,7 @@ class Ui_MainWindow(object):
         spacerItem21 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.gridLayout_3.addItem(spacerItem21, 0, 1, 1, 1)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(".\\qt\\../icon/training.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon12.addPixmap(QtGui.QPixmap(".\\ui\\../icon/training.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tabWidget.addTab(self.modeltrain_tab, icon12, "")
         self.arch_view_tab = QtWidgets.QWidget()
         font = QtGui.QFont()
@@ -1676,7 +1676,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(".\\qt\\../icon/add_list.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon13.addPixmap(QtGui.QPixmap(".\\ui\\../icon/add_list.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.add_list_btn.setIcon(icon13)
         self.add_list_btn.setIconSize(QtCore.QSize(24, 24))
         self.add_list_btn.setObjectName("add_list_btn")
@@ -2016,7 +2016,7 @@ class Ui_MainWindow(object):
         self.gridLayout_20.addWidget(self.photo_list_widget, 0, 0, 1, 1)
         self.gridLayout_17.addWidget(self.splitter_4, 0, 0, 1, 1)
         icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(".\\qt\\../icon/view_arch.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon14.addPixmap(QtGui.QPixmap(".\\ui\\../icon/view_arch.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tabWidget.addTab(self.arch_view_tab, icon14, "")
         self.arch_transfer_tab = QtWidgets.QWidget()
         font = QtGui.QFont()
@@ -2199,7 +2199,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap(".\\qt\\../icon/package.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon15.addPixmap(QtGui.QPixmap(".\\ui\\../icon/package.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton.setIcon(icon15)
         self.pushButton.setIconSize(QtCore.QSize(24, 24))
         self.pushButton.setObjectName("pushButton")
@@ -2209,7 +2209,7 @@ class Ui_MainWindow(object):
         self.gridLayout_25.addWidget(self.frame_10, 3, 0, 1, 2)
         self.gridLayout_23.addWidget(self.splitter_5, 0, 0, 1, 1)
         icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(".\\qt\\../icon/arch_transfer.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon16.addPixmap(QtGui.QPixmap(".\\ui\\../icon/arch_transfer.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tabWidget.addTab(self.arch_transfer_tab, icon16, "")
         self.setting_tab = QtWidgets.QWidget()
         font = QtGui.QFont()
@@ -2304,7 +2304,7 @@ class Ui_MainWindow(object):
         spacerItem34 = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_28.addItem(spacerItem34, 1, 0, 1, 1)
         icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(".\\qt\\../icon/setting.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon17.addPixmap(QtGui.QPixmap(".\\ui\\../icon/setting.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tabWidget.addTab(self.setting_tab, icon17, "")
         self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)

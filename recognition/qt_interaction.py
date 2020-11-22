@@ -7,7 +7,7 @@
 """
 from recognition.business_recognition import Recognition
 
-from photo_arch.infrastructures.gui.ui_interface import UiInterface
+from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
 
 __all__ = ['QtInteraction']
 

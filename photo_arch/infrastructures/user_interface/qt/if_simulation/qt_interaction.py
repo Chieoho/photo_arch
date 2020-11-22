@@ -8,7 +8,7 @@
 import os
 from pprint import pprint
 import time
-from photo_arch.infrastructures.gui.ui_interface import UiInterface
+from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
 
 handled_photo_num = 0
 unhandled_photo_num = 500
@@ -17,7 +17,7 @@ unhandled_photo_num = 500
 class QtInteraction(UiInterface):
     def __init__(self):
         self.arch_code_info = {}
-        time.sleep(5)
+        time.sleep(1)
 
     def start(self, params) -> dict:
         print('start')
@@ -63,7 +63,7 @@ class QtInteraction(UiInterface):
                 'group_code': '0001',
                 'peoples': None,
                 'photo_code': '0001',
-                'photo_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\photo1.jpg'),
+                'photo_path': os.path.abspath(__file__ + '/.././photo1.jpg'),
             },
             {
                 'arch_code': 'A2-ZP·2020-Y-0002',
@@ -75,7 +75,7 @@ class QtInteraction(UiInterface):
                 'photo_code': '0002',
                 'faces': '[{"id": 1, "box": "[240, 60, 320, 140]", "name": "刘德华"}, '
                          '{"id": 2, "box": "[370, 80, 450, 160]", "name": "梅艳芳"}]',
-                'photo_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\photo2.jpg'),
+                'photo_path': os.path.abspath(__file__ + '/.././photo2.jpg'),
             },
             {
                 'arch_code': 'A2-ZP·2020-Y-0003',
@@ -87,7 +87,7 @@ class QtInteraction(UiInterface):
                 'group_code': '0001',
                 'peoples': None,
                 'photo_code': '0003',
-                'photo_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\photo3.jpg'),
+                'photo_path': os.path.abspath(__file__ + '/.././photo3.jpg'),
             },
             {
                 'arch_code': 'A2-ZP·2020-Y-0004',
@@ -99,7 +99,7 @@ class QtInteraction(UiInterface):
                 'group_code': '0001',
                 'peoples': None,
                 'photo_code': '0004',
-                'photo_path': os.path.abspath(r'.\photo_arch\infrastructures\gui\qt\photo4.png'),
+                'photo_path': os.path.abspath(__file__ + '/.././photo4.png'),
             }
         ]
         filter_dict = {

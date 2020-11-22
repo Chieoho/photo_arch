@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@file: qt_gui.py
+@file: main_window.py
 @desc:
 @author: Jaden Wu
 @time: 2020/8/20 11:14
@@ -22,8 +22,8 @@ from photo_arch.adapters.controller import Controller, GroupInputData
 from photo_arch.adapters.sql.repo import Repo
 from photo_arch.adapters.presenter import Presenter, ViewModel
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
-from photo_arch.infrastructures.gui.qt.qt_ui import Ui_MainWindow
-from photo_arch.infrastructures.gui.ui_interface import UiInterface
+from photo_arch.infrastructures.user_interface.qt.ui.qt_ui import Ui_MainWindow
+from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
 
 
 class RunState(object):
@@ -51,7 +51,8 @@ class InitRecognition(Thread):
 
     def run(self) -> None:
         if (len(sys.argv) > 1) and (sys.argv[1] in ('-t', '--test')):
-            from photo_arch.infrastructures.gui.qt.qt_interaction import QtInteraction
+            from photo_arch.infrastructures.user_interface.qt.if_simulation.\
+                qt_interaction import QtInteraction
         else:
             from recognition.qt_interaction import QtInteraction
         self.mw_instance.interaction = QtInteraction()
@@ -330,8 +331,8 @@ class PhotoDescription(object):
     }
     pix_map = None
     tmp_info = {}
-    add_icon_path = 'icon/add.png'
-    del_icon_path = 'icon/cancel.png'
+    add_icon_path = '../icon/add.png'
+    del_icon_path = '../icon/cancel.png'
     photo_type = 1
     dir_type = 1
 
@@ -937,13 +938,3 @@ class Setting(object):
 
     def __init__(self):
         pass
-
-
-def init_parts(mw_):
-    Recognition()
-    PhotoDescription()
-    GroupDescription()
-    Training(mw_)
-    ArchBrowser()
-    ArchTransfer()
-    Setting()
