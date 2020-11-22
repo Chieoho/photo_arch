@@ -835,6 +835,7 @@ class ArchBrowser(object):
         mw.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
         mw.ui.arch_tree_view_browse.clicked.connect(self.show_group)
         mw.ui.order_combobox_browse.currentTextChanged.connect(self.display_arch)
+        mw.ui.add_list_btn.setStyleSheet(mw.button_style_sheet)
 
     @staticmethod
     @catch_exception
