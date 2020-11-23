@@ -141,9 +141,12 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.interaction != typing.Any:
                 untrained_photo_num = self.interaction.get_untrained_photo_num()
                 self.ui.untrained_num_label.setText(str(untrained_photo_num))
-        elif tab_id in (4, 5):  # 选中“档案浏览”或“档案移交”tab
+        elif tab_id == 4:  # 选中“档案浏览”tab
             self.controller.browse_arch()
-            self.view.display_arch()
+            self.view.display_browse_arch(self.ui.order_combobox_browse.currentText())
+        elif tab_id == 5:  # 选中“档案移交”tab
+            self.controller.browse_arch()
+            self.view.display_transfer_arch(self.ui.order_combobox_transfer.currentText())
         else:
             pass
 
@@ -208,7 +211,7 @@ class View(object):
         else:
             parent.appendRow(QStandardItem(str(d)))
 
-    def display_arch(self, priority_key='年度'):
+    def display_browse_arch(self, priority_key='年度'):
         data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
         for gi in self.view_model.arch:
             fc = gi.get('fonds_code')
@@ -224,5 +227,22 @@ class View(object):
         self._fill_model_from_dict(model.invisibleRootItem(), data)
         self.mw.ui.arch_tree_view_browse.setModel(model)
         self.mw.ui.arch_tree_view_browse.expandAll()
+
+    def display_transfer_arch(self, priority_key='年度'):
+        data = defaultdict(lambda: defaultdict(dict))
+        for gi in self.view_model.arch:
+            fc = gi.get('fonds_code')
+            ye = gi.get('year')
+            rp = gi.get('retention_period')
+            if priority_key == '年度':
+                data[fc][ye] = rp
+            else:
+                data[fc][rp] = ye
+        model = QStandardItemModel()
+        model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
+        self._fill_model_from_dict(model.invisibleRootItem(), data)
         self.mw.ui.arch_tree_view_transfer.setModel(model)
         self.mw.ui.arch_tree_view_transfer.expandAll()
+
+    def display_setting(self):
+        pass

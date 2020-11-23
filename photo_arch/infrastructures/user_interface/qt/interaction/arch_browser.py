@@ -27,19 +27,17 @@ class ArchBrowser(object):
         self.pix_map = None
         self.group_name = None
 
-        list_widget = self.mw.ui.photo_list_widget
-        list_widget.setViewMode(QListWidget.IconMode)
-        list_widget.setIconSize(QSize(200, 150))
-        # list_widget.setFixedHeight(235)
-        list_widget.setWrapping(False)  # 只一行显示
-        list_widget.itemClicked.connect(static(self.display_photo))
-
-        self.mw.ui.photo_view_in_arch.resizeEvent = static(self.resize_image)
+        self.mw.ui.photo_list_widget.setViewMode(QListWidget.IconMode)
+        self.mw.ui.photo_list_widget.setIconSize(QSize(200, 150))
+        # self.mw.ui.photo_list_widget.setFixedHeight(235)
+        self.mw.ui.photo_list_widget.setWrapping(False)  # 只一行显示
         self.mw.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.mw.ui.photo_list_widget.itemClicked.connect(static(self.display_photo))
+        self.mw.ui.photo_view_in_arch.resizeEvent = static(self.resize_image)
         self.mw.ui.arch_tree_view_browse.clicked.connect(static(self.show_group))
         self.mw.ui.order_combobox_browse.currentTextChanged.connect(
             static(self.display_arch))
-        self.mw.ui.add_list_btn.setStyleSheet(self.mw.button_style_sheet)
 
     @catch_exception
     def resize_image(self, event):
@@ -88,5 +86,4 @@ class ArchBrowser(object):
 
     @catch_exception
     def display_arch(self, text):
-        self.mw.ui.order_combobox_transfer.setCurrentText(text)
-        self.view.display_arch(text)
+        self.view.display_browse_arch(text)

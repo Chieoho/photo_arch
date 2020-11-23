@@ -5,11 +5,9 @@
 @author: Jaden Wu
 @time: 2020/11/22 21:36
 """
-import os
-import glob
+from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, View,
     static, catch_exception,
@@ -24,34 +22,35 @@ class ArchTransfer(object):
         self.view = view
 
         self.selected_arch_list = []
+        self.disk_icon_path = '../icon/disk.png'
 
-        list_widget = self.mw.ui.selected_arch_list_widget
-        list_widget.setViewMode(QListWidget.IconMode)
-        list_widget.setIconSize(QSize(200, 150))
-        list_widget.setResizeMode(QListWidget.Adjust)
-        list_widget.itemDoubleClicked.connect(static(self.unselect_arch))
+        self.mw.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
+        self.mw.ui.partition_list_widget.setIconSize(QSize(150, 150))
 
         self.mw.ui.order_combobox_transfer.currentTextChanged.connect(static(self.display_arch))
         self.mw.ui.arch_tree_view_transfer.doubleClicked.connect(static(self.select_arch))
+        self.mw.ui.selected_arch_list_widget.itemDoubleClicked.connect(static(self.unselect_arch))
+        self.mw.ui.disk_size_line_edit.returnPressed.connect(static(self.partition))
+        self.mw.ui.across_year_combo_box.currentTextChanged.connect(static(self.partition))
+        self.mw.ui.across_period_combo_box.currentTextChanged.connect(static(self.partition))
 
     @catch_exception
     def display_arch(self, text):
-        self.mw.ui.order_combobox_browse.setCurrentText(text)
-        self.view.display_arch(text)
+        self.view.display_transfer_arch(text)
 
     @catch_exception
     def select_arch(self, index):
-        if index.child(0, 0).data():  # 点击的不是组名则返回
+        if index.child(0, 0).data():  # 点击的不是叶子则返回
             return
-        group_name = index.data()
-        if group_name in self.selected_arch_list:
+        parent_index = index.parent()
+        fonds_code_index = parent_index.parent()
+        selected_name = '-'.join([fonds_code_index.data(), parent_index.data(), index.data()])
+        if selected_name in self.selected_arch_list:
             return
-        path = os.path.join(self.setting.description_path, group_name, '*.*')
-        for fp in glob.iglob(path):
-            item = QListWidgetItem(QIcon(fp), group_name)
-            self.mw.ui.selected_arch_list_widget.addItem(item)
-            break
-        self.selected_arch_list.append(group_name)
+        item = QListWidgetItem(selected_name)
+        self.mw.ui.selected_arch_list_widget.addItem(item)
+        self.selected_arch_list.append(selected_name)
+        self.partition()
 
     @catch_exception
     def unselect_arch(self, item):
@@ -60,3 +59,13 @@ class ArchTransfer(object):
         item_text = item.text()
         if item_text in self.selected_arch_list:
             self.selected_arch_list.remove(item_text)
+        self.partition()
+
+    @catch_exception
+    def partition(self):
+        self.mw.ui.partition_list_widget.clear()
+        disk_size = self.mw.ui.disk_size_line_edit.text()
+        if (not disk_size) or (not self.selected_arch_list):
+            return
+        item = QListWidgetItem(QIcon(self.disk_icon_path), 'disk 1(A1-2018-30年)')
+        self.mw.ui.partition_list_widget.addItem(item)
