@@ -22,7 +22,8 @@ class ArchTransfer(object):
         self.view = view
 
         self.selected_arch_list = []
-        self.disk_icon_path = './icon/disk.png'
+        # self.disk_icon_path = './icon/disk.png'
+        self.disk_icon_path = './icon/arch_cd.png'
 
         self.mw.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
         self.mw.ui.partition_list_widget.setIconSize(QSize(200, 150))
