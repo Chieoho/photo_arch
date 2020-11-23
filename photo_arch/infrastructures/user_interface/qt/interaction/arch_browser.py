@@ -12,16 +12,18 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow,
-    static,
-    catch_exception,
+    MainWindow, View,
+    static, catch_exception,
 )
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 
 class ArchBrowser(object):
-    def __init__(self, mw_: MainWindow):
+    def __init__(self, mw_: MainWindow, setting: Setting, view: View):
         self.mw = mw_
+        self.setting = setting
+        self.view = view
+
         self.pix_map = None
         self.group_name = None
 
@@ -59,14 +61,14 @@ class ArchBrowser(object):
             return
         self.group_name = index.data()
         self.mw.controller.get_group(self.group_name)
-        self.mw.view.display_group_in_arch_browse()
+        self.view.display_group_in_arch_browse()
         self.mw.ui.photo_view_in_arch.clear()
         self._list_photo_thumb()
 
     @catch_exception
     def _list_photo_thumb(self):
         self.mw.ui.photo_list_widget.clear()
-        path = os.path.join(Setting.path, self.group_name, '*.*')
+        path = os.path.join(self.setting.description_path, self.group_name, '*.*')
         for fp in glob.iglob(path):
             item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1])
             self.mw.ui.photo_list_widget.addItem(item)
@@ -75,7 +77,7 @@ class ArchBrowser(object):
     @catch_exception
     def display_photo(self, item):
         photo_name = item.text()
-        path = os.path.join(Setting.path, self.group_name, photo_name)
+        path = os.path.join(self.setting.description_path, self.group_name, photo_name)
         self.pix_map = QPixmap(path)
         pix_map = self.pix_map.scaled(
             self.mw.ui.photo_view_in_arch.size(),
@@ -87,4 +89,4 @@ class ArchBrowser(object):
     @catch_exception
     def display_arch(self, text):
         self.mw.ui.order_combobox_transfer.setCurrentText(text)
-        self.mw.view.display_arch(text)
+        self.view.display_arch(text)

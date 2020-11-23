@@ -6,15 +6,18 @@
 @time: 2020/11/22 15:17
 """
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow,
-    static,
-    catch_exception,
+    MainWindow, View,
+    static, catch_exception
 )
+from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 
 class Training(object):
-    def __init__(self, mw_: MainWindow):
+    def __init__(self, mw_: MainWindow, setting: Setting, view: View):
         self.mw = mw_
+        self.setting = setting
+        self.view = view
+
         self.mw.ui.train_btn.clicked.connect(static(self.start_training))
         self.mw.ui.train_btn.setStyleSheet(self.mw.button_style_sheet)
 

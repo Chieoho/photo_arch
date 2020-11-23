@@ -11,16 +11,18 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow,
-    static,
-    catch_exception,
+    MainWindow, View,
+    static, catch_exception,
 )
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 
 class ArchTransfer(object):
-    def __init__(self, mw_: MainWindow):
+    def __init__(self, mw_: MainWindow, setting: Setting, view: View):
         self.mw = mw_
+        self.setting = setting
+        self.view = view
+
         self.selected_arch_list = []
 
         list_widget = self.mw.ui.selected_arch_list_widget
@@ -35,7 +37,7 @@ class ArchTransfer(object):
     @catch_exception
     def display_arch(self, text):
         self.mw.ui.order_combobox_browse.setCurrentText(text)
-        self.mw.view.display_arch(text)
+        self.view.display_arch(text)
 
     @catch_exception
     def select_arch(self, index):
@@ -44,7 +46,7 @@ class ArchTransfer(object):
         group_name = index.data()
         if group_name in self.selected_arch_list:
             return
-        path = os.path.join(Setting.path, group_name, '*.*')
+        path = os.path.join(self.setting.description_path, group_name, '*.*')
         for fp in glob.iglob(path):
             item = QListWidgetItem(QIcon(fp), group_name)
             self.mw.ui.selected_arch_list_widget.addItem(item)

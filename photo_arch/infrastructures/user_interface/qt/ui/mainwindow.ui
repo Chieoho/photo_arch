@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1266</width>
-    <height>944</height>
+    <width>1288</width>
+    <height>996</height>
    </rect>
   </property>
   <property name="font">
@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="iconSize">
        <size>
@@ -211,7 +211,7 @@ QTabBar::tab:selected{
               </column>
               <column>
                <property name="text">
-                <string> </string>
+                <string/>
                </property>
               </column>
              </widget>
@@ -1911,38 +1911,6 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_34">
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>张号</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QLineEdit" name="photo_code_in_photo">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0" colspan="4">
              <widget class="QFrame" name="frame_7">
               <property name="minimumSize">
@@ -2582,7 +2550,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="2">
+            <item row="7" column="0">
              <widget class="QLabel" name="label_36">
               <property name="maximumSize">
                <size>
@@ -2604,7 +2572,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="3">
+            <item row="7" column="1">
              <widget class="QLineEdit" name="photographer_in_photo">
               <property name="enabled">
                <bool>false</bool>
@@ -2617,7 +2585,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="0">
+            <item row="7" column="2">
              <widget class="QLabel" name="label_37">
               <property name="font">
                <font>
@@ -2633,7 +2601,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="1">
+            <item row="7" column="3">
              <widget class="QLineEdit" name="taken_time_in_photo">
               <property name="enabled">
                <bool>false</bool>
@@ -2646,7 +2614,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="2">
+            <item row="8" column="0">
              <widget class="QLabel" name="label_38">
               <property name="maximumSize">
                <size>
@@ -2668,7 +2636,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="8" column="3">
+            <item row="8" column="1">
              <widget class="QLineEdit" name="taken_locations_in_photo">
               <property name="enabled">
                <bool>false</bool>
@@ -2681,7 +2649,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="0">
+            <item row="8" column="2">
              <widget class="QLabel" name="label_39">
               <property name="font">
                <font>
@@ -2697,7 +2665,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="1">
+            <item row="8" column="3">
              <widget class="QLineEdit" name="format_in_photo">
               <property name="enabled">
                <bool>false</bool>
@@ -2713,7 +2681,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="2">
+            <item row="9" column="0">
              <widget class="QLabel" name="label_40">
               <property name="maximumSize">
                <size>
@@ -2735,7 +2703,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="3">
+            <item row="9" column="1">
              <widget class="QLineEdit" name="security_classification_in_photo">
               <property name="enabled">
                <bool>false</bool>
@@ -2751,7 +2719,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="0">
+            <item row="9" column="2">
              <widget class="QLabel" name="label_41">
               <property name="font">
                <font>
@@ -2767,11 +2735,43 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
+            <item row="9" column="3">
              <widget class="QLineEdit" name="reference_code_in_photo">
               <property name="enabled">
                <bool>false</bool>
               </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_34">
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>张号</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="1">
+             <widget class="QLineEdit" name="photo_code_in_photo">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4797,7 +4797,6 @@ padding-bottom: 8px;</string>
   <tabstop>all_recognition_radioButton</tabstop>
   <tabstop>arch_code_in_photo</tabstop>
   <tabstop>current_dir_radioButton</tabstop>
-  <tabstop>photo_code_in_photo</tabstop>
   <tabstop>group_code_in_photo</tabstop>
   <tabstop>fonds_code_in_photo</tabstop>
   <tabstop>year_in_photo</tabstop>
