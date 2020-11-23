@@ -34,8 +34,8 @@ class PhotoDescription(object):
         }
         self.pix_map = None
         self.tmp_info = {}
-        self.add_icon_path = '../icon/add.png'
-        self.del_icon_path = '../icon/cancel.png'
+        self.add_icon_path = './icon/add.png'
+        self.del_icon_path = './icon/cancel.png'
         
         self.current_photo_id = 0
         self.check_state_dict = {}

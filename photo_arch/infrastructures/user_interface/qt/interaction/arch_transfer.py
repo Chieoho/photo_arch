@@ -5,9 +5,9 @@
 @author: Jaden Wu
 @time: 2020/11/22 21:36
 """
-from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, View,
     static, catch_exception,
@@ -22,10 +22,10 @@ class ArchTransfer(object):
         self.view = view
 
         self.selected_arch_list = []
-        self.disk_icon_path = '../icon/disk.png'
+        self.disk_icon_path = './icon/disk.png'
 
         self.mw.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
-        self.mw.ui.partition_list_widget.setIconSize(QSize(150, 150))
+        self.mw.ui.partition_list_widget.setIconSize(QSize(200, 150))
 
         self.mw.ui.order_combobox_transfer.currentTextChanged.connect(static(self.display_arch))
         self.mw.ui.arch_tree_view_transfer.doubleClicked.connect(static(self.select_arch))
