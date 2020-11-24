@@ -29,9 +29,9 @@ class RepoIf(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def query_group_by_path(self, group_path: str) -> List[dict]:
+    def query_group_by_code(self, group_code: str) -> List[dict]:
         """
-        :param group_path:
+        :param group_code:
         :return:
         """
 

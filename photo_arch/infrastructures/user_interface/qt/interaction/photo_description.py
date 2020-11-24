@@ -11,7 +11,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, View,
+    MainWindow, Ui_MainWindow, View,
     static, catch_exception,
 )
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -20,6 +20,7 @@ from photo_arch.infrastructures.user_interface.qt.interaction.setting import Set
 class PhotoDescription(object):
     def __init__(self, mw_: MainWindow, setting: Setting, view: View):
         self.mw = mw_
+        self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
         self.view = view
 
@@ -40,30 +41,30 @@ class PhotoDescription(object):
         self.current_photo_id = 0
         self.check_state_dict = {}
         
-        self.mw.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        self.mw.ui.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
-        self.mw.ui.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
 
-        self.mw.ui.all_photo_radioButton.toggled.connect(static(self.photo_choose))
-        self.mw.ui.part_recognition_radioButton.toggled.connect(static(self.photo_choose))
-        self.mw.ui.all_recognition_radioButton.toggled.connect(static(self.photo_choose))
-        self.mw.ui.pre_btn.clicked.connect(static(self.pre_photo))
-        self.mw.ui.next_btn.clicked.connect(static(self.next_photo))
-        self.mw.ui.tableWidget.itemChanged.connect(static(self.table_item_changed))
-        self.mw.ui.select_dir_radioButton.toggled.connect(static(self.dir_choose))
-        self.mw.ui.current_dir_radioButton.toggled.connect(static(self.dir_choose))
+        self.ui.all_photo_radioButton.toggled.connect(static(self.photo_choose))
+        self.ui.part_recognition_radioButton.toggled.connect(static(self.photo_choose))
+        self.ui.all_recognition_radioButton.toggled.connect(static(self.photo_choose))
+        self.ui.pre_btn.clicked.connect(static(self.pre_photo))
+        self.ui.next_btn.clicked.connect(static(self.next_photo))
+        self.ui.tableWidget.itemChanged.connect(static(self.table_item_changed))
+        self.ui.select_dir_radioButton.toggled.connect(static(self.dir_choose))
+        self.ui.current_dir_radioButton.toggled.connect(static(self.dir_choose))
 
-        self.mw.ui.all_photo_radioButton.setEnabled(False)
-        self.mw.ui.part_recognition_radioButton.setEnabled(False)
-        self.mw.ui.all_recognition_radioButton.setEnabled(False)
+        self.ui.all_photo_radioButton.setEnabled(False)
+        self.ui.part_recognition_radioButton.setEnabled(False)
+        self.ui.all_recognition_radioButton.setEnabled(False)
 
-        self.mw.ui.photo_view.resizeEvent = static(self.resize_image)
-        self.mw.ui.photo_view.setAlignment(QtCore.Qt.AlignCenter)
+        self.ui.photo_view.resizeEvent = static(self.resize_image)
+        self.ui.photo_view.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.mw.ui.pre_btn.setStyleSheet(self.mw.button_style_sheet)
-        self.mw.ui.next_btn.setStyleSheet(self.mw.button_style_sheet)
+        self.ui.pre_btn.setStyleSheet(self.mw.button_style_sheet)
+        self.ui.next_btn.setStyleSheet(self.mw.button_style_sheet)
 
-        self.mw.ui.verifycheckBox.stateChanged.connect(static(self.checked))
+        self.ui.verifycheckBox.stateChanged.connect(static(self.checked))
 
     @catch_exception
     def resize_image(self, event):
@@ -72,13 +73,13 @@ class PhotoDescription(object):
         size = event.size()
         w, h = size.width() - 1, size.height() - 1  # wow
         pix_map = self.pix_map.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.mw.ui.photo_view.setPixmap(pix_map)
+        self.ui.photo_view.setPixmap(pix_map)
 
     @catch_exception
     def photo_choose(self, check_state):
         if check_state is False:
             return
-        self.mw.ui.tabWidget.setCurrentIndex(2)
+        self.ui.tabWidget.setCurrentIndex(2)
         self.mw.photo_type = self.photo_radio_map[self.mw.sender().objectName()]
         photo_info_list = self.mw.interaction.get_photos_info(self.mw.photo_type, self.mw.dir_type)
         self.mw.photo_list = list(map(lambda d: d['photo_path'], photo_info_list))
@@ -92,28 +93,28 @@ class PhotoDescription(object):
         if check_state is False:
             return
         dir_scope, self.mw.dir_type = self.dir_radio_map[self.mw.sender().objectName()]
-        self.mw.ui.all_photo_radioButton.setText(f'显示{dir_scope}所有照片(Alt+Q)')
-        self.mw.ui.part_recognition_radioButton.setText(f'显示{dir_scope}部分识别照片(Alt+W)')
-        self.mw.ui.all_recognition_radioButton.setText(f'显示{dir_scope}全部识别照片(Alt+E)')
-        self.mw.ui.all_photo_radioButton.setShortcut('Alt+Q')
-        self.mw.ui.part_recognition_radioButton.setShortcut('Alt+W')
-        self.mw.ui.all_recognition_radioButton.setShortcut('Alt+E')
+        self.ui.all_photo_radioButton.setText(f'显示{dir_scope}所有照片(Alt+Q)')
+        self.ui.part_recognition_radioButton.setText(f'显示{dir_scope}部分识别照片(Alt+W)')
+        self.ui.all_recognition_radioButton.setText(f'显示{dir_scope}全部识别照片(Alt+E)')
+        self.ui.all_photo_radioButton.setShortcut('Alt+Q')
+        self.ui.part_recognition_radioButton.setShortcut('Alt+W')
+        self.ui.all_recognition_radioButton.setShortcut('Alt+E')
 
     @catch_exception
     def get_name_info(self):
         name_list = []
-        for row in range(self.mw.ui.tableWidget.rowCount() - 1):
-            item_0 = self.mw.ui.tableWidget.item(row, 0)
+        for row in range(self.ui.tableWidget.rowCount() - 1):
+            item_0 = self.ui.tableWidget.item(row, 0)
             id_ = item_0.text() if item_0 else ''
-            item_1 = self.mw.ui.tableWidget.item(row, 1)
+            item_1 = self.ui.tableWidget.item(row, 1)
             name = item_1.text() if item_1 else ''
             name_list.append((id_, name))
         return name_list
 
     @catch_exception
     def pre_photo(self):
-        if self.mw.ui.tabWidget.currentIndex() != 2:
-            self.mw.ui.tabWidget.setCurrentIndex(2)
+        if self.ui.tabWidget.currentIndex() != 2:
+            self.ui.tabWidget.setCurrentIndex(2)
             return
         self.tmp_info[self.mw.photo_list[self.current_photo_id]] = self.get_name_info()
         if self.current_photo_id > 0:
@@ -122,8 +123,8 @@ class PhotoDescription(object):
 
     @catch_exception
     def next_photo(self):
-        if self.mw.ui.tabWidget.currentIndex() != 2:
-            self.mw.ui.tabWidget.setCurrentIndex(2)
+        if self.ui.tabWidget.currentIndex() != 2:
+            self.ui.tabWidget.setCurrentIndex(2)
             return
         self.tmp_info[self.mw.photo_list[self.current_photo_id]] = self.get_name_info()
         if self.current_photo_id < len(self.mw.photo_list) - 1:
@@ -132,41 +133,41 @@ class PhotoDescription(object):
 
     @catch_exception
     def _create_button(self, name, ico_path):
-        button = QtWidgets.QPushButton(QIcon(QPixmap(ico_path)), name, self.mw.ui.tableWidget)
+        button = QtWidgets.QPushButton(QIcon(QPixmap(ico_path)), name, self.ui.tableWidget)
         button.setFlat(True)
         return button
 
     @catch_exception
     def add(self):
-        row = self.mw.ui.tableWidget.rowCount() - 1
+        row = self.ui.tableWidget.rowCount() - 1
         del_button = self._create_button('删除', self.del_icon_path)
         del_button.clicked.connect(lambda: self.delete(row))
-        self.mw.ui.tableWidget.setCellWidget(row, 2, del_button)
+        self.ui.tableWidget.setCellWidget(row, 2, del_button)
         add_button = self._create_button('添加', self.add_icon_path)
         add_button.clicked.connect(static(self.add))
-        self.mw.ui.tableWidget.insertRow(row + 1)
+        self.ui.tableWidget.insertRow(row + 1)
         for col in range(2):
             item = QTableWidgetItem('')
             item.setTextAlignment(QtCore.Qt.AlignCenter)
-            self.mw.ui.tableWidget.setItem(row+1, col, item)
-        self.mw.ui.tableWidget.setCellWidget(row+1, 2, add_button)
-        self.mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
+            self.ui.tableWidget.setItem(row+1, col, item)
+        self.ui.tableWidget.setCellWidget(row+1, 2, add_button)
+        self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
 
     @catch_exception
     def delete(self, row):
-        self.mw.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.mw.ui.tableWidget.removeRow(row)
-        for r in range(row, self.mw.ui.tableWidget.rowCount() - 1):
-            self.mw.ui.tableWidget.cellWidget(r, 2).clicked.disconnect()
-            self._connect(self.mw.ui.tableWidget.cellWidget(r, 2), r)
-        self.mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
+        self.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.ui.tableWidget.removeRow(row)
+        for r in range(row, self.ui.tableWidget.rowCount() - 1):
+            self.ui.tableWidget.cellWidget(r, 2).clicked.disconnect()
+            self._connect(self.ui.tableWidget.cellWidget(r, 2), r)
+        self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
-        self.mw.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.CurrentChanged)
+        self.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.CurrentChanged)
 
     @catch_exception
     def table_item_changed(self):
-        self.mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
+        self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
 
     @catch_exception
@@ -176,27 +177,27 @@ class PhotoDescription(object):
     @catch_exception
     def _display_recognizable(self):
         if not self.mw.photo_list:
-            self.mw.ui.photo_view.setText('没有照片可显示')
+            self.ui.photo_view.setText('没有照片可显示')
             return
         photo_path = self.mw.photo_list[self.current_photo_id]
         self.pix_map = QPixmap(photo_path)
         faces_data = self.mw.photo_info_dict.get(photo_path).get('faces')
         name_info_list, coordinate_list = self._conversion_data(faces_data)
         tmp_name_info_list = self.tmp_info.get(photo_path)
-        self.mw.ui.tableWidget.itemChanged.disconnect()
+        self.ui.tableWidget.itemChanged.disconnect()
         if tmp_name_info_list is None:
             self._update_table_widget(name_info_list)
         else:
             self._update_table_widget(tmp_name_info_list)
-        self.mw.ui.tableWidget.itemChanged.connect(static(self.table_item_changed))
+        self.ui.tableWidget.itemChanged.connect(static(self.table_item_changed))
         self._mark_face(coordinate_list)
         pix_map = self.pix_map.scaled(
-            self.mw.ui.photo_view.size(),
+            self.ui.photo_view.size(),
             Qt.KeepAspectRatio,
             Qt.SmoothTransformation
         )
-        self.mw.ui.photo_view.setPixmap(pix_map)
-        self.mw.ui.photo_index_label.setText('{}/{}'.format(self.current_photo_id + 1, len(self.mw.photo_list)))
+        self.ui.photo_view.setPixmap(pix_map)
+        self.ui.photo_index_label.setText('{}/{}'.format(self.current_photo_id + 1, len(self.mw.photo_list)))
         self._set_verify_checkbox(photo_path)
         self.view.display_photo(photo_path)
 
@@ -217,26 +218,26 @@ class PhotoDescription(object):
 
     @catch_exception
     def _update_table_widget(self, name_info_list):
-        for row in range(self.mw.ui.tableWidget.rowCount(), -1, -1):
-            self.mw.ui.tableWidget.removeRow(row)
+        for row in range(self.ui.tableWidget.rowCount(), -1, -1):
+            self.ui.tableWidget.removeRow(row)
         row = -1
         for row, (id_, name) in enumerate(name_info_list):
-            self.mw.ui.tableWidget.insertRow(row)
+            self.ui.tableWidget.insertRow(row)
             for col, item in enumerate([id_, name]):
                 item = QTableWidgetItem(item)
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
-                self.mw.ui.tableWidget.setItem(row, col, item)
+                self.ui.tableWidget.setItem(row, col, item)
             del_button = self._create_button('删除', self.del_icon_path)
             self._connect(del_button, row)
-            self.mw.ui.tableWidget.setCellWidget(row, 2, del_button)
-        self.mw.ui.tableWidget.insertRow(row+1)
+            self.ui.tableWidget.setCellWidget(row, 2, del_button)
+        self.ui.tableWidget.insertRow(row+1)
         for col in range(2):
             item = QTableWidgetItem('')
             item.setTextAlignment(QtCore.Qt.AlignCenter)
-            self.mw.ui.tableWidget.setItem(row+1, col, item)
+            self.ui.tableWidget.setItem(row+1, col, item)
         add_button = self._create_button('添加', self.add_icon_path)
         add_button.clicked.connect(static(self.add))
-        self.mw.ui.tableWidget.setCellWidget(row+1, 2, add_button)
+        self.ui.tableWidget.setCellWidget(row+1, 2, add_button)
 
     @catch_exception
     def _set_verify_checkbox(self, photo_path):
@@ -251,11 +252,11 @@ class PhotoDescription(object):
             original_verify_state = Qt.Unchecked
         current_check_state = self.check_state_dict.get(photo_path, original_verify_state)
         if current_check_state == Qt.Checked:
-            self.mw.ui.verifycheckBox.stateChanged.disconnect()
-            self.mw.ui.verifycheckBox.setCheckState(Qt.Checked)
-            self.mw.ui.verifycheckBox.stateChanged.connect(static(self.checked))
+            self.ui.verifycheckBox.stateChanged.disconnect()
+            self.ui.verifycheckBox.setCheckState(Qt.Checked)
+            self.ui.verifycheckBox.stateChanged.connect(static(self.checked))
         else:
-            self.mw.ui.verifycheckBox.setCheckState(Qt.Unchecked)
+            self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
 
     @catch_exception
     def _mark_face(self, coordinate_list):
@@ -276,13 +277,13 @@ class PhotoDescription(object):
 
     @catch_exception
     def checked(self):
-        if self.mw.ui.verifycheckBox.isChecked() and self.mw.photo_list:
+        if self.ui.verifycheckBox.isChecked() and self.mw.photo_list:
             name_list = self.get_name_info()
             photo_path = self.mw.photo_list[self.current_photo_id]
-            size = self.mw.ui.photo_view.size()
+            size = self.ui.photo_view.size()
             checked_info = {
                 "path": photo_path,
-                "arch_code": self.mw.ui.arch_code_in_photo.text(),
+                "arch_code": self.ui.arch_code_in_photo.text(),
                 "faces": self.mw.photo_info_dict.get(photo_path).get('faces'),
                 "table_widget": [{'id': i, 'name': n} for i, n in name_list],
                 "label_size": (size.width(), size.height())

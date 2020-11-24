@@ -22,8 +22,8 @@ class Controller(object):
     def save_group(self, group_info: GroupInputData):
         self.group_description.save_group(group_info)
 
-    def get_group(self, group_path: str):
-        self.group_description.get_group(group_path)
+    def get_group(self, group_code: str):
+        self.group_description.get_group(group_code)
 
     def browse_arch(self):
         self.arch_browser.browse_arch()

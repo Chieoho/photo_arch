@@ -9,7 +9,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, View,
+    MainWindow, Ui_MainWindow, View,
     static, catch_exception,
 )
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -18,22 +18,22 @@ from photo_arch.infrastructures.user_interface.qt.interaction.setting import Set
 class ArchTransfer(object):
     def __init__(self, mw_: MainWindow, setting: Setting, view: View):
         self.mw = mw_
+        self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
         self.view = view
 
         self.selected_arch_list = []
-        # self.disk_icon_path = './icon/disk.png'
         self.disk_icon_path = './icon/arch_cd.png'
 
-        self.mw.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
-        self.mw.ui.partition_list_widget.setIconSize(QSize(200, 150))
+        self.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
+        self.ui.partition_list_widget.setIconSize(QSize(200, 150))
 
-        self.mw.ui.order_combobox_transfer.currentTextChanged.connect(static(self.display_arch))
-        self.mw.ui.arch_tree_view_transfer.doubleClicked.connect(static(self.select_arch))
-        self.mw.ui.selected_arch_list_widget.itemDoubleClicked.connect(static(self.unselect_arch))
-        self.mw.ui.disk_size_line_edit.returnPressed.connect(static(self.partition))
-        self.mw.ui.across_year_combo_box.currentTextChanged.connect(static(self.partition))
-        self.mw.ui.across_period_combo_box.currentTextChanged.connect(static(self.partition))
+        self.ui.order_combobox_transfer.currentTextChanged.connect(static(self.display_arch))
+        self.ui.arch_tree_view_transfer.doubleClicked.connect(static(self.select_arch))
+        self.ui.selected_arch_list_widget.itemDoubleClicked.connect(static(self.unselect_arch))
+        self.ui.disk_size_line_edit.returnPressed.connect(static(self.partition))
+        self.ui.across_year_combo_box.currentTextChanged.connect(static(self.partition))
+        self.ui.across_period_combo_box.currentTextChanged.connect(static(self.partition))
 
     @catch_exception
     def display_arch(self, text):
@@ -49,14 +49,14 @@ class ArchTransfer(object):
         if selected_name in self.selected_arch_list:
             return
         item = QListWidgetItem(selected_name)
-        self.mw.ui.selected_arch_list_widget.addItem(item)
+        self.ui.selected_arch_list_widget.addItem(item)
         self.selected_arch_list.append(selected_name)
         self.partition()
 
     @catch_exception
     def unselect_arch(self, item):
-        row = self.mw.ui.selected_arch_list_widget.row(item)
-        self.mw.ui.selected_arch_list_widget.takeItem(row)
+        row = self.ui.selected_arch_list_widget.row(item)
+        self.ui.selected_arch_list_widget.takeItem(row)
         item_text = item.text()
         if item_text in self.selected_arch_list:
             self.selected_arch_list.remove(item_text)
@@ -64,9 +64,9 @@ class ArchTransfer(object):
 
     @catch_exception
     def partition(self):
-        self.mw.ui.partition_list_widget.clear()
-        disk_size = self.mw.ui.disk_size_line_edit.text()
+        self.ui.partition_list_widget.clear()
+        disk_size = self.ui.disk_size_line_edit.text()
         if (not disk_size) or (not self.selected_arch_list):
             return
         item = QListWidgetItem(QIcon(self.disk_icon_path), 'disk 1(A1-2018-30年)')
-        self.mw.ui.partition_list_widget.addItem(item)
+        self.ui.partition_list_widget.addItem(item)

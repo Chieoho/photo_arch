@@ -6,14 +6,16 @@
 @time: 2020/8/20 11:14
 """
 import sys
-import inspect
 from threading import Thread
 import typing
 from collections import defaultdict
+import functools
+import traceback
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from photo_arch.infrastructures.user_interface.qt.ui import slot_wrapper
 from photo_arch.adapters.controller import Controller
 from photo_arch.adapters.sql.repo import Repo
 from photo_arch.adapters.presenter import Presenter, ViewModel
@@ -29,17 +31,16 @@ class RecognizeState(object):
 
 
 def static(method):
-    return lambda *a: method(*a)
+    return slot_wrapper.static_(method)
 
 
 def catch_exception(func):
+    @functools.wraps(func)
     def wrapper(*args):
         try:
-            sign = inspect.signature(func)
-            return func(*args[0: len(sign.parameters)])
+            return func(*args)
         except Exception as e:
             _ = e
-            import traceback
             print(traceback.format_exc())
     return wrapper
 
@@ -244,5 +245,6 @@ class View(object):
         self.mw.ui.arch_tree_view_transfer.setModel(model)
         self.mw.ui.arch_tree_view_transfer.expandAll()
 
-    def display_setting(self):
-        pass
+    def display_setting(self, description_path, package_path):
+        self.mw.ui.description_path_line_edit.setText(description_path)
+        self.mw.ui.package_path_line_edit.setText(package_path)

@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
@@ -740,7 +740,7 @@ padding-bottom: 8px;</string>
                   </font>
                  </property>
                  <property name="text">
-                  <string>组名：</string>
+                  <string>组文件夹：</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -4972,7 +4972,7 @@ padding-bottom: 8px;</string>
          </spacer>
         </item>
         <item row="1" column="2">
-         <widget class="QLineEdit" name="lineEdit_4">
+         <widget class="QLineEdit" name="description_path_line_edit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -5036,7 +5036,7 @@ padding-bottom: 8px;</string>
          </widget>
         </item>
         <item row="2" column="2">
-         <widget class="QLineEdit" name="lineEdit_5">
+         <widget class="QLineEdit" name="package_path_line_edit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
