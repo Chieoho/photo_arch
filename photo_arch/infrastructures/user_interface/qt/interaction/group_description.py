@@ -135,8 +135,7 @@ class GroupDescription(object):
             item = items_value.child(i)
             if item.checkState(0) == Qt.Checked:
                 path = item.text(0)
-                line_edit = self.ui.treeWidget.itemWidget(item, 1)
-                arch_code = line_edit.text()
+                arch_code = self.ui.arch_code_in_group.text()
                 arch_code_info["children"].update({os.path.join(self.current_work_path, path): arch_code})
         self.mw.interaction.set_arch_code(arch_code_info)
         self._reset_state()
