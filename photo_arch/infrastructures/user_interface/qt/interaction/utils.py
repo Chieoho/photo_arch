@@ -25,6 +25,8 @@ def catch_exception(func):
 def for_all_methods(decorator):
     def decorate(cls):
         for fn, _ in inspect.getmembers(cls, predicate=inspect.isfunction):
+            if isinstance(inspect.getattr_static(cls, fn), staticmethod):
+                continue
             setattr(cls, fn, decorator(getattr(cls, fn)))
         return cls
     return decorate

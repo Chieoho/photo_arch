@@ -227,8 +227,8 @@ class PhotoDescription(object):
         self._set_verify_checkbox(photo_path)
         self.view.display_photo(photo_path)
 
-    def _conversion_data(self, faces_data):
-        _ = self
+    @staticmethod
+    def _conversion_data(faces_data):
         name_info_list = []
         coordinate_list = []
         face_coordinates_list = json.loads(faces_data)
