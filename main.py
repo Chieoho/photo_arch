@@ -8,8 +8,7 @@
 import sys
 from photo_arch.infrastructures.user_interface.qt.interaction import main_window
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    QtWidgets, MainWindow
-)
+    QtWidgets, MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.training import Training
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_transfer import ArchTransfer
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_browser import ArchBrowser

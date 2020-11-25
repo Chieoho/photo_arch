@@ -15,7 +15,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception)
+    static, catch_exception, for_all_methods)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -27,6 +27,7 @@ from photo_arch.adapters.presenter.arch_browser import Presenter
 from photo_arch.adapters.view_model.arch_browser import ViewModel
 
 
+@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
@@ -75,6 +76,7 @@ class View(object):
         self.mw.ui.arch_tree_view_browse.expandAll()
 
 
+@for_all_methods(catch_exception)
 class ArchBrowser(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
@@ -99,7 +101,6 @@ class ArchBrowser(object):
         self.ui.order_combobox_browse.currentTextChanged.connect(
             static(self.display_arch))
 
-    @catch_exception
     def resize_image(self, event):
         if not self.pix_map:
             return
@@ -113,7 +114,6 @@ class ArchBrowser(object):
         )
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
-    @catch_exception
     def show_group(self, index):
         if index.child(0, 0).data():  # 点击的不是组名则返回
             return
@@ -124,7 +124,6 @@ class ArchBrowser(object):
         self.ui.photo_view_in_arch.clear()
         self._list_photo_thumb()
 
-    @catch_exception
     def _list_photo_thumb(self):
         self.ui.photo_list_widget.clear()
         group_code = self.group_folder.split(' ')[0]
@@ -141,7 +140,6 @@ class ArchBrowser(object):
             self.ui.photo_list_widget.addItem(item)
             QApplication.processEvents()
 
-    @catch_exception
     def display_photo(self, item):
         photo_name = item.text()
         group_code = self.group_folder.split(' ')[0]
@@ -161,6 +159,5 @@ class ArchBrowser(object):
         )
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
-    @catch_exception
     def display_arch(self, text):
         self.view.display_browse_arch(text)

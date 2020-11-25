@@ -8,11 +8,14 @@
 import sys
 from threading import Thread
 import typing
+
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import catch_exception
+
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
+    catch_exception, for_all_methods)
 from photo_arch.infrastructures.user_interface.qt.ui.qt_ui import Ui_MainWindow
 from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
 
@@ -23,6 +26,7 @@ class RecognizeState(object):
     pause = 2
 
 
+@for_all_methods(catch_exception)
 class InitRecognition(Thread):
     def __init__(self, mw_instance):
         self.mw_instance = mw_instance
@@ -37,6 +41,7 @@ class InitRecognition(Thread):
         self.mw_instance.interaction = QtInteraction()
 
 
+@for_all_methods(catch_exception)
 class Overlay(QtWidgets.QWidget):
     def __init__(self, parent, text, dynamic=True, max_dot_num=3):
         QtWidgets.QWidget.__init__(self, parent)
@@ -66,6 +71,7 @@ class Overlay(QtWidgets.QWidget):
         painter.drawText(self.rect(), Qt.AlignCenter, self.text)
 
 
+@for_all_methods(catch_exception)
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, app):
         QtWidgets.QMainWindow.__init__(self)
@@ -101,6 +107,5 @@ class MainWindow(QtWidgets.QMainWindow):
         self.photo_type = 1
         self.dir_type = 1
 
-    @catch_exception
     def msg_box(self, msg: str):
         QMessageBox().warning(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)

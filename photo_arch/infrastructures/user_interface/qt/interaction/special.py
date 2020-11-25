@@ -8,7 +8,7 @@
 import typing
 
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception)
+    static, catch_exception, for_all_methods)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -17,6 +17,7 @@ from photo_arch.infrastructures.user_interface.qt.interaction.arch_browser impor
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_transfer import ArchTransfer
 
 
+@for_all_methods(catch_exception)
 class Special(object):
 
     def __init__(self,
@@ -33,7 +34,6 @@ class Special(object):
 
         self.ui.tabWidget.currentChanged.connect(static(self.tab_change))
 
-    @catch_exception
     def tab_change(self, tab_id):
         if tab_id == 3:  # 选中“模型训练”tab
             if self.mw.interaction != typing.Any:

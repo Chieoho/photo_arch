@@ -13,7 +13,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception)
+    static, catch_exception, for_all_methods)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -25,6 +25,7 @@ from photo_arch.adapters.presenter.group_description import Presenter
 from photo_arch.adapters.view_model.group_description import ViewModel
 
 
+@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
@@ -51,6 +52,7 @@ class View(object):
             widget.setText(self.mw.photo_info_dict.get(photo_path).get(k, ''))
 
 
+@for_all_methods(catch_exception)
 class PhotoDescription(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
@@ -102,7 +104,6 @@ class PhotoDescription(object):
 
         self.ui.verifycheckBox.stateChanged.connect(static(self.checked))
 
-    @catch_exception
     def resize_image(self, event):
         if not self.pix_map:
             return
@@ -111,7 +112,6 @@ class PhotoDescription(object):
         pix_map = self.pix_map.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.ui.photo_view.setPixmap(pix_map)
 
-    @catch_exception
     def photo_choose(self, check_state):
         if check_state is False:
             return
@@ -124,7 +124,6 @@ class PhotoDescription(object):
         self.current_photo_id = 0
         self._display_recognizable()
 
-    @catch_exception
     def dir_choose(self, check_state):
         if check_state is False:
             return
@@ -136,7 +135,6 @@ class PhotoDescription(object):
         self.ui.part_recognition_radioButton.setShortcut('Alt+W')
         self.ui.all_recognition_radioButton.setShortcut('Alt+E')
 
-    @catch_exception
     def get_name_info(self):
         name_list = []
         for row in range(self.ui.tableWidget.rowCount() - 1):
@@ -147,7 +145,6 @@ class PhotoDescription(object):
             name_list.append((id_, name))
         return name_list
 
-    @catch_exception
     def pre_photo(self):
         if self.ui.tabWidget.currentIndex() != 2:
             self.ui.tabWidget.setCurrentIndex(2)
@@ -157,7 +154,6 @@ class PhotoDescription(object):
             self.current_photo_id -= 1
             self._display_recognizable()
 
-    @catch_exception
     def next_photo(self):
         if self.ui.tabWidget.currentIndex() != 2:
             self.ui.tabWidget.setCurrentIndex(2)
@@ -167,13 +163,11 @@ class PhotoDescription(object):
             self.current_photo_id += 1
             self._display_recognizable()
 
-    @catch_exception
     def _create_button(self, name, ico_path):
         button = QtWidgets.QPushButton(QIcon(QPixmap(ico_path)), name, self.ui.tableWidget)
         button.setFlat(True)
         return button
 
-    @catch_exception
     def add(self):
         row = self.ui.tableWidget.rowCount() - 1
         del_button = self._create_button('删除', self.del_icon_path)
@@ -190,7 +184,6 @@ class PhotoDescription(object):
         self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
 
-    @catch_exception
     def delete(self, row):
         self.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.ui.tableWidget.removeRow(row)
@@ -201,16 +194,13 @@ class PhotoDescription(object):
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
         self.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.CurrentChanged)
 
-    @catch_exception
     def table_item_changed(self):
         self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
 
-    @catch_exception
     def _connect(self, button, row):
         button.clicked.connect(lambda: self.delete(row))
 
-    @catch_exception
     def _display_recognizable(self):
         if not self.mw.photo_list:
             self.ui.photo_view.setText('没有照片可显示')
@@ -237,8 +227,8 @@ class PhotoDescription(object):
         self._set_verify_checkbox(photo_path)
         self.view.display_photo(photo_path)
 
-    @catch_exception
     def _conversion_data(self, faces_data):
+        _ = self
         name_info_list = []
         coordinate_list = []
         face_coordinates_list = json.loads(faces_data)
@@ -252,7 +242,6 @@ class PhotoDescription(object):
             coordinate_list.append((id_, (x, y, w, h)))
         return name_info_list, coordinate_list
 
-    @catch_exception
     def _update_table_widget(self, name_info_list):
         for row in range(self.ui.tableWidget.rowCount(), -1, -1):
             self.ui.tableWidget.removeRow(row)
@@ -275,7 +264,6 @@ class PhotoDescription(object):
         add_button.clicked.connect(static(self.add))
         self.ui.tableWidget.setCellWidget(row+1, 2, add_button)
 
-    @catch_exception
     def _set_verify_checkbox(self, photo_path):
         photo_info = self.mw.photo_info_dict.get(photo_path)
         if photo_info:
@@ -294,7 +282,6 @@ class PhotoDescription(object):
         else:
             self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
 
-    @catch_exception
     def _mark_face(self, coordinate_list):
         painter = QPainter(self.pix_map)
         for id_, coordinate in coordinate_list:
@@ -311,7 +298,6 @@ class PhotoDescription(object):
             painter.setPen(pen)
             painter.drawRect(x, y, w, h)
 
-    @catch_exception
     def checked(self):
         if self.ui.verifycheckBox.isChecked() and self.mw.photo_list:
             name_list = self.get_name_info()

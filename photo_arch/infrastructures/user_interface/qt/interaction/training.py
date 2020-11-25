@@ -6,7 +6,7 @@
 @time: 2020/11/22 15:17
 """
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception)
+    static, catch_exception, for_all_methods)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -18,12 +18,14 @@ from photo_arch.adapters.presenter.training import Presenter
 from photo_arch.adapters.view_model.training import ViewModel
 
 
+@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
         self.view_model = view_model
 
 
+@for_all_methods(catch_exception)
 class Training(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
@@ -36,7 +38,6 @@ class Training(object):
         self.ui.train_btn.clicked.connect(static(self.start_training))
         self.ui.train_btn.setStyleSheet(self.mw.button_style_sheet)
 
-    @catch_exception
     def start_training(self):
         training_info = self.mw.interaction.start_training()
         model_acc = training_info.get('model_acc')

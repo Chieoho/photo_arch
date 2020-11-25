@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import *
 
 from photo_arch.use_cases.interfaces.dataset import GroupInputData
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception)
+    static, catch_exception, for_all_methods)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow, Overlay, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -29,6 +29,7 @@ from photo_arch.adapters.presenter.group_description import Presenter
 from photo_arch.adapters.view_model.group_description import ViewModel
 
 
+@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
@@ -48,6 +49,7 @@ class View(object):
                     widget.setText(v)
 
 
+@for_all_methods(catch_exception)
 class GroupDescription(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
@@ -80,11 +82,9 @@ class GroupDescription(object):
         self.ui.retention_period_in_group.currentTextChanged.connect(static(self.display_arch_and_group_code))
         self.ui.year_in_group.textChanged.connect(static(self.display_arch_and_group_code))
 
-    @catch_exception
     def clear_group_info(self):
         self.view.display_group()
 
-    @catch_exception
     def open_dir(self):
         current_work_path = QFileDialog.getExistingDirectory(
             self.ui.treeWidget, "选择文件夹",
@@ -110,7 +110,6 @@ class GroupDescription(object):
             self._generate_tree_by_path(self.current_work_path)
         self._reset_state()
 
-    @catch_exception
     def display_group(self, path):
         group_folder = os.path.split(path)[1]
         if self.setting.description_path in path:  # 以路径来判断是否已著录（应以照片的md5来判断）
@@ -120,7 +119,6 @@ class GroupDescription(object):
         else:
             self._display_default(group_folder)
 
-    @catch_exception
     def display_arch_and_group_code(self):
         fonds_code = self.ui.fonds_code_in_group.currentText()
         arch_category = self.ui.arch_category_code_in_group.currentText()
@@ -132,7 +130,6 @@ class GroupDescription(object):
         self.ui.group_code_in_group.setText(group_code)
         self.ui.arch_code_in_group.setText(group_arch_code)
 
-    @catch_exception
     def save_group(self):
         group_in = GroupInputData()
         for k in group_in.__dict__.keys():
@@ -146,7 +143,6 @@ class GroupDescription(object):
             setattr(group_in, k, value)
         self.controller.save_group(group_in)
 
-    @catch_exception
     def item_click(self, item):
         if item.text(0) == self.current_work_path:
             return
@@ -155,7 +151,6 @@ class GroupDescription(object):
         else:
             item.setCheckState(0, Qt.Unchecked)
 
-    @catch_exception
     def cancel_folder_item(self):
         item_value = QTreeWidgetItemIterator(self.ui.treeWidget).value()
         if item_value is None:
@@ -165,7 +160,6 @@ class GroupDescription(object):
             if item_value.child(i).checkState(0) == Qt.Checked:
                 item_value.child(i).setCheckState(0, Qt.Unchecked)
 
-    @catch_exception
     def add_folder_item(self):
         arch_code_info = {
             "root": {},
@@ -186,7 +180,6 @@ class GroupDescription(object):
         self.mw.interaction.set_arch_code(arch_code_info)
         self._reset_state()
 
-    @catch_exception
     def _reset_state(self):
         self.ui.radio_btn_group.setExclusive(False)
         for rb in [self.ui.all_photo_radioButton,
@@ -213,7 +206,6 @@ class GroupDescription(object):
 
         self.ui.verifycheckBox.setCheckState(False)
 
-    @catch_exception
     def _generate_dir_tree(self, root_arch_info, file_arch_list):
         root_path, root_arch_code = root_arch_info
         _, volume_name = os.path.split(root_path)
@@ -231,7 +223,6 @@ class GroupDescription(object):
             child.setCheckState(0, Qt.Checked)
         self.ui.treeWidget.expandAll()
 
-    @catch_exception
     def _gen_description_btn(self):
         description_btn = QtWidgets.QPushButton(
             ' ',
@@ -245,18 +236,15 @@ class GroupDescription(object):
         description_btn.setFlat(True)
         return description_btn
 
-    @catch_exception
     def _connect(self, button, path):
         button.clicked.connect(lambda: self.display_group(path))
 
-    @catch_exception
     def _generate_tree_by_path(self, root_path):
         file_list = filter(lambda p: os.path.isdir(os.path.join(root_path, p)), os.listdir(root_path))
         root_arch_info = (root_path, '')
         file_arch_list = [(fp, '') for fp in file_list]
         self._generate_dir_tree(root_arch_info, file_arch_list)
 
-    @catch_exception
     def _generate_tree_by_data(self, arch_code_info):
         root_arch = arch_code_info['root']
         root_arch_info = list(root_arch.items())[0]
@@ -267,7 +255,6 @@ class GroupDescription(object):
         arch_list = children_arch.items()
         self._generate_dir_tree(root_arch_info, arch_list)
 
-    @catch_exception
     def _display_default(self, group_folder):
         self.ui.group_path_in_group.setText(group_folder)
         self.ui.fonds_code_in_group.setCurrentText(self.setting.fonds_code)
@@ -279,7 +266,6 @@ class GroupDescription(object):
         self.ui.group_title_in_group.setText(group_folder)
         self.display_arch_and_group_code()
 
-    @catch_exception
     def _get_group_sn(self, year):
         path = os.path.join(
             self.setting.description_path, '照片档案',

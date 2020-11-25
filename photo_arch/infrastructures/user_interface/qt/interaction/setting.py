@@ -9,6 +9,8 @@ import os
 
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
+    catch_exception, for_all_methods)
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
 from photo_arch.adapters.sql.repo import Repo
@@ -17,6 +19,7 @@ from photo_arch.adapters.presenter.setting import Presenter
 from photo_arch.adapters.view_model.setting import ViewModel
 
 
+@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
@@ -27,6 +30,7 @@ class View(object):
         self.mw.ui.package_path_line_edit.setText(package_path)
 
 
+@for_all_methods(catch_exception)
 class Setting(object):
     def __init__(self, mw_: MainWindow):
         self.mw = mw_

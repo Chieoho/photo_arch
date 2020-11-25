@@ -8,8 +8,9 @@
 import time
 
 from PyQt5 import QtCore
+
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception)
+    static, catch_exception, for_all_methods)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -21,12 +22,14 @@ from photo_arch.adapters.presenter.recognition import Presenter
 from photo_arch.adapters.view_model.recognition import ViewModel
 
 
+@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
         self.view_model = view_model
 
 
+@for_all_methods(catch_exception)
 class Recognition(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
@@ -46,7 +49,6 @@ class Recognition(object):
         self.ui.recogni_btn.setStyleSheet(self.mw.button_style_sheet)
         self.ui.pausecontinue_btn.setStyleSheet(self.mw.button_style_sheet)
 
-    @catch_exception
     def run(self):
         if self.mw.run_state != RecognizeState.running:
             thresh = self.ui.thresh_lineEdit.text()
@@ -63,7 +65,6 @@ class Recognition(object):
             else:
                 self.mw.msg_box(result.get('msg'))
 
-    @catch_exception
     def pause_or_continue(self):
         if self.mw.run_state == RecognizeState.running:
             result = self.mw.interaction.pause()
@@ -85,7 +86,6 @@ class Recognition(object):
         else:
             pass
 
-    @catch_exception
     def periodic_update(self):
         if self.mw.run_state == RecognizeState.running:
             if self.ui.tabWidget.currentIndex() == 1:
