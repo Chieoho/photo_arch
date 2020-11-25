@@ -113,5 +113,5 @@ class ArchTransfer(object):
         disk_size = self.ui.disk_size_line_edit.text()
         if (not disk_size) or (not self.selected_arch_list):
             return
-        item = QListWidgetItem(QIcon(self.disk_icon_path), 'disk 1(A1-2018-30年)')
+        item = QListWidgetItem(QIcon(self.disk_icon_path), 'disk 1(A1-2018-D30)')
         self.ui.partition_list_widget.addItem(item)

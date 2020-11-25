@@ -23,8 +23,7 @@ class Special(object):
                  mw_: MainWindow,
                  setting: Setting,
                  arch_browser: ArchBrowser,
-                 arch_transfer: ArchTransfer
-                 ):
+                 arch_transfer: ArchTransfer):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting

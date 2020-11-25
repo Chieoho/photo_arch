@@ -132,7 +132,7 @@ class ArchBrowser(object):
         path = os.path.join(
             self.setting.description_path,
             '照片档案',
-            year, period+'年',
+            year, period,
             self.group_folder,
             '*.*'
         )
@@ -149,7 +149,7 @@ class ArchBrowser(object):
         path = os.path.join(
             self.setting.description_path,
             '照片档案',
-            year, period+'年',
+            year, period,
             self.group_folder,
             photo_name
         )

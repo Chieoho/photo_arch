@@ -897,17 +897,17 @@ padding-bottom: 8px;</string>
               </property>
               <item>
                <property name="text">
-                <string>10年</string>
+                <string>D10</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>30年</string>
+                <string>D30</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>永久</string>
+                <string>Y</string>
                </property>
               </item>
              </widget>
