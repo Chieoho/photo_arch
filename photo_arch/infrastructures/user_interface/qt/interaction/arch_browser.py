@@ -7,23 +7,82 @@
 """
 import os
 import glob
+from collections import defaultdict
+
 from PyQt5 import QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
+    static, catch_exception)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, Ui_MainWindow, View,
-    static, catch_exception,
-)
+    MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
+
+from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.controller.arch_browser import Controller
+from photo_arch.adapters.presenter.arch_browser import Presenter
+from photo_arch.adapters.view_model.arch_browser import ViewModel
+
+
+class View(object):
+    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+        self.mw = mw_
+        self.view_model = view_model
+
+    def display_group(self, widget_suffix='_in_group_arch'):
+        for k, v in self.view_model.group.items():
+            widget_name = k + widget_suffix
+            if hasattr(self.mw.ui, widget_name):
+                widget = getattr(self.mw.ui, widget_name)
+                if isinstance(widget, QComboBox):
+                    if v:
+                        widget.setCurrentText(v)
+                    else:
+                        widget.setCurrentIndex(-1)
+                else:
+                    widget.setText(v)
+
+    def _fill_model_from_dict(self, parent, d):
+        if isinstance(d, dict):
+            for k, v in d.items():
+                child = QStandardItem(str(k))
+                parent.appendRow(child)
+                self._fill_model_from_dict(child, v)
+        elif isinstance(d, list):
+            for v in d:
+                self._fill_model_from_dict(parent, v)
+        else:
+            parent.appendRow(QStandardItem(str(d)))
+
+    def display_browse_arch(self, priority_key='年度'):
+        data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+        for gi in self.view_model.arch:
+            fc = gi.get('fonds_code')
+            ye = gi.get('year')
+            rp = gi.get('retention_period')
+            gp = gi.get('group_path')
+            if priority_key == '年度':
+                data[fc][ye][rp].append(gp)
+            else:
+                data[fc][rp][ye].append(gp)
+        model = QStandardItemModel()
+        model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
+        self._fill_model_from_dict(model.invisibleRootItem(), data)
+        self.mw.ui.arch_tree_view_browse.setModel(model)
+        self.mw.ui.arch_tree_view_browse.expandAll()
 
 
 class ArchBrowser(object):
-    def __init__(self, mw_: MainWindow, setting: Setting, view: View):
+    def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view = view
+        view_model = ViewModel()
+        self.controller = Controller(Repo(make_session(engine)), Presenter(view_model))
+        self.view = View(mw_, view_model)
 
         self.pix_map = None
         self.group_folder = ''
@@ -60,8 +119,8 @@ class ArchBrowser(object):
             return
         self.group_folder = index.data()
         group_code = self.group_folder.split(' ')[0]
-        self.mw.controller.get_group(group_code)
-        self.view.display_group_in_arch_browse()
+        self.controller.get_group(group_code)
+        self.view.display_group()
         self.ui.photo_view_in_arch.clear()
         self._list_photo_thumb()
 

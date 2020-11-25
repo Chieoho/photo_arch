@@ -6,21 +6,35 @@
 @time: 2020/11/23 8:55
 """
 import time
+
 from PyQt5 import QtCore
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
+    static, catch_exception)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, Ui_MainWindow, View,
-    RecognizeState,
-    static, catch_exception
-)
+    MainWindow, Ui_MainWindow, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
+
+from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.controller.recognition import Controller
+from photo_arch.adapters.presenter.recognition import Presenter
+from photo_arch.adapters.view_model.recognition import ViewModel
+
+
+class View(object):
+    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+        self.mw = mw_
+        self.view_model = view_model
 
 
 class Recognition(object):
-    def __init__(self, mw_: MainWindow, setting: Setting, view: View):
+    def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view = view
+        view_model = ViewModel()
+        self.controller = Controller(Repo(make_session(engine)), Presenter(view_model))
+        self.view = View(mw_, view_model)
 
         self.update_timer = QtCore.QTimer()
         

@@ -8,7 +8,7 @@
 import sys
 from photo_arch.infrastructures.user_interface.qt.interaction import main_window
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    QtWidgets, MainWindow, View
+    QtWidgets, MainWindow
 )
 from photo_arch.infrastructures.user_interface.qt.interaction.training import Training
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_transfer import ArchTransfer
@@ -17,19 +17,20 @@ from photo_arch.infrastructures.user_interface.qt.interaction.group_description 
 from photo_arch.infrastructures.user_interface.qt.interaction.recognition import Recognition
 from photo_arch.infrastructures.user_interface.qt.interaction.photo_description import PhotoDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
+from photo_arch.infrastructures.user_interface.qt.interaction.special import Special
 
 SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
 
 
 def init_modules(mw_):
-    view = View(mw_)
-    setting = Setting(mw_, view)
-    Recognition(mw_, setting, view)
-    PhotoDescription(mw_, setting, view)
-    GroupDescription(mw_, setting, view)
-    Training(mw_, setting, view)
-    ArchBrowser(mw_, setting, view)
-    ArchTransfer(mw_, setting, view)
+    setting = Setting(mw_)
+    GroupDescription(mw_, setting)
+    Recognition(mw_, setting)
+    PhotoDescription(mw_, setting)
+    Training(mw_, setting)
+    arch_browser = ArchBrowser(mw_, setting)
+    arch_transfer = ArchTransfer(mw_, setting)
+    Special(mw_, setting, arch_browser, arch_transfer)
 
 
 def main():

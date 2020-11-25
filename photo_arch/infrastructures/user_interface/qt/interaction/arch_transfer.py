@@ -5,22 +5,67 @@
 @author: Jaden Wu
 @time: 2020/11/22 21:36
 """
+from collections import defaultdict
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
+    static, catch_exception)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, Ui_MainWindow, View,
-    static, catch_exception,
-)
+    MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
+
+from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.controller.arch_browser import Controller
+from photo_arch.adapters.presenter.arch_browser import Presenter
+from photo_arch.adapters.view_model.arch_browser import ViewModel
+
+
+class View(object):
+    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+        self.mw = mw_
+        self.view_model = view_model
+
+    def _fill_model_from_dict(self, parent, d):
+        if isinstance(d, dict):
+            for k, v in d.items():
+                child = QStandardItem(str(k))
+                parent.appendRow(child)
+                self._fill_model_from_dict(child, v)
+        elif isinstance(d, list):
+            for v in d:
+                self._fill_model_from_dict(parent, v)
+        else:
+            parent.appendRow(QStandardItem(str(d)))
+
+    def display_transfer_arch(self, priority_key='年度'):
+        data = defaultdict(lambda: defaultdict(dict))
+        for gi in self.view_model.arch:
+            fc = gi.get('fonds_code')
+            ye = gi.get('year')
+            rp = gi.get('retention_period')
+            if priority_key == '年度':
+                data[fc][ye] = rp
+            else:
+                data[fc][rp] = ye
+        model = QStandardItemModel()
+        model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
+        self._fill_model_from_dict(model.invisibleRootItem(), data)
+        self.mw.ui.arch_tree_view_transfer.setModel(model)
+        self.mw.ui.arch_tree_view_transfer.expandAll()
 
 
 class ArchTransfer(object):
-    def __init__(self, mw_: MainWindow, setting: Setting, view: View):
+    def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view = view
+        view_model = ViewModel()
+        self.controller = Controller(Repo(make_session(engine)), Presenter(view_model))
+        self.view = View(mw_, view_model)
 
         self.selected_arch_list = []
         self.disk_icon_path = './icon/arch_cd.png'

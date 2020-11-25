@@ -6,23 +6,59 @@
 @time: 2020/11/23 9:24
 """
 import json
+
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
+    static, catch_exception)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, Ui_MainWindow, View,
-    static, catch_exception,
-)
+    MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
+
+from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.controller.group_description import Controller
+from photo_arch.adapters.presenter.group_description import Presenter
+from photo_arch.adapters.view_model.group_description import ViewModel
+
+
+class View(object):
+    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+        self.mw = mw_
+        self.view_model = view_model
+
+    def display_photo(self, photo_path):
+        model_keys = [
+            'arch_code',
+            'photo_code',
+            'peoples',
+            'format',
+            'fonds_code',
+            'arch_category_code',
+            'year',
+            'group_code',
+            'photographer',
+            'taken_time',
+            'taken_locations',
+            'security_classification',
+            'reference_code'
+        ]
+        for k in model_keys:
+            widget = getattr(self.mw.ui, f'{k}_in_photo')
+            widget.setText(self.mw.photo_info_dict.get(photo_path).get(k, ''))
 
 
 class PhotoDescription(object):
-    def __init__(self, mw_: MainWindow, setting: Setting, view: View):
+    def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view = view
+        view_model = ViewModel()
+        self.controller = Controller(Repo(make_session(engine)), Presenter(view_model))
+        self.view = View(mw_, view_model)
 
         self.photo_radio_map = {
             'all_photo_radioButton': 1,

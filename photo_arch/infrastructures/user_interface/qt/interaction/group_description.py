@@ -7,25 +7,53 @@
 """
 import os
 import typing
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from photo_arch.adapters.controller import GroupInputData
+
+from photo_arch.use_cases.interfaces.dataset import GroupInputData
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
+    static, catch_exception)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, Ui_MainWindow, Overlay, View,
-    RecognizeState,
-    static, catch_exception,
-)
+    MainWindow, Ui_MainWindow, Overlay, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
+
+from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.controller.group_description import Controller
+from photo_arch.adapters.presenter.group_description import Presenter
+from photo_arch.adapters.view_model.group_description import ViewModel
+
+
+class View(object):
+    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+        self.mw = mw_
+        self.view_model = view_model
+
+    def display_group(self, widget_suffix='_in_group'):
+        for k, v in self.view_model.group.items():
+            widget_name = k + widget_suffix
+            if hasattr(self.mw.ui, widget_name):
+                widget = getattr(self.mw.ui, widget_name)
+                if isinstance(widget, QComboBox):
+                    if v:
+                        widget.setCurrentText(v)
+                    else:
+                        widget.setCurrentIndex(-1)
+                else:
+                    widget.setText(v)
 
 
 class GroupDescription(object):
-    def __init__(self, mw_: MainWindow, setting: Setting, view: View):
+    def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view = view
+        view_model = ViewModel()
+        self.controller = Controller(Repo(make_session(engine)), Presenter(view_model))
+        self.view = View(mw_, view_model)
 
         self.current_work_path = ''
         self.line_edit_prefix = '__line_edit__'
@@ -56,7 +84,7 @@ class GroupDescription(object):
             else:
                 value = widget.text()
             setattr(group_in, k, value)
-        self.mw.controller.save_group(group_in)
+        self.controller.save_group(group_in)
 
     @catch_exception
     def display_dir(self):
@@ -191,11 +219,12 @@ class GroupDescription(object):
         if path:
             group_folder = os.path.split(path)[1]
             group_code = group_folder.split(' ')[0]
-            self.mw.controller.get_group(group_code)
+            self.controller.get_group(group_code)
         else:
             group_folder = ''
-        self.view.display_group_in_description()
+        self.view.display_group()
         self.ui.group_path_in_group.setText(group_folder)
+        self.ui.group_title_in_group.setText(group_folder)
 
     @catch_exception
     def _generate_tree_by_path(self, root_path):

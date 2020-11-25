@@ -8,18 +8,11 @@
 import sys
 from threading import Thread
 import typing
-from collections import defaultdict
-import functools
-import traceback
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from photo_arch.infrastructures.user_interface.qt.ui import slot_wrapper
-from photo_arch.adapters.controller import Controller
-from photo_arch.adapters.sql.repo import Repo
-from photo_arch.adapters.presenter import Presenter, ViewModel
-from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import catch_exception
 from photo_arch.infrastructures.user_interface.qt.ui.qt_ui import Ui_MainWindow
 from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
 
@@ -28,21 +21,6 @@ class RecognizeState(object):
     stop = 0
     running = 1
     pause = 2
-
-
-def static(method):
-    return slot_wrapper.static_(method)
-
-
-def catch_exception(func):
-    @functools.wraps(func)
-    def wrapper(*args):
-        try:
-            return func(*args)
-        except Exception as e:
-            _ = e
-            print(traceback.format_exc())
-    return wrapper
 
 
 class InitRecognition(Thread):
@@ -88,25 +66,13 @@ class Overlay(QtWidgets.QWidget):
         painter.drawText(self.rect(), Qt.AlignCenter, self.text)
 
 
-view_model = ViewModel()
-
-
-def get_controller():
-    repo = Repo(make_session(engine))
-    presenter = Presenter(view_model)
-    controller = Controller(repo, presenter)
-    return controller
-
-
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, app):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.view = View(self)
 
         self.interaction: UiInterface = typing.Any
-        self.controller = get_controller()
         self.init_recognition = InitRecognition(self)
         self.init_recognition.start()
 
@@ -122,7 +88,6 @@ class MainWindow(QtWidgets.QMainWindow):
             "unhandled_photo_num": self.ui.unhandled_photo_label
         }
         self.run_state = RecognizeState.stop
-        self.ui.tabWidget.currentChanged.connect(self.tab_change)
         self.ui.tabWidget.setCurrentIndex(2)
         self.ui.tabWidget.setCurrentIndex(0)
 
@@ -137,114 +102,5 @@ class MainWindow(QtWidgets.QMainWindow):
         self.dir_type = 1
 
     @catch_exception
-    def tab_change(self, tab_id):
-        if tab_id == 3:  # 选中“模型训练”tab
-            if self.interaction != typing.Any:
-                untrained_photo_num = self.interaction.get_untrained_photo_num()
-                self.ui.untrained_num_label.setText(str(untrained_photo_num))
-        elif tab_id == 4:  # 选中“档案浏览”tab
-            self.controller.browse_arch()
-            self.view.display_browse_arch(self.ui.order_combobox_browse.currentText())
-        elif tab_id == 5:  # 选中“档案移交”tab
-            self.controller.browse_arch()
-            self.view.display_transfer_arch(self.ui.order_combobox_transfer.currentText())
-        else:
-            pass
-
-    @catch_exception
     def msg_box(self, msg: str):
         QMessageBox().warning(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
-
-
-class View(object):
-    def __init__(self, mw_: MainWindow):
-        self.mw = mw_
-        self.view_model = view_model
-
-    def _display_group(self, widget_suffix):
-        for k, v in self.view_model.group.items():
-            widget_name = k + widget_suffix
-            if hasattr(self.mw.ui, widget_name):
-                widget = getattr(self.mw.ui, widget_name)
-                if isinstance(widget, QComboBox):
-                    if v:
-                        widget.setCurrentText(v)
-                    else:
-                        widget.setCurrentIndex(-1)
-                else:
-                    widget.setText(v)
-
-    def display_group_in_description(self):
-        self._display_group('_in_group')
-
-    def display_group_in_arch_browse(self):
-        self._display_group('_in_group_arch')
-
-    def display_photo(self, photo_path):
-        model_keys = [
-            'arch_code',
-            'photo_code',
-            'peoples',
-            'format',
-            'fonds_code',
-            'arch_category_code',
-            'year',
-            'group_code',
-            'photographer',
-            'taken_time',
-            'taken_locations',
-            'security_classification',
-            'reference_code'
-        ]
-        for k in model_keys:
-            widget = getattr(self.mw.ui, f'{k}_in_photo')
-            widget.setText(self.mw.photo_info_dict.get(photo_path).get(k, ''))
-
-    def _fill_model_from_dict(self, parent, d):
-        if isinstance(d, dict):
-            for k, v in d.items():
-                child = QStandardItem(str(k))
-                parent.appendRow(child)
-                self._fill_model_from_dict(child, v)
-        elif isinstance(d, list):
-            for v in d:
-                self._fill_model_from_dict(parent, v)
-        else:
-            parent.appendRow(QStandardItem(str(d)))
-
-    def display_browse_arch(self, priority_key='年度'):
-        data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-        for gi in self.view_model.arch:
-            fc = gi.get('fonds_code')
-            ye = gi.get('year')
-            rp = gi.get('retention_period')
-            gp = gi.get('group_path')
-            if priority_key == '年度':
-                data[fc][ye][rp].append(gp)
-            else:
-                data[fc][rp][ye].append(gp)
-        model = QStandardItemModel()
-        model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
-        self._fill_model_from_dict(model.invisibleRootItem(), data)
-        self.mw.ui.arch_tree_view_browse.setModel(model)
-        self.mw.ui.arch_tree_view_browse.expandAll()
-
-    def display_transfer_arch(self, priority_key='年度'):
-        data = defaultdict(lambda: defaultdict(dict))
-        for gi in self.view_model.arch:
-            fc = gi.get('fonds_code')
-            ye = gi.get('year')
-            rp = gi.get('retention_period')
-            if priority_key == '年度':
-                data[fc][ye] = rp
-            else:
-                data[fc][rp] = ye
-        model = QStandardItemModel()
-        model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
-        self._fill_model_from_dict(model.invisibleRootItem(), data)
-        self.mw.ui.arch_tree_view_transfer.setModel(model)
-        self.mw.ui.arch_tree_view_transfer.expandAll()
-
-    def display_setting(self, description_path, package_path):
-        self.mw.ui.description_path_line_edit.setText(description_path)
-        self.mw.ui.package_path_line_edit.setText(package_path)

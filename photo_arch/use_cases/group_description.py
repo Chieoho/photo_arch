@@ -8,7 +8,7 @@
 from photo_arch.domains.photo_group import PhotoGroup
 from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
-from photo_arch.use_cases.interfaces.presenter_if import PresenterIf
+from photo_arch.use_cases.interfaces.presenter_if.group_description import PresenterIf
 
 
 class GroupDescription(object):

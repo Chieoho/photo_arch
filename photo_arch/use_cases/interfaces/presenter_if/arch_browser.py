@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-@file: presenter_if.py
+@file: arch_browser.py
 @desc:
 @author: Jaden Wu
-@time: 2020/11/5 14:36
+@time: 2020/11/25 10:57
 """
 from abc import ABCMeta, abstractmethod
 
 
 class PresenterIf(metaclass=ABCMeta):
     @abstractmethod
-    def update_group_model(self, group_info) -> bool:
+    def update_arch_model(self, group_info_list) -> bool:
         """
-        :param group_info:
+        :param group_info_list:
         :return:
         """
 
     @abstractmethod
-    def update_arch_model(self, group_info_list) -> bool:
+    def update_group_model(self, group_info) -> bool:
         """
-        :param group_info_list:
+        :param group_info:
         :return:
         """
