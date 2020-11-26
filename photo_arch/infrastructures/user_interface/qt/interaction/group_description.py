@@ -54,10 +54,10 @@ class GroupDescription(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        view_model = ViewModel()
-        self.presenter = Presenter(view_model)
+        self.view_model = ViewModel()
+        self.presenter = Presenter(self.view_model)
         self.controller = Controller(Repo(make_session(engine)), self.presenter)
-        self.view = View(mw_, view_model)
+        self.view = View(mw_, self.view_model)
 
         self.current_work_path = ''
         self.description_path_info = {}

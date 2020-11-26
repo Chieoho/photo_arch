@@ -14,5 +14,5 @@ class Controller(object):
     def __init__(self, repo: Repo, presenter: Presenter):
         self.arch_transfer = ArchTransfer(repo, presenter)
 
-    def get_group(self, year, retention_period):
-        pass
+    def list_arch(self):
+        self.arch_transfer.list_arch()

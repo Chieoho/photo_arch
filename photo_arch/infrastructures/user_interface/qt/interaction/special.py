@@ -17,7 +17,6 @@ from photo_arch.infrastructures.user_interface.qt.interaction.arch_transfer impo
 
 
 class Special(object):
-
     def __init__(self,
                  mw_: MainWindow,
                  setting: Setting,
@@ -41,7 +40,7 @@ class Special(object):
             self.arch_browser.controller.browse_arch()
             self.arch_browser.view.display_browse_arch(self.ui.order_combobox_browse.currentText())
         elif tab_id == 5:  # 选中“档案移交”tab
-            self.arch_transfer.controller.browse_arch()
+            self.arch_transfer.controller.list_arch()
             self.arch_transfer.view.display_transfer_arch(self.ui.order_combobox_transfer.currentText())
         else:
             pass

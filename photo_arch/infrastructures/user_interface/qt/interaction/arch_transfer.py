@@ -62,9 +62,10 @@ class ArchTransfer(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        view_model = ViewModel()
-        self.controller = Controller(Repo(make_session(engine)), Presenter(view_model))
-        self.view = View(mw_, view_model)
+        self.view_model = ViewModel()
+        self.presenter = Presenter(self.view_model)
+        self.controller = Controller(Repo(make_session(engine)), self.presenter)
+        self.view = View(mw_, self.view_model)
 
         self.selected_arch_list = []
         self.disk_icon_path = './icon/arch_cd.png'
@@ -87,12 +88,14 @@ class ArchTransfer(object):
             return
         parent_index = index.parent()
         fonds_code_index = parent_index.parent()
-        selected_name = '-'.join([fonds_code_index.data(), parent_index.data(), index.data()])
-        if selected_name in self.selected_arch_list:
+        selected_name1 = '-'.join([fonds_code_index.data(), parent_index.data(), index.data()])
+        selected_name2 = '-'.join([fonds_code_index.data(), index.data(), parent_index.data()])
+        if (selected_name1 in self.selected_arch_list) or \
+                (selected_name2 in self.selected_arch_list):
             return
-        item = QListWidgetItem(selected_name)
+        item = QListWidgetItem(selected_name1)
         self.ui.selected_arch_list_widget.addItem(item)
-        self.selected_arch_list.append(selected_name)
+        self.selected_arch_list.append(selected_name1)
         self.partition()
 
     def unselect_arch(self, item):
@@ -108,6 +111,18 @@ class ArchTransfer(object):
         disk_size = self.ui.disk_size_line_edit.text()
         if (not disk_size) or (not self.selected_arch_list):
             return
-
-        item = QListWidgetItem(QIcon(self.disk_icon_path), 'disk 1(A1-2018-D30)')
+        data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+        for gi in self.view_model.arch:
+            fc = gi.get('fonds_code')
+            ye = gi.get('year')
+            rp = gi.get('retention_period')
+            data[fc][ye][rp].append(gi)
+            data[fc][rp][ye].append(gi)
+        selected_arch_data = []
+        for sa in self.selected_arch_list:
+            fc, x1, x2 = sa.split('-')
+            selected_arch_data.extend(data[fc][x1][x2])
+        from pprint import pprint
+        pprint(selected_arch_data)
+        item = QListWidgetItem(QIcon(self.disk_icon_path), f'disk1({self.selected_arch_list[0]})')
         self.ui.partition_list_widget.addItem(item)
