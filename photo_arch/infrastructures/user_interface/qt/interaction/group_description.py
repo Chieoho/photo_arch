@@ -7,17 +7,18 @@
 """
 import os
 import typing
-from datetime import datetime
 import glob
+from pathlib import Path
+import time
+import shutil
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from photo_arch.use_cases.interfaces.dataset import GroupInputData
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception, for_all_methods)
+from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow, Overlay, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -29,7 +30,6 @@ from photo_arch.adapters.presenter.group_description import Presenter
 from photo_arch.adapters.view_model.group_description import ViewModel
 
 
-@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
@@ -49,19 +49,20 @@ class View(object):
                     widget.setText(v)
 
 
-@for_all_methods(catch_exception)
 class GroupDescription(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
         view_model = ViewModel()
-        self.controller = Controller(Repo(make_session(engine)), Presenter(view_model))
+        self.presenter = Presenter(view_model)
+        self.controller = Controller(Repo(make_session(engine)), self.presenter)
         self.view = View(mw_, view_model)
 
         self.current_work_path = ''
         self.description_path_info = {}
-        self.group_arch_code_info = {}
+        self.arch_code_info = {}
+        self.current_folder = ''
 
         height = int(self.mw.dt_height*30/1080)
         self.ui.treeWidget.setStyleSheet('#treeWidget::item{height:%spx;}' % (height + 5))
@@ -77,10 +78,10 @@ class GroupDescription(object):
 
         self.clear_group_info()
 
-        self.ui.fonds_code_in_group.currentTextChanged.connect(static(self.display_arch_and_group_code))
-        self.ui.arch_category_code_in_group.currentTextChanged.connect(static(self.display_arch_and_group_code))
-        self.ui.retention_period_in_group.currentTextChanged.connect(static(self.display_arch_and_group_code))
-        self.ui.year_in_group.textChanged.connect(static(self.display_arch_and_group_code))
+        self.ui.fonds_code_in_group.currentTextChanged.connect(static(self.display_path_arch_group_code))
+        self.ui.arch_category_code_in_group.currentTextChanged.connect(static(self.display_path_arch_group_code))
+        self.ui.retention_period_in_group.currentTextChanged.connect(static(self.display_path_arch_group_code))
+        self.ui.year_in_group.textChanged.connect(static(self.display_path_arch_group_code))
 
     def clear_group_info(self):
         self.view.display_group()
@@ -117,18 +118,14 @@ class GroupDescription(object):
             self.controller.get_group(group_code)
             self.view.display_group()
         else:
-            self._display_default(group_folder)
+            self._display_default(path)
+        self.current_folder = group_folder
 
-    def display_arch_and_group_code(self):
-        fonds_code = self.ui.fonds_code_in_group.currentText()
-        arch_category = self.ui.arch_category_code_in_group.currentText()
-        year = self.ui.year_in_group.text()
-        retention_period = self.ui.retention_period_in_group.currentText()
-        group_sn = self._get_group_sn(year)
-        group_code = f'{arch_category}·{year}-{retention_period}-{group_sn}'
-        group_arch_code = f'{fonds_code}-{group_code}'
+    def display_path_arch_group_code(self):
+        group_folder, arch_code, group_code = self._get_path_arch_group_code()
+        self.ui.group_path_in_group.setText(group_folder)
+        self.ui.arch_code_in_group.setText(arch_code)
         self.ui.group_code_in_group.setText(group_code)
-        self.ui.arch_code_in_group.setText(group_arch_code)
 
     def save_group(self):
         group_in = GroupInputData()
@@ -142,6 +139,21 @@ class GroupDescription(object):
                 value = widget.text()
             setattr(group_in, k, value)
         self.controller.save_group(group_in)
+
+        source_path = os.path.join(self.current_work_path, self.current_folder)
+        group_code = self.ui.group_code_in_group.text()
+        taken_time = self.ui.taken_time_in_group.text()
+        group_title = self.ui.group_title_in_group.text()
+        name = ' '.join([group_code, taken_time, group_title])
+        dst_abspath = os.path.join(
+            self.setting.description_path,
+            '照片档案',
+            self.ui.year_in_group.text(),
+            self.ui.retention_period_in_group.currentText(),
+            name)
+        self.description_path_info[source_path] = os.path.join(dst_abspath)
+        self.arch_code_info[source_path] = self.ui.arch_code_in_group.text()
+        shutil.copytree(source_path, dst_abspath)
 
     def item_click(self, item):
         if item.text(0) == self.current_work_path:
@@ -174,9 +186,10 @@ class GroupDescription(object):
             item = items_value.child(i)
             if item.checkState(0) == Qt.Checked:
                 path = item.text(0)
-                arch_code = self.ui.arch_code_in_group.text()
                 group_abspath = os.path.join(self.current_work_path, path)
-                arch_code_info["children"].update({group_abspath: arch_code})
+                dst_abspath = self.description_path_info.get(group_abspath, '')
+                arch_code = self.arch_code_info.get(group_abspath, '')
+                arch_code_info["children"].update({dst_abspath: arch_code})
         self.mw.interaction.set_arch_code(arch_code_info)
         self._reset_state()
 
@@ -255,16 +268,58 @@ class GroupDescription(object):
         arch_list = children_arch.items()
         self._generate_dir_tree(root_arch_info, arch_list)
 
-    def _display_default(self, group_folder):
-        self.ui.group_path_in_group.setText(group_folder)
-        self.ui.fonds_code_in_group.setCurrentText(self.setting.fonds_code)
-        self.ui.year_in_group.setText(str(datetime.now().year))
-        self.ui.arch_category_code_in_group.setCurrentIndex(0)
-        self.ui.retention_period_in_group.setCurrentIndex(0)
-        self.ui.security_classification_in_group.setCurrentIndex(0)
-        self.ui.opening_state_in_group.setCurrentIndex(0)
-        self.ui.group_title_in_group.setText(group_folder)
-        self.display_arch_and_group_code()
+    def _display_default(self, path):
+        group_info = self._gen_default_info(path)
+        self.presenter.update_group_model(group_info)
+        self.view.display_group()
+        self.display_path_arch_group_code()
+
+    def _gen_default_info(self, path):
+        group_data = GroupOutputData()
+        group_folder = os.path.split(path)[1]
+        group_data.fonds_code = self.setting.fonds_code
+        group_data.arch_category_code = 'ZP'
+        group_data.retention_period = 'D10'
+        group_data.security_classification = '公开资料'
+        group_data.opening_state = '公开'
+        group_data.group_title = group_folder
+        folder_size, photo_num, file_create_time = self._get_folder_info(path)
+        group_data.folder_size = folder_size
+        group_data.photo_num = str(photo_num)
+        group_data.taken_time = file_create_time
+        group_data.year = file_create_time[0: 4]
+        return group_data.__dict__
+
+    def _get_path_arch_group_code(self):
+        taken_time = self.ui.taken_time_in_group.text()
+        group_title = self.ui.group_title_in_group.text()
+        fonds_code = self.ui.fonds_code_in_group.currentText()
+        arch_category = self.ui.arch_category_code_in_group.currentText()
+        year = self.ui.year_in_group.text()
+        retention_period = self.ui.retention_period_in_group.currentText()
+        group_sn = self._get_group_sn(year)
+        group_code = f'{arch_category}·{year}-{retention_period}-{group_sn}'
+        arch_code = f'{fonds_code}-{group_code}'
+        group_folder = f'{group_code} {taken_time} {group_title}'
+        return group_folder, arch_code, group_code
+
+    @staticmethod
+    def _get_folder_info(path):
+        directory = Path(path)
+        total_size = 0
+        photo_num = 0
+        f_stat = None
+        file_create_time = ''
+        for f in directory.glob('**/*'):
+            if f.is_file():
+                photo_num += 1
+                f_stat = f.stat()
+                total_size += f_stat.st_size
+        if f_stat:
+            file_create_time = time.strftime('%Y%m%d', time.localtime(f_stat.st_ctime))
+        mb = 1024 * 1024.0
+        folder_size = "%.2fMB" % (total_size / mb)
+        return folder_size, photo_num, file_create_time
 
     def _get_group_sn(self, year):
         path = os.path.join(

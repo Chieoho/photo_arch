@@ -5,8 +5,7 @@
 @author: Jaden Wu
 @time: 2020/11/22 15:17
 """
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception, for_all_methods)
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -18,14 +17,12 @@ from photo_arch.adapters.presenter.training import Presenter
 from photo_arch.adapters.view_model.training import ViewModel
 
 
-@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
         self.view_model = view_model
 
 
-@for_all_methods(catch_exception)
 class Training(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_

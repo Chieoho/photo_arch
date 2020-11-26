@@ -159,8 +159,8 @@ def calculate_img_scaling(img_path, canvasH, canvasW):
     return scale
 
 
-# 人脸框排序
-def enabel_row_up(det):
+# 按照距离顶部最近的人脸框为基准进行排序
+def enabel_row_up_by_top(det):
     row_up = []
     row_no = []
     if len(det) >= 1:
@@ -179,7 +179,7 @@ def enabel_row_up(det):
     return row_up, row_no
 
 
-def arrange_row_up(det, row_up):
+def arrange_row_up_by_top(det, row_up):
     det_row = []
     det_arr = []
     length = len(row_up)
@@ -196,33 +196,33 @@ def arrange_row_up(det, row_up):
     return det_arr
 
 
-def arrange_row_no(det, row_no):
+def remaining_row_no(det, row_no):
     det_row = []
     det_arr = []
     length = len(row_no)
-    # 取出排成一行的人脸框
+    # 取出剩余未排序的人脸框
     for i in range(length):
         det_row.append(det.tolist().pop(row_no[i]))
 
     return det_row
 
 
-def rank_all_faces(det):
+def rank_all_faces_by_top(det):
     rank = []
     while True:
-        row_up, row_no = enabel_row_up(det)
+        row_up, row_no = enabel_row_up_by_top(det)
         # print('row_up:', row_up)
         # print('row_no:', row_no)
         if len(row_up) >= 1:
-            det_row_up = arrange_row_up(det, row_up)
+            det_row_up = arrange_row_up_by_top(det, row_up)
             for i in range(len(det_row_up)):
                 rank.append(det_row_up[i])
 
         if len(row_no) > 1:
-            det_row_no = arrange_row_no(det, row_no)
+            det_row_no = remaining_row_no(det, row_no)
             det = np.asarray(det_row_no)
         elif len(row_no) == 1:
-            det_row_no = arrange_row_no(det, row_no)
+            det_row_no = remaining_row_no(det, row_no)
             det = np.asarray(det_row_no)
             rank.append(det[0])
             break
@@ -230,6 +230,77 @@ def rank_all_faces(det):
             break
 
     return rank
+
+
+# 按照距离底部最近的人脸框为基准进行排序
+def enabel_row_up_by_bottom(det):
+    row_up = []
+    row_no = []
+    if len(det) >= 1:
+        # 以离左上角最近的人脸框为基准,找出同一行的人脸框 or 以离右上角最近的人脸框为基准,找出同一行的人脸框
+        # if np.argmin(det[:, 1]) == np.argmin(det[:, 0])
+
+        max_y1 = det[np.argmax(det[:, 3])][1]
+        rank_index = np.argsort(det[:, 3])
+        for i in range(len(det)):
+            if det[rank_index[i]][3] > (max_y1 + 5):
+                # ratio = (base_h - abs(base_h - det[rank_index[i]][3]))/base_h
+                row_up.append(rank_index[i])  # 成一行
+            else:
+                row_no.append(rank_index[i])  # 非成行
+
+    return row_up, row_no
+
+
+def arrange_row_up_by_bottom(det, row_up):
+    det_row = []
+    det_arr = []
+    length = len(row_up)
+    # 取出排成一行的人脸框
+    for i in range(length):
+        det_row.append(det.tolist().pop(row_up[i]))
+
+    # 对取出的一行人脸框先按照左上角坐标x从小到大排序，然后从中间向两边取.
+    det_row = np.asarray(det_row)
+    index = np.argsort(det_row[:, 0])
+
+    for i in range(int(length / 2) + 1):
+        if i == 0:
+            init_pos = int(length / 2)
+            det_arr.append(det_row[index[init_pos]])
+        else:
+            if init_pos - i >= 0:
+                det_arr.append(det_row[index[init_pos - i]])
+            if init_pos + i <= (length - 1):
+                det_arr.append(det_row[index[init_pos + i]])
+
+    return det_arr
+
+
+def rank_all_faces_by_bottom(det):
+    rank = []
+    while True:
+        row_up, row_no = enabel_row_up_by_bottom(det)
+        # print('row_up:', row_up)
+        # print('row_no:', row_no)
+        if len(row_up) >= 1:
+            det_row_up = arrange_row_up_by_bottom(det, row_up)
+            for i in range(len(det_row_up)):
+                rank.append(det_row_up[i])
+
+        if len(row_no) > 1:
+            det_row_no = remaining_row_no(det, row_no)
+            det = np.asarray(det_row_no)
+        elif len(row_no) == 1:
+            det_row_no = remaining_row_no(det, row_no)
+            det = np.asarray(det_row_no)
+            rank.append(det[0])
+            break
+        else:
+            break
+
+    return rank
+
 
 # 置信度排序
 def rank_confidence(src_det_x1, dst_det, src_cf):

@@ -7,8 +7,7 @@
 """
 import typing
 
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception, for_all_methods)
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -17,7 +16,6 @@ from photo_arch.infrastructures.user_interface.qt.interaction.arch_browser impor
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_transfer import ArchTransfer
 
 
-@for_all_methods(catch_exception)
 class Special(object):
 
     def __init__(self,

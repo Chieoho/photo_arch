@@ -18,8 +18,7 @@ class GroupDescription(object):
 
     def save_group(self, input_data: GroupInputData) -> bool:
         group = PhotoGroup(**input_data.__dict__)
-        group_code = group.group_path.split(' ')[0]
-        group_list = self.repo.query_group_by_code(group_code)
+        group_list = self.repo.query_group_by_code(group.group_code)
         if group_list:
             save_res = self.repo.update_group(group)
         else:

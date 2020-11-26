@@ -14,8 +14,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
-    static, catch_exception, for_all_methods)
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -27,7 +26,6 @@ from photo_arch.adapters.presenter.arch_browser import Presenter
 from photo_arch.adapters.view_model.arch_browser import ViewModel
 
 
-@for_all_methods(catch_exception)
 class View(object):
     def __init__(self, mw_: MainWindow, view_model: ViewModel):
         self.mw = mw_
@@ -76,7 +74,6 @@ class View(object):
         self.mw.ui.arch_tree_view_browse.expandAll()
 
 
-@for_all_methods(catch_exception)
 class ArchBrowser(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.mw = mw_

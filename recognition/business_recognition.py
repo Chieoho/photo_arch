@@ -34,33 +34,34 @@ class RecognizeProcess(Process):
     facenet_model = None
     margin = 32
 
-    faceProp = 0.0
+    faceProp = 0.9
     euclideanDist = 0.79
-    canvasW = 0
-    canvasH = 0
+    canvasW = 2000
+    canvasH = 2000
 
-    def __init__(self, done_queue):
+    face_rank_rule_by_top = False
+
+    def __init__(self, done_queue, data_queue, param_queue):
         super(RecognizeProcess, self).__init__()
         self.event = Event()
         self.event.set() # 设置为True
         self.done_queue = done_queue # 写入返回数据
-
-    def updataData(self, data_queue):
-        self.data_queue =data_queue
+        self.data_queue = data_queue
+        self.param_queue = param_queue
 
     def pause(self):
         if self.is_alive():
-            print("子进程休眠")
+            print("识别子进程休眠")
             self.event.clear()  # 设置为False, 让进程阻塞
         else:
-            print("子进程结束")
+            print("识别子进程结束")
 
     def resume(self):
         if self.is_alive():
             self.event.set()  # 设置为True, 进程唤醒
-            print("子进程唤醒")
+            print("识别子进程唤醒")
         else:
-            print("子进程结束")
+            print("识别子进程结束")
 
 
     def run(self):
@@ -80,7 +81,7 @@ class RecognizeProcess(Process):
 
         while 1:
             if self.data_queue.empty() == True:
-                print('####:队列空,子进程暂停')
+                print('#### 识别:队列空,子进程暂停')
                 self.pause()
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
@@ -90,6 +91,15 @@ class RecognizeProcess(Process):
             rectangles = []
             # cf = []
             tupFData = []
+
+            if not self.param_queue.empty():
+                try:
+                    params = self.param_queue.get_nowait()
+                    params = eval(params)
+                    self.faceProp = params['threshold']
+                except Exception as e:
+                    print(repr(e))
+                    self.faceProp = 0.9
 
             scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
             img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
@@ -129,11 +139,14 @@ class RecognizeProcess(Process):
             src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
                 # src_det_x1 = np.asarray(det)[:, 0].tolist()
-                det_arr = rank_all_faces(np.asarray(det))
+                if self.face_rank_rule_by_top:
+                    det_arr = rank_all_faces_by_top(np.asarray(det))
+                else:
+                    det_arr = rank_all_faces_by_bottom(np.asarray(det))
                 # cf_arr = rank_confidence(src_det_x1, det_arr, cf)
 
                 faces = []
-                peoples = []
+                peoples = ''
                 curFaceRecNum = 0  # 当前图片里面的人脸数
                 faceRecNum = 0
                 for j, box in enumerate(det_arr):
@@ -162,10 +175,11 @@ class RecognizeProcess(Process):
                         # 'embedding':str(list(unknown_embedding))
                     })  # box和embedding如果不转换成str,json.dumps就会报错(目前没有找到解决方法)
 
-                    peoples.append({
-                        'id': j,
-                        'name': who_name
-                    })
+                    if j < len(det_arr)-1 :
+                        if who_name != '':
+                            peoples += '{},'.format(who_name)
+                    else:
+                        peoples += '{}'.format(who_name)
 
 
                 if curFaceRecNum == face_nums:
@@ -174,11 +188,10 @@ class RecognizeProcess(Process):
                     face_recog_state = 0  # 部分识别
 
                 jsonFaces = json.dumps(faces, ensure_ascii=False)
-                jsonPeoples = json.dumps(peoples, ensure_ascii=False)
             else:
                 face_recog_state = 2  # 没有检测出脸
                 jsonFaces = ''
-                jsonPeoples = ''
+                peoples = ''
 
             # cv2.imwrite("img_{}.jpg".format(time.time()), cv2.cvtColor(test_img, cv2.COLOR_RGB2BGR))
             recognizedResultInfo = {'face_nums': face_nums, 'face_recog_state': face_recog_state, 'faceRecNum': faceRecNum, 'img_path': imgPath}
@@ -188,7 +201,7 @@ class RecognizeProcess(Process):
             sql_repo.update('face', {"photo_path": [imgPath]},
                                 new_info={'faces': jsonFaces, 'recog_state': face_recog_state,
                                      'parent_path': os.path.abspath(imgPath + os.path.sep + "..")})
-            sql_repo.update('photo', {"photo_path": [imgPath]}, new_info={'peoples': jsonPeoples})
+            sql_repo.update('photo', {"photo_path": [imgPath]}, new_info={'peoples': peoples})
 
 
 class VerifyProcess(Process):
@@ -242,8 +255,8 @@ class VerifyProcess(Process):
 
         while 1:
             if self.verify_queue.empty() == True:
-                self.pause()
                 print('#### VerifyProcess :队列空,子进程暂停')
+                self.pause()
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
             checkedInfoDict = self.verify_queue.get()
@@ -262,7 +275,7 @@ class VerifyProcess(Process):
             faces_embedding = []
 
             new_faces = []
-            new_people = []
+            peoples = ''
             new_faces_name = []
             new_faces_id = []
 
@@ -293,10 +306,12 @@ class VerifyProcess(Process):
                     'box':self.faces_list[id]['box'],
                     'name': name
                 })
-                new_people.append({
-                    'id': id,
-                    'name': name
-                })
+
+                if id < len(orig_faces_id) - 1:
+                    if name != '' and name != '已删除':
+                        peoples += '{},'.format(name)
+                else:
+                    peoples += '{}'.format(name)
 
                 if name != '':
                     (startX, startY, endX, endY) = eval(self.faces_list[id]['box'])
@@ -318,10 +333,9 @@ class VerifyProcess(Process):
 
             saveData('data/data.npz', faces_name, faces_embedding)
             jsonFaces = json.dumps(new_faces, ensure_ascii=False)
-            jsonPeople = json.dumps(new_people, ensure_ascii=False)
             verifyState = 1
             sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})
-            sql_repo.update('photo', {"photo_path": [self.img_path]}, new_info={'peoples': jsonPeople})
+            sql_repo.update('photo', {"photo_path": [self.img_path]}, new_info={'peoples': peoples})
 
 
 class Recognition(object):
@@ -331,6 +345,7 @@ class Recognition(object):
         self.pending_dirs_list = []
 
         self.data_queue = Queue() # 点击“添加”按钮的时候,用来写入图片路径
+        self.param_queue = Queue()
         self.verify_queue = Queue()  # 用来填充核验信息
         self.done_queue = Manager().Queue() # 返回识别结果信息
         self.jobs_proc = []   # 将进程对象放进list
@@ -351,10 +366,13 @@ class Recognition(object):
         self.sql_repo = RepoGeneral(make_session(engine))
 
         # 实例化识别子进程
-        for _ in range(os.cpu_count()):
-            proc = RecognizeProcess(self.done_queue)
+        for i in range(os.cpu_count()):
+            proc = RecognizeProcess(self.done_queue, self.data_queue, self.param_queue)
             proc.daemon = True
+            proc.start()
+            print('### pid %d will start' % i)
             self.jobs_proc.append(proc)
+
 
         # 开启核验子进程
         self.verifyProc = VerifyProcess()
@@ -391,12 +409,11 @@ class Recognition(object):
                 ret = 1
                 return ret
 
+        for _ in range(len(self.jobs_proc)):
+            self.param_queue.put(json.dumps(params, ensure_ascii=False)) # 为了让每个子进程都能得到这个param参数
+
         for job in self.jobs_proc:
-            if not job.is_alive():
-                print('### pid will start')
-                job.updataData(self.data_queue)
-                job.start()
-            else:
+            if not self.data_queue.empty():
                 job.resume()
                 print('### pid will resume')
 
@@ -492,10 +509,10 @@ class Recognition(object):
         unprocessedImg = self.pendingTotalImgsNum - self.handled_pic_num
         recognizedResultInfo['recognition_rate'] = recRatio  # 识别率
         recognizedResultInfo['recognized_face_num'] = self.recognized_face_num  # 已识别人脸
-        recognizedResultInfo['part_recognized_pic_num'] = self.part_recognized_pic_num  # 部分识别出人脸的图片的总数
-        recognizedResultInfo['all_recognized_pic_num'] = self.all_recognized_pic_num  # 全部识别出人脸的图片的总数
-        recognizedResultInfo['handled_pic_num'] = self.handled_pic_num  # 已处理图片
-        recognizedResultInfo['unhandled_pic_num'] = unprocessedImg  # 未处理的图片
+        recognizedResultInfo['part_recognized_photo_num'] = self.part_recognized_pic_num  # 部分识别出人脸的图片的总数
+        recognizedResultInfo['all_recognized_photo_num'] = self.all_recognized_pic_num  # 全部识别出人脸的图片的总数
+        recognizedResultInfo['handled_photo_num'] = self.handled_pic_num  # 已处理图片
+        recognizedResultInfo['unhandled_photo_num'] = unprocessedImg  # 未处理的图片
 
         return recognizedResultInfo
 
