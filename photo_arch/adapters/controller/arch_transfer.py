@@ -13,3 +13,6 @@ from photo_arch.adapters.presenter.arch_transfer import Presenter
 class Controller(object):
     def __init__(self, repo: Repo, presenter: Presenter):
         self.arch_transfer = ArchTransfer(repo, presenter)
+
+    def get_group(self, year, retention_period):
+        pass

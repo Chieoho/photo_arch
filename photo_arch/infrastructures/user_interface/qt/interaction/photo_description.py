@@ -19,9 +19,9 @@ from photo_arch.infrastructures.user_interface.qt.interaction.setting import Set
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
 from photo_arch.adapters.sql.repo import Repo
-from photo_arch.adapters.controller.group_description import Controller
-from photo_arch.adapters.presenter.group_description import Presenter
-from photo_arch.adapters.view_model.group_description import ViewModel
+from photo_arch.adapters.controller.photo_description import Controller
+from photo_arch.adapters.presenter.photo_description import Presenter
+from photo_arch.adapters.view_model.photo_description import ViewModel
 
 
 class View(object):

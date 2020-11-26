@@ -13,3 +13,8 @@ class ArchTransfer(object):
     def __init__(self, repo: RepoIf, pres: PresenterIf):
         self.repo = repo
         self.pres = pres
+
+    def list_arch(self):
+        group_list = self.repo.get_all_groups()
+        self.pres.update_arch_model(group_list)
+        return True
