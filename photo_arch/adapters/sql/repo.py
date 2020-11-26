@@ -89,8 +89,8 @@ class Repo(RepoIf):
         self.repo_general.update('photo_group', {'group_path': [path]}, group_dict)
         return True
 
-    def query_group_by_code(self, group_code: str) -> List[dict]:
-        group_list = self.repo_general.query('photo_group', cond={'group_code': [group_code]})
+    def query_group_by_group_arch_code(self, group_arch_code: str) -> List[dict]:
+        group_list = self.repo_general.query('photo_group', cond={'arch_code': [group_arch_code]})
         return group_list
 
     def get_all_groups(self) -> List[dict]:

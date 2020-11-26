@@ -20,8 +20,8 @@ class ArchBrowser(object):
         self.pres.update_arch_model(group_list)
         return True
 
-    def get_group(self, group_code: str) -> bool:
-        group_list = self.repo.query_group_by_code(group_code)
+    def get_group(self, group_arch_code: str) -> bool:
+        group_list = self.repo.query_group_by_group_arch_code(group_arch_code)
         if group_list:
             group_info = group_list[-1]
         else:

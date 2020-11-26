@@ -10,7 +10,7 @@ import typing
 import glob
 from pathlib import Path
 import time
-import shutil
+from distutils.dir_util import copy_tree
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
@@ -82,6 +82,7 @@ class GroupDescription(object):
         self.ui.arch_category_code_in_group.currentTextChanged.connect(static(self.display_path_arch_group_code))
         self.ui.retention_period_in_group.currentTextChanged.connect(static(self.display_path_arch_group_code))
         self.ui.year_in_group.textChanged.connect(static(self.display_path_arch_group_code))
+        self.ui.group_title_in_group.textChanged.connect(static(self.display_path_arch_group_code))
 
     def clear_group_info(self):
         self.view.display_group()
@@ -153,7 +154,7 @@ class GroupDescription(object):
             name)
         self.description_path_info[source_path] = os.path.join(dst_abspath)
         self.arch_code_info[source_path] = self.ui.arch_code_in_group.text()
-        shutil.copytree(source_path, dst_abspath)
+        copy_tree(source_path, dst_abspath)
 
     def item_click(self, item):
         if item.text(0) == self.current_work_path:
@@ -318,7 +319,7 @@ class GroupDescription(object):
         if f_stat:
             file_create_time = time.strftime('%Y%m%d', time.localtime(f_stat.st_ctime))
         mb = 1024 * 1024.0
-        folder_size = "%.2fMB" % (total_size / mb)
+        folder_size = "%.2f" % (total_size / mb)
         return folder_size, photo_num, file_create_time
 
     def _get_group_sn(self, year):

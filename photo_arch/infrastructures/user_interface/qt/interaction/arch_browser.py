@@ -92,11 +92,10 @@ class ArchBrowser(object):
         self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
         self.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.ui.photo_list_widget.itemClicked.connect(static(self.display_photo))
+        self.ui.photo_list_widget.itemSelectionChanged.connect(static(self.display_photo))
         self.ui.photo_view_in_arch.resizeEvent = static(self.resize_image)
         self.ui.arch_tree_view_browse.clicked.connect(static(self.show_group))
-        self.ui.order_combobox_browse.currentTextChanged.connect(
-            static(self.display_arch))
+        self.ui.order_combobox_browse.currentTextChanged.connect(static(self.display_arch))
 
     def resize_image(self, event):
         if not self.pix_map:
@@ -137,7 +136,9 @@ class ArchBrowser(object):
             self.ui.photo_list_widget.addItem(item)
             QApplication.processEvents()
 
-    def display_photo(self, item):
+    def display_photo(self):
+        QApplication.processEvents()
+        item = self.ui.photo_list_widget.currentItem()
         photo_name = item.text()
         group_code = self.group_folder.split(' ')[0]
         year, period, _ = group_code.split('·')[1].split('-')

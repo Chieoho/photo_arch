@@ -17,7 +17,7 @@ def test_save_group():
 
 
 def test_get_group():
-    group_input_data = GroupInputData(group_code='ZP·2018-30-0001')
+    group_input_data = GroupInputData(arch_code='A1-ZP·2018-30-0001')
     group_description.save_group(group_input_data)
-    get_res = group_description.get_group(group_code='ZP·2018-30-0001')
+    get_res = group_description.get_group('A1-ZP·2018-30-0001')
     assert get_res is True

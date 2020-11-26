@@ -18,15 +18,15 @@ class GroupDescription(object):
 
     def save_group(self, input_data: GroupInputData) -> bool:
         group = PhotoGroup(**input_data.__dict__)
-        group_list = self.repo.query_group_by_code(group.group_code)
+        group_list = self.repo.query_group_by_group_arch_code(group.arch_code)
         if group_list:
             save_res = self.repo.update_group(group)
         else:
             save_res = self.repo.add_group(group)
         return save_res
 
-    def get_group(self, group_code: str) -> bool:
-        group_list = self.repo.query_group_by_code(group_code)
+    def get_group(self, group_arch_code: str) -> bool:
+        group_list = self.repo.query_group_by_group_arch_code(group_arch_code)
         if group_list:
             group_info = group_list[-1]
         else:
