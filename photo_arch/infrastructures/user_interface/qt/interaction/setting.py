@@ -38,6 +38,7 @@ class Setting(object):
 
         self.description_path = ''
         self.package_path = ''
+        self.fonds_name = ''
         self.fonds_code = ''
 
         self._get_setting()
@@ -45,6 +46,7 @@ class Setting(object):
     def _get_setting(self):
         self.description_path = os.path.abspath(r'.\已著录')
         self.package_path = os.path.abspath(r'.\已打包')
+        self.fonds_name = '深圳市委办公厅'
         self.fonds_code = 'A1'
 
         self.view.display_setting(

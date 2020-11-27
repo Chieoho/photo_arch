@@ -93,6 +93,17 @@ class Repo(RepoIf):
         group_list = self.repo_general.query('photo_group', cond={'arch_code': [group_arch_code]})
         return group_list
 
+    def query_group_by_selected(self, fonds_code, year, retention_period) -> List[dict]:
+        group_list = self.repo_general.query(
+            'photo_group',
+            cond={
+                'fonds_code': [fonds_code],
+                'year': [year],
+                'retention_period': [retention_period]
+            }
+        )
+        return group_list
+
     def get_all_groups(self) -> List[dict]:
         repo_general = RepoGeneral(self.session)
         group_list = repo_general.query('photo_group', cond={})

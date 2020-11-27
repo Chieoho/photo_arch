@@ -6,7 +6,10 @@
 @time: 2020/11/22 21:36
 """
 from collections import defaultdict
+import time
+from typing import List
 
+from PyQt5 import QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -67,18 +70,27 @@ class ArchTransfer(object):
         self.controller = Controller(Repo(make_session(engine)), self.presenter)
         self.view = View(mw_, self.view_model)
 
-        self.selected_arch_list = []
         self.disk_icon_path = './icon/arch_cd.png'
+        self.selected_condition_list = []
+        self.partition_list: List[dict] = []
 
         self.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
         self.ui.partition_list_widget.setIconSize(QSize(200, 150))
+        self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
 
         self.ui.order_combobox_transfer.currentTextChanged.connect(static(self.display_arch))
         self.ui.arch_tree_view_transfer.doubleClicked.connect(static(self.select_arch))
         self.ui.selected_arch_list_widget.itemDoubleClicked.connect(static(self.unselect_arch))
-        self.ui.disk_size_line_edit.returnPressed.connect(static(self.partition))
+        self.ui.cd_size_line_edit.returnPressed.connect(static(self.partition))
         self.ui.across_year_combo_box.currentTextChanged.connect(static(self.partition))
         self.ui.across_period_combo_box.currentTextChanged.connect(static(self.partition))
+        self.ui.partition_list_widget.itemSelectionChanged.connect(static(self.display_cd_info))
+        self.ui.packeage_btn.clicked.connect(static(self.package))
+
+        catalog_tw = self.ui.cd_catalog_table_widget
+        catalog_tw.verticalHeader().setVisible(True)
+        catalog_tw.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        catalog_tw.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
 
     def display_arch(self, text):
         self.view.display_transfer_arch(text)
@@ -90,39 +102,101 @@ class ArchTransfer(object):
         fonds_code_index = parent_index.parent()
         selected_name1 = '-'.join([fonds_code_index.data(), parent_index.data(), index.data()])
         selected_name2 = '-'.join([fonds_code_index.data(), index.data(), parent_index.data()])
-        if (selected_name1 in self.selected_arch_list) or \
-                (selected_name2 in self.selected_arch_list):
+        if (selected_name1 in self.selected_condition_list) or \
+                (selected_name2 in self.selected_condition_list):
             return
         item = QListWidgetItem(selected_name1)
         self.ui.selected_arch_list_widget.addItem(item)
-        self.selected_arch_list.append(selected_name1)
+        self.selected_condition_list.append(selected_name1)
         self.partition()
 
     def unselect_arch(self, item):
         row = self.ui.selected_arch_list_widget.row(item)
         self.ui.selected_arch_list_widget.takeItem(row)
         item_text = item.text()
-        if item_text in self.selected_arch_list:
-            self.selected_arch_list.remove(item_text)
+        if item_text in self.selected_condition_list:
+            self.selected_condition_list.remove(item_text)
         self.partition()
 
     def partition(self):
         self.ui.partition_list_widget.clear()
-        disk_size = self.ui.disk_size_line_edit.text()
-        if (not disk_size) or (not self.selected_arch_list):
+        cd_size = float(self.ui.cd_size_line_edit.text()) * 1024
+        if (not cd_size) or (not self.selected_condition_list):
             return
-        data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-        for gi in self.view_model.arch:
-            fc = gi.get('fonds_code')
-            ye = gi.get('year')
-            rp = gi.get('retention_period')
-            data[fc][ye][rp].append(gi)
-            data[fc][rp][ye].append(gi)
-        selected_arch_data = []
-        for sa in self.selected_arch_list:
+        selected_arch_list = self._get_selected_arch()
+
+        self.partition_list = []
+        used_size, arch_list = 0, []
+        for gi in selected_arch_list:
+            folder_size = float(gi['folder_size'])
+            used_size += folder_size
+            if used_size < cd_size:
+                arch_list.append(gi)
+            else:
+                used_size -= folder_size
+                self.partition_list.append({"used_size": used_size, 'arch_list': arch_list})
+                used_size, arch_list = 0, []
+                used_size += folder_size
+                arch_list.append(gi)
+        if used_size:
+            self.partition_list.append({"used_size": used_size, 'arch_list': arch_list})
+
+        self._display_partition_res()
+
+    def _get_selected_arch(self):
+        selected_arch_list = []
+        for sa in self.selected_condition_list:
             fc, x1, x2 = sa.split('-')
-            selected_arch_data.extend(data[fc][x1][x2])
-        from pprint import pprint
-        pprint(selected_arch_data)
-        item = QListWidgetItem(QIcon(self.disk_icon_path), f'disk1({self.selected_arch_list[0]})')
-        self.ui.partition_list_widget.addItem(item)
+            if x1.isdigit():
+                ye, rp = x1, x2
+            else:
+                rp, ye = x1, x2
+            selected_arch_list.extend(self.controller.get_selected_arch(fc, ye, rp))
+        return selected_arch_list
+
+    def _display_partition_res(self):
+        for i, sc in enumerate(self.partition_list, 1):
+            item = QListWidgetItem(QIcon(self.disk_icon_path), f'{i}号')
+            self.ui.partition_list_widget.addItem(item)
+
+    def display_cd_info(self):
+        if not self.selected_condition_list:
+            return
+        row = self.ui.partition_list_widget.currentRow()
+        arch_list = self.partition_list[row]['arch_list']
+        self._display_cd_catalog(arch_list)
+        self._display_cd_caption()
+        self._display_cd_label(row)
+
+    def _display_cd_catalog(self, arch_list):
+        column_count = self.ui.cd_catalog_table_widget.columnCount()
+        key_list = ['fonds_code', 'arch_category_code', 'group_code', 'group_title',
+                    'taken_time', 'taken_locations', 'photographer', 'photo_num']
+        for i in range(self.ui.cd_catalog_table_widget.rowCount(), -1, -1):
+            self.ui.cd_catalog_table_widget.removeRow(i)
+        for row, gi in enumerate(arch_list):
+            self.ui.cd_catalog_table_widget.insertRow(row)
+            for key, col in zip(key_list, range(column_count)):
+                item_text = gi.get(key, '')
+                item = QTableWidgetItem(str(item_text))
+                item.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.ui.cd_catalog_table_widget.setItem(row, col, item)
+
+    def _display_cd_caption(self):
+        operation_date = time.strftime('%Y%m%d')
+        self.ui.operation_date_line_edit.setText(operation_date)
+
+    def _display_cd_label(self, row):
+        self.ui.cd_fonds_name_line_edit.setText(self.setting.fonds_name)
+        self.ui.cd_fonds_code_line_edit.setText(self.setting.fonds_code)
+        arch_list = self.partition_list[row]['arch_list']
+        start_group_code = arch_list[0]['group_code']
+        end_group_code = arch_list[-1]['group_code']
+        self.ui.cd_group_codes_line_edit.setText(f'{start_group_code} 至 {end_group_code}')
+        total_num = sum(map(lambda g: g['photo_num'], arch_list))
+        self.ui.cd_photo_num_line_edit.setText(str(total_num))
+        self.ui.cd_num_line_edit.setText(f'{row+1}号')
+
+    def package(self):
+        _ = self
+        print('打包')

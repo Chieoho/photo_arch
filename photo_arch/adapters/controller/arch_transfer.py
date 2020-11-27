@@ -16,3 +16,7 @@ class Controller(object):
 
     def list_arch(self):
         self.arch_transfer.list_arch()
+
+    def get_selected_arch(self, fonds_code, year, retention_period):
+        group_list = self.arch_transfer.get_selected_arch(fonds_code, year, retention_period)
+        return group_list

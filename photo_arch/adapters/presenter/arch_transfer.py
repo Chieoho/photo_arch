@@ -22,3 +22,12 @@ class Presenter(PresenterIf):
                 group[k] = str(group_info[k])
             self.view_model.arch.append(group)
         return True
+
+    def update_arch_vm(self, group_info_list):
+        self.view_model.arch.clear()
+        for group_info in group_info_list:
+            group = deepcopy(self.view_model.group)
+            for k in group.keys():
+                group[k] = str(group_info[k])
+            self.view_model.arch.append(group)
+        return True

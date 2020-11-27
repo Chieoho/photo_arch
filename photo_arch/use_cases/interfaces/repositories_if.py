@@ -36,6 +36,15 @@ class RepoIf(metaclass=ABCMeta):
         """
 
     @abstractmethod
+    def query_group_by_selected(self, fonds_code, year, retention_period) -> List[dict]:
+        """
+        :param fonds_code:
+        :param year:
+        :param retention_period:
+        :return:
+        """
+
+    @abstractmethod
     def get_all_groups(self) -> List[dict]:
         """
         :return:

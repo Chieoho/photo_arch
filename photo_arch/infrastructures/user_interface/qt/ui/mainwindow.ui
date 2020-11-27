@@ -211,7 +211,7 @@ QTabBar::tab:selected{
               </column>
               <column>
                <property name="text">
-                <string> </string>
+                <string/>
                </property>
               </column>
              </widget>
@@ -4227,13 +4227,19 @@ padding-bottom: 8px;</string>
             <property name="leftMargin">
              <number>12</number>
             </property>
-            <item row="7" column="1">
-             <widget class="QLineEdit" name="disk_fonds_code__line_edit">
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_86">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
+              </property>
+              <property name="text">
+               <string>题名</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -4253,18 +4259,8 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="1" colspan="6">
-             <widget class="QLineEdit" name="disk_title_line_edit">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="2">
-             <widget class="QLabel" name="label_84">
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_82">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4272,7 +4268,23 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="text">
-               <string>文件类型</string>
+               <string>光盘型号</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0">
+             <widget class="QLabel" name="label_87">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>全宗名称</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -4292,32 +4304,6 @@ padding-bottom: 8px;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="4" colspan="2">
-             <widget class="QLabel" name="label_87">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>全宗名称</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="3">
-             <widget class="QLineEdit" name="disk_file_type_line_edit">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
               </property>
              </widget>
             </item>
@@ -4342,7 +4328,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="12" column="0">
-             <widget class="QLabel" name="label_86">
+             <widget class="QLabel" name="label_89">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4350,15 +4336,15 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="text">
-               <string>题名</string>
+               <string>起止组号</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_79">
+            <item row="13" column="4">
+             <widget class="QLabel" name="label_90">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4366,20 +4352,7 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="text">
-               <string>光盘说明：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="0">
-             <widget class="QLabel" name="label_82">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>光盘型号</string>
+               <string>盘号</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -4406,16 +4379,6 @@ padding-bottom: 8px;</string>
               </item>
              </widget>
             </item>
-            <item row="6" column="6">
-             <widget class="QLineEdit" name="disk_fonds_name_line_edit">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="7">
              <spacer name="horizontalSpacer_18">
               <property name="orientation">
@@ -4429,7 +4392,23 @@ padding-bottom: 8px;</string>
               </property>
              </spacer>
             </item>
-            <item row="13" column="0" colspan="8">
+            <item row="11" column="2">
+             <widget class="QLabel" name="label_88">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>全宗号</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="0" colspan="8">
              <widget class="QFrame" name="frame_10">
               <property name="minimumSize">
                <size>
@@ -4458,7 +4437,7 @@ padding-bottom: 8px;</string>
                 </spacer>
                </item>
                <item row="0" column="1">
-                <widget class="QPushButton" name="pushButton">
+                <widget class="QPushButton" name="packeage_btn">
                  <property name="font">
                   <font>
                    <family>新宋体</family>
@@ -4502,18 +4481,8 @@ padding-bottom: 8px;</string>
               </layout>
              </widget>
             </item>
-            <item row="11" column="1">
-             <widget class="QLineEdit" name="operator_line_edit">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="disk_size_line_edit">
+             <widget class="QLineEdit" name="cd_size_line_edit">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -4531,24 +4500,18 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="2">
-             <widget class="QLabel" name="label_81">
+            <item row="7" column="6">
+             <widget class="QLineEdit" name="operation_date_line_edit">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
               </property>
-              <property name="text">
-               <string>光盘类型</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
              </widget>
             </item>
-            <item row="10" column="6">
-             <widget class="QLineEdit" name="operation_time_line_edit">
+            <item row="12" column="1" colspan="3">
+             <widget class="QLineEdit" name="cd_group_codes_line_edit">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4558,13 +4521,48 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="4" column="0" colspan="8">
-             <widget class="QTableWidget" name="disk_catalog_table_widget">
+             <widget class="QTableWidget" name="cd_catalog_table_widget">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
               </property>
+              <property name="styleSheet">
+               <string notr="true">   QHeaderView::section{
+            border-top:0px solid #D8D8D8;
+            border-left:0px solid #D8D8D8;
+            border-right:1px solid #D8D8D8;
+            border-bottom: 1px solid #D8D8D8;
+            background-color:white;
+            padding:4px;
+        }
+        QTableCornerButton::section{
+            border-top:0px solid #D8D8D8;
+            border-left:0px solid #D8D8D8;
+            border-right:1px solid #D8D8D8;
+            border-bottom: 1px solid #D8D8D8;
+            background-color:white;
+        }</string>
+              </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <attribute name="horizontalHeaderCascadingSectionResizes">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
               <column>
                <property name="text">
                 <string>全宗号</string>
@@ -4573,6 +4571,8 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
@@ -4584,6 +4584,8 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
@@ -4595,6 +4597,8 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
@@ -4606,6 +4610,8 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
@@ -4617,6 +4623,8 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
@@ -4628,6 +4636,8 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
@@ -4639,6 +4649,8 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
@@ -4650,6 +4662,8 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
@@ -4661,18 +4675,36 @@ padding-bottom: 8px;</string>
                 <font>
                  <family>新宋体</family>
                  <pointsize>14</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
               </column>
              </widget>
             </item>
-            <item row="6" column="3">
-             <widget class="QLineEdit" name="disk_type_line_edit">
+            <item row="13" column="6">
+             <widget class="QLineEdit" name="cd_num_line_edit">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="4">
+             <widget class="QLabel" name="label_83">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>制作时间</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -4692,8 +4724,8 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="11" column="0">
-             <widget class="QLabel" name="label_85">
+            <item row="7" column="2">
+             <widget class="QLabel" name="label_84">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4701,10 +4733,20 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="text">
-               <string>制作人</string>
+               <string>文件类型</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="3">
+             <widget class="QLineEdit" name="cd_fonds_code_line_edit">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
@@ -4724,8 +4766,8 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_88">
+            <item row="8" column="0">
+             <widget class="QLabel" name="label_85">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4733,10 +4775,20 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="text">
-               <string>全宗号</string>
+               <string>制作人</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="1">
+             <widget class="QLineEdit" name="cd_fonds_name_line_edit">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
@@ -4753,8 +4805,21 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
-             <widget class="QLineEdit" name="disk_num_line_edit">
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_79">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>光盘说明：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1" colspan="6">
+             <widget class="QLineEdit" name="cd_title_line_edit">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4763,7 +4828,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
+            <item row="10" column="0">
              <widget class="QLabel" name="label_78">
               <property name="font">
                <font>
@@ -4773,38 +4838,6 @@ padding-bottom: 8px;</string>
               </property>
               <property name="text">
                <string>光盘标签：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_90">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>盘号</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="4">
-             <widget class="QLabel" name="label_83">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>制作时间</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -4821,33 +4854,7 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="10" column="1">
-             <widget class="QLineEdit" name="disk_model_line_edit">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_89">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>起止组号</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="2">
+            <item row="13" column="0">
              <widget class="QLabel" name="label_91">
               <property name="font">
                <font>
@@ -4863,8 +4870,8 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="3">
-             <widget class="QLineEdit" name="disk_photo_num_line_edit">
+            <item row="13" column="1">
+             <widget class="QLineEdit" name="cd_photo_num_line_edit">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4873,8 +4880,79 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
+            <item row="13" column="2">
+             <widget class="QLabel" name="label_81">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>光盘类型</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QComboBox" name="cd_model_combo_box">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <item>
+               <property name="text">
+                <string>CD-R</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>DVD</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="7" column="3">
+             <widget class="QComboBox" name="cd_file_type_combo_box">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <item>
+               <property name="text">
+                <string>JPEG</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>PNG</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="13" column="3">
+             <widget class="QComboBox" name="cd_type_combo_box">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <item>
+               <property name="text">
+                <string>备份盘</string>
+               </property>
+              </item>
+             </widget>
+            </item>
             <item row="8" column="1" colspan="3">
-             <widget class="QLineEdit" name="disk_group_codes_line_edit">
+             <widget class="QLineEdit" name="operator_line_edit">
               <property name="font">
                <font>
                 <family>新宋体</family>

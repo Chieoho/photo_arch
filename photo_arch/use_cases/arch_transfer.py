@@ -18,3 +18,7 @@ class ArchTransfer(object):
         group_list = self.repo.get_all_groups()
         self.pres.update_arch_vm(group_list)
         return True
+
+    def get_selected_arch(self, fonds_code, year, retention_period):
+        group_list = self.repo.query_group_by_selected(fonds_code, year, retention_period)
+        return group_list

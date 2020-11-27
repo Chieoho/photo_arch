@@ -94,7 +94,8 @@ class ArchBrowser(object):
 
         self.ui.photo_list_widget.itemSelectionChanged.connect(static(self.display_photo))
         self.ui.photo_view_in_arch.resizeEvent = static(self.resize_image)
-        self.ui.arch_tree_view_browse.clicked.connect(static(self.show_group))
+        self.ui.arch_tree_view_browse.selectionModel()
+        self.ui.arch_tree_view_browse.selectionChanged = static(self.show_group)
         self.ui.order_combobox_browse.currentTextChanged.connect(static(self.display_arch))
 
     def resize_image(self, event):
@@ -110,7 +111,11 @@ class ArchBrowser(object):
         )
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
-    def show_group(self, index):
+    def show_group(self, item):
+        indexes = item.indexes()
+        if not indexes:
+            return
+        index = indexes[0]
         if index.child(0, 0).data():  # 点击的不是组名则返回
             return
         self.group_folder = index.data()
@@ -118,6 +123,7 @@ class ArchBrowser(object):
         self.controller.get_group(group_code)
         self.view.display_group()
         self.ui.photo_view_in_arch.clear()
+        QApplication.processEvents()
         self._list_photo_thumb()
 
     def _list_photo_thumb(self):

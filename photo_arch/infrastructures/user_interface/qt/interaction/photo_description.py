@@ -77,9 +77,8 @@ class PhotoDescription(object):
         self.current_photo_id = 0
         self.check_state_dict = {}
         
-        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
-        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
 
         self.ui.all_photo_radioButton.toggled.connect(static(self.photo_choose))
         self.ui.part_recognition_radioButton.toggled.connect(static(self.photo_choose))
