@@ -94,8 +94,7 @@ class ArchBrowser(object):
 
         self.ui.photo_list_widget.itemSelectionChanged.connect(static(self.display_photo))
         self.ui.photo_view_in_arch.resizeEvent = static(self.resize_image)
-        self.ui.arch_tree_view_browse.selectionModel()
-        self.ui.arch_tree_view_browse.selectionChanged = static(self.show_group)
+        self.ui.arch_tree_view_browse = self.show_group(self.ui.arch_tree_view_browse)
         self.ui.order_combobox_browse.currentTextChanged.connect(static(self.display_arch))
 
     def resize_image(self, event):
@@ -111,20 +110,26 @@ class ArchBrowser(object):
         )
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
-    def show_group(self, item):
-        indexes = item.indexes()
-        if not indexes:
-            return
-        index = indexes[0]
-        if index.child(0, 0).data():  # 点击的不是组名则返回
-            return
-        self.group_folder = index.data()
-        group_code = self.group_folder.split(' ')[0]
-        self.controller.get_group(group_code)
-        self.view.display_group()
-        self.ui.photo_view_in_arch.clear()
-        QApplication.processEvents()
-        self._list_photo_thumb()
+    def show_group(self, tree_view):
+        old_sc = tree_view.selectionChanged
+
+        def new_sc(*args, **kwargs):
+            item_selection = args[0]
+            old_sc(*args, **kwargs)
+            indexes = item_selection.indexes()
+            if not indexes:
+                return
+            index = indexes[0]
+            if index.child(0, 0).data():  # 点击的不是组名则返回
+                return
+            self.group_folder = index.data()
+            group_code = self.group_folder.split(' ')[0]
+            self.controller.get_group(group_code)
+            self.view.display_group()
+            self.ui.photo_view_in_arch.clear()
+            self._list_photo_thumb()
+        setattr(tree_view, 'selectionChanged', new_sc)
+        return tree_view
 
     def _list_photo_thumb(self):
         self.ui.photo_list_widget.clear()
@@ -137,13 +142,13 @@ class ArchBrowser(object):
             self.group_folder,
             '*.*'
         )
-        for fp in glob.iglob(path):
+        for i, fp in enumerate(glob.iglob(path)):
             item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1])
             self.ui.photo_list_widget.addItem(item)
-            QApplication.processEvents()
+            if i in range(3):
+                QApplication.processEvents()  # 前n张一张接一张显示
 
     def display_photo(self):
-        QApplication.processEvents()
         item = self.ui.photo_list_widget.currentItem()
         photo_name = item.text()
         group_code = self.group_folder.split(' ')[0]
