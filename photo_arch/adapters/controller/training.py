@@ -11,5 +11,6 @@ from photo_arch.adapters.presenter.training import Presenter
 
 
 class Controller(object):
-    def __init__(self, repo: Repo, presenter: Presenter):
-        self.training = Training(repo, presenter)
+    def __init__(self, repo: Repo):
+        self.presenter = Presenter()
+        self.training = Training(repo, self.presenter)

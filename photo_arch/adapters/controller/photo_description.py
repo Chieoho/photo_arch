@@ -11,5 +11,6 @@ from photo_arch.adapters.presenter.photo_description import Presenter
 
 
 class Controller(object):
-    def __init__(self, repo: Repo, presenter: Presenter):
-        self.photo_description = PhotoDescription(repo, presenter)
+    def __init__(self, repo: Repo):
+        self.presenter = Presenter()
+        self.photo_description = PhotoDescription(repo, self.presenter)

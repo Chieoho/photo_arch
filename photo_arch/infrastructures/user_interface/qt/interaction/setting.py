@@ -11,16 +11,12 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
     MainWindow, Ui_MainWindow)
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
-from photo_arch.adapters.sql.repo import Repo
-from photo_arch.adapters.controller.setting import Controller
-from photo_arch.adapters.presenter.setting import Presenter
-from photo_arch.adapters.view_model.setting import ViewModel
+from photo_arch.adapters.controller.setting import Controller, Repo
 
 
 class View(object):
-    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+    def __init__(self, mw_: MainWindow):
         self.mw = mw_
-        self.view_model = view_model
 
     def display_setting(self, description_path, package_path):
         self.mw.ui.description_path_line_edit.setText(description_path)
@@ -31,10 +27,8 @@ class Setting(object):
     def __init__(self, mw_: MainWindow):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
-        self.view_model = ViewModel()
-        self.presenter = Presenter(self.view_model)
-        self.controller = Controller(Repo(make_session(engine)), self.presenter)
-        self.view = View(mw_, self.view_model)
+        self.controller = Controller(Repo(make_session(engine)))
+        self.view = View(mw_)
 
         self.description_path = ''
         self.package_path = ''

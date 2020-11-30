@@ -20,19 +20,15 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
-from photo_arch.adapters.sql.repo import Repo
-from photo_arch.adapters.controller.arch_browser import Controller
-from photo_arch.adapters.presenter.arch_browser import Presenter
-from photo_arch.adapters.view_model.arch_browser import ViewModel
+from photo_arch.adapters.controller.arch_browser import Controller, Repo
 
 
 class View(object):
-    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+    def __init__(self, mw_: MainWindow):
         self.mw = mw_
-        self.view_model = view_model
 
-    def display_group(self, widget_suffix='_in_group_arch'):
-        for k, v in self.view_model.group.items():
+    def display_group(self, group, widget_suffix='_in_group_arch'):
+        for k, v in group.items():
             widget_name = k + widget_suffix
             if hasattr(self.mw.ui, widget_name):
                 widget = getattr(self.mw.ui, widget_name)
@@ -56,9 +52,9 @@ class View(object):
         else:
             parent.appendRow(QStandardItem(str(d)))
 
-    def display_browse_arch(self, priority_key='年度'):
+    def display_browse_arch(self, arch, priority_key='年度'):
         data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-        for gi in self.view_model.arch:
+        for gi in arch:
             fc = gi.get('fonds_code')
             ye = gi.get('year')
             rp = gi.get('retention_period')
@@ -79,10 +75,8 @@ class ArchBrowser(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view_model = ViewModel()
-        self.presenter = Presenter(self.view_model)
-        self.controller = Controller(Repo(make_session(engine)), self.presenter)
-        self.view = View(mw_, self.view_model)
+        self.controller = Controller(Repo(make_session(engine)))
+        self.view = View(mw_)
         self.pix_map = None
         self.group_folder = ''
 
@@ -124,8 +118,8 @@ class ArchBrowser(object):
                 return
             self.group_folder = index.data()
             group_code = self.group_folder.split(' ')[0]
-            self.controller.get_group(group_code)
-            self.view.display_group()
+            _, data = self.controller.get_group(group_code)
+            self.view.display_group(data)
             self.ui.photo_view_in_arch.clear()
             self._list_photo_thumb()
         setattr(tree_view, 'selectionChanged', new_sc)
@@ -168,5 +162,6 @@ class ArchBrowser(object):
         )
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
-    def display_arch(self, text):
-        self.view.display_browse_arch(text)
+    def display_arch(self, priority_key):
+        _, arch = self.controller.browse_arch()
+        self.view.display_browse_arch(arch, priority_key)

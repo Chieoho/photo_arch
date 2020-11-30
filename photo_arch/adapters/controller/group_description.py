@@ -12,14 +12,19 @@ from photo_arch.adapters.sql.repo import Repo
 
 
 class Controller(object):
-    def __init__(self, repo: Repo, presenter: Presenter):
-        self.group_description = GroupDescription(repo, presenter)
+    def __init__(self, repo: Repo):
+        self.presenter = Presenter()
+        self.group_description = GroupDescription(repo, self.presenter)
 
     def save_group(self, group_info: GroupInputData):
-        self.group_description.save_group(group_info)
+        res = self.group_description.save_group(group_info)
+        return res
 
     def get_group(self, first_photo_md5: str):
-        return self.group_description.get_group(first_photo_md5)
+        res = self.group_description.get_group(first_photo_md5)
+        group = self.presenter.view_model.group
+        return res, group
 
     def get_group_sn(self, year):
-        return self.group_description.get_group_sn(year)
+        group_sn = self.group_description.get_group_sn(year)
+        return True, group_sn

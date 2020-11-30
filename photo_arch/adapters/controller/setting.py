@@ -11,5 +11,6 @@ from photo_arch.adapters.presenter.setting import Presenter
 
 
 class Controller(object):
-    def __init__(self, repo: Repo, presenter: Presenter):
-        self.setting = Setting(repo, presenter)
+    def __init__(self, repo: Repo):
+        self.presenter = Presenter()
+        self.setting = Setting(repo, self.presenter)

@@ -15,16 +15,12 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
-from photo_arch.adapters.sql.repo import Repo
-from photo_arch.adapters.controller.recognition import Controller
-from photo_arch.adapters.presenter.recognition import Presenter
-from photo_arch.adapters.view_model.recognition import ViewModel
+from photo_arch.adapters.controller.recognition import Controller, Repo
 
 
 class View(object):
-    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+    def __init__(self, mw_: MainWindow):
         self.mw = mw_
-        self.view_model = view_model
 
 
 class Recognition(object):
@@ -32,10 +28,8 @@ class Recognition(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view_model = ViewModel()
-        self.presenter = Presenter(self.view_model)
-        self.controller = Controller(Repo(make_session(engine)), self.presenter)
-        self.view = View(mw_, self.view_model)
+        self.controller = Controller(Repo(make_session(engine)))
+        self.view = View(mw_)
 
         self.update_timer = QtCore.QTimer()
         

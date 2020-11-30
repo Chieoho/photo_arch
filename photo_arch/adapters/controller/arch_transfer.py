@@ -11,12 +11,16 @@ from photo_arch.adapters.presenter.arch_transfer import Presenter
 
 
 class Controller(object):
-    def __init__(self, repo: Repo, presenter: Presenter):
-        self.arch_transfer = ArchTransfer(repo, presenter)
+    def __init__(self, repo: Repo):
+        self.presenter = Presenter()
+        self.arch_transfer = ArchTransfer(repo, self.presenter)
 
     def list_arch(self):
-        self.arch_transfer.list_arch()
+        res = self.arch_transfer.list_arch()
+        group_list = self.presenter.view_model.arch
+        return res, group_list
 
     def get_selected_arch(self, fonds_code, year, retention_period):
-        group_list = self.arch_transfer.get_selected_arch(fonds_code, year, retention_period)
-        return group_list
+        res = self.arch_transfer.get_selected_arch(fonds_code, year, retention_period)
+        group_list = self.presenter.view_model.arch
+        return res, group_list

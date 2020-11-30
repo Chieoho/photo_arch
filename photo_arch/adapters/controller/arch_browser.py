@@ -11,11 +11,16 @@ from photo_arch.adapters.presenter.arch_browser import Presenter
 
 
 class Controller(object):
-    def __init__(self, repo: Repo, presenter: Presenter):
-        self.arch_browser = ArchBrowser(repo, presenter)
+    def __init__(self, repo: Repo):
+        self.presenter = Presenter()
+        self.arch_browser = ArchBrowser(repo, self.presenter)
 
     def browse_arch(self):
-        self.arch_browser.browse_arch()
+        res = self.arch_browser.browse_arch()
+        arch = self.presenter.view_model.arch
+        return res, arch
 
     def get_group(self, group_code: str):
-        self.arch_browser.get_group(group_code)
+        res = self.arch_browser.get_group(group_code)
+        group = self.presenter.view_model.group
+        return res, group

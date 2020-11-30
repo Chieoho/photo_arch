@@ -11,13 +11,13 @@ from photo_arch.use_cases.interfaces.presenter_if.arch_browser import PresenterI
 
 
 class ArchBrowser(object):
-    def __init__(self, repo: RepoIf, pres: PresenterIf):
+    def __init__(self, repo: RepoIf, presenter: PresenterIf):
         self.repo = repo
-        self.pres = pres
+        self.presenter = presenter
 
     def browse_arch(self) -> bool:
         group_list = self.repo.get_all_groups()
-        self.pres.update_arch_model(group_list)
+        self.presenter.update_arch_model(group_list)
         return True
 
     def get_group(self, group_arch_code: str) -> bool:
@@ -26,5 +26,5 @@ class ArchBrowser(object):
             group_info = group_list[-1]
         else:
             group_info = GroupOutputData().__dict__
-        self.pres.update_group_model(group_info)
+        self.presenter.update_group_model(group_info)
         return True

@@ -32,7 +32,7 @@ class GroupDescription(object):
         else:
             group_info = GroupOutputData().__dict__
         self.pres.update_group_model(group_info)
-        return group_list
+        return bool(group_list)
 
     def get_group_sn(self, year):
         group_sn = self.repo.get_group_sn(year)

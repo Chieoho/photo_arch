@@ -37,10 +37,10 @@ class Special(object):
                 untrained_photo_num = self.mw.interaction.get_untrained_photo_num()
                 self.ui.untrained_num_label.setText(str(untrained_photo_num))
         elif tab_id == 4:  # 选中“档案浏览”tab
-            self.arch_browser.controller.browse_arch()
-            self.arch_browser.view.display_browse_arch(self.ui.order_combobox_browse.currentText())
+            _, arch = self.arch_browser.controller.browse_arch()
+            self.arch_browser.view.display_browse_arch(arch, self.ui.order_combobox_browse.currentText())
         elif tab_id == 5:  # 选中“档案移交”tab
-            self.arch_transfer.controller.list_arch()
-            self.arch_transfer.view.display_transfer_arch(self.ui.order_combobox_transfer.currentText())
+            _, arch = self.arch_transfer.controller.list_arch()
+            self.arch_transfer.view.display_transfer_arch(arch, self.ui.order_combobox_transfer.currentText())
         else:
             pass

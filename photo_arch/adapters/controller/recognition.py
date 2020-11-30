@@ -11,5 +11,6 @@ from photo_arch.adapters.presenter.recognition import Presenter
 
 
 class Controller(object):
-    def __init__(self, repo: Repo, presenter: Presenter):
-        self.recognition = Recognition(repo, presenter)
+    def __init__(self, repo: Repo):
+        self.presenter = Presenter()
+        self.recognition = Recognition(repo, self.presenter)

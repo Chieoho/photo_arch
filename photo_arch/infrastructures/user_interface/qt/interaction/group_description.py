@@ -23,19 +23,15 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
-from photo_arch.adapters.sql.repo import Repo
-from photo_arch.adapters.controller.group_description import Controller
-from photo_arch.adapters.presenter.group_description import Presenter
-from photo_arch.adapters.view_model.group_description import ViewModel
+from photo_arch.adapters.controller.group_description import Controller, Repo
 
 
 class View(object):
-    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+    def __init__(self, mw_: MainWindow):
         self.mw = mw_
-        self.view_model = view_model
 
-    def display_group(self, widget_suffix='_in_group'):
-        for k, v in self.view_model.group.items():
+    def display_group(self, group, widget_suffix='_in_group'):
+        for k, v in group.items():
             widget_name = k + widget_suffix
             if hasattr(self.mw.ui, widget_name):
                 widget = getattr(self.mw.ui, widget_name)
@@ -53,10 +49,8 @@ class GroupDescription(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view_model = ViewModel()
-        self.presenter = Presenter(self.view_model)
-        self.controller = Controller(Repo(make_session(engine)), self.presenter)
-        self.view = View(mw_, self.view_model)
+        self.controller = Controller(Repo(make_session(engine)))
+        self.view = View(mw_)
 
         self.current_work_path = ''
         self.description_path_info = {}
@@ -87,7 +81,7 @@ class GroupDescription(object):
         self.ui.taken_time_in_group.textChanged.connect(static(self.update_path_year))
 
     def clear_group_info(self):
-        self.view.display_group()
+        self.view.display_group(GroupOutputData().__dict__)
 
     def open_dir(self):
         current_work_path = QFileDialog.getExistingDirectory(
@@ -121,10 +115,9 @@ class GroupDescription(object):
         group_folder = item.text(0)
         first_photo = self._find_fist_photo(group_folder)
         first_photo_md5 = calc_md5(first_photo)
-        if self.controller.get_group(first_photo_md5):
-            # self.disconnect_group_folder_signal()
-            self.view.display_group()
-            # self.connect_group_folder_signal()
+        _, group = self.controller.get_group(first_photo_md5)
+        if group:
+            self.view.display_group(group)
         else:
             path = os.path.join(self.current_work_path, group_folder)
             self._display_default(path)
@@ -320,8 +313,7 @@ class GroupDescription(object):
 
     def _display_default(self, path):
         group_info = self._gen_default_info(path)
-        self.presenter.update_group_model(group_info)
-        self.view.display_group()
+        self.view.display_group(group_info)
         self._display_path_arch_group_code()
 
     def _gen_default_info(self, path):

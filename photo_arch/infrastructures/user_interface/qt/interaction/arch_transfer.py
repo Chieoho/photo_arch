@@ -20,16 +20,12 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
-from photo_arch.adapters.sql.repo import Repo
-from photo_arch.adapters.controller.arch_transfer import Controller
-from photo_arch.adapters.presenter.arch_transfer import Presenter
-from photo_arch.adapters.view_model.arch_transfer import ViewModel
+from photo_arch.adapters.controller.arch_transfer import Controller, Repo
 
 
 class View(object):
-    def __init__(self, mw_: MainWindow, view_model: ViewModel):
+    def __init__(self, mw_: MainWindow):
         self.mw = mw_
-        self.view_model = view_model
 
     def _fill_model_from_dict(self, parent, d):
         if isinstance(d, dict):
@@ -43,9 +39,9 @@ class View(object):
         else:
             parent.appendRow(QStandardItem(str(d)))
 
-    def display_transfer_arch(self, priority_key='年度'):
+    def display_transfer_arch(self, arch, priority_key='年度'):
         data = defaultdict(lambda: defaultdict(dict))
-        for gi in self.view_model.arch:
+        for gi in arch:
             fc = gi.get('fonds_code')
             ye = gi.get('year')
             rp = gi.get('retention_period')
@@ -65,10 +61,8 @@ class ArchTransfer(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.view_model = ViewModel()
-        self.presenter = Presenter(self.view_model)
-        self.controller = Controller(Repo(make_session(engine)), self.presenter)
-        self.view = View(mw_, self.view_model)
+        self.controller = Controller(Repo(make_session(engine)))
+        self.view = View(mw_)
 
         self.disk_icon_path = './icon/arch_cd.png'
         self.selected_condition_list = []
@@ -92,8 +86,9 @@ class ArchTransfer(object):
         catalog_tw.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         catalog_tw.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
 
-    def display_arch(self, text):
-        self.view.display_transfer_arch(text)
+    def display_arch(self, priority_key):
+        _, arch = self.controller.list_arch()
+        self.view.display_transfer_arch(arch, priority_key)
 
     def select_arch(self, index):
         if index.child(0, 0).data():  # 点击的不是叶子则返回
@@ -151,7 +146,8 @@ class ArchTransfer(object):
                 ye, rp = x1, x2
             else:
                 rp, ye = x1, x2
-            selected_arch_list.extend(self.controller.get_selected_arch(fc, ye, rp))
+            _, arch = self.controller.get_selected_arch(fc, ye, rp)
+            selected_arch_list.extend(arch)
         return selected_arch_list
 
     def _display_partition_res(self):
@@ -193,7 +189,7 @@ class ArchTransfer(object):
         start_group_code = arch_list[0]['group_code']
         end_group_code = arch_list[-1]['group_code']
         self.ui.cd_group_codes_line_edit.setText(f'{start_group_code} 至 {end_group_code}')
-        total_num = sum(map(lambda g: g['photo_num'], arch_list))
+        total_num = sum(map(lambda g: int(g['photo_num']), arch_list))
         self.ui.cd_photo_num_line_edit.setText(str(total_num))
         self.ui.cd_num_line_edit.setText(f'{row+1}号')
 
