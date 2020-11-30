@@ -36,11 +36,25 @@ class RepoIf(metaclass=ABCMeta):
         """
 
     @abstractmethod
+    def query_group_by_first_photo_md5(self, first_photo_md5: str) -> List[dict]:
+        """
+        :param first_photo_md5:
+        :return:
+        """
+
+    @abstractmethod
     def query_group_by_selected(self, fonds_code, year, retention_period) -> List[dict]:
         """
         :param fonds_code:
         :param year:
         :param retention_period:
+        :return:
+        """
+
+    @abstractmethod
+    def get_group_sn(self, year):
+        """
+        :param year:
         :return:
         """
 

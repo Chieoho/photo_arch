@@ -15,9 +15,9 @@ class Repo:
         return True
 
     @staticmethod
-    def query_group_by_group_arch_code(group_arch_code) -> List[dict]:
-        _ = group_arch_code
-        return [{'arch_code': 'A1-ZP·2018-30-0001'}]
+    def query_group_by_first_photo_md5(first_photo_md5) -> List[dict]:
+        _ = first_photo_md5
+        return [{'first_photo_md5': 'd41d8cd98f00b204e9800998ecf8427e'}]
 
     @staticmethod
     def add_photo(photo) -> bool:

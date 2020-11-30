@@ -12,13 +12,12 @@ from pathlib import Path
 import time
 from distutils.dir_util import copy_tree
 
-from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, calc_md5
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow, Overlay, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -67,7 +66,8 @@ class GroupDescription(object):
         height = int(self.mw.dt_height*30/1080)
         self.ui.treeWidget.setStyleSheet('#treeWidget::item{height:%spx;}' % (height + 5))
         self.ui.open_dir_btn.clicked.connect(static(self.open_dir))
-        self.ui.treeWidget.itemClicked.connect(static(self.item_click))
+        self.ui.treeWidget.itemDoubleClicked.connect(static(self.item_click))
+        self.ui.treeWidget.itemClicked.connect(static(self.display_group))
         self.ui.add_folder_btn.clicked.connect(static(self.add_folder_item))
         self.ui.cancel_folder_btn.clicked.connect(static(self.cancel_folder_item))
         self.ui.save_group_btn.clicked.connect(static(self.save_group))
@@ -78,11 +78,13 @@ class GroupDescription(object):
 
         self.clear_group_info()
 
-        self.ui.fonds_code_in_group.currentTextChanged.connect(static(self.display_path_arch_group_code))
-        self.ui.arch_category_code_in_group.currentTextChanged.connect(static(self.display_path_arch_group_code))
-        self.ui.retention_period_in_group.currentTextChanged.connect(static(self.display_path_arch_group_code))
-        self.ui.year_in_group.textChanged.connect(static(self.display_path_arch_group_code))
-        self.ui.group_title_in_group.textChanged.connect(static(self.display_path_arch_group_code))
+        self.ui.fonds_code_in_group.currentTextChanged.connect(static(self.update_arch_code))
+        self.ui.arch_category_code_in_group.currentTextChanged.connect(static(self.update_group_code))
+        self.ui.retention_period_in_group.currentTextChanged.connect(static(self.update_group_code))
+        self.ui.year_in_group.textChanged.connect(static(self.update_group_code))
+        self.ui.group_title_in_group.textChanged.connect(static(self.update_path))
+        self.ui.group_code_in_group.textChanged.connect(static(self.update_path_arch))
+        self.ui.taken_time_in_group.textChanged.connect(static(self.update_path_year))
 
     def clear_group_info(self):
         self.view.display_group()
@@ -112,23 +114,71 @@ class GroupDescription(object):
             self._generate_tree_by_path(self.current_work_path)
         self._reset_state()
 
-    def display_group(self, path):
-        group_folder = os.path.split(path)[1]
-        if self.setting.description_path in path:  # 以路径来判断是否已著录（应以照片的md5来判断）
-            group_code = group_folder.split(' ')[0]
-            self.controller.get_group(group_code)
+    def display_group(self, item):
+        if item.text(0) == self.current_work_path:
+            return
+        self.save_group()
+        group_folder = item.text(0)
+        first_photo = self._find_fist_photo(group_folder)
+        first_photo_md5 = calc_md5(first_photo)
+        if self.controller.get_group(first_photo_md5):
+            # self.disconnect_group_folder_signal()
             self.view.display_group()
+            # self.connect_group_folder_signal()
         else:
+            path = os.path.join(self.current_work_path, group_folder)
             self._display_default(path)
         self.current_folder = group_folder
 
-    def display_path_arch_group_code(self):
+    def update_arch_code(self):
+        arch_code_parts = self.ui.arch_code_in_group.text().split('-')
+        arch_code_parts[0] = self.ui.fonds_code_in_group.currentText()
+        self.ui.arch_code_in_group.setText('-'.join(arch_code_parts))
+
+    def update_group_code(self):
+        group_sn = self.ui.group_code_in_group.text().split('-')[-1]
+        arch_category = self.ui.arch_category_code_in_group.currentText()
+        year = self.ui.year_in_group.text()
+        retention_period = self.ui.retention_period_in_group.currentText()
+        group_code = f'{arch_category}·{year}-{retention_period}-{group_sn}'
+        self.ui.group_code_in_group.setText(group_code)
+
+    def update_path(self):
+        group_path = self.ui.group_path_in_group.text()
+        if not group_path:
+            return
+        group_path_parts = group_path.split(' ')
+        group_code, taken_time = group_path_parts[0], group_path_parts[1]
+        group_title = self.ui.group_title_in_group.text()
+        self.ui.group_path_in_group.setText(' '.join([group_code, taken_time, group_title]))
+
+    def update_path_arch(self):
+        group_code = self.ui.group_code_in_group.text()
+
+        group_path_parts = self.ui.group_path_in_group.text().split(' ')
+        group_path_parts[0] = group_code
+        self.ui.group_path_in_group.setText(' '.join(group_path_parts))
+
+        fonds_code = self.ui.arch_code_in_group.text().split('-')[0]
+        self.ui.arch_code_in_group.setText('-'.join([fonds_code, group_code]))
+
+    def update_path_year(self):
+        taken_time = self.ui.taken_time_in_group.text()
+        group_path_parts = self.ui.group_path_in_group.text().split(' ')
+        group_path_parts[1] = taken_time
+        self.ui.group_path_in_group.setText(' '.join(group_path_parts))
+        self.ui.year_in_group.setText(taken_time[0: 4])
+
+    def _display_path_arch_group_code(self):
         group_folder, arch_code, group_code = self._get_path_arch_group_code()
         self.ui.group_path_in_group.setText(group_folder)
         self.ui.arch_code_in_group.setText(arch_code)
         self.ui.group_code_in_group.setText(group_code)
 
     def save_group(self):
+        group_arch_code = self.ui.arch_code_in_group.text()
+        if not group_arch_code:
+            return
         group_in = GroupInputData()
         for k in group_in.__dict__.keys():
             widget = getattr(self.ui, k+'_in_group')
@@ -139,8 +189,14 @@ class GroupDescription(object):
             else:
                 value = widget.text()
             setattr(group_in, k, value)
-        self.controller.save_group(group_in)
+        first_photo = self._find_fist_photo()
+        first_photo_md5 = calc_md5(first_photo)
 
+        group_in.first_photo_md5 = first_photo_md5
+        self.controller.save_group(group_in)
+        self._copy_arch()
+
+    def _copy_arch(self):
         source_path = os.path.join(self.current_work_path, self.current_folder)
         group_code = self.ui.group_code_in_group.text()
         taken_time = self.ui.taken_time_in_group.text()
@@ -155,6 +211,19 @@ class GroupDescription(object):
         self.description_path_info[source_path] = os.path.join(dst_abspath)
         self.arch_code_info[source_path] = self.ui.arch_code_in_group.text()
         copy_tree(source_path, dst_abspath)
+
+    def _find_fist_photo(self, group_folder=None):
+        if group_folder is None:
+            group_folder = self.current_folder
+        path = os.path.join(self.current_work_path, group_folder)
+        min_c_time = 32472115200  # 2999-01-01
+        first_photo = ''
+        for f in glob.iglob(os.path.join(path, '*')):
+            c_time = os.stat(f).st_ctime
+            if c_time < min_c_time:
+                min_c_time = c_time
+                first_photo = f
+        return first_photo
 
     def item_click(self, item):
         if item.text(0) == self.current_work_path:
@@ -230,28 +299,8 @@ class GroupDescription(object):
         for name, arch_code in file_arch_list:
             child = QTreeWidgetItem(root)
             child.setText(0, name)
-            description_btn = self._gen_description_btn()
-            self._connect(description_btn, root_path + '\\' + name)
-            self.ui.treeWidget.setItemWidget(child, 1, description_btn)
-            child.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
             child.setCheckState(0, Qt.Checked)
         self.ui.treeWidget.expandAll()
-
-    def _gen_description_btn(self):
-        description_btn = QtWidgets.QPushButton(
-            ' ',
-            self.ui.treeWidget
-        )
-        font = QFont()
-        font.setFamily("新宋体")
-        font.setPointSize(14)
-        description_btn.setFont(font)
-        description_btn.setStyleSheet("text-align: left; padding-left: 18px;")
-        description_btn.setFlat(True)
-        return description_btn
-
-    def _connect(self, button, path):
-        button.clicked.connect(lambda: self.display_group(path))
 
     def _generate_tree_by_path(self, root_path):
         file_list = filter(lambda p: os.path.isdir(os.path.join(root_path, p)), os.listdir(root_path))
@@ -273,7 +322,7 @@ class GroupDescription(object):
         group_info = self._gen_default_info(path)
         self.presenter.update_group_model(group_info)
         self.view.display_group()
-        self.display_path_arch_group_code()
+        self._display_path_arch_group_code()
 
     def _gen_default_info(self, path):
         group_data = GroupOutputData()
@@ -323,9 +372,6 @@ class GroupDescription(object):
         return folder_size, photo_num, file_create_time
 
     def _get_group_sn(self, year):
-        path = os.path.join(
-            self.setting.description_path, '照片档案',
-            year, '*', '*'
-        )
-        group_sn = str(len(glob.glob(path))+1).zfill(4)
+        group_sn = self.controller.get_group_sn(year)
+        group_sn = str(group_sn).zfill(4)
         return group_sn

@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
@@ -184,6 +184,9 @@ QTabBar::tab:selected{
                 <pointsize>14</pointsize>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;双击勾选&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -196,6 +199,12 @@ QTabBar::tab:selected{
               <property name="midLineWidth">
                <number>2</number>
               </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SingleSelection</enum>
+              </property>
               <column>
                <property name="text">
                 <string notr="true">文件夹</string>
@@ -207,11 +216,6 @@ QTabBar::tab:selected{
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string/>
                </property>
               </column>
              </widget>
@@ -453,6 +457,19 @@ padding-bottom: 8px;</string>
                  </property>
                 </widget>
                </item>
+               <item row="0" column="1" colspan="2">
+                <widget class="QLabel" name="group_path_in_group">
+                 <property name="font">
+                  <font>
+                   <family>新宋体</family>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="label_47">
                  <property name="maximumSize">
@@ -475,28 +492,6 @@ padding-bottom: 8px;</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <widget class="QLineEdit" name="arch_code_in_group">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>300</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <family>新宋体</family>
-                   <pointsize>14</pointsize>
-                  </font>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="2">
                 <spacer name="horizontalSpacer_15">
                  <property name="orientation">
@@ -513,8 +508,14 @@ padding-bottom: 8px;</string>
                  </property>
                 </spacer>
                </item>
-               <item row="0" column="1" colspan="2">
-                <widget class="QLabel" name="group_path_in_group">
+               <item row="1" column="1">
+                <widget class="QLabel" name="arch_code_in_group">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="font">
                   <font>
                    <family>新宋体</family>
@@ -5203,7 +5204,6 @@ padding-bottom: 8px;</string>
   <tabstop>dir_lineEdit</tabstop>
   <tabstop>open_dir_btn</tabstop>
   <tabstop>treeWidget</tabstop>
-  <tabstop>arch_code_in_group</tabstop>
   <tabstop>year_in_group</tabstop>
   <tabstop>department_in_group</tabstop>
   <tabstop>group_code_in_group</tabstop>

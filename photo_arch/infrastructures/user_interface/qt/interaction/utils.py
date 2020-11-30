@@ -8,7 +8,22 @@
 import functools
 import traceback
 import inspect
+import hashlib
 from photo_arch.infrastructures.user_interface.qt.ui import slot_wrapper
+
+
+def calc_md5(file_path):
+    if not file_path:
+        return ''
+    with open(file_path, 'rb') as fr:
+        file_md5_obj = hashlib.md5()
+        while True:
+            block = fr.read(4 * 1024 * 1024)
+            if not block:
+                break
+            file_md5_obj.update(block)
+        file_md5 = file_md5_obj.hexdigest()
+        return file_md5
 
 
 def catch_exception(func):

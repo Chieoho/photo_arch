@@ -36,6 +36,7 @@ class PhotoGroupModel(Base):
     security_classification = Column(Integer)
     reference_code = Column(String(64))
     opening_state = Column(String(64))
+    first_photo_md5 = Column(String(64))
 
 
 class PhotoModel(Base):
@@ -84,13 +85,17 @@ class Repo(RepoIf):
         return True
 
     def update_group(self, group: PhotoGroup) -> bool:
-        path = group.group_path
+        first_photo_md5 = group.first_photo_md5
         group_dict = group.to_dict()
-        self.repo_general.update('photo_group', {'group_path': [path]}, group_dict)
+        self.repo_general.update('photo_group', {'first_photo_md5': [first_photo_md5]}, group_dict)
         return True
 
     def query_group_by_group_arch_code(self, group_arch_code: str) -> List[dict]:
         group_list = self.repo_general.query('photo_group', cond={'arch_code': [group_arch_code]})
+        return group_list
+
+    def query_group_by_first_photo_md5(self, first_photo_md5: str) -> List[dict]:
+        group_list = self.repo_general.query('photo_group', cond={'first_photo_md5': [first_photo_md5]})
         return group_list
 
     def query_group_by_selected(self, fonds_code, year, retention_period) -> List[dict]:
@@ -103,6 +108,10 @@ class Repo(RepoIf):
             }
         )
         return group_list
+
+    def get_group_sn(self, year):
+        query_obj = self.session.query(PhotoGroupModel).filter(PhotoGroupModel.year == year)
+        return query_obj.count() + 1
 
     def get_all_groups(self) -> List[dict]:
         repo_general = RepoGeneral(self.session)

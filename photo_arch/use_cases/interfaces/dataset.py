@@ -29,6 +29,7 @@ class GroupInputData(object):
     security_classification: int = 0
     reference_code: str = ''
     opening_state: str = ''
+    first_photo_md5 = ''
 
 
 @dataclass

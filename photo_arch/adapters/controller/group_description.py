@@ -18,5 +18,8 @@ class Controller(object):
     def save_group(self, group_info: GroupInputData):
         self.group_description.save_group(group_info)
 
-    def get_group(self, group_code: str):
-        self.group_description.get_group(group_code)
+    def get_group(self, first_photo_md5: str):
+        return self.group_description.get_group(first_photo_md5)
+
+    def get_group_sn(self, year):
+        return self.group_description.get_group_sn(year)

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 @file: ui_interface.py
-@desc:
+@desc: 用户界面接口文件不应放在user_interface下，由于特殊原因，该文件由界面编写者编写和维护，
+       所以放在这里。
+       该接口主要完成人脸识别、张著录、模型训练和部分组著录的交互功能。
 @author: Jaden Wu
 @time: 2020/8/25 10:27
 """
