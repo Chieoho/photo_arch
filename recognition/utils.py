@@ -417,6 +417,33 @@ def fileTreeWidgetData(rootVolumePath, dbDataList):
     return rootVolumeNum, fileTreeData
 
 
+def get_filePath_with_creationDate_as_dict(folder):
+    result = {}
+    for f in os.listdir(folder):
+        fullFileName = folder + "\\" + f
+        t = os.stat(fullFileName)
+        mtime = np.min([t.st_ctime, t.st_mtime, t.st_atime])
+        mtime = str(mtime)
+        i = 0
+        while mtime+"_"*i in result:
+            i += 1
+        mtime = mtime+"_"*i
+        result[mtime] = fullFileName
+    return result
+
+
+def rank_and_rename_filePath_with_creationDate(filesDict, preName):
+    for i,key in enumerate(sorted(filesDict)):
+        dummy, extension =  os.path.splitext(filesDict[key])
+        parentPath = os.path.abspath(os.path.join(dummy, ".."))
+        newName = preName + '-{0:0>4}'.format(i + 1)
+        new_file_name = os.path.abspath(os.path.join(parentPath, newName)) + extension
+        os.rename(filesDict[key],  new_file_name)
+        filesDict[key] = new_file_name
+
+        return filesDict
+
+
 # 两个眼睛和图片中心旋转实现人脸对齐
 def alignment_1(img,landmark):
 
@@ -523,6 +550,13 @@ def alignFace2(img, rectangles, rectanglesExd, squareRect, box):
     # print('#### alignFace2:', margin)
     imgSize = [160, 160 + margin]
     face_landmarks = np.reshape(rectanglesExd[index][5:15], (5, 2)).tolist()
+    warpImg = warp_im(img, face_landmarks, std_landmark)
+    new_img = warpImg[0:imgSize[0], margin:imgSize[1]]
+    return new_img, face_landmarks
+
+
+def alignFace2WithVerify(img, margin, face_landmarks):
+    imgSize = [160, 160 + margin]
     warpImg = warp_im(img, face_landmarks, std_landmark)
     new_img = warpImg[0:imgSize[0], margin:imgSize[1]]
     return new_img

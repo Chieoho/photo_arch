@@ -5,6 +5,7 @@
 @author: Jaden Wu
 @time: 2020/9/3 10:15
 """
+import hashlib
 import json
 import os
 import shutil
@@ -35,7 +36,7 @@ class RecognizeProcess(Process):
     margin = 32
 
     faceProp = 0.9
-    euclideanDist = 0.79
+    euclideanDist = 0.744
     canvasW = 2000
     canvasH = 2000
 
@@ -159,8 +160,8 @@ class RecognizeProcess(Process):
                     # cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
                     # scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
                     # scaled = alignFace(test_img, rectangles, squareRect, box)
-                    scaled = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
-                    # cv2.imwrite("./align/align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
+                    scaled, face_landmarks = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
+                    cv2.imwrite("reco_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
                     # cv2.rectangle(test_img, (startX, startY), (endX, endY), (0,255,0), 2)
                     with self.graph.as_default():
                         unknown_embedding = get_embedding(self.facenet_model, scaled)
@@ -171,7 +172,8 @@ class RecognizeProcess(Process):
                     faces.append({
                         'id': j,
                         'box': str([startX / scale, startY / scale, endX / scale, endY / scale]),
-                        'name': who_name
+                        'name': who_name,
+                        'landmark': str((np.asarray(face_landmarks)/scale).tolist())
                         # 'embedding':str(list(unknown_embedding))
                     })  # box和embedding如果不转换成str,json.dumps就会报错(目前没有找到解决方法)
 
@@ -304,7 +306,8 @@ class VerifyProcess(Process):
                 new_faces.append({
                     'id':id,
                     'box':self.faces_list[id]['box'],
-                    'name': name
+                    'name': name,
+                    'landmark': self.faces_list[id]['landmark']
                 })
 
                 if id < len(orig_faces_id) - 1:
@@ -321,8 +324,16 @@ class VerifyProcess(Process):
                     bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
                     bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
                     bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
-                    cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
-                    scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
+
+                    squareRect = rect2square(np.array([[bb[0], bb[1], bb[2], bb[3]]]))
+                    marginValue = int((bb[0] - squareRect[0][0])/2)
+                    print('#### verify_margin:', marginValue)
+                    face_landmark = (np.asarray(eval(self.faces_list[id]['landmark']))*scale).tolist()
+                    scaled = alignFace2WithVerify(test_img, marginValue, face_landmark)
+                    cv2.imwrite("verify_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
+
+                    # cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
+                    # scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
                     with self.graph.as_default():
                         embedding = get_embedding(self.facenet_model, scaled)
 
@@ -341,7 +352,6 @@ class VerifyProcess(Process):
 class Recognition(object):
     def __init__(self):
         os.makedirs('data', exist_ok=True)
-        self.volume_dict = {}  # 用来填充选择的文件夹
         self.pending_dirs_list = []
 
         self.data_queue = Queue() # 点击“添加”按钮的时候,用来写入图片路径
@@ -436,40 +446,61 @@ class Recognition(object):
         faceDbData = []
         self.pending_dirs_list.clear()
 
+        print('########:', arch_num_info)
+
         if len(arch_num_info['children']) == 0:
             return False
 
-        self.volume_dict = arch_num_info['children']
-
-        for volume_name, volume_num in self.volume_dict.items():  # 取绝对路径,数据才会保持一样的形式. 例如 'D:\\深圳市社保局联谊活动\\合影\\0.jpg',否则'D:/深圳市社保局联谊活动\\合影'
-            fileData = glob.glob(os.path.abspath(os.path.join(volume_name, '*.*[jpg,png]')))
-            print(fileData)
-            for i, path in enumerate(fileData):
-                self.data_queue.put(path)
+        volume_dict = arch_num_info['children']
+        md = hashlib.md5()
+        for volume_name, volume_num in volume_dict.items():  # 取绝对路径,数据才会保持一样的形式. 例如 'D:\\深圳市社保局联谊活动\\合影\\0.jpg',否则'D:/深圳市社保局联谊活动\\合影'
+            all_files = get_filePath_with_creationDate_as_dict(volume_name)
+            # rank_and_rename_filePath_with_creationDate(all_files, volume_num)
+            # fileData = glob.glob(os.path.abspath(os.path.join(volume_name, '*.*[jpg,png]')))
+            photo_group_info = self.sql_repo.query('photo_group', {'arch_code': [volume_num]}, ('photographer', 'taken_time', 'taken_locations', 'security_classification', 'reference_code'))
+            split_arch_code = volume_num.split('-')  # A1-ZP·2020-D10-0001
+            for i, key in enumerate(sorted(all_files)):
                 photoInfo = {}
                 faceInfo = {}
-                photoInfo['arch_code'] = 'A1_lzd_{}'.format(i)
-                photoInfo['photo_path'] = path
-                photoInfo['group_code'] = 'A1_anyun'
-                photoInfo['fonds_code'] = 'A1'
-                photoInfo['arch_category_code'] = 'ZP'
-                photoInfo['year'] = '2020'
-                photoInfo['group_code'] = '0001'
-                photoInfo['photo_code'] = '{0:0>4}'.format(i + 1)
-                photoInfo['format'] ='JPGE'
-                photoInfo['photographer'] = 'lzd'
-                photoInfo['taken_time'] = '20201116'
-                photoInfo['taken_locations'] = '深圳'
-                photoInfo['security_classification'] = '公开'
-                photoInfo['reference_code'] = '深字001'
+                dummy, extension = os.path.splitext(all_files[key])
+                parentPath = os.path.abspath(os.path.join(dummy, ".."))
+                arch_code = volume_num + '-{0:0>4}'.format(i + 1)
+                newPath = os.path.abspath(os.path.join(parentPath, arch_code)) + extension
+                os.rename(all_files[key], newPath)
+
+                # 件著录信息
+                photoInfo['arch_code'] = arch_code  # 件的档号
+                photoInfo['photo_path'] = newPath
+                photoInfo['fonds_code'] = split_arch_code[0]          #全宗号
+                photoInfo['arch_category_code'] =  split_arch_code[1].split('·')[0]  #门类
+                photoInfo['year'] = split_arch_code[1].split('·')[1] #年
+                photoInfo['group_code'] = volume_num  # 组号
+                photoInfo['photo_code'] = '{0:0>4}'.format(i + 1) #件号
+                extName = extension.split('.')[-1].upper() # 格式
+                if extName in ['JPG', 'JPEG']:
+                    photoInfo['format'] = 'JPGE'
+                else:
+                    photoInfo['format'] = extName
+                photoInfo['photographer'] = photo_group_info[0]['photographer'] # 拍摄者
+                photoInfo['taken_time'] = photo_group_info[0]['taken_time'] # 拍摄时间
+                photoInfo['taken_locations'] = photo_group_info[0]['taken_locations'] # 拍摄地点
+                photoInfo['security_classification'] = photo_group_info[0]['security_classification'] # 密级
+                photoInfo['reference_code'] = photo_group_info[0]['reference_code'] # 参见号
+                file = open(newPath, "rb")
+                md.update(file.read())
+                photoInfo['md5'] = md.hexdigest()
+                file.close()
                 photoDbData.append(photoInfo)
-                faceInfo['photo_path'] = path
-                faceInfo['photo_archival_code'] = 'A1_lzd_{}'.format(i)
+                # 人脸信息
+                faceInfo['photo_path'] = newPath
+                faceInfo['photo_archival_code'] = arch_code
                 faceInfo['recog_state'] = 0
                 faceInfo['verify_state'] = 0
-                faceInfo['parent_path'] = volume_name
+                faceInfo['parent_path'] = parentPath
                 faceDbData.append(faceInfo)
-            self.pending_dirs_list.append(os.path.abspath(os.path.join(volume_name)))
+                # 图片路径写入队列
+                self.data_queue.put(newPath)
+            self.pending_dirs_list.append(os.path.abspath(volume_name))
 
         self.pendingTotalImgsNum = self.data_queue.qsize()
         self.sql_repo.add('photo', photoDbData)

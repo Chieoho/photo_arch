@@ -56,6 +56,7 @@ class PhotoModel(Base):
     taken_locations = Column(String(64))
     security_classification = Column(Integer)
     reference_code = Column(String(64))
+    md5 = Column(String(64))
 
 
 class FaceModel(Base):
