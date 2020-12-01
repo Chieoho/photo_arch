@@ -23,7 +23,8 @@ class Controller(object):
     def get_group(self, first_photo_md5: str):
         res = self.group_description.get_group(first_photo_md5)
         group = self.presenter.view_model.group
-        return res, group
+        data = group if res is True else None
+        return res, data
 
     def get_group_sn(self, year):
         group_sn = self.group_description.get_group_sn(year)

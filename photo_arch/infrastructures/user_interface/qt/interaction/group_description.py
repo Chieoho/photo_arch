@@ -53,9 +53,10 @@ class GroupDescription(object):
         self.view = View(mw_)
 
         self.current_work_path = ''
+        self.current_folder = ''
         self.description_path_info = {}
         self.arch_code_info = {}
-        self.current_folder = ''
+        self.group_tmp_info = {}
 
         height = int(self.mw.dt_height*30/1080)
         self.ui.treeWidget.setStyleSheet('#treeWidget::item{height:%spx;}' % (height + 5))
@@ -64,7 +65,7 @@ class GroupDescription(object):
         self.ui.treeWidget.itemClicked.connect(static(self.display_group))
         self.ui.add_folder_btn.clicked.connect(static(self.add_folder_item))
         self.ui.cancel_folder_btn.clicked.connect(static(self.cancel_folder_item))
-        self.ui.save_group_btn.clicked.connect(static(self.save_group))
+        self.ui.save_group_btn.clicked.connect(static(self.save_and_copy_group))
 
         self.ui.add_folder_btn.setStyleSheet(self.mw.button_style_sheet)
         self.ui.cancel_folder_btn.setStyleSheet(self.mw.button_style_sheet)
@@ -111,17 +112,25 @@ class GroupDescription(object):
     def display_group(self, item):
         if item.text(0) == self.current_work_path:
             return
-        self.save_group()
+        self._keep_tmp_info(self.current_folder)
         group_folder = item.text(0)
-        first_photo = self._find_fist_photo(group_folder)
-        first_photo_md5 = calc_md5(first_photo)
-        _, group = self.controller.get_group(first_photo_md5)
-        if group:
-            self.view.display_group(group)
+        if group_folder in self.group_tmp_info:
+            self.view.display_group(self.group_tmp_info[group_folder])
         else:
-            path = os.path.join(self.current_work_path, group_folder)
-            self._display_default(path)
+            first_photo = self._find_fist_photo(group_folder)
+            first_photo_md5 = calc_md5(first_photo)
+            _, group = self.controller.get_group(first_photo_md5)
+            if group:
+                self.view.display_group(group)
+            else:
+                path = os.path.join(self.current_work_path, group_folder)
+                self._display_default(path)
         self.current_folder = group_folder
+
+    def _keep_tmp_info(self, group_folder):
+        group_info = self._get_group_input()
+        if group_info.group_path:
+            self.group_tmp_info[group_folder] = group_info.__dict__
 
     def update_arch_code(self):
         arch_code_parts = self.ui.arch_code_in_group.text().split('-')
@@ -129,9 +138,9 @@ class GroupDescription(object):
         self.ui.arch_code_in_group.setText('-'.join(arch_code_parts))
 
     def update_group_code(self):
-        group_sn = self.ui.group_code_in_group.text().split('-')[-1]
         arch_category = self.ui.arch_category_code_in_group.currentText()
         year = self.ui.year_in_group.text()
+        group_sn = self._get_group_sn(year)
         retention_period = self.ui.retention_period_in_group.currentText()
         group_code = f'{arch_category}·{year}-{retention_period}-{group_sn}'
         self.ui.group_code_in_group.setText(group_code)
@@ -147,19 +156,18 @@ class GroupDescription(object):
 
     def update_path_arch(self):
         group_code = self.ui.group_code_in_group.text()
-
         group_path_parts = self.ui.group_path_in_group.text().split(' ')
         group_path_parts[0] = group_code
         self.ui.group_path_in_group.setText(' '.join(group_path_parts))
-
         fonds_code = self.ui.arch_code_in_group.text().split('-')[0]
         self.ui.arch_code_in_group.setText('-'.join([fonds_code, group_code]))
 
     def update_path_year(self):
         taken_time = self.ui.taken_time_in_group.text()
         group_path_parts = self.ui.group_path_in_group.text().split(' ')
-        group_path_parts[1] = taken_time
-        self.ui.group_path_in_group.setText(' '.join(group_path_parts))
+        if len(group_path_parts) >= 2:
+            group_path_parts[1] = taken_time
+            self.ui.group_path_in_group.setText(' '.join(group_path_parts))
         self.ui.year_in_group.setText(taken_time[0: 4])
 
     def _display_path_arch_group_code(self):
@@ -168,10 +176,21 @@ class GroupDescription(object):
         self.ui.arch_code_in_group.setText(arch_code)
         self.ui.group_code_in_group.setText(group_code)
 
-    def save_group(self):
+    def save_and_copy_group(self):
+        self._save_group()
+        self._copy_arch()
+
+    def _save_group(self):
         group_arch_code = self.ui.arch_code_in_group.text()
         if not group_arch_code:
             return
+        first_photo = self._find_fist_photo()
+        first_photo_md5 = calc_md5(first_photo)
+        group_in: GroupInputData = self._get_group_input()
+        group_in.first_photo_md5 = first_photo_md5
+        self.controller.save_group(group_in)
+
+    def _get_group_input(self):
         group_in = GroupInputData()
         for k in group_in.__dict__.keys():
             widget = getattr(self.ui, k+'_in_group')
@@ -182,12 +201,7 @@ class GroupDescription(object):
             else:
                 value = widget.text()
             setattr(group_in, k, value)
-        first_photo = self._find_fist_photo()
-        first_photo_md5 = calc_md5(first_photo)
-
-        group_in.first_photo_md5 = first_photo_md5
-        self.controller.save_group(group_in)
-        self._copy_arch()
+        return group_in
 
     def _copy_arch(self):
         source_path = os.path.join(self.current_work_path, self.current_folder)
@@ -364,6 +378,6 @@ class GroupDescription(object):
         return folder_size, photo_num, file_create_time
 
     def _get_group_sn(self, year):
-        group_sn = self.controller.get_group_sn(year)
+        _, group_sn = self.controller.get_group_sn(year)
         group_sn = str(group_sn).zfill(4)
         return group_sn

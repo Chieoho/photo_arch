@@ -29,10 +29,10 @@ class GroupDescription(object):
         group_list = self.repo.query_group_by_first_photo_md5(first_photo_md5)
         if group_list:
             group_info = group_list[-1]
+            self.pres.update_group_model(group_info)
+            return True
         else:
-            group_info = GroupOutputData().__dict__
-        self.pres.update_group_model(group_info)
-        return bool(group_list)
+            return False
 
     def get_group_sn(self, year):
         group_sn = self.repo.get_group_sn(year)

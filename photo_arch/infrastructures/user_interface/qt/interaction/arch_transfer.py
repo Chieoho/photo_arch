@@ -181,6 +181,7 @@ class ArchTransfer(object):
     def _display_cd_caption(self):
         operation_date = time.strftime('%Y%m%d')
         self.ui.operation_date_line_edit.setText(operation_date)
+        self.ui.operator_line_edit.setText(self.setting.fonds_name)
 
     def _display_cd_label(self, row):
         self.ui.cd_fonds_name_line_edit.setText(self.setting.fonds_name)
