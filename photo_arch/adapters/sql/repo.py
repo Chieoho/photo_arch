@@ -126,6 +126,10 @@ class Repo(RepoIf):
         self.session.commit()
         return True
 
+    def query_photo_by_arch_code(self, photo_arch_code):
+        photo_list = self.repo_general.query('photo', cond={'arch_code': [photo_arch_code]})
+        return photo_list
+
 
 table_model_dict = {
     'photo_group': PhotoGroupModel,

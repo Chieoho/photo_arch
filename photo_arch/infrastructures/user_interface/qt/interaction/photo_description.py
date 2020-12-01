@@ -189,6 +189,10 @@ class PhotoDescription(object):
         self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
 
+        name_list = self.get_name_info()
+        names = ','.join([n[1] for n in name_list])
+        self.ui.peoples_in_photo.setText(names)
+
     def _connect(self, button, row):
         button.clicked.connect(lambda: self.delete(row))
 

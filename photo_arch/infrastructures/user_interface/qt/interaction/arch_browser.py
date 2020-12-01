@@ -69,6 +69,13 @@ class View(object):
         self.mw.ui.arch_tree_view_browse.setModel(model)
         self.mw.ui.arch_tree_view_browse.expandAll()
 
+    def display_photo_info(self, photo_info, widget_suffix='_in_photo_arch'):
+        for k, v in photo_info.items():
+            widget_name = k + widget_suffix
+            if hasattr(self.mw.ui, widget_name):
+                widget = getattr(self.mw.ui, widget_name)
+                widget.setText(v)
+
 
 class ArchBrowser(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
@@ -145,6 +152,15 @@ class ArchBrowser(object):
     def display_photo(self):
         item = self.ui.photo_list_widget.currentItem()
         photo_name = item.text()
+        self._display_photo_info(photo_name)
+        self._display_image(photo_name)
+
+    def _display_photo_info(self, photo_name):
+        photo_arch_code, _ = photo_name.split('.')
+        _, photo_info = self.controller.get_photo_info(photo_arch_code)
+        self.view.display_photo_info(photo_info)
+
+    def _display_image(self, photo_name):
         group_code = self.group_folder.split(' ')[0]
         year, period, _ = group_code.split('·')[1].split('-')
         path = os.path.join(

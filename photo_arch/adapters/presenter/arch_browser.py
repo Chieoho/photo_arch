@@ -7,7 +7,7 @@
 """
 from copy import deepcopy
 from typing import List
-from photo_arch.use_cases.interfaces.dataset import GroupOutputData
+from photo_arch.use_cases.interfaces.dataset import GroupOutputData, PhotoOutputData
 from photo_arch.use_cases.interfaces.presenter_if.arch_browser import PresenterIf
 
 
@@ -15,6 +15,7 @@ class ViewModel(object):
     def __init__(self):
         self.group: dict = GroupOutputData().__dict__
         self.arch: List[dict] = []
+        self.photo: dict = PhotoOutputData().__dict__
 
 
 class Presenter(PresenterIf):
@@ -33,4 +34,9 @@ class Presenter(PresenterIf):
     def update_group_model(self, group_info) -> bool:
         for k in self.view_model.group.keys():
             self.view_model.group[k] = str(group_info[k])
+        return True
+
+    def update_photo_model(self, photo_info) -> bool:
+        for k in self.view_model.photo.keys():
+            self.view_model.photo[k] = str(photo_info[k])
         return True

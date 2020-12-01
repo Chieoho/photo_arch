@@ -22,3 +22,10 @@ class PresenterIf(metaclass=ABCMeta):
         :param group_info:
         :return:
         """
+
+    @abstractmethod
+    def update_photo_model(self, photo_info) -> bool:
+        """
+        :param photo_info:
+        :return:
+        """

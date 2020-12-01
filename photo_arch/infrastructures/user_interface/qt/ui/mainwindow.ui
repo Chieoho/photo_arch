@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="iconSize">
        <size>
@@ -3364,7 +3364,7 @@ padding-bottom: 8px;</string>
               </widget>
              </item>
              <item row="9" column="1">
-              <widget class="QLineEdit" name="lineEdit_2">
+              <widget class="QLineEdit" name="photo_arch_code_in_photo_arch">
                <property name="font">
                 <font>
                  <family>新宋体</family>
@@ -3813,7 +3813,7 @@ padding-bottom: 8px;</string>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QLineEdit" name="arch_code_in_group_arch">
+              <widget class="QLineEdit" name="group_arch_code_in_group_arch">
                <property name="font">
                 <font>
                  <family>新宋体</family>

@@ -70,3 +70,10 @@ class RepoIf(metaclass=ABCMeta):
         :param photo:
         :return:
         """
+
+    @abstractmethod
+    def query_photo_by_arch_code(self, photo_arch_code):
+        """
+        :param photo_arch_code:
+        :return:
+        """

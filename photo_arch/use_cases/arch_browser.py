@@ -5,7 +5,7 @@
 @author: Jaden Wu
 @time: 2020/11/18 9:50
 """
-from photo_arch.use_cases.interfaces.dataset import GroupOutputData
+from photo_arch.use_cases.interfaces.dataset import GroupOutputData, PhotoOutputData
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
 from photo_arch.use_cases.interfaces.presenter_if.arch_browser import PresenterIf
 
@@ -27,4 +27,13 @@ class ArchBrowser(object):
         else:
             group_info = GroupOutputData().__dict__
         self.presenter.update_group_model(group_info)
+        return True
+
+    def get_photo_info(self, photo_arch_code):
+        photo_list = self.repo.query_photo_by_arch_code(photo_arch_code)
+        if photo_list:
+            photo_info = photo_list[-1]
+        else:
+            photo_info = PhotoOutputData().__dict__
+        self.presenter.update_photo_model(photo_info)
         return True

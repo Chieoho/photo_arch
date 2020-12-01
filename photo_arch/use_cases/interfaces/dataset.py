@@ -66,7 +66,6 @@ class GroupOutputData(object):
 
 @dataclass
 class PhotoOutputData(object):
-    group_arch_code: str = ''
     arch_code: str = ''
     photo_code: str = ''
     peoples: str = ''
