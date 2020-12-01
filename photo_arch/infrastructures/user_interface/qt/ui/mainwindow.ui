@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>2</number>
       </property>
       <property name="iconSize">
        <size>
@@ -2548,6 +2548,9 @@ padding-bottom: 8px;</string>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

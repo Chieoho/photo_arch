@@ -12,6 +12,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from photo_arch.use_cases.interfaces.dataset import PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
@@ -26,22 +27,7 @@ class View(object):
         self.mw = mw_
 
     def display_photo(self, photo_path):
-        model_keys = [
-            'arch_code',
-            'photo_code',
-            'peoples',
-            'format',
-            'fonds_code',
-            'arch_category_code',
-            'year',
-            'group_code',
-            'photographer',
-            'taken_time',
-            'taken_locations',
-            'security_classification',
-            'reference_code'
-        ]
-        for k in model_keys:
+        for k in PhotoInDescription().__dict__:
             widget = getattr(self.mw.ui, f'{k}_in_photo')
             widget.setText(self.mw.photo_info_dict.get(photo_path).get(k, ''))
 
@@ -188,9 +174,11 @@ class PhotoDescription(object):
     def table_item_changed(self):
         self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
+        self._display_peoples()
 
+    def _display_peoples(self):
         name_list = self.get_name_info()
-        names = ','.join([n[1] for n in name_list])
+        names = ','.join([n[1] for n in name_list if n[1].strip()])
         self.ui.peoples_in_photo.setText(names)
 
     def _connect(self, button, row):
@@ -221,6 +209,7 @@ class PhotoDescription(object):
         self.ui.photo_index_label.setText('{}/{}'.format(self.current_photo_id + 1, len(self.mw.photo_list)))
         self._set_verify_checkbox(photo_path)
         self.view.display_photo(photo_path)
+        self._display_peoples()
 
     @staticmethod
     def _conversion_data(faces_data):

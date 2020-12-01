@@ -33,15 +33,6 @@ class GroupInputData(object):
 
 
 @dataclass
-class PhotoInputData(object):
-    group_arch_code: str = ''
-    arch_code: str = ''
-    photo_code: str = ''
-    peoples: str = ''
-    format: str = ''
-
-
-@dataclass
 class GroupOutputData(object):
     arch_code: str = ''
     group_path: str = ''
@@ -72,6 +63,18 @@ class PhotoOutputData(object):
     format: str = ''
 
 
-if __name__ == '__main__':
-    photo_in = PhotoInputData()
-    print(photo_in.__dict__)
+@dataclass
+class PhotoInDescription(object):
+    arch_code: str = ''
+    photo_code: str = ''
+    peoples: str = ''
+    format: str = ''
+    fonds_code: str = ''
+    arch_category_code: str = ''
+    year: str = ''
+    group_code: str = ''
+    photographer: str = ''
+    taken_time: str = ''
+    taken_locations: str = ''
+    security_classification: str = ''
+    reference_code: str = ''

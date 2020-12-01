@@ -16,7 +16,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData
+from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData, PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, calc_md5
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow, Overlay, RecognizeState)
@@ -122,6 +122,7 @@ class GroupDescription(object):
             _, group = self.controller.get_group(first_photo_md5)
             if group:
                 self.view.display_group(group)
+                self.mw.msg_box('该组已著录过')
             else:
                 path = os.path.join(self.current_work_path, group_folder)
                 self._display_default(path)
@@ -233,10 +234,17 @@ class GroupDescription(object):
         return first_photo
 
     def item_click(self, item):
-        if item.text(0) == self.current_work_path:
+        group_folder = item.text(0)
+        if group_folder == self.current_work_path:
             return
         if item.checkState(0) == Qt.Unchecked:
-            item.setCheckState(0, Qt.Checked)
+            first_photo = self._find_fist_photo(group_folder)
+            first_photo_md5 = calc_md5(first_photo)
+            _, group = self.controller.get_group(first_photo_md5)
+            if group:
+                item.setCheckState(0, Qt.Checked)
+            else:
+                self.mw.msg_box('未完成组著录，请先完成')
         else:
             item.setCheckState(0, Qt.Unchecked)
 
@@ -284,7 +292,9 @@ class GroupDescription(object):
         for label in self.mw.rcn_info_label_dict.values():
             label.clear()
         self.ui.progressBar.setValue(0)
-        self.ui.arch_code_in_photo.clear()
+        for k in PhotoInDescription().__dict__:
+            widget = getattr(self.mw.ui, f'{k}_in_photo')
+            widget.setText('')
         self.ui.photo_view.clear()
         for row in range(self.ui.tableWidget.rowCount(), -1, -1):
             self.ui.tableWidget.removeRow(row)
@@ -306,7 +316,7 @@ class GroupDescription(object):
         for name, arch_code in file_arch_list:
             child = QTreeWidgetItem(root)
             child.setText(0, name)
-            child.setCheckState(0, Qt.Checked)
+            child.setCheckState(0, Qt.Unchecked)
         self.ui.treeWidget.expandAll()
 
     def _generate_tree_by_path(self, root_path):

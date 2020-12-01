@@ -11,7 +11,7 @@ import time
 from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
 
 handled_photo_num = 0
-unhandled_photo_num = 500
+unhandled_photo_num = 100
 
 
 class QtInteraction(UiInterface):
@@ -24,7 +24,7 @@ class QtInteraction(UiInterface):
         print(params)
         global handled_photo_num, unhandled_photo_num
         handled_photo_num = 0
-        unhandled_photo_num = 500
+        unhandled_photo_num = 100
         return {"res": True, "msg": "xxx"}
         # return {"res": False, "msg": "参数错误"}
 
@@ -44,7 +44,7 @@ class QtInteraction(UiInterface):
         unhandled_photo_num -= 10
         recognition_info = {
             "recognition_rate": 0.9,
-            "recognized_face_num": 1000,
+            "recognized_face_num": 500,
             "part_recognized_photo_num": 200,
             "all_recognized_photo_num": 300,
             "handled_photo_num": handled_photo_num,

@@ -1218,6 +1218,7 @@ class Ui_MainWindow(object):
         font.setFamily("新宋体")
         font.setPointSize(14)
         self.peoples_in_photo.setFont(font)
+        self.peoples_in_photo.setReadOnly(True)
         self.peoples_in_photo.setObjectName("peoples_in_photo")
         self.gridLayout_15.addWidget(self.peoples_in_photo, 12, 0, 1, 4)
         self.label_36 = QtWidgets.QLabel(self.widget_4)
@@ -2573,7 +2574,7 @@ class Ui_MainWindow(object):
         self.action.setObjectName("action")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tabWidget, self.dir_lineEdit)
         MainWindow.setTabOrder(self.dir_lineEdit, self.open_dir_btn)

@@ -9,6 +9,7 @@ import time
 
 from PyQt5 import QtCore
 
+from photo_arch.use_cases.interfaces.dataset import PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow, RecognizeState)
@@ -78,6 +79,27 @@ class Recognition(object):
         else:
             pass
 
+    def _clear_data(self):
+        self.ui.photo_view.clear()
+
+        self.ui.radio_btn_group.setExclusive(False)
+        for rb in [self.ui.all_photo_radioButton,
+                   self.ui.part_recognition_radioButton,
+                   self.ui.all_recognition_radioButton]:
+            rb.setEnabled(True)
+            rb.setChecked(False)
+        self.ui.radio_btn_group.setExclusive(True)
+
+        for k in PhotoInDescription().__dict__:
+            widget = getattr(self.mw.ui, f'{k}_in_photo')
+            widget.setText('')
+
+        for row in range(self.ui.tableWidget.rowCount(), -1, -1):
+            self.ui.tableWidget.removeRow(row)
+
+        self.ui.verifycheckBox.setCheckState(False)
+        self.ui.photo_index_label.clear()
+
     def periodic_update(self):
         if self.mw.run_state == RecognizeState.running:
             if self.ui.tabWidget.currentIndex() == 1:
@@ -101,3 +123,4 @@ class Recognition(object):
                     )
                     self.mw.photo_list = list(map(lambda d: d['photo_path'], photo_info_list))
                     self.mw.photo_info_dict = {d['photo_path']: d for d in photo_info_list}
+                    self._clear_data()

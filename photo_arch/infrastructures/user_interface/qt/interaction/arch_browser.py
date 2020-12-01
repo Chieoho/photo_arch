@@ -14,6 +14,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from photo_arch.use_cases.interfaces.dataset import GroupOutputData, PhotoOutputData
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
@@ -119,6 +120,7 @@ class ArchBrowser(object):
             old_sc(*args, **kwargs)
             indexes = item_selection.indexes()
             if not indexes:
+                self._clear_data()
                 return
             index = indexes[0]
             if index.child(0, 0).data():  # 点击的不是组名则返回
@@ -131,6 +133,16 @@ class ArchBrowser(object):
             self._list_photo_thumb()
         setattr(tree_view, 'selectionChanged', new_sc)
         return tree_view
+
+    def _clear_data(self):
+        for k in GroupOutputData().__dict__:
+            widget_name = f'{k}_in_group_arch'
+            if hasattr(self.mw.ui, widget_name):
+                getattr(self.mw.ui, widget_name).setText('')
+        for k in PhotoOutputData().__dict__:
+            getattr(self.mw.ui, f'{k}_in_photo_arch').setText('')
+        self.ui.photo_list_widget.clear()
+        self.ui.photo_view_in_arch.clear()
 
     def _list_photo_thumb(self):
         self.ui.photo_list_widget.clear()
