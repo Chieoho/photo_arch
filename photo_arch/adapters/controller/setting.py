@@ -14,3 +14,11 @@ class Controller(object):
     def __init__(self, repo: Repo):
         self.presenter = Presenter()
         self.setting = Setting(repo, self.presenter)
+
+    def save_setting(self, setting_info):
+        res = self.setting.save_setting(setting_info)
+        return res
+
+    def get_setting(self):
+        setting_list = self.setting.get_setting()
+        return True, setting_list[0] if setting_list else {}

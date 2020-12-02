@@ -60,7 +60,7 @@ class GroupDescription(object):
 
         height = int(self.mw.dt_height*30/1080)
         self.ui.treeWidget.setStyleSheet('#treeWidget::item{height:%spx;}' % (height + 5))
-        self.ui.open_dir_btn.clicked.connect(static(self.open_dir))
+        self.ui.open_dir_btn.clicked.connect(static(self.select_dir))
         self.ui.treeWidget.itemDoubleClicked.connect(static(self.item_click))
         self.ui.treeWidget.itemClicked.connect(static(self.display_group))
         self.ui.add_folder_btn.clicked.connect(static(self.add_folder_item))
@@ -84,7 +84,7 @@ class GroupDescription(object):
     def clear_group_info(self):
         self.view.display_group(GroupOutputData().__dict__)
 
-    def open_dir(self):
+    def select_dir(self):
         current_work_path = QFileDialog.getExistingDirectory(
             self.ui.treeWidget, "选择文件夹",
             options=QFileDialog.ShowDirsOnly

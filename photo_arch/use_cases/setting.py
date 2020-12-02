@@ -13,3 +13,14 @@ class Setting(object):
     def __init__(self, repo: RepoIf, pres: PresenterIf):
         self.repo = repo
         self.pres = pres
+
+    def save_setting(self, setting_info):
+        setting_list = self.repo.query_setting()
+        if setting_list:
+            save_res = self.repo.update_setting(setting_info)
+        else:
+            save_res = self.repo.add_setting(setting_info)
+        return save_res
+
+    def get_setting(self):
+        return self.repo.query_setting()

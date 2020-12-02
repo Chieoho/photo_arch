@@ -70,6 +70,15 @@ class FaceModel(Base):
     parent_path = Column(String(2048))
 
 
+class SettingModel(Base):
+    __tablename__ = 'setting'
+    setting_id = Column(Integer, primary_key=True)
+    fonds_name = Column(String(1024))
+    fonds_code = Column(String(64))
+    description_path = Column(String(2048))
+    package_path = Column(String(2048))
+
+
 class Repo(RepoIf):
     def __init__(self, session):
         self.session = session
@@ -131,11 +140,26 @@ class Repo(RepoIf):
         photo_list = self.repo_general.query('photo', cond={'arch_code': [photo_arch_code]})
         return photo_list
 
+    def add_setting(self, setting_info: dict) -> bool:
+        new_setting = SettingModel(**setting_info)
+        self.session.add(new_setting)
+        self.session.commit()
+        return True
+
+    def query_setting(self):
+        setting_list = self.repo_general.query('setting', cond={'setting_id': [1]})
+        return setting_list
+
+    def update_setting(self, setting_info: dict) -> bool:
+        self.repo_general.update('setting', {'setting_id': [1]}, setting_info)
+        return True
+
 
 table_model_dict = {
     'photo_group': PhotoGroupModel,
     'photo': PhotoModel,
-    'face': FaceModel
+    'face': FaceModel,
+    'setting': SettingModel
 }
 
 

@@ -77,3 +77,23 @@ class RepoIf(metaclass=ABCMeta):
         :param photo_arch_code:
         :return:
         """
+
+    @abstractmethod
+    def add_setting(self, setting_info: dict) -> bool:
+        """
+        :param setting_info:
+        :return:
+        """
+
+    @abstractmethod
+    def query_setting(self):
+        """
+        :return:
+        """
+
+    @abstractmethod
+    def update_setting(self, setting_info: dict) -> bool:
+        """
+        :param setting_info:
+        :return:
+        """
