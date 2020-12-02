@@ -250,7 +250,26 @@ class ArchTransfer(object):
         table_widget_to_xls(self.ui.cd_catalog_table_widget, xls_path)
 
     def _gen_caption_file(self, cd_path):
-        pass
+        caption_text = f"""题名：{self.ui.cd_title_line_edit.text()}；
+光盘型号：{self.ui.cd_model_combo_box.currentText()}；
+文件类型：{self.ui.cd_type_combo_box.currentText()}；
+制作时间：{self.ui.operation_date_line_edit.text()}；
+制作人：{self.ui.operator_line_edit.text()}。"""
+        with open(os.path.join(cd_path, 'SM.txt'), 'w') as fw:
+            fw.write(caption_text)
 
     def _gen_label_file(self, cd_path):
-        pass
+        label_text = f"""全宗名称：{self.ui.cd_fonds_name_line_edit.text()}
+全宗号：{self.ui.cd_fonds_code_line_edit.text()}
+
+          
+
+
+
+
+起止组号：{self.ui.cd_group_codes_line_edit.text()}
+张/件数：{self.ui.cd_photo_num_line_edit.text()}张
+光盘类型：{self.ui.cd_type_combo_box.currentText()}
+盘号：{self.ui.cd_num_line_edit.text()}"""
+        with open(os.path.join(cd_path, '标签.txt'), 'w') as fw:
+            fw.write(label_text)
