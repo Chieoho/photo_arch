@@ -255,8 +255,8 @@ class ArchTransfer(object):
 文件类型：{self.ui.cd_type_combo_box.currentText()}；
 制作时间：{self.ui.operation_date_line_edit.text()}；
 制作人：{self.ui.operator_line_edit.text()}。"""
-        with open(os.path.join(cd_path, 'SM.txt'), 'w') as fw:
-            fw.write(caption_text)
+        with open(os.path.join(cd_path, 'SM.txt'), 'wb') as fw:
+            fw.write(caption_text.encode())
 
     def _gen_label_file(self, cd_path):
         label_text = f"""全宗名称：{self.ui.cd_fonds_name_line_edit.text()}
@@ -271,5 +271,5 @@ class ArchTransfer(object):
 张/件数：{self.ui.cd_photo_num_line_edit.text()}张
 光盘类型：{self.ui.cd_type_combo_box.currentText()}
 盘号：{self.ui.cd_num_line_edit.text()}"""
-        with open(os.path.join(cd_path, '标签.txt'), 'w') as fw:
-            fw.write(label_text)
+        with open(os.path.join(cd_path, '标签.txt'), 'wb') as fw:
+            fw.write(label_text.encode())
