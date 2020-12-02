@@ -11,18 +11,32 @@ from typing import List
 from distutils.dir_util import copy_tree
 import os
 
+from dataclasses import dataclass
 from PyQt5 import QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
+    static, table_widget_to_xls)
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
 from photo_arch.adapters.controller.arch_transfer import Controller, Repo
+
+
+@dataclass
+class Group:
+    fonds_code: str = ''
+    arch_category_code: str = ''
+    group_code: str = ''
+    group_title: str = ''
+    taken_time: str = ''
+    taken_locations: str = ''
+    photographer: str = ''
+    photo_num: str = ''
 
 
 class View(object):
@@ -182,12 +196,9 @@ class ArchTransfer(object):
         self.ui.cd_num_line_edit.setText('')
 
     def _display_cd_catalog(self, group_list):
-        column_count = self.ui.cd_catalog_table_widget.columnCount()
-        key_list = ['fonds_code', 'arch_category_code', 'group_code', 'group_title',
-                    'taken_time', 'taken_locations', 'photographer', 'photo_num']
         for row, gi in enumerate(group_list):
             self.ui.cd_catalog_table_widget.insertRow(row)
-            for key, col in zip(key_list, range(column_count)):
+            for col, key in enumerate(Group().__dict__):
                 item_text = gi.get(key, '')
                 item = QTableWidgetItem(str(item_text))
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -214,7 +225,9 @@ class ArchTransfer(object):
     def package(self):
         for r in range(self.ui.partition_list_widget.count()):
             item = self.ui.partition_list_widget.item(r)
+            item.setSelected(True)
             cd_name = item.text()
+            cd_path = os.path.join(self.setting.package_path, cd_name)
             group_list = self.partition_list[r]['group_list']
             for gi in group_list:
                 group_name = gi['group_path']
@@ -224,6 +237,20 @@ class ArchTransfer(object):
                     gi['year'],
                     gi['retention_period'],
                     group_name)
-                dst_abspath = os.path.join(self.setting.package_path, cd_name, group_name)
+                dst_abspath = os.path.join(cd_path, group_name)
                 copy_tree(src_abspath, dst_abspath)
+            self._gen_catalog_file(cd_path)
+            self._gen_caption_file(cd_path)
+            self._gen_label_file(cd_path)
         self.mw.msg_box('打包成功', 'info')
+
+    def _gen_catalog_file(self, cd_path):
+        xls_name = os.path.split(cd_path)[1] + '.xls'
+        xls_path = os.path.join(cd_path, xls_name)
+        table_widget_to_xls(self.ui.cd_catalog_table_widget, xls_path)
+
+    def _gen_caption_file(self, cd_path):
+        pass
+
+    def _gen_label_file(self, cd_path):
+        pass
