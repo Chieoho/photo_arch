@@ -2383,6 +2383,7 @@ class Ui_MainWindow(object):
         font.setFamily("新宋体")
         font.setPointSize(14)
         self.partition_list_widget.setFont(font)
+        self.partition_list_widget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.partition_list_widget.setObjectName("partition_list_widget")
         self.gridLayout_25.addWidget(self.partition_list_widget, 2, 0, 1, 8)
         self.label_79 = QtWidgets.QLabel(self.widget_10)
@@ -2608,7 +2609,7 @@ class Ui_MainWindow(object):
         self.action.setObjectName("action")
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(6)
+        self.tabWidget.setCurrentIndex(5)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tabWidget, self.dir_lineEdit)
         MainWindow.setTabOrder(self.dir_lineEdit, self.open_dir_btn)

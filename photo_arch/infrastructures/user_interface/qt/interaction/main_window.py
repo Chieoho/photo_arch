@@ -102,5 +102,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.photo_type = 1
         self.dir_type = 1
 
-    def msg_box(self, msg: str):
-        QMessageBox().warning(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
+    def msg_box(self, msg: str, msg_type: str = 'warn'):
+        if msg_type == 'warn':
+            QMessageBox().warning(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
+        elif msg_type == 'info':
+            QMessageBox().information(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
+        else:
+            pass

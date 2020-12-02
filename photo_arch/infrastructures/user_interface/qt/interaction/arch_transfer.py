@@ -8,6 +8,8 @@
 from collections import defaultdict
 import time
 from typing import List
+from distutils.dir_util import copy_tree
+import os
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import *
@@ -118,59 +120,72 @@ class ArchTransfer(object):
         cd_size = float(self.ui.cd_size_line_edit.text()) * 1024
         if (not cd_size) or (not self.selected_condition_list):
             return
-        selected_arch_list = self._get_selected_arch()
-
+        selected_group_list = self._get_selected_group()
         self.partition_list = []
-        used_size, arch_list = 0, []
-        for gi in selected_arch_list:
-            folder_size = float(gi['folder_size'])
-            used_size += folder_size
-            if used_size < cd_size:
-                arch_list.append(gi)
-            else:
-                used_size -= folder_size
-                self.partition_list.append({"used_size": used_size, 'arch_list': arch_list})
-                used_size, arch_list = 0, []
+        selected_cond, used_size, group_list = '', 0, []
+        for sc_sgl in selected_group_list:
+            selected_cond, sgl = sc_sgl
+            for gi in sgl:
+                folder_size = float(gi['folder_size'])
                 used_size += folder_size
-                arch_list.append(gi)
-        if used_size:
-            self.partition_list.append({"used_size": used_size, 'arch_list': arch_list})
+                if used_size < cd_size:
+                    group_list.append(gi)
+                else:
+                    used_size -= folder_size
+                    partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond}
+                    self.partition_list.append(partition)
+                    used_size, group_list = 0, []
+                    used_size += folder_size
+                    group_list.append(gi)
+            if used_size:
+                partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond}
+                self.partition_list.append(partition)
 
         self._display_partition_res()
 
-    def _get_selected_arch(self):
-        selected_arch_list = []
-        for sa in self.selected_condition_list:
-            fc, x1, x2 = sa.split('-')
+    def _get_selected_group(self):
+        selected_group_list = []
+        for sc in self.selected_condition_list:
+            fc, x1, x2 = sc.split('-')
             if x1.isdigit():
                 ye, rp = x1, x2
             else:
                 rp, ye = x1, x2
-            _, arch = self.controller.get_selected_arch(fc, ye, rp)
-            selected_arch_list.extend(arch)
-        return selected_arch_list
+            _, archives = self.controller.get_selected_arch(fc, ye, rp)
+            selected_group_list.append((sc, archives))
+        return selected_group_list
 
     def _display_partition_res(self):
-        for i, sc in enumerate(self.partition_list, 1):
-            item = QListWidgetItem(QIcon(self.disk_icon_path), f'{i}号')
+        for i, p in enumerate(self.partition_list, 1):
+            item = QListWidgetItem(QIcon(self.disk_icon_path), f'{p["selected_cond"]} {i}号')
             self.ui.partition_list_widget.addItem(item)
 
     def display_cd_info(self):
+        self._clear_data()
         if not self.selected_condition_list:
             return
-        row = self.ui.partition_list_widget.currentRow()
-        arch_list = self.partition_list[row]['arch_list']
-        self._display_cd_catalog(arch_list)
-        self._display_cd_caption()
-        self._display_cd_label(row)
+        selected_items = self.ui.partition_list_widget.selectedItems()
+        if selected_items:
+            item = selected_items[0]
+            row = self.ui.partition_list_widget.row(item)
+            group_list = self.partition_list[row]['group_list']
+            self._display_cd_catalog(group_list)
+            self._display_cd_caption()
+            self._display_cd_label(row)
 
-    def _display_cd_catalog(self, arch_list):
+    def _clear_data(self):
+        for i in range(self.ui.cd_catalog_table_widget.rowCount(), -1, -1):
+            self.ui.cd_catalog_table_widget.removeRow(i)
+
+        self.ui.cd_group_codes_line_edit.setText('')
+        self.ui.cd_photo_num_line_edit.setText('')
+        self.ui.cd_num_line_edit.setText('')
+
+    def _display_cd_catalog(self, group_list):
         column_count = self.ui.cd_catalog_table_widget.columnCount()
         key_list = ['fonds_code', 'arch_category_code', 'group_code', 'group_title',
                     'taken_time', 'taken_locations', 'photographer', 'photo_num']
-        for i in range(self.ui.cd_catalog_table_widget.rowCount(), -1, -1):
-            self.ui.cd_catalog_table_widget.removeRow(i)
-        for row, gi in enumerate(arch_list):
+        for row, gi in enumerate(group_list):
             self.ui.cd_catalog_table_widget.insertRow(row)
             for key, col in zip(key_list, range(column_count)):
                 item_text = gi.get(key, '')
@@ -186,14 +201,29 @@ class ArchTransfer(object):
     def _display_cd_label(self, row):
         self.ui.cd_fonds_name_line_edit.setText(self.setting.fonds_name)
         self.ui.cd_fonds_code_line_edit.setText(self.setting.fonds_code)
-        arch_list = self.partition_list[row]['arch_list']
-        start_group_code = arch_list[0]['group_code']
-        end_group_code = arch_list[-1]['group_code']
+        group_list = self.partition_list[row]['group_list']
+        if not group_list:
+            return
+        start_group_code = group_list[0]['group_code']
+        end_group_code = group_list[-1]['group_code']
         self.ui.cd_group_codes_line_edit.setText(f'{start_group_code} 至 {end_group_code}')
-        total_num = sum(map(lambda g: int(g['photo_num']), arch_list))
+        total_num = sum(map(lambda g: int(g['photo_num']), group_list))
         self.ui.cd_photo_num_line_edit.setText(str(total_num))
         self.ui.cd_num_line_edit.setText(f'{row+1}号')
 
     def package(self):
-        _ = self
-        print('打包')
+        for r in range(self.ui.partition_list_widget.count()):
+            item = self.ui.partition_list_widget.item(r)
+            cd_name = item.text()
+            group_list = self.partition_list[r]['group_list']
+            for gi in group_list:
+                group_name = gi['group_path']
+                src_abspath = os.path.join(
+                    self.setting.description_path,
+                    '照片档案',
+                    gi['year'],
+                    gi['retention_period'],
+                    group_name)
+                dst_abspath = os.path.join(self.setting.package_path, cd_name, group_name)
+                copy_tree(src_abspath, dst_abspath)
+        self.mw.msg_box('打包成功', 'info')

@@ -180,6 +180,7 @@ class GroupDescription(object):
     def save_and_copy_group(self):
         self._save_group()
         self._copy_arch()
+        self.mw.msg_box('保存成功', msg_type='info')
 
     def _save_group(self):
         group_arch_code = self.ui.arch_code_in_group.text()
