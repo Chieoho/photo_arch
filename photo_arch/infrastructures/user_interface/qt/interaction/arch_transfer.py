@@ -144,6 +144,7 @@ class ArchTransfer(object):
         self.selected_condition_list = []
         self.partition_list: List[dict] = []
         self.cd_info_dict = defaultdict(dict)
+        self.current_cd = ''
 
         self.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
         self.ui.partition_list_widget.setIconSize(QSize(200, 150))
@@ -237,7 +238,6 @@ class ArchTransfer(object):
             self.ui.partition_list_widget.addItem(item)
 
     def display_cd_info(self):
-        self._clear_data()
         if not self.selected_condition_list:
             return
         selected_items = self.ui.partition_list_widget.selectedItems()
@@ -247,19 +247,25 @@ class ArchTransfer(object):
             group_list = self.partition_list[row]['group_list']
             self._display_cd_catalog(group_list)
 
-            caption = self.cd_info_dict[item.text()].get('caption')
-            label = self.cd_info_dict[item.text()].get('label')
-            print(caption)
+            cd_name = item.text()
+            self._keep_tmp(cd_name)
+            caption = self.cd_info_dict[self.current_cd].get('caption')
+            label = self.cd_info_dict[self.current_cd].get('label')
             if caption:
                 self.view.display_caption(caption)
                 self.view.display_label(label)
             else:
                 self._display_default_caption()
                 self._display_default_label(row)
+            self.current_cd = cd_name
+        else:
+            self._clear_data()
 
-    def _keep_tmp(self, item):
-        self.cd_info_dict[item.text()]['caption'] = self.view.get_caption()
-        self.cd_info_dict[item.text()]['label'] = self.view.get_label()
+    def _keep_tmp(self, cd_name):
+        if not self.ui.cd_num_in_transfer.text():
+            return
+        self.cd_info_dict[cd_name]['caption'] = self.view.get_caption()
+        self.cd_info_dict[cd_name]['label'] = self.view.get_label()
 
     def _clear_data(self):
         for i in range(self.ui.cd_catalog_table_widget.rowCount(), -1, -1):
@@ -271,6 +277,8 @@ class ArchTransfer(object):
         self.ui.cd_num_in_transfer.setText('')
 
     def _display_cd_catalog(self, group_list):
+        for i in range(self.ui.cd_catalog_table_widget.rowCount(), -1, -1):
+            self.ui.cd_catalog_table_widget.removeRow(i)
         for row, gi in enumerate(group_list):
             self.ui.cd_catalog_table_widget.insertRow(row)
             _, pi = self.controller.get_photo(gi['group_code'] + '-0001')
