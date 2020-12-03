@@ -118,9 +118,9 @@ class ArchBrowser(object):
         def new_sc(*args, **kwargs):
             item_selection = args[0]
             old_sc(*args, **kwargs)
+            self._clear_data()
             indexes = item_selection.indexes()
             if not indexes:
-                self._clear_data()
                 return
             index = indexes[0]
             if index.child(0, 0).data():  # 点击的不是组名则返回

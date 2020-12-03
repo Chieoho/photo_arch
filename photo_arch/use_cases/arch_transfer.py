@@ -23,3 +23,7 @@ class ArchTransfer(object):
         group_list = self.repo.query_group_by_selected(fonds_code, year, retention_period)
         self.pres.update_arch_vm(group_list)
         return True
+
+    def get_photo(self, photo_arch_code):
+        photo_list = self.repo.query_photo_by_arch_code(photo_arch_code)
+        return photo_list

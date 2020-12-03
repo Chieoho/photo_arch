@@ -73,7 +73,7 @@ class GroupDescription(object):
 
         self.clear_group_info()
 
-        self.ui.fonds_code_in_group.currentTextChanged.connect(static(self.update_arch_code))
+        self.ui.fonds_code_in_group.textChanged.connect(static(self.update_arch_code))
         self.ui.arch_category_code_in_group.currentTextChanged.connect(static(self.update_group_code))
         self.ui.retention_period_in_group.currentTextChanged.connect(static(self.update_group_code))
         self.ui.year_in_group.textChanged.connect(static(self.update_group_code))
@@ -120,7 +120,7 @@ class GroupDescription(object):
             first_photo = self._find_fist_photo(group_folder)
             first_photo_md5 = calc_md5(first_photo)
             _, group = self.controller.get_group(first_photo_md5)
-            if group:
+            if first_photo_md5 and group:
                 self.view.display_group(group)
                 self.mw.msg_box('该组已著录过')
             else:
@@ -135,7 +135,7 @@ class GroupDescription(object):
 
     def update_arch_code(self):
         arch_code_parts = self.ui.arch_code_in_group.text().split('-')
-        arch_code_parts[0] = self.ui.fonds_code_in_group.currentText()
+        arch_code_parts[0] = self.ui.fonds_code_in_group.text()
         self.ui.arch_code_in_group.setText('-'.join(arch_code_parts))
 
     def update_group_code(self):
@@ -360,7 +360,7 @@ class GroupDescription(object):
     def _get_path_arch_group_code(self):
         taken_time = self.ui.taken_time_in_group.text()
         group_title = self.ui.group_title_in_group.text()
-        fonds_code = self.ui.fonds_code_in_group.currentText()
+        fonds_code = self.ui.fonds_code_in_group.text()
         arch_category = self.ui.arch_category_code_in_group.currentText()
         year = self.ui.year_in_group.text()
         retention_period = self.ui.retention_period_in_group.currentText()

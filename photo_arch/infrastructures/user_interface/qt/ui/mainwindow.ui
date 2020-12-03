@@ -746,31 +746,6 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QComboBox" name="fonds_code_in_group">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>A1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>A2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>A3</string>
-               </property>
-              </item>
-             </widget>
-            </item>
             <item row="4" column="1">
              <widget class="QLineEdit" name="department_in_group">
               <property name="sizePolicy">
@@ -1280,6 +1255,19 @@ padding-bottom: 8px;</string>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="fonds_code_in_group">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -3791,6 +3779,9 @@ padding-bottom: 8px;</string>
                  <pointsize>14</pointsize>
                 </font>
                </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
              <item row="7" column="2">
@@ -4505,7 +4496,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="7" column="6">
-             <widget class="QLineEdit" name="operation_date_line_edit">
+             <widget class="QLineEdit" name="operation_date_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4515,7 +4506,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="12" column="1" colspan="3">
-             <widget class="QLineEdit" name="cd_group_codes_line_edit">
+             <widget class="QLineEdit" name="group_codes_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4621,7 +4612,7 @@ padding-bottom: 8px;</string>
               </column>
               <column>
                <property name="text">
-                <string>时间</string>
+                <string>拍摄时间</string>
                </property>
                <property name="font">
                 <font>
@@ -4634,7 +4625,7 @@ padding-bottom: 8px;</string>
               </column>
               <column>
                <property name="text">
-                <string>地点</string>
+                <string>拍摄地点</string>
                </property>
                <property name="font">
                 <font>
@@ -4687,7 +4678,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="13" column="6">
-             <widget class="QLineEdit" name="cd_num_line_edit">
+             <widget class="QLineEdit" name="cd_num_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4745,12 +4736,15 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="11" column="3">
-             <widget class="QLineEdit" name="cd_fonds_code_line_edit">
+             <widget class="QLineEdit" name="fonds_code_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -4787,12 +4781,15 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="11" column="1">
-             <widget class="QLineEdit" name="cd_fonds_name_line_edit">
+             <widget class="QLineEdit" name="fonds_name_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -4826,7 +4823,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="6" column="1" colspan="6">
-             <widget class="QLineEdit" name="cd_title_line_edit">
+             <widget class="QLineEdit" name="title_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4878,7 +4875,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="13" column="1">
-             <widget class="QLineEdit" name="cd_photo_num_line_edit">
+             <widget class="QLineEdit" name="photo_num_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4904,7 +4901,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="7" column="1">
-             <widget class="QComboBox" name="cd_model_combo_box">
+             <widget class="QComboBox" name="cd_model_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4924,7 +4921,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="7" column="3">
-             <widget class="QComboBox" name="cd_file_type_combo_box">
+             <widget class="QComboBox" name="file_type_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4938,13 +4935,23 @@ padding-bottom: 8px;</string>
               </item>
               <item>
                <property name="text">
-                <string>PNG</string>
+                <string>TIFF</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>RAW</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>DNG</string>
                </property>
               </item>
              </widget>
             </item>
             <item row="13" column="3">
-             <widget class="QComboBox" name="cd_type_combo_box">
+             <widget class="QComboBox" name="cd_type_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4959,7 +4966,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="8" column="1" colspan="3">
-             <widget class="QLineEdit" name="operator_line_edit">
+             <widget class="QLineEdit" name="operator_in_transfer">
               <property name="font">
                <font>
                 <family>新宋体</family>

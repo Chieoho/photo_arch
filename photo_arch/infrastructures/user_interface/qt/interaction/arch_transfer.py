@@ -39,9 +39,33 @@ class Group:
     photo_num: str = ''
 
 
+@dataclass
+class Photo:
+    format: str = ''
+
+
+@dataclass
+class Caption:
+    title: str = ''
+    cd_model: str = ''
+    file_type: str = ''
+    operation_date: str = ''
+    operator: str = ''
+
+
+@dataclass
+class Label:
+    fonds_name: str = ''
+    fonds_code: str = ''
+    group_codes: str = ''
+    photo_num: str = ''
+    cd_type: str = ''
+    cd_num: str = ''
+
+
 class View(object):
     def __init__(self, mw_: MainWindow):
-        self.mw = mw_
+        self.ui: Ui_MainWindow = mw_.ui
 
     def _fill_model_from_dict(self, parent, d):
         if isinstance(d, dict):
@@ -68,8 +92,44 @@ class View(object):
         model = QStandardItemModel()
         model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
         self._fill_model_from_dict(model.invisibleRootItem(), data)
-        self.mw.ui.arch_tree_view_transfer.setModel(model)
-        self.mw.ui.arch_tree_view_transfer.expandAll()
+        self.ui.arch_tree_view_transfer.setModel(model)
+        self.ui.arch_tree_view_transfer.expandAll()
+
+    def get_caption(self):
+        caption = Caption()
+        for key in caption.__dict__:
+            widget = getattr(self.ui, f'{key}_in_transfer')
+            if isinstance(widget, QComboBox):
+                setattr(caption, key, widget.currentText())
+            elif isinstance(widget, QLineEdit):
+                setattr(caption, key, widget.text())
+        return caption
+
+    def display_caption(self, caption: Caption):
+        for key in caption.__dict__:
+            widget = getattr(self.ui, f'{key}_in_transfer')
+            if isinstance(widget, QComboBox):
+                widget.setCurrentText(getattr(caption, key))
+            elif isinstance(widget, QLineEdit):
+                widget.setText(getattr(caption, key))
+
+    def get_label(self):
+        label = Label()
+        for key in label.__dict__:
+            widget = getattr(self.ui, f'{key}_in_transfer')
+            if isinstance(widget, QComboBox):
+                setattr(label, key, widget.currentText())
+            elif isinstance(widget, QLineEdit):
+                setattr(label, key, widget.text())
+        return label
+
+    def display_label(self, label: Label):
+        for key in label.__dict__:
+            widget = getattr(self.ui, f'{key}_in_transfer')
+            if isinstance(widget, QComboBox):
+                widget.setCurrentText(getattr(label, key))
+            elif isinstance(widget, QLineEdit):
+                widget.setText(getattr(label, key))
 
 
 class ArchTransfer(object):
@@ -83,6 +143,7 @@ class ArchTransfer(object):
         self.disk_icon_path = './icon/arch_cd.png'
         self.selected_condition_list = []
         self.partition_list: List[dict] = []
+        self.cd_info_dict = defaultdict(dict)
 
         self.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
         self.ui.partition_list_widget.setIconSize(QSize(200, 150))
@@ -130,6 +191,7 @@ class ArchTransfer(object):
         self.partition()
 
     def partition(self):
+        self.cd_info_dict.clear()
         self.ui.partition_list_widget.clear()
         cd_size = float(self.ui.cd_size_line_edit.text()) * 1024
         if (not cd_size) or (not self.selected_condition_list):
@@ -151,7 +213,7 @@ class ArchTransfer(object):
                     used_size, group_list = 0, []
                     used_size += folder_size
                     group_list.append(gi)
-            if used_size:
+            if used_size > 0:
                 partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond}
                 self.partition_list.append(partition)
 
@@ -184,43 +246,63 @@ class ArchTransfer(object):
             row = self.ui.partition_list_widget.row(item)
             group_list = self.partition_list[row]['group_list']
             self._display_cd_catalog(group_list)
-            self._display_cd_caption()
-            self._display_cd_label(row)
+
+            caption = self.cd_info_dict[item.text()].get('caption')
+            label = self.cd_info_dict[item.text()].get('label')
+            print(caption)
+            if caption:
+                self.view.display_caption(caption)
+                self.view.display_label(label)
+            else:
+                self._display_default_caption()
+                self._display_default_label(row)
+
+    def _keep_tmp(self, item):
+        self.cd_info_dict[item.text()]['caption'] = self.view.get_caption()
+        self.cd_info_dict[item.text()]['label'] = self.view.get_label()
 
     def _clear_data(self):
         for i in range(self.ui.cd_catalog_table_widget.rowCount(), -1, -1):
             self.ui.cd_catalog_table_widget.removeRow(i)
 
-        self.ui.cd_group_codes_line_edit.setText('')
-        self.ui.cd_photo_num_line_edit.setText('')
-        self.ui.cd_num_line_edit.setText('')
+        self.ui.title_in_transfer.setText('')
+        self.ui.group_codes_in_transfer.setText('')
+        self.ui.photo_num_in_transfer.setText('')
+        self.ui.cd_num_in_transfer.setText('')
 
     def _display_cd_catalog(self, group_list):
         for row, gi in enumerate(group_list):
             self.ui.cd_catalog_table_widget.insertRow(row)
-            for col, key in enumerate(Group().__dict__):
-                item_text = gi.get(key, '')
+            _, pi = self.controller.get_photo(gi['group_code'] + '-0001')
+            group_dict = Group().__dict__
+            photo_dict = Photo().__dict__
+            columns = {**group_dict, **photo_dict}
+            for col, key in enumerate(columns):
+                if key in group_dict:
+                    item_text = gi.get(key, '')
+                else:
+                    item_text = pi.get(key, '')
                 item = QTableWidgetItem(str(item_text))
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.ui.cd_catalog_table_widget.setItem(row, col, item)
 
-    def _display_cd_caption(self):
+    def _display_default_caption(self):
         operation_date = time.strftime('%Y%m%d')
-        self.ui.operation_date_line_edit.setText(operation_date)
-        self.ui.operator_line_edit.setText(self.setting.fonds_name)
+        self.ui.operation_date_in_transfer.setText(operation_date)
+        self.ui.operator_in_transfer.setText(self.setting.fonds_name)
 
-    def _display_cd_label(self, row):
-        self.ui.cd_fonds_name_line_edit.setText(self.setting.fonds_name)
-        self.ui.cd_fonds_code_line_edit.setText(self.setting.fonds_code)
+    def _display_default_label(self, row):
+        self.ui.fonds_name_in_transfer.setText(self.setting.fonds_name)
+        self.ui.fonds_code_in_transfer.setText(self.setting.fonds_code)
         group_list = self.partition_list[row]['group_list']
         if not group_list:
             return
         start_group_code = group_list[0]['group_code']
         end_group_code = group_list[-1]['group_code']
-        self.ui.cd_group_codes_line_edit.setText(f'{start_group_code} 至 {end_group_code}')
+        self.ui.group_codes_in_transfer.setText(f'{start_group_code} 至 {end_group_code}')
         total_num = sum(map(lambda g: int(g['photo_num']), group_list))
-        self.ui.cd_photo_num_line_edit.setText(str(total_num))
-        self.ui.cd_num_line_edit.setText(f'{row+1}号')
+        self.ui.photo_num_in_transfer.setText(str(total_num))
+        self.ui.cd_num_in_transfer.setText(f'{row+1}号')
 
     def package(self):
         for r in range(self.ui.partition_list_widget.count()):
@@ -240,8 +322,8 @@ class ArchTransfer(object):
                 dst_abspath = os.path.join(cd_path, group_name)
                 copy_tree(src_abspath, dst_abspath)
             self._gen_catalog_file(cd_path)
-            self._gen_caption_file(cd_path)
-            self._gen_label_file(cd_path)
+            self._gen_caption_file(cd_name, cd_path)
+            self._gen_label_file(cd_name, cd_path)
         self.mw.msg_box('打包成功', 'info')
 
     def _gen_catalog_file(self, cd_path):
@@ -249,27 +331,35 @@ class ArchTransfer(object):
         xls_path = os.path.join(cd_path, xls_name)
         table_widget_to_xls(self.ui.cd_catalog_table_widget, xls_path)
 
-    def _gen_caption_file(self, cd_path):
-        caption_text = f"""题名：{self.ui.cd_title_line_edit.text()}；
-光盘型号：{self.ui.cd_model_combo_box.currentText()}；
-文件类型：{self.ui.cd_type_combo_box.currentText()}；
-制作时间：{self.ui.operation_date_line_edit.text()}；
-制作人：{self.ui.operator_line_edit.text()}。"""
+    def _gen_caption_file(self, cd_name, cd_path):
+        caption = self.cd_info_dict[cd_name]['caption']
+        caption_text = self._gen_caption_text(caption)
         with open(os.path.join(cd_path, 'SM.txt'), 'wb') as fw:
             fw.write(caption_text.encode())
 
-    def _gen_label_file(self, cd_path):
-        label_text = f"""全宗名称：{self.ui.cd_fonds_name_line_edit.text()}
-全宗号：{self.ui.cd_fonds_code_line_edit.text()}
-
-          
-
-
-
-
-起止组号：{self.ui.cd_group_codes_line_edit.text()}
-张/件数：{self.ui.cd_photo_num_line_edit.text()}张
-光盘类型：{self.ui.cd_type_combo_box.currentText()}
-盘号：{self.ui.cd_num_line_edit.text()}"""
+    def _gen_label_file(self, cd_name, cd_path):
+        label = self.cd_info_dict[cd_name]['label']
+        label_text = self._gen_label_text(label)
         with open(os.path.join(cd_path, '标签.txt'), 'wb') as fw:
             fw.write(label_text.encode())
+
+    def _gen_caption_text(self, cap: Caption):
+        _ = self
+        title = f'题名：{cap.title}；'
+        cd_model = f'光盘型号：{cap.cd_model}；'
+        file_type = f'文件类型：照片 {cap.file_type}；'
+        operation_date = f'制作时间：{cap.operation_date}；'
+        operator = f'制作人：{cap.operator}。'
+        caption_text = '\n'.join([title, cd_model, file_type, operation_date, operator])
+        return caption_text
+
+    def _gen_label_text(self, label: Label):
+        _ = self
+        fonds_name = f'     全宗名称：{label.fonds_name}'
+        fonds_code = f'     全宗号：{label.fonds_code}'
+        group_codes = f'起止组号：{label.group_codes}'
+        photo_num = f'张/件数：{label.photo_num}张'
+        cd_type = f'光盘类型：{label.cd_type}'
+        cd_num = f'盘号：{label.cd_num}'
+        label_text = '\n'.join([fonds_name, fonds_code, '\n'*5, group_codes, photo_num, cd_type, cd_num])
+        return label_text
