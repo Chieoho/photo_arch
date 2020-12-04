@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>1</number>
       </property>
       <property name="iconSize">
        <size>
@@ -940,12 +940,12 @@ padding-bottom: 8px;</string>
               </property>
               <item>
                <property name="text">
-                <string>公开</string>
+                <string>主动公开</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>申请公开</string>
+                <string>依申请公开</string>
                </property>
               </item>
               <item>

@@ -6,13 +6,15 @@
 @time: 2020/11/23 8:55
 """
 import time
+import typing
 
 from PyQt5 import QtCore
+from PyQt5.QtWidgets import *
 
 from photo_arch.use_cases.interfaces.dataset import PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, Ui_MainWindow, RecognizeState)
+    MainWindow, Ui_MainWindow, Overlay, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
@@ -43,6 +45,15 @@ class Recognition(object):
         self.ui.pausecontinue_btn.setStyleSheet(self.mw.button_style_sheet)
 
     def run(self):
+        overlay = Overlay(self.ui.recognition_tab, '初始化中', dynamic=True)
+        overlay.show()
+        while 1:
+            if self.mw.interaction != typing.Any:
+                break
+            else:
+                QApplication.processEvents()
+        overlay.hide()
+
         if self.mw.run_state != RecognizeState.running:
             thresh = self.ui.thresh_lineEdit.text()
             size = self.ui.photo_view.size()

@@ -6,7 +6,6 @@
 @time: 2020/11/23 8:55
 """
 import os
-import typing
 import glob
 from pathlib import Path
 import time
@@ -19,7 +18,7 @@ from PyQt5.QtWidgets import *
 from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData, PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, calc_md5
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, Ui_MainWindow, Overlay, RecognizeState)
+    MainWindow, Ui_MainWindow, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 from photo_arch.infrastructures.databases.db_setting import engine, make_session
@@ -94,19 +93,7 @@ class GroupDescription(object):
         self.ui.tabWidget.setCurrentWidget(self.ui.group_tab)
         self.current_work_path = os.path.abspath(current_work_path)
         self.ui.dir_lineEdit.setText(self.current_work_path)
-        overlay = Overlay(self.ui.treeWidget, '初始化中', dynamic=True)
-        overlay.show()
-        while 1:
-            if self.mw.interaction != typing.Any:
-                break
-            else:
-                QApplication.processEvents()
-        overlay.hide()
-        arch_code_info = self.mw.interaction.get_arch_code(self.current_work_path)
-        if arch_code_info and arch_code_info.get('root'):
-            self._generate_tree_by_data(arch_code_info)
-        else:
-            self._generate_tree_by_path(self.current_work_path)
+        self._generate_tree_by_path(self.current_work_path)
         self._reset_state()
 
     def display_group(self, item):
@@ -348,7 +335,7 @@ class GroupDescription(object):
         group_data.arch_category_code = 'ZP'
         group_data.retention_period = 'D10'
         group_data.security_classification = '公开资料'
-        group_data.opening_state = '公开'
+        group_data.opening_state = '主动公开'
         group_data.group_title = group_folder
         folder_size, photo_num, file_create_time = self._get_folder_info(path)
         group_data.folder_size = folder_size

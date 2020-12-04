@@ -95,7 +95,7 @@ class ArchBrowser(object):
         self.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
 
         self.ui.photo_list_widget.itemSelectionChanged.connect(static(self.display_photo))
-        self.ui.photo_view_in_arch.resizeEvent = static(self.resize_image)
+        extend_slot(self.ui.photo_view_in_arch.resizeEvent, static(self.resize_image))
         extend_slot(self.ui.arch_tree_view_browse.selectionChanged, static(self.show_group))
         self.ui.order_combobox_browse.currentTextChanged.connect(static(self.display_arch))
 
@@ -113,7 +113,6 @@ class ArchBrowser(object):
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
     def show_group(self, item_selection):
-        self._clear_data()
         indexes = item_selection.indexes()
         if not indexes:
             return
@@ -124,18 +123,9 @@ class ArchBrowser(object):
         group_code = self.group_folder.split(' ')[0]
         _, data = self.controller.get_group(group_code)
         self.view.display_group(data)
-        self.ui.photo_view_in_arch.clear()
         self._list_photo_thumb()
-
-    def _clear_data(self):
-        for k in GroupOutputData().__dict__:
-            widget_name = f'{k}_in_group_arch'
-            if hasattr(self.mw.ui, widget_name):
-                getattr(self.mw.ui, widget_name).setText('')
         for k in PhotoOutputData().__dict__:
-            getattr(self.mw.ui, f'{k}_in_photo_arch').setText('')
-        self.ui.photo_list_widget.clear()
-        self.ui.photo_view_in_arch.clear()
+            getattr(self.ui, f'{k}_in_photo_arch').clear()
 
     def _list_photo_thumb(self):
         self.ui.photo_list_widget.clear()

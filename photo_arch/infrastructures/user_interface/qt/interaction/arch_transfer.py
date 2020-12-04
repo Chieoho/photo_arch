@@ -335,7 +335,7 @@ class ArchTransfer(object):
         self.mw.msg_box('打包成功', 'info')
 
     def _gen_catalog_file(self, cd_path):
-        xls_name = os.path.split(cd_path)[1] + '.xls'
+        xls_name = '目录.xls'
         xls_path = os.path.join(cd_path, xls_name)
         table_widget_to_xls(self.ui.cd_catalog_table_widget, xls_path)
 
