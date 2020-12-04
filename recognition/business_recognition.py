@@ -36,11 +36,11 @@ class RecognizeProcess(Process):
     margin = 32
 
     faceProp = 0.9
-    euclideanDist = 0.744
+    euclideanDist = 0.75
     canvasW = 2000
     canvasH = 2000
 
-    face_rank_rule_by_top = False
+    face_rank_rule_by_top = True
 
     def __init__(self, done_queue, data_queue, param_queue):
         super(RecognizeProcess, self).__init__()
@@ -87,7 +87,7 @@ class RecognizeProcess(Process):
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
             imgPath = self.data_queue.get()
-            print('#####:pid=%d, imgPath=%s' %(os.getpid(), imgPath))
+            # print('#####:pid=%d, imgPath=%s' %(os.getpid(), imgPath))
             det = []
             rectangles = []
             # cf = []
@@ -161,11 +161,11 @@ class RecognizeProcess(Process):
                     # scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
                     # scaled = alignFace(test_img, rectangles, squareRect, box)
                     scaled, face_landmarks = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
-                    cv2.imwrite("reco_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
+                    # cv2.imwrite("reco_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
                     # cv2.rectangle(test_img, (startX, startY), (endX, endY), (0,255,0), 2)
                     with self.graph.as_default():
                         unknown_embedding = get_embedding(self.facenet_model, scaled)
-                    who_name = get_name_by_embedding(unknown_embedding, self.faceProp, self.euclideanDist)
+                    who_name = get_name_by_embedding(imgPath, unknown_embedding, self.faceProp, self.euclideanDist)
                     if who_name != '':
                         faceRecNum += 1
                         curFaceRecNum += 1
@@ -406,7 +406,7 @@ class Recognition(object):
         ret = 0
         self.initRecognitionInfo()
         # 再次识别前的数据处理(即预设档号的目录没有变)
-        if self.data_queue.qsize() == 0: # 队列已被取空,说明已经识别完了,这里将未核验的图片数据再次取出进行识别
+        if self.pendingTotalImgsNum != 0 and self.data_queue.qsize() == 0: # 队列已被取空,说明已经识别完了,这里将未核验的图片数据再次取出进行识别
             img_path_list = []
             for dirPath in self.pending_dirs_list:
                 img_path_list += self.sql_repo.query('face', {"parent_path": [dirPath], "verify_state":[0]}, ('photo_path'))
@@ -418,6 +418,10 @@ class Recognition(object):
             else: # 所有图片已经核验完了
                 ret = 1
                 return ret
+        elif self.pendingTotalImgsNum == 0 and self.data_queue.qsize() == 0: # 没有进行过‘添加’操作
+            ret = 2
+            return ret
+
 
         for _ in range(len(self.jobs_proc)):
             self.param_queue.put(json.dumps(params, ensure_ascii=False)) # 为了让每个子进程都能得到这个param参数

@@ -78,8 +78,9 @@ def get_name_by_euclid_distance(unknown_embedding, euclideanDist, data_path):
 
     return who_name
 
-def get_name_by_embedding(unknown_embedding, faceProp, euclideanDist):
+def get_name_by_embedding(imgPath, unknown_embedding, faceProp, euclideanDist):
     if os.path.exists('data/model/custom_faceRecognize.h5'):
+        print('#####:pid=%d, imgPath=%s' % (os.getpid(), imgPath))
         model = joblib.load('data/model/custom_faceRecognize.h5')
         last_data = np.load('data/model/last_data.npz', allow_pickle=True) # 模型上次训练时,使用的数据.
         label_encoder = LabelEncoder()
@@ -103,6 +104,7 @@ def get_name_by_embedding(unknown_embedding, faceProp, euclideanDist):
             #     data_path = 'data/data.npz'
             who_name = get_name_by_euclid_distance(unknown_embedding, euclideanDist, 'data/data.npz')
     else: # 模型不存在时,使用欧式距离计算.
+        print('#####:pid=%d, imgPath=%s' % (os.getpid(), imgPath))
         who_name = get_name_by_euclid_distance(unknown_embedding, euclideanDist, 'data/data.npz')
 
     return  who_name

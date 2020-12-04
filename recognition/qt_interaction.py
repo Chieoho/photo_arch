@@ -26,8 +26,10 @@ class QtInteraction(UiInterface):
         ret = self._rcn.recognition(params)
         if ret == 0:
             return {"res": True, "msg": ""}
-        else:
+        elif ret == 1:
             return {"res": True, "msg": "已完成全部核验."}
+        elif ret == 2:
+            return {"res": False, "msg": "在组著录中没有添加任何目录."}
 
     def continue_run(self) -> dict:
         self._rcn.continueRecognition()
