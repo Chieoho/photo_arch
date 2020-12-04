@@ -113,6 +113,7 @@ class ArchBrowser(object):
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
     def show_group(self, item_selection):
+        self._clear_data()
         indexes = item_selection.indexes()
         if not indexes:
             return
@@ -124,8 +125,16 @@ class ArchBrowser(object):
         _, data = self.controller.get_group(group_code)
         self.view.display_group(data)
         self._list_photo_thumb()
+
+    def _clear_data(self):
+        for k in GroupOutputData().__dict__:
+            widget_name = f'{k}_in_group_arch'
+            if hasattr(self.mw.ui, widget_name):
+                getattr(self.mw.ui, widget_name).setText('')
         for k in PhotoOutputData().__dict__:
-            getattr(self.ui, f'{k}_in_photo_arch').clear()
+            getattr(self.mw.ui, f'{k}_in_photo_arch').setText('')
+        self.ui.photo_list_widget.clear()
+        self.ui.photo_view_in_arch.clear()
 
     def _list_photo_thumb(self):
         self.ui.photo_list_widget.clear()
@@ -145,10 +154,11 @@ class ArchBrowser(object):
                 QApplication.processEvents()  # 前n张一张接一张显示
 
     def display_photo(self):
-        item = self.ui.photo_list_widget.currentItem()
-        photo_name = item.text()
-        self._display_photo_info(photo_name)
-        self._display_image(photo_name)
+        item_list = self.ui.photo_list_widget.selectedItems()
+        if item_list:
+            photo_name = item_list[0].text()
+            self._display_photo_info(photo_name)
+            self._display_image(photo_name)
 
     def _display_photo_info(self, photo_name):
         photo_arch_code, _ = photo_name.split('.')
