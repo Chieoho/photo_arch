@@ -89,8 +89,8 @@ class MainWindow(QtWidgets.QMainWindow):
             "unhandled_photo_num": self.ui.unhandled_photo_label
         }
         self.run_state = RecognizeState.stop
-        self.ui.tabWidget.setCurrentIndex(2)
-        self.ui.tabWidget.setCurrentIndex(0)
+        self.ui.tabWidget.setCurrentWidget(self.ui.photo_tab)
+        self.ui.tabWidget.setCurrentWidget(self.ui.group_tab)
 
         desktop = app.desktop()
         self.dt_width, self.dt_height = desktop.width(), desktop.height()

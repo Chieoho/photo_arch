@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>6</number>
       </property>
       <property name="iconSize">
        <size>
@@ -5291,10 +5291,10 @@ padding-bottom: 8px;</string>
   </action>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>dir_lineEdit</tabstop>
-  <tabstop>open_dir_btn</tabstop>
-  <tabstop>treeWidget</tabstop>
+  <tabstop>fonds_name_in_setting</tabstop>
+  <tabstop>fonds_code_in_setting</tabstop>
+  <tabstop>description_path_in_setting</tabstop>
+  <tabstop>package_path_in_setting</tabstop>
   <tabstop>year_in_group</tabstop>
   <tabstop>department_in_group</tabstop>
   <tabstop>group_code_in_group</tabstop>
@@ -5314,6 +5314,77 @@ padding-bottom: 8px;</string>
   <tabstop>group_code_in_photo</tabstop>
   <tabstop>fonds_code_in_photo</tabstop>
   <tabstop>year_in_photo</tabstop>
+  <tabstop>arch_category_code_in_group</tabstop>
+  <tabstop>retention_period_in_group</tabstop>
+  <tabstop>opening_state_in_group</tabstop>
+  <tabstop>reference_code_in_group</tabstop>
+  <tabstop>security_classification_in_group</tabstop>
+  <tabstop>photo_num_in_group</tabstop>
+  <tabstop>taken_locations_in_group</tabstop>
+  <tabstop>taken_time_in_group</tabstop>
+  <tabstop>photographer_in_group</tabstop>
+  <tabstop>folder_size_in_group</tabstop>
+  <tabstop>author_in_group</tabstop>
+  <tabstop>fonds_code_in_group</tabstop>
+  <tabstop>peoples_in_photo</tabstop>
+  <tabstop>photographer_in_photo</tabstop>
+  <tabstop>taken_time_in_photo</tabstop>
+  <tabstop>taken_locations_in_photo</tabstop>
+  <tabstop>format_in_photo</tabstop>
+  <tabstop>security_classification_in_photo</tabstop>
+  <tabstop>reference_code_in_photo</tabstop>
+  <tabstop>photo_code_in_photo</tabstop>
+  <tabstop>order_combobox_browse</tabstop>
+  <tabstop>arch_tree_view_browse</tabstop>
+  <tabstop>photographer_in_group_arch</tabstop>
+  <tabstop>department_in_group_arch</tabstop>
+  <tabstop>photo_num_in_group_arch</tabstop>
+  <tabstop>arch_code_in_photo_arch</tabstop>
+  <tabstop>security_classification_in_group_arch</tabstop>
+  <tabstop>retention_period_in_group_arch</tabstop>
+  <tabstop>peoples_in_photo_arch</tabstop>
+  <tabstop>fonds_code_in_group_arch</tabstop>
+  <tabstop>author_in_group_arch</tabstop>
+  <tabstop>group_code_in_group_arch</tabstop>
+  <tabstop>taken_locations_in_group_arch</tabstop>
+  <tabstop>year_in_group_arch</tabstop>
+  <tabstop>photo_code_in_photo_arch</tabstop>
+  <tabstop>format_in_photo_arch</tabstop>
+  <tabstop>arch_code_in_group_arch</tabstop>
+  <tabstop>taken_time_in_group_arch</tabstop>
+  <tabstop>folder_size_in_group_arch</tabstop>
+  <tabstop>arch_category_code_in_group_arch</tabstop>
+  <tabstop>reference_code_in_group_arch</tabstop>
+  <tabstop>group_title_in_group_arch</tabstop>
+  <tabstop>opening_state_in_group_arch</tabstop>
+  <tabstop>group_caption_in_group_arch</tabstop>
+  <tabstop>photo_list_widget</tabstop>
+  <tabstop>order_combobox_transfer</tabstop>
+  <tabstop>arch_tree_view_transfer</tabstop>
+  <tabstop>selected_arch_list_widget</tabstop>
+  <tabstop>across_year_combo_box</tabstop>
+  <tabstop>across_period_combo_box</tabstop>
+  <tabstop>packeage_btn</tabstop>
+  <tabstop>cd_size_line_edit</tabstop>
+  <tabstop>operation_date_in_transfer</tabstop>
+  <tabstop>group_codes_in_transfer</tabstop>
+  <tabstop>cd_catalog_table_widget</tabstop>
+  <tabstop>cd_num_in_transfer</tabstop>
+  <tabstop>fonds_code_in_transfer</tabstop>
+  <tabstop>fonds_name_in_transfer</tabstop>
+  <tabstop>partition_list_widget</tabstop>
+  <tabstop>title_in_transfer</tabstop>
+  <tabstop>photo_num_in_transfer</tabstop>
+  <tabstop>cd_model_in_transfer</tabstop>
+  <tabstop>file_type_in_transfer</tabstop>
+  <tabstop>cd_type_in_transfer</tabstop>
+  <tabstop>operator_in_transfer</tabstop>
+  <tabstop>select_package_dir_btn</tabstop>
+  <tabstop>treeWidget</tabstop>
+  <tabstop>dir_lineEdit</tabstop>
+  <tabstop>select_description_dir_btn</tabstop>
+  <tabstop>open_dir_btn</tabstop>
+  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>

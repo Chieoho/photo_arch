@@ -56,6 +56,13 @@ def calc_md5(file_path):
         return file_md5
 
 
+def extend_slot(original_slot, func):
+    def new_slot(*args, **kwargs):
+        original_slot(*args, **kwargs)
+        func(*args, **kwargs)
+    setattr(original_slot.__self__, original_slot.__name__, new_slot)
+
+
 def catch_exception(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):

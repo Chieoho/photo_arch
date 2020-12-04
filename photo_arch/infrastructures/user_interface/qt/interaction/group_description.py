@@ -91,7 +91,7 @@ class GroupDescription(object):
         )
         if not current_work_path:
             return
-        self.ui.tabWidget.setCurrentIndex(0)
+        self.ui.tabWidget.setCurrentWidget(self.ui.group_tab)
         self.current_work_path = os.path.abspath(current_work_path)
         self.ui.dir_lineEdit.setText(self.current_work_path)
         overlay = Overlay(self.ui.treeWidget, '初始化中', dynamic=True)

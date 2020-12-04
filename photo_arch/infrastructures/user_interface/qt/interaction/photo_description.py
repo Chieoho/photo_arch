@@ -92,7 +92,7 @@ class PhotoDescription(object):
     def photo_choose(self, check_state):
         if check_state is False:
             return
-        self.ui.tabWidget.setCurrentIndex(2)
+        self.ui.tabWidget.setCurrentWidget(self.ui.photo_tab)
         self.mw.photo_type = self.photo_radio_map[self.mw.sender().objectName()]
         photo_info_list = self.mw.interaction.get_photos_info(self.mw.photo_type, self.mw.dir_type)
         self.mw.photo_list = list(map(lambda d: d['photo_path'], photo_info_list))
@@ -123,18 +123,12 @@ class PhotoDescription(object):
         return name_list
 
     def pre_photo(self):
-        if self.ui.tabWidget.currentIndex() != 2:
-            self.ui.tabWidget.setCurrentIndex(2)
-            return
         self.tmp_info[self.mw.photo_list[self.current_photo_id]] = self.get_name_info()
         if self.current_photo_id > 0:
             self.current_photo_id -= 1
             self._display_recognizable()
 
     def next_photo(self):
-        if self.ui.tabWidget.currentIndex() != 2:
-            self.ui.tabWidget.setCurrentIndex(2)
-            return
         self.tmp_info[self.mw.photo_list[self.current_photo_id]] = self.get_name_info()
         if self.current_photo_id < len(self.mw.photo_list) - 1:
             self.current_photo_id += 1

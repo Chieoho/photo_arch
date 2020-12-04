@@ -63,6 +63,8 @@ class Setting(object):
         if setting_info:
             for k in setting_info:
                 setattr(self, k, setting_info[k])
+        else:
+            self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
         self.view.display_setting(
             self.fonds_name,
             self.fonds_code,
@@ -95,4 +97,5 @@ class Setting(object):
         for k in setting_info:
             widget = getattr(self.ui, f'{k}_in_setting')
             setting_info[k] = widget.text()
+        self.__dict__.update(setting_info)
         self.controller.save_setting(setting_info)

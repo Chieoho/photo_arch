@@ -248,9 +248,9 @@ class ArchTransfer(object):
             self._display_cd_catalog(group_list)
 
             cd_name = item.text()
-            self._keep_tmp(cd_name)
-            caption = self.cd_info_dict[self.current_cd].get('caption')
-            label = self.cd_info_dict[self.current_cd].get('label')
+            self._keep_tmp(self.current_cd)
+            caption = self.cd_info_dict[cd_name].get('caption')
+            label = self.cd_info_dict[cd_name].get('label')
             if caption:
                 self.view.display_caption(caption)
                 self.view.display_label(label)
@@ -261,11 +261,11 @@ class ArchTransfer(object):
         else:
             self._clear_data()
 
-    def _keep_tmp(self, cd_name):
-        if not self.ui.cd_num_in_transfer.text():
+    def _keep_tmp(self, current_cd):
+        if not current_cd:
             return
-        self.cd_info_dict[cd_name]['caption'] = self.view.get_caption()
-        self.cd_info_dict[cd_name]['label'] = self.view.get_label()
+        self.cd_info_dict[current_cd]['caption'] = self.view.get_caption()
+        self.cd_info_dict[current_cd]['label'] = self.view.get_label()
 
     def _clear_data(self):
         for i in range(self.ui.cd_catalog_table_widget.rowCount(), -1, -1):
