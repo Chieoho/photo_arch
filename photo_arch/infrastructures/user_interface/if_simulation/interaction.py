@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@file: qt_interaction.py
+@file: interaction.py
 @desc:
 @author: Jaden Wu
 @time: 2020/9/3 10:13
@@ -14,7 +14,7 @@ handled_photo_num = 0
 unhandled_photo_num = 100
 
 
-class QtInteraction(UiInterface):
+class Interaction(UiInterface):
     def __init__(self):
         self.arch_code_info = {}
         time.sleep(10)

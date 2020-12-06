@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@file: qt_interaction.py
+@file: interaction.py
 @desc:
 @author: Jaden Wu
 @time: 2020/9/3 10:14

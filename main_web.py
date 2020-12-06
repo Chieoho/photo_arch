@@ -5,10 +5,12 @@
 @author: Jaden Wu
 @time: 2020/12/5 20:30
 """
-from photo_arch.infrastructures.user_interface.restful import app
+from photo_arch.infrastructures.user_interface.restful import app, init_modules, InitRecognition
 
 
 def main():
+    InitRecognition().start()
+    init_modules()
     app.run(host='127.0.0.1', port=80)
 
 

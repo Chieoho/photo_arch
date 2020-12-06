@@ -31,11 +31,11 @@ class InitRecognition(Thread):
 
     def run(self) -> None:
         if (len(sys.argv) > 1) and (sys.argv[1] in ('-t', '--test')):
-            from photo_arch.infrastructures.user_interface.qt.if_simulation.\
-                qt_interaction import QtInteraction
+            from photo_arch.infrastructures.user_interface.if_simulation.\
+                interaction import Interaction
         else:
-            from recognition.qt_interaction import QtInteraction
-        self.mw_instance.interaction = QtInteraction()
+            from recognition.qt_interaction import QtInteraction as Interaction
+        self.mw_instance.interaction = Interaction()
 
 
 class Overlay(QtWidgets.QWidget):
