@@ -7,12 +7,11 @@
 """
 from recognition.business_recognition import Recognition
 
-from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
 
 __all__ = ['QtInteraction']
 
 
-class QtInteraction(UiInterface):
+class QtInteraction(object):
     def __init__(self):
         self._rcn = Recognition()
 

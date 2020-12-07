@@ -85,12 +85,13 @@ class ArchBrowser(object):
         self.setting = setting
         self.controller = Controller(Repo(make_session(engine)))
         self.view = View(mw_)
+
         self.pix_map = None
         self.group_folder = ''
 
         self.ui.photo_list_widget.setViewMode(QListWidget.IconMode)
-        self.ui.photo_list_widget.setIconSize(QSize(200, 150))
-        # self.ui.photo_list_widget.setFixedHeight(235)
+        self.ui.photo_list_widget.setIconSize(QSize(100, 100))
+        self.ui.photo_list_widget.setFixedHeight(118)
         self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
         self.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
 

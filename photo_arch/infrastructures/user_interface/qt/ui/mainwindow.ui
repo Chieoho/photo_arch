@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>5</number>
       </property>
       <property name="iconSize">
        <size>
@@ -1794,7 +1794,7 @@ padding-bottom: 8px;</string>
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/picture.png</normaloff>../icon/picture.png</iconset>
+         <normaloff>../icon/photo.png</normaloff>../icon/photo.png</iconset>
        </attribute>
        <attribute name="title">
         <string>张著录</string>
@@ -3105,7 +3105,7 @@ padding-bottom: 8px;</string>
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/view_arch.png</normaloff>../icon/view_arch.png</iconset>
+         <normaloff>../icon/browse_arch.png</normaloff>../icon/browse_arch.png</iconset>
        </attribute>
        <attribute name="title">
         <string>档案浏览</string>
@@ -4062,6 +4062,15 @@ padding-bottom: 8px;</string>
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="search_archives_tab">
+       <attribute name="icon">
+        <iconset>
+         <normaloff>../icon/search_arch.png</normaloff>../icon/search_arch.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>档案搜索</string>
+       </attribute>
       </widget>
       <widget class="QWidget" name="arch_transfer_tab">
        <property name="font">

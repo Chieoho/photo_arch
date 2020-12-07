@@ -17,9 +17,6 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
     MainWindow, Ui_MainWindow, Overlay, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
-from photo_arch.infrastructures.databases.db_setting import engine, make_session
-from photo_arch.adapters.controller.recognition import Controller, Repo
-
 
 class View(object):
     def __init__(self, mw_: MainWindow):
@@ -31,7 +28,6 @@ class Recognition(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.controller = Controller(Repo(make_session(engine)))
         self.view = View(mw_)
 
         self.update_timer = QtCore.QTimer()
