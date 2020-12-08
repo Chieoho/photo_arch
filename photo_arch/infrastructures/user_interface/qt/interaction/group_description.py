@@ -10,13 +10,14 @@ import glob
 from pathlib import Path
 import time
 from distutils.dir_util import copy_tree
+import shutil
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData, PhotoInDescription
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, calc_md5
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, calc_md5, make_thumb
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -27,13 +28,13 @@ from photo_arch.adapters.controller.group_description import Controller, Repo
 
 class View(object):
     def __init__(self, mw_: MainWindow):
-        self.mw = mw_
+        self.ui: Ui_MainWindow = mw_.ui
 
     def display_group(self, group, widget_suffix='_in_group'):
         for k, v in group.items():
             widget_name = k + widget_suffix
-            if hasattr(self.mw.ui, widget_name):
-                widget = getattr(self.mw.ui, widget_name)
+            if hasattr(self.ui, widget_name):
+                widget = getattr(self.ui, widget_name)
                 if isinstance(widget, QComboBox):
                     if v:
                         widget.setCurrentText(v)
@@ -41,6 +42,19 @@ class View(object):
                         widget.setCurrentIndex(-1)
                 else:
                     widget.setText(v)
+
+    def get_group_input(self):
+        group_in = GroupInputData()
+        for k in group_in.__dict__.keys():
+            widget = getattr(self.ui, k+'_in_group')
+            if isinstance(widget, QComboBox):
+                value = widget.currentText()
+            elif isinstance(widget, QTextEdit):
+                value = widget.toPlainText()
+            else:
+                value = widget.text()
+            setattr(group_in, k, value)
+        return group_in
 
 
 class GroupDescription(object):
@@ -58,7 +72,7 @@ class GroupDescription(object):
         self.group_tmp_info = {}
 
         height = int(self.mw.dt_height*30/1080)
-        self.ui.treeWidget.setStyleSheet('#treeWidget::item{height:%spx;}' % (height + 5))
+        self.ui.treeWidget.setStyleSheet('#treeWidget::item{height:%spx;}' % height)
         self.ui.open_dir_btn.clicked.connect(static(self.select_dir))
         self.ui.treeWidget.itemDoubleClicked.connect(static(self.item_click))
         self.ui.treeWidget.itemClicked.connect(static(self.display_group))
@@ -109,6 +123,9 @@ class GroupDescription(object):
             _, group = self.controller.get_group(first_photo_md5)
             if first_photo_md5 and group:
                 self.view.display_group(group)
+                source_path, dst_abspath = self._get_src_dst_path(group_folder)
+                self.description_path_info[source_path] = os.path.join(dst_abspath)
+                self.arch_code_info[source_path] = self.ui.arch_code_in_group.text()
                 self.mw.msg_box('该组已著录过')
             else:
                 path = os.path.join(self.current_work_path, group_folder)
@@ -116,7 +133,7 @@ class GroupDescription(object):
         self.current_folder = group_folder
 
     def _keep_tmp_info(self, group_folder):
-        group_info = self._get_group_input()
+        group_info = self.view.get_group_input()
         if group_info.group_path:
             self.group_tmp_info[group_folder] = group_info.__dict__
 
@@ -165,35 +182,56 @@ class GroupDescription(object):
         self.ui.group_code_in_group.setText(group_code)
 
     def save_and_copy_group(self):
-        self._save_group()
-        self._copy_arch()
+        self._save_group_and_move_folder()
+        self._copy_arch_and_gen_thumbs()
         self.mw.msg_box('保存成功', msg_type='info')
 
-    def _save_group(self):
+    def _save_group_and_move_folder(self):
         group_arch_code = self.ui.arch_code_in_group.text()
         if not group_arch_code:
             return
         first_photo = self._find_fist_photo()
         first_photo_md5 = calc_md5(first_photo)
-        group_in: GroupInputData = self._get_group_input()
-        group_in.first_photo_md5 = first_photo_md5
-        self.controller.save_group(group_in)
+        group_data: GroupInputData = self.view.get_group_input()
+        group_data.first_photo_md5 = first_photo_md5
+        _, group_info = self.controller.get_group(first_photo_md5)
+        if group_info:
+            self._move_old_group(group_info, group_data)
+            self.controller.update_group(group_data)
+        else:
+            self.controller.add_group(group_data)
 
-    def _get_group_input(self):
-        group_in = GroupInputData()
-        for k in group_in.__dict__.keys():
-            widget = getattr(self.ui, k+'_in_group')
-            if isinstance(widget, QComboBox):
-                value = widget.currentText()
-            elif isinstance(widget, QTextEdit):
-                value = widget.toPlainText()
-            else:
-                value = widget.text()
-            setattr(group_in, k, value)
-        return group_in
+    def _move_old_group(self, old_group: dict, new_group: GroupInputData):
+        _ = self
+        old_folder_name = old_group.get('group_path')
+        new_folder_name = new_group.group_path
+        old_group_path = self._get_group_folder_path(old_folder_name)
+        if os.path.exists(old_group_path):
+            shutil.move(old_group_path, self._get_group_folder_path(new_folder_name))
 
-    def _copy_arch(self):
-        source_path = os.path.join(self.current_work_path, self.current_folder)
+    def _get_group_folder_path(self, group_folder_name):
+        group_code, _, _ = group_folder_name.split(' ')
+        year, retention_period, _ = group_code.split('·')[1].split('-')
+        group_folder_path = os.path.join(
+            self.setting.description_path,
+            '照片档案',
+            year, retention_period,
+            group_folder_name
+        )
+        return group_folder_path
+
+    def _copy_arch_and_gen_thumbs(self):
+        source_path, dst_abspath = self._get_src_dst_path()
+        self.description_path_info[source_path] = os.path.join(dst_abspath)
+        self.arch_code_info[source_path] = self.ui.arch_code_in_group.text()
+        copy_tree(source_path, dst_abspath)
+        self._gen_thumbs(source_path, dst_abspath)
+
+    def _get_src_dst_path(self, current_folder=None):
+        if current_folder:
+            source_path = os.path.join(self.current_work_path, current_folder)
+        else:
+            source_path = os.path.join(self.current_work_path, self.current_folder)
         group_code = self.ui.group_code_in_group.text()
         taken_time = self.ui.taken_time_in_group.text()
         group_title = self.ui.group_title_in_group.text()
@@ -204,9 +242,16 @@ class GroupDescription(object):
             self.ui.year_in_group.text(),
             self.ui.retention_period_in_group.currentText(),
             name)
-        self.description_path_info[source_path] = os.path.join(dst_abspath)
-        self.arch_code_info[source_path] = self.ui.arch_code_in_group.text()
-        copy_tree(source_path, dst_abspath)
+        return source_path, dst_abspath
+
+    def _gen_thumbs(self, src_path, dst_path):
+        _ = self
+        thumb_path = os.path.join(dst_path, 'thumbs')
+        if not os.path.exists(thumb_path):
+            os.mkdir(thumb_path)
+        for f in glob.iglob(os.path.join(src_path, '*')):
+            name = os.path.split(f)[1]
+            make_thumb(f, os.path.join(thumb_path, name))
 
     def _find_fist_photo(self, group_folder=None):
         if group_folder is None:

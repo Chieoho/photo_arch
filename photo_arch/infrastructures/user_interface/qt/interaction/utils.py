@@ -9,9 +9,37 @@ import functools
 import traceback
 import inspect
 import hashlib
+
 from xlwt import *
+from PIL import Image
+
 
 from photo_arch.infrastructures.user_interface.qt.ui import slot_wrapper
+
+
+def make_thumb(img_path, thumb_path, sizes=(100, 100)):
+    im = Image.open(img_path)
+    mode = im.mode
+    if mode not in ('L', 'RGB'):
+        im = im.convert('RGB')
+
+    # 切成方图，避免变形
+    width, height = im.size
+    if width == height:
+        region = im
+    else:
+        if width > height:
+            # h*h
+            delta = (width - height) / 2
+            box = (delta, 0, delta + height, height)
+        else:
+            # w*w
+            delta = (height - width) / 2
+            box = (0, delta, width, delta + width)
+        region = im.crop(box)
+
+    thumb = region.resize((sizes[0], sizes[1]), Image.ANTIALIAS)
+    thumb.save(thumb_path, quality=100)
 
 
 def table_widget_to_xls(table_widget, xls_path):
@@ -86,3 +114,8 @@ def for_all_methods(decorator):
 
 def static(method):
     return slot_wrapper.static_(method)
+
+
+if __name__ == '__main__':
+    make_thumb(r'G:\Git\photo_arch\training_data\深圳市长陈如桂一行视察恒裕前海金融中心\0003.jpg',
+               r'G:\Git\photo_arch\training_data\深圳市长陈如桂一行视察恒裕前海金融中心\0003_thumb.jpg')

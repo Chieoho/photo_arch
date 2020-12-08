@@ -91,13 +91,14 @@ class ArchBrowser(object):
 
         self.ui.photo_list_widget.setViewMode(QListWidget.IconMode)
         self.ui.photo_list_widget.setIconSize(QSize(100, 100))
-        self.ui.photo_list_widget.setFixedHeight(118)
+        self.ui.photo_list_widget.setFixedHeight(128)
         self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
         self.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
 
         self.ui.photo_list_widget.itemSelectionChanged.connect(static(self.display_photo))
         extend_slot(self.ui.photo_view_in_arch.resizeEvent, static(self.resize_image))
         extend_slot(self.ui.arch_tree_view_browse.selectionChanged, static(self.show_group))
+        extend_slot(self.ui.photo_list_widget.focusInEvent, static(self.set_selected))
         self.ui.order_combobox_browse.currentTextChanged.connect(static(self.display_arch))
 
     def resize_image(self, event):
@@ -146,10 +147,11 @@ class ArchBrowser(object):
             '照片档案',
             year, period,
             self.group_folder,
+            'thumbs',
             '*.*'
         )
         for i, fp in enumerate(glob.iglob(path)):
-            item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1])
+            item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1].split('-')[-1])
             self.ui.photo_list_widget.addItem(item)
             if i in range(3):
                 QApplication.processEvents()  # 前n张一张接一张显示
@@ -187,3 +189,8 @@ class ArchBrowser(object):
     def display_arch(self, priority_key):
         _, arch = self.controller.browse_arch()
         self.view.display_browse_arch(arch, priority_key)
+
+    def set_selected(self):
+        selected_items = self.ui.photo_list_widget.selectedItems()
+        if (not selected_items) and self.ui.photo_list_widget.count():
+            self.ui.photo_list_widget.item(0).setSelected(True)

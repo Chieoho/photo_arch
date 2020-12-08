@@ -6,7 +6,7 @@
 @time: 2020/11/12 13:28
 """
 from photo_arch.domains.photo_group import PhotoGroup
-from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData
+from photo_arch.use_cases.interfaces.dataset import GroupInputData
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
 from photo_arch.use_cases.interfaces.presenter_if.group_description import PresenterIf
 
@@ -16,14 +16,13 @@ class GroupDescription(object):
         self.repo = repo
         self.pres = pres
 
-    def save_group(self, input_data: GroupInputData) -> bool:
+    def add_group(self, input_data: GroupInputData) -> bool:
         group = PhotoGroup(**input_data.__dict__)
-        group_list = self.repo.query_group_by_first_photo_md5(group.first_photo_md5)
-        if group_list:
-            save_res = self.repo.update_group(group)
-        else:
-            save_res = self.repo.add_group(group)
-        return save_res
+        return self.repo.add_group(group)
+
+    def update_group(self, input_data: GroupInputData) -> bool:
+        group = PhotoGroup(**input_data.__dict__)
+        return self.repo.update_group(group)
 
     def get_group(self, first_photo_md5: str):
         group_list = self.repo.query_group_by_first_photo_md5(first_photo_md5)

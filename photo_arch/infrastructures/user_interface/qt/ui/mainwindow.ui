@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>4</number>
       </property>
       <property name="iconSize">
        <size>
@@ -4055,6 +4055,12 @@ padding-bottom: 8px;</string>
                 <pointsize>14</pointsize>
                </font>
               </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <property name="itemAlignment">
+               <set>Qt::AlignBottom</set>
+              </property>
              </widget>
             </item>
            </layout>
@@ -5300,31 +5306,31 @@ padding-bottom: 8px;</string>
   </action>
  </widget>
  <tabstops>
-  <tabstop>fonds_name_in_setting</tabstop>
-  <tabstop>fonds_code_in_setting</tabstop>
-  <tabstop>description_path_in_setting</tabstop>
-  <tabstop>package_path_in_setting</tabstop>
-  <tabstop>year_in_group</tabstop>
-  <tabstop>department_in_group</tabstop>
-  <tabstop>group_code_in_group</tabstop>
-  <tabstop>group_title_in_group</tabstop>
-  <tabstop>group_caption_in_group</tabstop>
-  <tabstop>save_group_btn</tabstop>
-  <tabstop>tableWidget</tabstop>
-  <tabstop>verifycheckBox</tabstop>
-  <tabstop>thresh_lineEdit</tabstop>
-  <tabstop>all_photo_radioButton</tabstop>
-  <tabstop>arch_category_code_in_photo</tabstop>
-  <tabstop>select_dir_radioButton</tabstop>
-  <tabstop>part_recognition_radioButton</tabstop>
-  <tabstop>all_recognition_radioButton</tabstop>
-  <tabstop>arch_code_in_photo</tabstop>
-  <tabstop>current_dir_radioButton</tabstop>
-  <tabstop>group_code_in_photo</tabstop>
-  <tabstop>fonds_code_in_photo</tabstop>
-  <tabstop>year_in_photo</tabstop>
-  <tabstop>arch_category_code_in_group</tabstop>
-  <tabstop>retention_period_in_group</tabstop>
+  <tabstop>order_combobox_browse</tabstop>
+  <tabstop>arch_tree_view_browse</tabstop>
+  <tabstop>photo_list_widget</tabstop>
+  <tabstop>arch_code_in_group_arch</tabstop>
+  <tabstop>fonds_code_in_group_arch</tabstop>
+  <tabstop>arch_category_code_in_group_arch</tabstop>
+  <tabstop>retention_period_in_group_arch</tabstop>
+  <tabstop>year_in_group_arch</tabstop>
+  <tabstop>department_in_group_arch</tabstop>
+  <tabstop>group_code_in_group_arch</tabstop>
+  <tabstop>author_in_group_arch</tabstop>
+  <tabstop>group_title_in_group_arch</tabstop>
+  <tabstop>folder_size_in_group_arch</tabstop>
+  <tabstop>photographer_in_group_arch</tabstop>
+  <tabstop>taken_time_in_group_arch</tabstop>
+  <tabstop>taken_locations_in_group_arch</tabstop>
+  <tabstop>photo_num_in_group_arch</tabstop>
+  <tabstop>security_classification_in_group_arch</tabstop>
+  <tabstop>reference_code_in_group_arch</tabstop>
+  <tabstop>opening_state_in_group_arch</tabstop>
+  <tabstop>arch_code_in_photo_arch</tabstop>
+  <tabstop>photo_code_in_photo_arch</tabstop>
+  <tabstop>format_in_photo_arch</tabstop>
+  <tabstop>group_caption_in_group_arch</tabstop>
+  <tabstop>peoples_in_photo_arch</tabstop>
   <tabstop>opening_state_in_group</tabstop>
   <tabstop>reference_code_in_group</tabstop>
   <tabstop>security_classification_in_group</tabstop>
@@ -5343,31 +5349,31 @@ padding-bottom: 8px;</string>
   <tabstop>security_classification_in_photo</tabstop>
   <tabstop>reference_code_in_photo</tabstop>
   <tabstop>photo_code_in_photo</tabstop>
-  <tabstop>order_combobox_browse</tabstop>
-  <tabstop>arch_tree_view_browse</tabstop>
-  <tabstop>photographer_in_group_arch</tabstop>
-  <tabstop>department_in_group_arch</tabstop>
-  <tabstop>photo_num_in_group_arch</tabstop>
-  <tabstop>arch_code_in_photo_arch</tabstop>
-  <tabstop>security_classification_in_group_arch</tabstop>
-  <tabstop>retention_period_in_group_arch</tabstop>
-  <tabstop>peoples_in_photo_arch</tabstop>
-  <tabstop>fonds_code_in_group_arch</tabstop>
-  <tabstop>author_in_group_arch</tabstop>
-  <tabstop>group_code_in_group_arch</tabstop>
-  <tabstop>taken_locations_in_group_arch</tabstop>
-  <tabstop>year_in_group_arch</tabstop>
-  <tabstop>photo_code_in_photo_arch</tabstop>
-  <tabstop>format_in_photo_arch</tabstop>
-  <tabstop>arch_code_in_group_arch</tabstop>
-  <tabstop>taken_time_in_group_arch</tabstop>
-  <tabstop>folder_size_in_group_arch</tabstop>
-  <tabstop>arch_category_code_in_group_arch</tabstop>
-  <tabstop>reference_code_in_group_arch</tabstop>
-  <tabstop>group_title_in_group_arch</tabstop>
-  <tabstop>opening_state_in_group_arch</tabstop>
-  <tabstop>group_caption_in_group_arch</tabstop>
-  <tabstop>photo_list_widget</tabstop>
+  <tabstop>fonds_name_in_setting</tabstop>
+  <tabstop>fonds_code_in_setting</tabstop>
+  <tabstop>all_photo_radioButton</tabstop>
+  <tabstop>group_caption_in_group</tabstop>
+  <tabstop>part_recognition_radioButton</tabstop>
+  <tabstop>group_code_in_photo</tabstop>
+  <tabstop>all_recognition_radioButton</tabstop>
+  <tabstop>group_code_in_group</tabstop>
+  <tabstop>retention_period_in_group</tabstop>
+  <tabstop>year_in_group</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>save_group_btn</tabstop>
+  <tabstop>select_dir_radioButton</tabstop>
+  <tabstop>group_title_in_group</tabstop>
+  <tabstop>fonds_code_in_photo</tabstop>
+  <tabstop>year_in_photo</tabstop>
+  <tabstop>package_path_in_setting</tabstop>
+  <tabstop>arch_category_code_in_photo</tabstop>
+  <tabstop>thresh_lineEdit</tabstop>
+  <tabstop>department_in_group</tabstop>
+  <tabstop>arch_code_in_photo</tabstop>
+  <tabstop>verifycheckBox</tabstop>
+  <tabstop>current_dir_radioButton</tabstop>
+  <tabstop>arch_category_code_in_group</tabstop>
+  <tabstop>description_path_in_setting</tabstop>
   <tabstop>order_combobox_transfer</tabstop>
   <tabstop>arch_tree_view_transfer</tabstop>
   <tabstop>selected_arch_list_widget</tabstop>

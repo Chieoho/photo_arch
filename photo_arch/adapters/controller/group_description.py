@@ -16,8 +16,12 @@ class Controller(object):
         self.presenter = Presenter()
         self.group_description = GroupDescription(repo, self.presenter)
 
-    def save_group(self, group_info: GroupInputData):
-        res = self.group_description.save_group(group_info)
+    def add_group(self, group_info: GroupInputData):
+        res = self.group_description.add_group(group_info)
+        return res
+
+    def update_group(self, group_info: GroupInputData):
+        res = self.group_description.update_group(group_info)
         return res
 
     def get_group(self, first_photo_md5: str):
