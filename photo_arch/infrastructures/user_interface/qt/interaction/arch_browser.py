@@ -26,13 +26,15 @@ from photo_arch.adapters.controller.arch_browser import Controller, Repo
 
 class View(object):
     def __init__(self, mw_: MainWindow):
-        self.mw = mw_
+        self.ui: Ui_MainWindow = mw_.ui
+        self.tv_browse_pre_sel_text = ''
+        self.tv_browse_pre_sel_item = None
 
     def display_group(self, group, widget_suffix='_in_group_arch'):
         for k, v in group.items():
             widget_name = k + widget_suffix
-            if hasattr(self.mw.ui, widget_name):
-                widget = getattr(self.mw.ui, widget_name)
+            if hasattr(self.ui, widget_name):
+                widget = getattr(self.ui, widget_name)
                 if isinstance(widget, QComboBox):
                     if v:
                         widget.setCurrentText(v)
@@ -51,7 +53,10 @@ class View(object):
             for v in d:
                 self._fill_model_from_dict(parent, v)
         else:
-            parent.appendRow(QStandardItem(str(d)))
+            item = QStandardItem(str(d))
+            parent.appendRow(item)
+            if self.tv_browse_pre_sel_text == d:
+                self.tv_browse_pre_sel_item = item
 
     def display_browse_arch(self, arch, priority_key='年度'):
         data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
@@ -66,21 +71,35 @@ class View(object):
                 data[fc][rp][ye].append(gp)
         model = QStandardItemModel()
         model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
+        self.tv_browse_pre_sel_text = self._get_tv_browse_sel_text()
         self._fill_model_from_dict(model.invisibleRootItem(), data)
-        self.mw.ui.arch_tree_view_browse.setModel(model)
-        self.mw.ui.arch_tree_view_browse.expandAll()
+        self.ui.arch_tree_view_browse.setModel(model)
+        self.ui.arch_tree_view_browse.expandAll()
+        if self.tv_browse_pre_sel_item:
+            idx = model.indexFromItem(self.tv_browse_pre_sel_item)
+            self.ui.arch_tree_view_browse.setCurrentIndex(idx)
+        self.tv_browse_pre_sel_item = None
+
+    def _get_tv_browse_sel_text(self):
+        group_code = self.ui.group_code_in_group_arch.text()
+        taken_time = self.ui.taken_time_in_group_arch.text()
+        group_title = self.ui.group_title_in_group_arch.text()
+        group_folder = ' '.join([group_code, taken_time, group_title]).strip()
+        if group_folder:
+            return group_folder
+        else:
+            return ''
 
     def display_photo_info(self, photo_info, widget_suffix='_in_photo_arch'):
         for k, v in photo_info.items():
             widget_name = k + widget_suffix
-            if hasattr(self.mw.ui, widget_name):
-                widget = getattr(self.mw.ui, widget_name)
+            if hasattr(self.ui, widget_name):
+                widget = getattr(self.ui, widget_name)
                 widget.setText(v)
 
 
 class ArchBrowser(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
-        self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
         self.controller = Controller(Repo(make_session(engine)))
@@ -115,10 +134,10 @@ class ArchBrowser(object):
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
     def show_group(self, item_selection):
-        self._clear_data()
         indexes = item_selection.indexes()
         if not indexes:
             return
+        self._clear_data()
         index = indexes[0]
         if index.child(0, 0).data():  # 点击的不是组名则返回
             return
@@ -131,10 +150,10 @@ class ArchBrowser(object):
     def _clear_data(self):
         for k in GroupOutputData().__dict__:
             widget_name = f'{k}_in_group_arch'
-            if hasattr(self.mw.ui, widget_name):
-                getattr(self.mw.ui, widget_name).setText('')
+            if hasattr(self.ui, widget_name):
+                getattr(self.ui, widget_name).setText('')
         for k in PhotoOutputData().__dict__:
-            getattr(self.mw.ui, f'{k}_in_photo_arch').setText('')
+            getattr(self.ui, f'{k}_in_photo_arch').setText('')
         self.ui.photo_list_widget.clear()
         self.ui.photo_view_in_arch.clear()
 

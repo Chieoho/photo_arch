@@ -32,16 +32,23 @@ class Special(object):
         self.ui.tabWidget.currentChanged.connect(static(self.tab_change))
 
     def tab_change(self, tab_id):
-        if tab_id == self.ui.tabWidget.indexOf(self.ui.modeltrain_tab):
+        if tab_id == self.ui.tabWidget.indexOf(self.ui.training_tab):
             if self.mw.interaction != typing.Any:
                 untrained_photo_num = self.mw.interaction.get_untrained_photo_num()
                 self.ui.untrained_num_label.setText(str(untrained_photo_num))
-        elif tab_id == self.ui.tabWidget.indexOf(self.ui.arch_view_tab):
+
+        elif tab_id == self.ui.tabWidget.indexOf(self.ui.arch_browser_tab):
             _, arch = self.arch_browser.controller.browse_arch()
-            self.arch_browser.view.display_browse_arch(arch, self.ui.order_combobox_browse.currentText())
+            priority_key = self.ui.order_combobox_browse.currentText()
+            self.arch_browser.view.display_browse_arch(arch, priority_key)
+
         elif tab_id == self.ui.tabWidget.indexOf(self.ui.arch_transfer_tab):
             _, arch = self.arch_transfer.controller.list_arch()
-            self.arch_transfer.view.display_transfer_arch(arch, self.ui.order_combobox_transfer.currentText())
+            priority_key = self.ui.order_combobox_transfer.currentText()
+            self.arch_transfer.view.display_transfer_arch(arch, priority_key)
+
+        else:
+            pass
 
         if tab_id != self.ui.tabWidget.indexOf(self.ui.setting_tab):
             setting_data = SettingData().__dict__

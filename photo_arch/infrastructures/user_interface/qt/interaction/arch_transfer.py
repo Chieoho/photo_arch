@@ -147,8 +147,9 @@ class ArchTransfer(object):
         self.current_cd = ''
 
         self.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
-        self.ui.partition_list_widget.setIconSize(QSize(200, 150))
-        self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
+        self.ui.partition_list_widget.setIconSize(QSize(160, 160))
+        self.ui.partition_list_widget.setFixedHeight(218)
+        self.ui.partition_list_widget.setWrapping(False)  # 只一行显示
 
         self.ui.order_combobox_transfer.currentTextChanged.connect(static(self.display_arch))
         self.ui.arch_tree_view_transfer.doubleClicked.connect(static(self.select_arch))
@@ -204,16 +205,23 @@ class ArchTransfer(object):
             selected_cond, sgl = sc_sgl
             for gi in sgl:
                 folder_size = float(gi['folder_size'])
-                used_size += folder_size
-                if used_size < cd_size:
-                    group_list.append(gi)
+                # 组大小大于或等于光盘容量
+                if folder_size >= cd_size:
+                    for _ in range(int(folder_size//cd_size) + 1):
+                        partition = {'group_list': [gi], 'selected_cond': selected_cond}
+                        self.partition_list.append(partition)
+                # 组大小小于光盘容量
                 else:
-                    used_size -= folder_size
-                    partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond}
-                    self.partition_list.append(partition)
-                    used_size, group_list = 0, []
                     used_size += folder_size
-                    group_list.append(gi)
+                    if used_size < cd_size:
+                        group_list.append(gi)
+                    else:
+                        used_size -= folder_size
+                        partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond}
+                        self.partition_list.append(partition)
+                        used_size, group_list = 0, []
+                        used_size += folder_size
+                        group_list.append(gi)
             if used_size > 0:
                 partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond}
                 self.partition_list.append(partition)
@@ -238,8 +246,6 @@ class ArchTransfer(object):
             self.ui.partition_list_widget.addItem(item)
 
     def display_cd_info(self):
-        if not self.selected_condition_list:
-            return
         selected_items = self.ui.partition_list_widget.selectedItems()
         if selected_items:
             item = selected_items[0]
@@ -260,6 +266,7 @@ class ArchTransfer(object):
             self.current_cd = cd_name
         else:
             self._clear_data()
+            self.current_cd = ''
 
     def _keep_tmp(self, current_cd):
         if not current_cd:

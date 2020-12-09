@@ -2778,7 +2778,7 @@ padding-bottom: 8px;</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="modeltrain_tab">
+      <widget class="QWidget" name="training_tab">
        <property name="font">
         <font>
          <family>新宋体</family>
@@ -3096,7 +3096,7 @@ padding-bottom: 8px;</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="arch_view_tab">
+      <widget class="QWidget" name="arch_browser_tab">
        <property name="font">
         <font>
          <family>新宋体</family>
@@ -3196,6 +3196,9 @@ padding-bottom: 8px;</string>
                </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectItems</enum>
                </property>
               </widget>
              </item>
