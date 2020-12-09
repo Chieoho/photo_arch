@@ -110,7 +110,7 @@ class ArchBrowser(object):
 
         self.ui.photo_list_widget.setViewMode(QListWidget.IconMode)
         self.ui.photo_list_widget.setIconSize(QSize(100, 100))
-        self.ui.photo_list_widget.setFixedHeight(128)
+        self.ui.photo_list_widget.setFixedHeight(132)
         self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
         self.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
 
