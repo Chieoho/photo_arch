@@ -65,10 +65,13 @@ class View(object):
             ye = gi.get('year')
             rp = gi.get('retention_period')
             gp = gi.get('group_path')
+            group_code, _, group_title = gp.split(' ')
+            group_sn = group_code.split('-')[-1]
+            group_name = f'{group_sn} {group_title}'
             if priority_key == '年度':
-                data[fc][ye][rp].append(gp)
+                data[fc][ye][rp].append(group_name)
             else:
-                data[fc][rp][ye].append(gp)
+                data[fc][rp][ye].append(group_name)
         model = QStandardItemModel()
         model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
         self.tv_browse_pre_sel_text = self._get_tv_browse_sel_text()
@@ -82,11 +85,11 @@ class View(object):
 
     def _get_tv_browse_sel_text(self):
         group_code = self.ui.group_code_in_group_arch.text()
-        taken_time = self.ui.taken_time_in_group_arch.text()
+        group_sn = group_code.split('-')[-1]
         group_title = self.ui.group_title_in_group_arch.text()
-        group_folder = ' '.join([group_code, taken_time, group_title]).strip()
-        if group_folder:
-            return group_folder
+        group_name = f'{group_sn} {group_title}'.strip()
+        if group_name:
+            return group_name
         else:
             return ''
 
@@ -138,11 +141,18 @@ class ArchBrowser(object):
         if not indexes:
             return
         self._clear_data()
-        index = indexes[0]
+        index: QModelIndex = indexes[0]
         if index.child(0, 0).data():  # 点击的不是组名则返回
             return
-        self.group_folder = index.data()
-        group_code = self.group_folder.split(' ')[0]
+        parent = index.parent()
+        p_parent = parent.parent()
+        parent_data = parent.data()
+        if parent_data.isdigit():
+            year, period = parent_data, p_parent.data()
+        else:
+            year, period = p_parent.data(), parent_data
+        group_sn = index.data().split(' ')[0]
+        group_code = f'ZP·{year}-{period}-{group_sn}'
         _, data = self.controller.get_group(group_code)
         self.view.display_group(data)
         self._list_photo_thumb()
@@ -159,8 +169,12 @@ class ArchBrowser(object):
 
     def _list_photo_thumb(self):
         self.ui.photo_list_widget.clear()
-        group_code = self.group_folder.split(' ')[0]
-        year, period, _ = group_code.split('·')[1].split('-')
+        year = self.ui.year_in_group_arch.text()
+        period = self.ui.retention_period_in_group_arch.text()
+        group_code = self.ui.group_code_in_group_arch.text()
+        taken_time = self.ui.taken_time_in_group_arch.text()
+        group_title = self.ui.group_title_in_group_arch.text()
+        self.group_folder = f'{group_code} {taken_time} {group_title}'
         path = os.path.join(
             self.setting.description_path,
             '照片档案',

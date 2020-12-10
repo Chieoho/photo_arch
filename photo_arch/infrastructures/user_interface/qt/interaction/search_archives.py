@@ -5,6 +5,7 @@
 @author: Jaden Wu
 @time: 2020/12/7 10:30
 """
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -25,3 +26,8 @@ class SearchArchives(object):
         self.setting = setting
         self.controller = Controller(Repo(make_session(engine)))
         self.view = View(mw_)
+
+        self.ui.search_btn.clicked.connect(static(self.search))
+
+    def search(self):
+        print('搜索')
