@@ -20,8 +20,8 @@ class Controller(object):
         arch = self.presenter.view_model.arch
         return res, arch
 
-    def get_group(self, group_code: str):
-        res = self.arch_browser.get_group(group_code)
+    def get_group(self, group_arch_code: str):
+        res = self.arch_browser.get_group(group_arch_code)
         group = self.presenter.view_model.group
         return res, group
 

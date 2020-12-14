@@ -152,8 +152,8 @@ class ArchBrowser(object):
         else:
             year, period = p_parent.data(), parent_data
         group_sn = index.data().split(' ')[0]
-        group_code = f'ZP·{year}-{period}-{group_sn}'
-        _, data = self.controller.get_group(group_code)
+        group_arch_code = f'{self.setting.fonds_code}-ZP·{year}-{period}-{group_sn}'
+        _, data = self.controller.get_group(group_arch_code)
         self.view.display_group(data)
         self._list_photo_thumb()
 
