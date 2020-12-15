@@ -30,18 +30,20 @@ class View(object):
         self.tv_browse_pre_sel_text = ''
         self.tv_browse_pre_sel_item = None
 
+        self.ui.photo_list_widget.setViewMode(QListWidget.IconMode)
+        self.ui.photo_list_widget.setIconSize(QSize(100, 100))
+        self.ui.photo_list_widget.setFixedHeight(132)
+        self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
+        self.ui.photo_list_widget.setMovement(QListWidget.Static)
+
+        self.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
+
     def display_group(self, group, widget_suffix='_in_group_arch'):
         for k, v in group.items():
             widget_name = k + widget_suffix
             if hasattr(self.ui, widget_name):
                 widget = getattr(self.ui, widget_name)
-                if isinstance(widget, QComboBox):
-                    if v:
-                        widget.setCurrentText(v)
-                    else:
-                        widget.setCurrentIndex(-1)
-                else:
-                    widget.setText(v)
+                widget.setText(v)
 
     def _fill_model_from_dict(self, parent, d):
         if isinstance(d, dict):
@@ -111,12 +113,6 @@ class ArchBrowser(object):
         self.pix_map = None
         self.group_folder = ''
 
-        self.ui.photo_list_widget.setViewMode(QListWidget.IconMode)
-        self.ui.photo_list_widget.setIconSize(QSize(100, 100))
-        self.ui.photo_list_widget.setFixedHeight(132)
-        self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
-        self.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
-
         self.ui.photo_list_widget.itemSelectionChanged.connect(static(self.display_photo))
         extend_slot(self.ui.photo_view_in_arch.resizeEvent, static(self.resize_image))
         extend_slot(self.ui.arch_tree_view_browse.selectionChanged, static(self.show_group))
@@ -184,7 +180,7 @@ class ArchBrowser(object):
             '*.*'
         )
         for i, fp in enumerate(glob.iglob(path)):
-            item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1].split('-')[-1])
+            item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1].split('-')[-1])  # 只显示张序号
             self.ui.photo_list_widget.addItem(item)
             if i in range(3):
                 QApplication.processEvents()  # 前n张一张接一张显示
@@ -192,7 +188,9 @@ class ArchBrowser(object):
     def display_photo(self):
         item_list = self.ui.photo_list_widget.selectedItems()
         if item_list:
-            photo_name = item_list[0].text()
+            photo_sn = item_list[0].text()
+            group_arch_code = self.ui.arch_code_in_group_arch.text()
+            photo_name = f'{group_arch_code}-{photo_sn}'
             self._display_photo_info(photo_name)
             self._display_image(photo_name)
 

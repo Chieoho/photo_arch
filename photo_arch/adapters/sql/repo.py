@@ -119,6 +119,28 @@ class Repo(RepoIf):
         )
         return group_list
 
+    def search_groups(self, title_key_list: list, year_key_list: list) -> List[dict]:
+        group_list = self.repo_general.query(
+            'photo_group',
+            cond={
+                'group_title': title_key_list,
+                'year': year_key_list
+            },
+            ret_columns=('arch_code',)
+        )
+        return group_list
+
+    def search_photos(self, title_key_list: list, people_key_list: list, year_key_list: list) -> List[dict]:
+        photo_list = self.repo_general.query(
+            'photo',
+            cond={
+                'peoples': people_key_list,
+                'year': year_key_list
+            },
+            ret_columns=('photo_path',)
+        )
+        return photo_list
+
     def get_group_sn(self, year):
         query_obj = self.session.query(PhotoGroupModel).filter(PhotoGroupModel.year == year)
         return query_obj.count() + 1

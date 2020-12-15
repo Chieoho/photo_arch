@@ -79,6 +79,24 @@ class RepoIf(metaclass=ABCMeta):
         """
 
     @abstractmethod
+    def search_groups(self, title_key_list: list, year_key_list: list) -> List[dict]:
+        """
+        :param title_key_list:
+        :param year_key_list:
+        :return:
+        """
+
+    @abstractmethod
+    def search_photos(self, title_key_list: list, people_key_list: list, year_key_list: list) -> List[dict]:
+        """
+        :param title_key_list:
+        :param people_key_list:
+        :param year_key_list:
+        :return:
+        """
+
+
+    @abstractmethod
     def add_setting(self, setting_info: dict) -> bool:
         """
         :param setting_info:

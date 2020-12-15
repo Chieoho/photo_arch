@@ -4144,7 +4144,7 @@ padding-bottom: 8px;</string>
               </widget>
              </item>
              <item row="4" column="0" colspan="2">
-              <widget class="QListWidget" name="arch_list_widget_search">
+              <widget class="QListWidget" name="group_list_widget_search">
                <property name="font">
                 <font>
                  <family>新宋体</family>
@@ -4243,6 +4243,9 @@ padding-bottom: 8px;</string>
                     <pointsize>14</pointsize>
                    </font>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::TabFocus</enum>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">padding-left: 30px; 
 padding-right: 30px;
@@ -4261,6 +4264,12 @@ padding-bottom: 8px;</string>
                     <width>24</width>
                     <height>24</height>
                    </size>
+                  </property>
+                  <property name="autoDefault">
+                   <bool>true</bool>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -4590,7 +4599,7 @@ padding-bottom: 8px;</string>
               </widget>
              </item>
              <item row="14" column="0" colspan="4">
-              <widget class="QTextEdit" name="peoples_in_photo__search">
+              <widget class="QTextEdit" name="peoples_in_photo_search">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -5076,7 +5085,7 @@ padding-bottom: 8px;</string>
               </widget>
              </item>
              <item row="12" column="0" colspan="4">
-              <widget class="QTextEdit" name="group_caption_search">
+              <widget class="QTextEdit" name="group_caption_in_group_search">
                <property name="font">
                 <font>
                  <family>新宋体</family>
@@ -6378,34 +6387,34 @@ padding-bottom: 8px;</string>
   </action>
  </widget>
  <tabstops>
-  <tabstop>order_combobox_browse</tabstop>
-  <tabstop>arch_tree_view_browse</tabstop>
-  <tabstop>photo_list_widget</tabstop>
-  <tabstop>arch_code_in_group_arch</tabstop>
-  <tabstop>fonds_code_in_group_arch</tabstop>
-  <tabstop>arch_category_code_in_group_arch</tabstop>
-  <tabstop>retention_period_in_group_arch</tabstop>
-  <tabstop>year_in_group_arch</tabstop>
-  <tabstop>department_in_group_arch</tabstop>
-  <tabstop>group_code_in_group_arch</tabstop>
-  <tabstop>author_in_group_arch</tabstop>
-  <tabstop>group_title_in_group_arch</tabstop>
-  <tabstop>folder_size_in_group_arch</tabstop>
-  <tabstop>photographer_in_group_arch</tabstop>
-  <tabstop>taken_time_in_group_arch</tabstop>
-  <tabstop>taken_locations_in_group_arch</tabstop>
-  <tabstop>photo_num_in_group_arch</tabstop>
-  <tabstop>security_classification_in_group_arch</tabstop>
-  <tabstop>reference_code_in_group_arch</tabstop>
-  <tabstop>opening_state_in_group_arch</tabstop>
-  <tabstop>arch_code_in_photo_arch</tabstop>
-  <tabstop>photo_code_in_photo_arch</tabstop>
-  <tabstop>format_in_photo_arch</tabstop>
-  <tabstop>group_caption_in_group_arch</tabstop>
-  <tabstop>peoples_in_photo_arch</tabstop>
-  <tabstop>opening_state_in_group</tabstop>
-  <tabstop>reference_code_in_group</tabstop>
-  <tabstop>security_classification_in_group</tabstop>
+  <tabstop>group_title_search</tabstop>
+  <tabstop>peoples_search</tabstop>
+  <tabstop>time_search</tabstop>
+  <tabstop>search_btn</tabstop>
+  <tabstop>group_list_widget_search</tabstop>
+  <tabstop>photo_list_widget_search</tabstop>
+  <tabstop>arch_code_in_group_search</tabstop>
+  <tabstop>fonds_code_in_group_search</tabstop>
+  <tabstop>arch_category_code_in_group_search</tabstop>
+  <tabstop>retention_period_in_group_search</tabstop>
+  <tabstop>year_in_group_search</tabstop>
+  <tabstop>department_in_group_search</tabstop>
+  <tabstop>group_code_in_group_search</tabstop>
+  <tabstop>author_in_group_search</tabstop>
+  <tabstop>group_title_in_group_search</tabstop>
+  <tabstop>folder_size_in_group_search</tabstop>
+  <tabstop>photographer_in_group_search</tabstop>
+  <tabstop>taken_time_in_group_search</tabstop>
+  <tabstop>taken_locations_in_group_search</tabstop>
+  <tabstop>photo_num_in_group_search</tabstop>
+  <tabstop>security_classification_in_group_search</tabstop>
+  <tabstop>reference_code_in_group_search</tabstop>
+  <tabstop>opening_state_in_group_search</tabstop>
+  <tabstop>arch_code_in_photo_search</tabstop>
+  <tabstop>photo_code_in_photo_search</tabstop>
+  <tabstop>format_in_photo_search</tabstop>
+  <tabstop>group_caption_in_group_search</tabstop>
+  <tabstop>peoples_in_photo_search</tabstop>
   <tabstop>photo_num_in_group</tabstop>
   <tabstop>taken_locations_in_group</tabstop>
   <tabstop>taken_time_in_group</tabstop>
@@ -6472,6 +6481,34 @@ padding-bottom: 8px;</string>
   <tabstop>select_description_dir_btn</tabstop>
   <tabstop>open_dir_btn</tabstop>
   <tabstop>tabWidget</tabstop>
+  <tabstop>arch_tree_view_browse</tabstop>
+  <tabstop>order_combobox_browse</tabstop>
+  <tabstop>arch_code_in_group_arch</tabstop>
+  <tabstop>photo_list_widget</tabstop>
+  <tabstop>photo_num_in_group_arch</tabstop>
+  <tabstop>group_title_in_group_arch</tabstop>
+  <tabstop>opening_state_in_group_arch</tabstop>
+  <tabstop>group_caption_in_group_arch</tabstop>
+  <tabstop>arch_code_in_photo_arch</tabstop>
+  <tabstop>group_code_in_group_arch</tabstop>
+  <tabstop>security_classification_in_group</tabstop>
+  <tabstop>year_in_group_arch</tabstop>
+  <tabstop>photographer_in_group_arch</tabstop>
+  <tabstop>folder_size_in_group_arch</tabstop>
+  <tabstop>reference_code_in_group_arch</tabstop>
+  <tabstop>author_in_group_arch</tabstop>
+  <tabstop>peoples_in_photo_arch</tabstop>
+  <tabstop>opening_state_in_group</tabstop>
+  <tabstop>retention_period_in_group_arch</tabstop>
+  <tabstop>security_classification_in_group_arch</tabstop>
+  <tabstop>taken_locations_in_group_arch</tabstop>
+  <tabstop>department_in_group_arch</tabstop>
+  <tabstop>photo_code_in_photo_arch</tabstop>
+  <tabstop>taken_time_in_group_arch</tabstop>
+  <tabstop>format_in_photo_arch</tabstop>
+  <tabstop>reference_code_in_group</tabstop>
+  <tabstop>fonds_code_in_group_arch</tabstop>
+  <tabstop>arch_category_code_in_group_arch</tabstop>
  </tabstops>
  <resources/>
  <connections/>
