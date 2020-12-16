@@ -130,7 +130,8 @@ class ArchSearcher(object):
         year_key_list = year_keys.split(' ')
         if people_keys:
             people_key_list = people_keys.split(' ')
-            res, photo_info_list = self.controller.search_photos(title_key_list, people_key_list, year_key_list)
+            res, photo_info_list = self.controller.search_photos(title_key_list, people_key_list,
+                                                                 year_key_list)
             self.view.display_photo_list(photo_info_list)
 
         else:
@@ -146,6 +147,7 @@ class ArchSearcher(object):
             self._list_photo_thumb()
         else:
             self.view.clear_group_info()
+            self.view.clear_photo_info()
 
     def _list_photo_thumb(self):
         year, period, group_code, taken_time, group_title = self.view.get_path_info()

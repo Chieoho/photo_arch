@@ -7,7 +7,7 @@
 """
 from typing import List, Dict, Tuple
 from functools import partial
-from sqlalchemy import Column, Integer, String, and_, or_
+from sqlalchemy import Column, Integer, String, and_, or_, UnicodeText
 from photo_arch.domains.photo_group import PhotoGroup, Photo
 from photo_arch.adapters.sql import Base
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
@@ -68,6 +68,8 @@ class FaceModel(Base):
     recog_state = Column(Integer)
     verify_state = Column(Integer)
     parent_path = Column(String(2048))
+    embeddings = Column(UnicodeText)
+    trained_state = Column(Integer)
 
 
 class SettingModel(Base):
@@ -77,6 +79,16 @@ class SettingModel(Base):
     fonds_code = Column(String(64))
     description_path = Column(String(2048))
     package_path = Column(String(2048))
+
+
+class SearchFacesModel(Base):
+    __tablename__ = 'searchfaces'
+    searchfaces_id = Column(Integer, primary_key=True)
+    photo_path = Column(String(2048))
+    face_box = Column(String(64))
+    embedding = Column(UnicodeText)
+    parent_path = Column(String(2048))
+
 
 
 class Repo(RepoIf):
@@ -130,12 +142,21 @@ class Repo(RepoIf):
         )
         return group_list
 
-    def search_photos(self, title_key_list: list, people_key_list: list, year_key_list: list) -> List[dict]:
+    def search_photos(self, title_key_list: list, people_key_list: list,
+                      year_key_list: list) -> List[dict]:
+        group_list = self.repo_general.query(
+            'photo_group',
+            cond={
+                'group_title': title_key_list,
+                'year': year_key_list
+            },
+            ret_columns=('group_code',)
+        )
         photo_list = self.repo_general.query(
             'photo',
             cond={
                 'peoples': people_key_list,
-                'year': year_key_list
+                'group_code': [gi['group_code'] for gi in group_list]
             },
             ret_columns=('photo_path',)
         )
@@ -181,7 +202,8 @@ table_model_dict = {
     'photo_group': PhotoGroupModel,
     'photo': PhotoModel,
     'face': FaceModel,
-    'setting': SettingModel
+    'setting': SettingModel,
+    'searchfaces': SearchFacesModel
 }
 
 
@@ -232,7 +254,7 @@ class RepoGeneral(RepoGeneralIf):
     def query(self, table: str, cond: Dict[str, list],
               ret_columns: Tuple = ()) -> List[dict]:
         model = table_model_dict.get(table)
-        if model:
+        if model and all(cond.values()):
             row2dict = partial(self._row2dict, col_names=ret_columns)
             query_obj = self._query(model, cond)
             results = list(map(row2dict, query_obj))
