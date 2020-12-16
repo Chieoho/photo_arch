@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>4</number>
       </property>
       <property name="iconSize">
        <size>
@@ -3093,6 +3093,313 @@ padding-bottom: 8px;</string>
            </size>
           </property>
          </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="search_face_tab">
+       <attribute name="icon">
+        <iconset>
+         <normaloff>../icon/search_face.png</normaloff>../icon/search_face.png</iconset>
+       </attribute>
+       <attribute name="title">
+        <string>人脸搜索</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_26">
+        <item row="5" column="0" colspan="3">
+         <widget class="QPushButton" name="searchface_start">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>300</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding-left: 30px; 
+padding-right: 30px;
+padding-top: 8px; 
+padding-bottom: 8px;</string>
+          </property>
+          <property name="text">
+           <string>开始检索</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../icon/search_face.png</normaloff>../icon/search_face.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2" colspan="4">
+         <widget class="QLineEdit" name="searchface_retieve_dir_line">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="3">
+         <widget class="QPushButton" name="searchface_retrieve_result_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>300</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding-left: 30px; 
+padding-right: 30px;
+padding-top: 8px; 
+padding-bottom: 8px;</string>
+          </property>
+          <property name="text">
+           <string>查看检索结果</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../icon/search_face.png</normaloff>../icon/search_face.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" rowspan="2" colspan="4">
+         <widget class="QGraphicsView" name="searchface_src_graphicsView"/>
+        </item>
+        <item row="7" column="0" colspan="2">
+         <widget class="QLabel" name="label_95">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>检索结果：</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="4">
+         <widget class="QLabel" name="searchface_dst_show_view">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>展示检索出的照片</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="searchface_select_photo_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding-left: 30px; 
+padding-right: 30px;
+padding-top: 8px; 
+padding-bottom: 8px;</string>
+          </property>
+          <property name="text">
+           <string>打开</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>C:/Users/lizd/.designer/icon/open.png</normaloff>C:/Users/lizd/.designer/icon/open.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="6">
+         <widget class="QPushButton" name="searchface_select_retrieve_dir_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">padding-left: 30px; 
+padding-right: 30px;
+padding-top: 8px; 
+padding-bottom: 8px;</string>
+          </property>
+          <property name="text">
+           <string>选择</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>C:/Users/lizd/.designer/icon/open.png</normaloff>C:/Users/lizd/.designer/icon/open.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLabel" name="label_94">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>请选择待检索的目录：</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLabel" name="searchface_src_view">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>待检索人物的照片</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="label_96">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>请指定待检索人物的照片：</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="7">
+         <spacer name="horizontalSpacer_25">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="3" colspan="5">
+         <spacer name="horizontalSpacer_24">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>781</width>
+            <height>39</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="4" colspan="4">
+         <widget class="QGraphicsView" name="searchface_dst_show_graphicsView"/>
+        </item>
+        <item row="9" column="0" colspan="8">
+         <widget class="QListWidget" name="searchface_list_widget">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
