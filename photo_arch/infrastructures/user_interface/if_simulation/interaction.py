@@ -17,7 +17,7 @@ unhandled_photo_num = 100
 class Interaction(UiInterface):
     def __init__(self):
         self.arch_code_info = {}
-        time.sleep(10)
+        time.sleep(1)
 
     def start(self, params) -> dict:
         print('start')
@@ -131,3 +131,19 @@ class Interaction(UiInterface):
 
     def get_untrained_photo_num(self) -> int:
         return 10
+
+    def start_retrieve(self):
+        pass
+
+    def get_retrieve_result(self, file_path, dir_path) -> list:
+        retrive_results_photo_path = []
+        retrive_results_face_box = []
+
+        retrive_results_photo_path.append(os.path.abspath('D:/公司历年团建活动\待检索目录/10.jpg'))
+        retrive_results_face_box.append([419.0, 169.0, 686.0, 528.0])
+
+        retrive_results_photo_path.append(os.path.abspath('D:/公司历年团建活动\待检索目录/11.jpg'))
+        retrive_results_face_box.append([410.0, 93.0, 478.0, 182.0])
+
+        return retrive_results_photo_path, retrive_results_face_box
+

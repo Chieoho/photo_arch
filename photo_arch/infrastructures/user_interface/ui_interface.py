@@ -98,3 +98,20 @@ class UiInterface(metaclass=ABCMeta):
         获取未训练图片数量
         :return:
         """
+
+    @abstractmethod
+    def start_retrieve(self) -> int:
+        """
+        开始检索人物
+        :return:
+        """
+
+    @abstractmethod
+    def get_retrieve_result(self, file_path, dir_path) -> list:
+        """
+         获取检索结果
+         :return:
+         """
+
+
+

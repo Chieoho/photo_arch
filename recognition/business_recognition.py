@@ -20,6 +20,8 @@ from keras.models import load_model
 from mtcnn import MTCNN
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
+from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.model_selection import cross_val_score
 from multiprocessing import Process, Event, Queue, Manager
 
 from recognition.utils import *
@@ -36,7 +38,7 @@ class RecognizeProcess(Process):
     margin = 32
 
     faceProp = 0.9
-    euclideanDist = 0.75
+    euclideanDist = 0.79
     canvasW = 2000
     canvasH = 2000
 
@@ -68,14 +70,14 @@ class RecognizeProcess(Process):
     def run(self):
         if self.graph == None:
             self.graph = tf.get_default_graph()
-            print('######:graph')
+            print('######:识别 graph')
         with self.graph.as_default():
             if self.mtcnn_detector == None:
                 self.mtcnn_detector = MTCNN()
-                print('######:mtcnn_detector')
+                print('######:识别 mtcnn_detector')
             if self.facenet_model == None:
                 self.facenet_model = load_model('model/facenet_keras.h5')
-                print('######:load model')
+                print('######:识别 load model')
 
         engine.dispose()
         sql_repo = RepoGeneral(make_session(engine))
@@ -147,6 +149,7 @@ class RecognizeProcess(Process):
                 # cf_arr = rank_confidence(src_det_x1, det_arr, cf)
 
                 faces = []
+                embeddings = []
                 peoples = ''
                 curFaceRecNum = 0  # 当前图片里面的人脸数
                 faceRecNum = 0
@@ -177,6 +180,10 @@ class RecognizeProcess(Process):
                         # 'embedding':str(list(unknown_embedding))
                     })  # box和embedding如果不转换成str,json.dumps就会报错(目前没有找到解决方法)
 
+                    embeddings.append({
+                        str(j): str(list(unknown_embedding))
+                    })
+
                     if j < len(det_arr)-1 :
                         if who_name != '':
                             peoples += '{},'.format(who_name)
@@ -190,9 +197,11 @@ class RecognizeProcess(Process):
                     face_recog_state = 0  # 部分识别
 
                 jsonFaces = json.dumps(faces, ensure_ascii=False)
+                jsonEmbeddings = json.dumps(embeddings, ensure_ascii=False)
             else:
                 face_recog_state = 2  # 没有检测出脸
                 jsonFaces = ''
+                jsonEmbeddings = ''
                 peoples = ''
 
             # cv2.imwrite("img_{}.jpg".format(time.time()), cv2.cvtColor(test_img, cv2.COLOR_RGB2BGR))
@@ -201,31 +210,28 @@ class RecognizeProcess(Process):
 
             # 更新数据库photo_path为imgPath的记录
             sql_repo.update('face', {"photo_path": [imgPath]},
-                                new_info={'faces': jsonFaces, 'recog_state': face_recog_state,
-                                     'parent_path': os.path.abspath(imgPath + os.path.sep + "..")})
+                            new_info={'faces': jsonFaces, 'recog_state': face_recog_state, 'parent_path': os.path.abspath(imgPath + os.path.sep + ".."),
+                                      'embeddings': jsonEmbeddings })
             sql_repo.update('photo', {"photo_path": [imgPath]}, new_info={'peoples': peoples})
 
 
 class VerifyProcess(Process):
-    graph = None
-    mtcnn_detector = None
-    facenet_model = None
-    margin = 32
+    # graph = None
+    # mtcnn_detector = None
+    # facenet_model = None
+    # margin = 32
     img_path = ''
     faces_list = []
     table_widget = []
-    canvasW = 0
-    canvasH = 0
+    # canvasW = 0
+    # canvasH = 0
 
 
-    def __init__(self):
+    def __init__(self, verify_queue):
         super(VerifyProcess, self).__init__()
         self.event = Event()
         self.event.set()  # 设置为True
-
-
-    def updataData(self, verify_queue):
-        self.verify_queue =verify_queue
+        self.verify_queue = verify_queue
 
 
     def pause(self):
@@ -244,13 +250,13 @@ class VerifyProcess(Process):
 
 
     def run(self):
-        if self.graph == None:
-            self.graph = tf.get_default_graph()
-            print('###### VerifyProcess:graph')
-        with self.graph.as_default():
-            if self.facenet_model == None:
-                self.facenet_model = load_model('model/facenet_keras.h5')
-                print('###### VerifyProcess:load model')
+        # if self.graph == None:
+        #     self.graph = tf.get_default_graph()
+        #     print('###### VerifyProcess:graph')
+        # with self.graph.as_default():
+        #     if self.facenet_model == None:
+        #         self.facenet_model = load_model('model/facenet_keras.h5')
+        #         print('###### VerifyProcess:load model')
 
         engine.dispose()
         sql_repo = RepoGeneral(make_session(engine))
@@ -269,12 +275,12 @@ class VerifyProcess(Process):
             # self.archivalNum = checkedInfoDict['arch_num']
             # self.subject = checkedInfoDict['theme']
             self.table_widget = checkedInfoDict['table_widget']
-            self.canvasW = checkedInfoDict['label_size'][0]
-            self.canvasH = checkedInfoDict['label_size'][1]
+            # self.canvasW = checkedInfoDict['label_size'][0]
+            # self.canvasH = checkedInfoDict['label_size'][1]
 
 
-            faces_name = []
-            faces_embedding = []
+            # faces_name = []
+            # faces_embedding = []
 
             new_faces = []
             peoples = ''
@@ -283,11 +289,11 @@ class VerifyProcess(Process):
 
             orig_faces_id = list(range(len(self.faces_list)))
 
-            scale = calculate_img_scaling(self.img_path, self.canvasH, self.canvasW)
-            img = cv2.cvtColor(cv2.imdecode(np.fromfile(self.img_path, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
-            (h, w) = img.shape[:2]
-            test_img = cv2.resize(img, (int(w*scale), int(h*scale)))
-            (h, w) = test_img.shape[:2]
+            # scale = calculate_img_scaling(self.img_path, self.canvasH, self.canvasW)
+            # img = cv2.cvtColor(cv2.imdecode(np.fromfile(self.img_path, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+            # (h, w) = img.shape[:2]
+            # test_img = cv2.resize(img, (int(w*scale), int(h*scale)))
+            # (h, w) = test_img.shape[:2]
 
             for item in self.table_widget:
                 if item['id'] == '':
@@ -295,6 +301,7 @@ class VerifyProcess(Process):
                 new_faces_id.append(int(item['id']))
                 new_faces_name.append(item['name'])
 
+            # embeddings_dict = sql_repo.query('face', {"photo_path": [self.img_path]}, ('embeddings'))
 
             for id in orig_faces_id:
                 if id in new_faces_id: # 没有删除
@@ -316,37 +323,168 @@ class VerifyProcess(Process):
                 else:
                     peoples += '{}'.format(name)
 
-                if name != '':
-                    (startX, startY, endX, endY) = eval(self.faces_list[id]['box'])
-                    (startX, startY, endX, endY) = startX*scale, startY*scale, endX*scale, endY*scale
+                # if name != '':
+                    # (startX, startY, endX, endY) = eval(self.faces_list[id]['box'])
+                    # (startX, startY, endX, endY) = startX*scale, startY*scale, endX*scale, endY*scale
+                    # bb = np.zeros(4, dtype=np.int32)
+                    # bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
+                    # bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
+                    # bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
+                    # bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
+
+                    # squareRect = rect2square(np.array([[bb[0], bb[1], bb[2], bb[3]]]))
+                    # marginValue = int((bb[0] - squareRect[0][0])/2)
+                    # print('#### verify_margin:', marginValue)
+                    # face_landmark = (np.asarray(eval(self.faces_list[id]['landmark']))*scale).tolist()
+                    # scaled = alignFace2WithVerify(test_img, marginValue, face_landmark)
+                    # cv2.imwrite("verify_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
+
+                    # cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
+                    # scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
+                    # with self.graph.as_default():
+                    #     embedding = get_embedding(self.facenet_model, scaled)
+
+                    # embedding = embeddings_dict[0][id]
+
+                    # faces_embedding.append(embedding)
+                    # faces_name.append(name)
+                # else:
+                #     print('核验---id:{},name:{}'.format(id, name))
+
+            # saveData('data/data.npz', faces_name, faces_embedding)
+            jsonFaces = json.dumps(new_faces, ensure_ascii=False)
+            verifyState = 1
+            sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})
+            sql_repo.update('photo', {"photo_path": [self.img_path]}, new_info={'peoples': peoples})
+
+
+class SearchImagesProcess(Process):
+    graph = None
+    mtcnn_detector = None
+    facenet_model = None
+    margin = 32
+    canvasH = 0
+    canvasW = 0
+
+    search_src_img_path = ''
+    src_embedding = None
+
+
+    def __init__(self, search_queue):
+        super(SearchImagesProcess, self).__init__()
+        self.event = Event()
+        self.event.set()  # 设置为True
+        self.search_queue = search_queue
+
+
+    def pause(self):
+        if self.is_alive():
+            print("检索子进程休眠")
+            self.event.clear()  # 设置为False, 让进程阻塞
+        else:
+            print("检索子进程结束")
+
+    def resume(self):
+        if self.is_alive():
+            self.event.set()  # 设置为True, 进程唤醒
+            print("检索子进程唤醒")
+        else:
+            print("检索子进程结束")
+
+    def run(self):
+        if self.graph == None:
+            self.graph = tf.get_default_graph()
+            print('######:检索 graph')
+
+        with self.graph.as_default():
+            if self.mtcnn_detector == None:
+                self.mtcnn_detector = MTCNN()
+                print('######:检索 mtcnn_detector')
+            if self.facenet_model == None:
+                self.facenet_model = load_model('model/facenet_keras.h5')
+                print('######:检索 load model')
+
+        engine.dispose()
+        sql_repo = RepoGeneral(make_session(engine))
+
+        while 1:
+            if self.search_queue.empty() == True:
+                print('#### 检索:队列空,子进程暂停')
+                self.pause()
+            self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
+
+            imgPath = self.search_queue.get()
+            print('#####: imgPath=%s' % imgPath)
+
+            det = []
+            rectangles = []
+
+            scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
+            img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+            (h, w) = img.shape[:2]
+            test_img = cv2.resize(img, (int(w * scale), int(h * scale)))
+            (h, w) = test_img.shape[:2]
+            with self.graph.as_default():
+                detect_faces = self.mtcnn_detector.detect_faces(test_img)
+
+            for face in detect_faces:
+                confidence = face['confidence']
+                if confidence > 0.9:
+                    box = face['box']
+                    (startX, startY, endX, endY) = box[0], box[1], box[0] + box[2], box[1] + box[3]
+                    tmp_box = [startX, startY, endX, endY]
+
+                    # 将超出图像边框的检测框过滤掉
+                    if endX > w or endY > h:
+                        print('检测框超出了图像边框的.')
+                        continue
+
+                    # print('MTCNN置信度:%f.' % confidence)
+                    det.append(tmp_box)
+                    # cf.append(confidence)
+                    rectangle = tmp_box + [face['confidence']] + list(face['keypoints']['left_eye']) + list(
+                        face['keypoints']['right_eye']) + list(face['keypoints']['nose']) + list(
+                        face['keypoints']['mouth_left']) + list(face['keypoints']['mouth_right'])
+                    # crop_img = test_img[int(rectangle[1]):int(rectangle[3]), int(rectangle[0]):int(rectangle[2])]
+                    rectangles.append(rectangle)
+
+            rectangles_array = np.array(rectangles)
+            rectangles_array[:, 0] = np.maximum(rectangles_array[:, 0] - self.margin / 2, 0)  # x1
+            rectangles_array[:, 1] = np.maximum(rectangles_array[:, 1] - self.margin / 2, 0)  # y1
+            rectangles_array[:, 2] = np.minimum(rectangles_array[:, 2] + self.margin / 2, w)  # x2
+            rectangles_array[:, 3] = np.minimum(rectangles_array[:, 3] + self.margin / 2, h)  # y2
+            rectanglesExd = rectangles_array.tolist()
+            squareRect = rect2square(np.array(rectanglesExd))  # 将长方形调整为正方形
+            face_nums = len(det)
+            src_dir = os.path.abspath(os.path.join(imgPath, ".."))
+            if face_nums > 0:
+                searchfacesDatas = []
+                for j, box in enumerate(np.asarray(det)):
+                    searchface = {}
+                    (startX, startY, endX, endY) = box.astype("int")
                     bb = np.zeros(4, dtype=np.int32)
                     bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
                     bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
                     bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
                     bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
-
-                    squareRect = rect2square(np.array([[bb[0], bb[1], bb[2], bb[3]]]))
-                    marginValue = int((bb[0] - squareRect[0][0])/2)
-                    print('#### verify_margin:', marginValue)
-                    face_landmark = (np.asarray(eval(self.faces_list[id]['landmark']))*scale).tolist()
-                    scaled = alignFace2WithVerify(test_img, marginValue, face_landmark)
-                    cv2.imwrite("verify_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
-
                     # cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
                     # scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
+                    # scaled = alignFace(test_img, rectangles, squareRect, box)
+                    scaled, face_landmarks = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
+                    # cv2.imwrite("reco_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
+                    # cv2.rectangle(test_img, (startX, startY), (endX, endY), (0,255,0), 2)
                     with self.graph.as_default():
                         embedding = get_embedding(self.facenet_model, scaled)
 
-                    faces_embedding.append(embedding)
-                    faces_name.append(name)
-                else:
-                    print('核验---id:{},name:{}'.format(id, name))
+                    searchface['photo_path'] = imgPath
+                    searchface['face_box'] = str([startX / scale, startY / scale, endX / scale, endY / scale])
+                    searchface['embedding'] = str(list(embedding))
+                    searchface['parent_path'] = src_dir
+                    searchfacesDatas.append(searchface)
 
-            saveData('data/data.npz', faces_name, faces_embedding)
-            jsonFaces = json.dumps(new_faces, ensure_ascii=False)
-            verifyState = 1
-            sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})
-            sql_repo.update('photo', {"photo_path": [self.img_path]}, new_info={'peoples': peoples})
+                sql_repo.add('searchfaces', searchfacesDatas)
+
+
 
 
 class Recognition(object):
@@ -357,6 +495,7 @@ class Recognition(object):
         self.data_queue = Queue() # 点击“添加”按钮的时候,用来写入图片路径
         self.param_queue = Queue()
         self.verify_queue = Queue()  # 用来填充核验信息
+        self.search_queue = Queue()  # 用来填充以图搜图的图片路径
         self.done_queue = Manager().Queue() # 返回识别结果信息
         self.jobs_proc = []   # 将进程对象放进list
         self.pendingTotalImgsNum = 0 #待处理的图片总数量
@@ -385,10 +524,15 @@ class Recognition(object):
 
 
         # 开启核验子进程
-        self.verifyProc = VerifyProcess()
+        self.verifyProc = VerifyProcess(self.verify_queue)
         self.verifyProc.daemon = True
-        self.verifyProc.updataData(self.verify_queue)
         self.verifyProc.start()
+
+
+        # 开启以图搜图子进程
+        self.searchImagesProc = SearchImagesProcess(self.search_queue)
+        self.searchImagesProc.daemon = True
+        self.searchImagesProc.start()
 
 
     def initRecognitionInfo(self):
@@ -500,6 +644,7 @@ class Recognition(object):
                 faceInfo['photo_archival_code'] = arch_code
                 faceInfo['recog_state'] = 0
                 faceInfo['verify_state'] = 0
+                faceInfo['trained_state'] = 0
                 faceInfo['parent_path'] = parentPath
                 faceDbData.append(faceInfo)
                 # 图片路径写入队列
@@ -618,9 +763,11 @@ class Recognition(object):
 
         return  arch_num_info
 
-
+    # 如果估计器是一个分类器，并且y是二进制或多类，则使用StratifiedKFold，如果是其他情况，就用KFold,
+    # 即cv=StratifiedKFold(n_splits=5)其实就等价于cv=5
     def trainModel(self):
         acc = -1.0
+        max_acc = 0.9
         if os.path.exists('data/data.npz'):
             data = np.load('data/data.npz', allow_pickle=True)
             faces_name, faces_embedding = data['faces_name'], data['faces_embedding']
@@ -631,29 +778,70 @@ class Recognition(object):
             trainy = label_encoder.fit_transform(trainy)
 
             model = SVC(kernel='linear', probability=True)
-            try:
-                model.fit(trainX, trainy)
-            except Exception as e:
-                print(str(e))
-                acc = -2.0 # The number of classes has to be greater than one; got 1 class
-                return {"model_acc": acc}
+            # try:
+            #     model.fit(trainX, trainy)
+            # except Exception as e:
+            #     print(str(e))
+            #     acc = -2.0 # The number of classes has to be greater than one; got 1 class
+            #     return {"model_acc": acc}
 
-            os.makedirs('data/model/', exist_ok=True)
-            joblib.dump(model, 'data/model/custom_faceRecognize.h5')
-            shutil.copy('data/data.npz', 'data/model/last_data.npz') # 当前模型训练时, 使用的数据
+            # os.makedirs('data/model/', exist_ok=True)
+            # joblib.dump(model, 'data/model/custom_faceRecognize.h5')
+            # shutil.copy('data/data.npz', 'data/model/last_data.npz') # 当前模型训练时, 使用的数据
 
             # if os.path.exists('data/last_no_train_data.npz'):
             #     os.remove('data/last_no_train_data.npz')
 
-            yhat_train = model.predict(trainX)
-            acc = accuracy_score(trainy, yhat_train)
-            print('Accuracy: train=%0.3f' % (acc*100))
-            # label_encoder.inverse_transform(yhat_train)
+            # yhat_train = model.predict(trainX)
+            # acc = accuracy_score(trainy, yhat_train)
+            # print('Accuracy: train=%0.3f' % (acc*100))
+
+            strKFold = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
+            scores = cross_val_score(model, trainX, trainy, cv=strKFold)
+            acc_mean = scores.mean()
+            print('cross_val_score scores:', scores)
+            print('CV mean accuracy: train=%0.3f' % (acc_mean * 100))
+            if acc_mean > max_acc:
+                try:
+                    model.fit(trainX, trainy)
+                except Exception as e:
+                    print(str(e))
+                    acc = -2.0 # The number of classes has to be greater than one; got 1 class
+                    return {"model_acc": acc}
+
+                os.makedirs('data/model/', exist_ok=True)
+                joblib.dump(model, 'data/model/custom_faceRecognize.h5')
+                shutil.copy('data/data.npz', 'data/model/last_data.npz')  # 当前模型训练时, 使用的数据
+
+                yhat_train = model.predict(trainX)
+                acc = accuracy_score(trainy, yhat_train)
+                print('Accuracy: train=%0.3f' % (acc*100))
 
         return {"model_acc": acc}
 
+
     def get_untrained_pic_num(self):
         length = 0
+
+        faces_name = []
+        faces_embedding = []
+
+        embeddings_dict = self.sql_repo.query('face', {"verify_state": [1], 'trained_state': [0]}, ('faces', 'embeddings'))
+        for ele_dict in embeddings_dict:
+            faces = eval(ele_dict['faces'])
+            embeddings = eval(ele_dict['embeddings'])
+            for face in faces:
+                id = face['id']
+                name = face['name']
+                embedding = np.asarray(eval(embeddings[id][str(id)]))
+                faces_embedding.append(embedding)
+                faces_name.append(name)
+
+        if len(embeddings_dict) != 0:
+            self.sql_repo.update('face', {"verify_state": [1], 'trained_state': [0]}, new_info={'trained_state': 1})
+        if len(faces_name) != 0 :
+            saveData('data/data.npz', faces_name, faces_embedding)
+
         if os.path.exists('data/model/last_data.npz'):
             last_data = np.load('data/model/last_data.npz', allow_pickle=True)
             len_last_data = len(last_data['faces_name'])
@@ -668,6 +856,66 @@ class Recognition(object):
                 length = len(data['faces_name'])
 
         return length
+
+
+    def start_retrieve(self, file_path, dir_path):
+        ret = 0
+        # 判断该dir_path路径是否已经检索过了
+        parent_path_list = self.sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('parent_path'))
+        if len(parent_path_list) > 0:
+            ret = -2
+            return ret
+
+        # 判断该dir_path路径是否有照片
+        img_list = glob.glob(os.path.abspath(os.path.join(dir_path, '*.*[jpg,png]')))
+        if len(img_list) == 0:
+            ret = -1
+            return ret
+
+        if self.search_queue.empty() == True:
+            self.searchImagesProc.resume()
+
+            self.search_queue.put(os.path.abspath(file_path))
+            for imgPath in img_list:
+                self.search_queue.put(imgPath)
+
+
+    def get_retrieve_result(self, file_path, dir_path) -> list:
+
+        photo_path = []
+        retrive_des_box = []
+        retrive_des_embedding = []
+
+        retrive_results_photo_path = []
+        retrive_results_face_box = []
+
+        src_embedding_list = self.sql_repo.query('searchfaces', {"photo_path": [os.path.abspath(file_path)]}, ('embedding'))
+        retrive_src_embedding = eval(src_embedding_list[0]['embedding'])
+
+        des_embedding_list = self.sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('photo_path', 'face_box', 'embedding'))
+        for ele_dict in des_embedding_list:
+            photo_path.append(ele_dict['photo_path'])
+            retrive_des_box.append(eval(ele_dict['face_box']))
+            retrive_des_embedding.append((eval(ele_dict['embedding'])))
+
+        dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(retrive_src_embedding), axis=1)
+        dist = list(dist)
+        sortDist = sorted(dist)
+        des_dist = [x for x in sortDist if x <= 0.8]
+        for x in des_dist:
+            index = dist.index(x)
+            retrive_results_photo_path.append(photo_path[index])
+            retrive_results_face_box.append(retrive_des_box[index])
+
+        return retrive_results_photo_path, retrive_results_face_box
+
+
+
+
+
+
+
+
 
 
 
