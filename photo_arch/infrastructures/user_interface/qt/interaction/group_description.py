@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file: group_description.py
-@desc:
+@desc: 人脸识别
 @author: Jaden Wu
 @time: 2020/11/23 8:55
 """

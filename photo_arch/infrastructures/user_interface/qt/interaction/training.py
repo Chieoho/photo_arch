@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file: training.py
-@desc:
+@desc: 模型训练
 @author: Jaden Wu
 @time: 2020/11/22 15:17
 """

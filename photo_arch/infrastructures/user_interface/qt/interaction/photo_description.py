@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file: photo_description.py
-@desc:
+@desc: 张著录
 @author: Jaden Wu
 @time: 2020/11/23 9:24
 """

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file: special.py
-@desc:
+@desc: 其他特殊功能
 @author: Jaden Wu
 @time: 2020/11/25 9:46
 """

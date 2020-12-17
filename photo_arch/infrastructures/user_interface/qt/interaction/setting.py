@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file: setting.py
-@desc:
+@desc: 系统设置
 @author: Jaden Wu
 @time: 2020/11/23 9:58
 """

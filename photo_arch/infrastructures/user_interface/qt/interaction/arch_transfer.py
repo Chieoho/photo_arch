@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file: arch_transfer.py
-@desc:
+@desc: 档案移交
 @author: Jaden Wu
 @time: 2020/11/22 21:36
 """

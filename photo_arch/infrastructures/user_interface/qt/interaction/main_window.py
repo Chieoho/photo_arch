@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file: main_window.py
-@desc:
+@desc: 主窗体
 @author: Jaden Wu
 @time: 2020/8/20 11:14
 """

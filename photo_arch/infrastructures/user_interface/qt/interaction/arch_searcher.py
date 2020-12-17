@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-@file: arch_searcher
-@desc:
+@file: arch_searcher.py
+@desc: 档案搜索
 @author: Jaden Wu
 @time: 2020/12/7 10:30
 """

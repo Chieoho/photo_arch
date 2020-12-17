@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-@file: self.py
-@desc:
+@file: recognition.py
+@desc: 人脸识别
 @author: Jaden Wu
 @time: 2020/11/23 8:55
 """
