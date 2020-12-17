@@ -29,8 +29,11 @@ def make_session(engine_):
     Base.metadata.create_all(engine_)
     session_factory = sessionmaker(bind=engine_)
     session_obj = scoped_session(session_factory)
-    session = session_obj()
-    return session
+    session_ = session_obj()
+    return session_
+
+
+session = make_session(engine)
 
 
 class UpdateProcess(Process):

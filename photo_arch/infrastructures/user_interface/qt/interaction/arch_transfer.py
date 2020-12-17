@@ -20,7 +20,7 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
-from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.infrastructures.databases.db_setting import session
 from photo_arch.adapters.controller.arch_transfer import Controller, Repo
 
 
@@ -134,7 +134,7 @@ class ArchTransfer(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.controller = Controller(Repo(make_session(engine)))
+        self.controller = Controller(Repo(session))
         self.view = View(mw_)
 
         self.disk_icon_path = './icon/arch_cd.png'

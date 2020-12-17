@@ -169,7 +169,7 @@ class PhotoDescription(object):
         self.ui.tableWidget.removeRow(row)
         for r in range(row, self.ui.tableWidget.rowCount() - 1):
             self.ui.tableWidget.cellWidget(r, 2).clicked.disconnect()
-            self._connect(self.ui.tableWidget.cellWidget(r, 2), r)
+            self._connect(self.ui.tableWidget.cellWidget(r, 2).clicked, r)
         self.ui.verifycheckBox.setCheckState(QtGui.Qt.Unchecked)
         self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = QtGui.Qt.Unchecked
         self.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.CurrentChanged)
@@ -184,8 +184,8 @@ class PhotoDescription(object):
         names = ','.join([n[1] for n in name_list if n[1].strip()])
         self.ui.peoples_in_photo.setText(names)
 
-    def _connect(self, button, row):
-        button.clicked.connect(lambda: self.delete(row))
+    def _connect(self, signal, row):
+        signal.connect(lambda: self.delete(row))
 
     def _display_recognizable(self):
         if not self.mw.photo_list:
@@ -241,7 +241,7 @@ class PhotoDescription(object):
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.ui.tableWidget.setItem(row, col, item)
             del_button = self._create_button('删除', self.del_icon_path)
-            self._connect(del_button, row)
+            self._connect(del_button.clicked, row)
             self.ui.tableWidget.setCellWidget(row, 2, del_button)
         self.ui.tableWidget.insertRow(row+1)
         for col in range(2):

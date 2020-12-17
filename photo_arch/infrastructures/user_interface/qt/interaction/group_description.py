@@ -20,7 +20,7 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
     MainWindow, Ui_MainWindow, RecognizeState)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
-from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.infrastructures.databases.db_setting import session
 from photo_arch.adapters.controller.group_description import Controller, Repo
 
 
@@ -60,7 +60,7 @@ class GroupDescription(object):
         self.mw = mw_
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.controller = Controller(Repo(make_session(engine)))
+        self.controller = Controller(Repo(session))
         self.view = View(mw_)
 
         self.current_work_path = ''

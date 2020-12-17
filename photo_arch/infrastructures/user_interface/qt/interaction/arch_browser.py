@@ -17,7 +17,7 @@ from photo_arch.infrastructures.user_interface.qt.interaction.main_window import
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
-from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.infrastructures.databases.db_setting import session
 from photo_arch.adapters.controller.arch_browser import Controller, Repo
 
 
@@ -104,7 +104,7 @@ class ArchBrowser(object):
     def __init__(self, mw_: MainWindow, setting: Setting):
         self.ui: Ui_MainWindow = mw_.ui
         self.setting = setting
-        self.controller = Controller(Repo(make_session(engine)))
+        self.controller = Controller(Repo(session))
         self.view = View(mw_)
 
         self.pix_map = None
@@ -199,13 +199,15 @@ class ArchBrowser(object):
     def _display_image(self, photo_name):
         group_code = self.group_folder.split(' ')[0]
         year, period, _ = group_code.split('·')[1].split('-')
-        path = os.path.join(
+        group_folder_path = os.path.join(
             self.setting.description_path,
             '照片档案',
             year, period,
-            self.group_folder,
-            photo_name
+            self.group_folder
         )
+        path = os.path.join(group_folder_path, photo_name)
+        if not os.path.exists(path):
+            path = os.path.join(group_folder_path, photo_name.split('-')[-1])
         self.pix_map = QtGui.QPixmap(path)
         pix_map = self.pix_map.scaled(
             self.ui.photo_view_in_arch.size(),
