@@ -11,7 +11,7 @@ import glob
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from photo_arch.use_cases.interfaces.dataset import GroupOutputData, PhotoOutputData
-from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
+from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, extend_slot
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
@@ -100,8 +100,7 @@ class View(object):
                 widget.clear()
         self.ui.photo_view_search.clear()
 
-    def display_image(self, path):
-        pix_map = QtGui.QPixmap(path)
+    def display_image(self, pix_map):
         scaled_pix_map = pix_map.scaled(
             self.ui.photo_view_search.size(),
             QtGui.Qt.KeepAspectRatio,
@@ -118,9 +117,12 @@ class ArchSearcher(object):
         self.controller = Controller(Repo(session))
         self.view = View(mw_)
 
+        self.pix_map = None
+
         self.ui.search_btn.clicked.connect(static(self.search))
         self.ui.group_list_widget_search.itemSelectionChanged.connect(static(self.display_group_info))
         self.ui.photo_list_widget_search.itemSelectionChanged.connect(static(self.display_photo))
+        extend_slot(self.ui.photo_view_search.resizeEvent, static(self.resize_image))
 
     def search(self):
         title_keys, people_keys, year_keys = self.view.get_search_keys()
@@ -198,4 +200,18 @@ class ArchSearcher(object):
         path = os.path.join(group_folder_path, photo_name)
         if not os.path.exists(path):
             path = os.path.join(group_folder_path, photo_sn)
-        self.view.display_image(path)
+        self.pix_map = QtGui.QPixmap(path)
+        self.view.display_image(self.pix_map)
+
+    def resize_image(self, event):
+        if not self.pix_map:
+            return
+        size = event.size()
+        w, h = size.width() - 1, size.height() - 1  # wow
+        pix_map = self.pix_map.scaled(
+            w,
+            h,
+            QtGui.Qt.KeepAspectRatio,
+            QtGui.Qt.SmoothTransformation
+        )
+        self.ui.photo_view_search.setPixmap(pix_map)
