@@ -8,7 +8,7 @@
 import os
 from dataclasses import dataclass
 
-from PyQt5.QtWidgets import *
+from PySide2 import QtWidgets
 
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
@@ -73,9 +73,9 @@ class Setting(object):
         )
 
     def select_description_dir(self):
-        description_dir = QFileDialog.getExistingDirectory(
+        description_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self.ui.setting_tab, "选择文件夹",
-            options=QFileDialog.ShowDirsOnly
+            options=QtWidgets.QFileDialog.ShowDirsOnly
         )
         if not description_dir:
             return
@@ -83,9 +83,9 @@ class Setting(object):
         self.ui.description_path_in_setting.setText(self.description_path)
 
     def select_package_dir(self):
-        package_dir = QFileDialog.getExistingDirectory(
+        package_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self.ui.setting_tab, "选择文件夹",
-            options=QFileDialog.ShowDirsOnly
+            options=QtWidgets.QFileDialog.ShowDirsOnly
         )
         if not package_dir:
             return

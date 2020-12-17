@@ -10,7 +10,7 @@ import traceback
 import inspect
 import hashlib
 
-from xlwt import *
+import xlwt
 from PIL import Image
 
 
@@ -46,10 +46,10 @@ def table_widget_to_xls(table_widget, xls_path):
     sheet_qty = 65000
     column_qty = table_widget.columnCount()
     row_qty = table_widget.rowCount()
-    w = Workbook()
-    fnt = Font()
+    w = xlwt.Workbook()
+    fnt = xlwt.Font()
     fnt.height = 320
-    style = XFStyle()
+    style = xlwt.XFStyle()
     style.font = fnt
     for i in range(row_qty // sheet_qty + 1):
         ws = w.add_sheet('Sheet%s' % (i + 1))

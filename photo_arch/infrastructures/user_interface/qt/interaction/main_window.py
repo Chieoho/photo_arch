@@ -9,10 +9,7 @@ import sys
 from threading import Thread
 import typing
 
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from photo_arch.infrastructures.user_interface.qt.ui.qt_ui import Ui_MainWindow
 from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
@@ -41,7 +38,7 @@ class InitRecognition(Thread):
 class Overlay(QtWidgets.QWidget):
     def __init__(self, parent, text, dynamic=True, max_dot_num=3):
         QtWidgets.QWidget.__init__(self, parent)
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)
+        self.setWindowFlag(QtGui.Qt.WindowStaysOnTopHint)
         self.resize(parent.size())
         if dynamic:
             self.ori_text = text
@@ -62,9 +59,9 @@ class Overlay(QtWidgets.QWidget):
         self.update()
 
     def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.setFont(QFont('新宋体', 15))
-        painter.drawText(self.rect(), Qt.AlignCenter, self.text)
+        painter = QtGui.QPainter(self)
+        painter.setFont(QtGui.QFont('新宋体', 15))
+        painter.drawText(self.rect(), QtGui.Qt.AlignCenter, self.text)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -104,8 +101,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def msg_box(self, msg: str, msg_type: str = 'warn'):
         if msg_type == 'warn':
-            QMessageBox().warning(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
+            QtWidgets.QMessageBox().warning(self.ui.centralwidget, '提示', msg,
+                                            QtWidgets.QMessageBox.Ok,
+                                            QtWidgets.QMessageBox.Ok)
         elif msg_type == 'info':
-            QMessageBox().information(self.ui.centralwidget, '提示', msg, QMessageBox.Ok, QMessageBox.Ok)
+            QtWidgets.QMessageBox().information(self.ui.centralwidget, '提示', msg,
+                                                QtWidgets.QMessageBox.Ok,
+                                                QtWidgets.QMessageBox.Ok)
         else:
             pass

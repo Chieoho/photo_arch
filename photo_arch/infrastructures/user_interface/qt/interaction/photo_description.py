@@ -7,10 +7,7 @@
 """
 import json
 
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from photo_arch.use_cases.interfaces.dataset import PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
@@ -53,12 +50,14 @@ class PhotoDescription(object):
         self.current_photo_id = 0
         self.check_state_dict = {}
         
-        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(
+            1, QtWidgets.QHeaderView.Stretch)
 
-        self.ui.all_photo_radioButton.toggled.connect(static(self.photo_choose))
-        self.ui.part_recognition_radioButton.toggled.connect(static(self.photo_choose))
-        self.ui.all_recognition_radioButton.toggled.connect(static(self.photo_choose))
+        self.ui.all_photo_radioButton.toggled.connect(static(self.all_photo))
+        self.ui.part_recognition_radioButton.toggled.connect(static(self.part_recognition))
+        self.ui.all_recognition_radioButton.toggled.connect(static(self.all_recognition))
         self.ui.pre_btn.clicked.connect(static(self.pre_photo))
         self.ui.next_btn.clicked.connect(static(self.next_photo))
         self.ui.tableWidget.itemChanged.connect(static(self.table_item_changed))
@@ -82,15 +81,28 @@ class PhotoDescription(object):
             return
         size = event.size()
         w, h = size.width() - 1, size.height() - 1  # wow
-        pix_map = self.pix_map.scaled(w, h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        pix_map = self.pix_map.scaled(w, h, QtGui.Qt.KeepAspectRatio,
+                                      QtGui.Qt.SmoothTransformation)
         self.ui.photo_view.setPixmap(pix_map)
 
-    def photo_choose(self, check_state):
+    def all_photo(self, check_state):
+        self.mw.photo_type = 1
+        self._photo_choose(check_state)
+
+    def part_recognition(self, check_state):
+        self.mw.photo_type = 2
+        self._photo_choose(check_state)
+
+    def all_recognition(self, check_state):
+        self.mw.photo_type = 3
+        self._photo_choose(check_state)
+
+    def _photo_choose(self, check_state):
         if check_state is False:
             return
         self.ui.tabWidget.setCurrentWidget(self.ui.photo_tab)
-        self.mw.photo_type = self.photo_radio_map[self.mw.sender().objectName()]
-        photo_info_list = self.mw.interaction.get_photos_info(self.mw.photo_type, self.mw.dir_type)
+        photo_info_list = self.mw.interaction.get_photos_info(self.mw.photo_type,
+                                                              self.mw.dir_type)
         self.mw.photo_list = list(map(lambda d: d['photo_path'], photo_info_list))
         self.mw.photo_info_dict = {d['photo_path']: d for d in photo_info_list}
         self.tmp_info = {}
@@ -131,7 +143,8 @@ class PhotoDescription(object):
             self._display_recognizable()
 
     def _create_button(self, name, ico_path):
-        button = QtWidgets.QPushButton(QIcon(QPixmap(ico_path)), name, self.ui.tableWidget)
+        button = QtWidgets.QPushButton(QtGui.QIcon(QtGui.QPixmap(ico_path)), name,
+                                       self.ui.tableWidget)
         button.setFlat(True)
         return button
 
@@ -144,12 +157,12 @@ class PhotoDescription(object):
         add_button.clicked.connect(static(self.add))
         self.ui.tableWidget.insertRow(row + 1)
         for col in range(2):
-            item = QTableWidgetItem('')
+            item = QtWidgets.QTableWidgetItem('')
             item.setTextAlignment(QtCore.Qt.AlignCenter)
             self.ui.tableWidget.setItem(row+1, col, item)
         self.ui.tableWidget.setCellWidget(row+1, 2, add_button)
-        self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
-        self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
+        self.ui.verifycheckBox.setCheckState(QtGui.Qt.Unchecked)
+        self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = QtGui.Qt.Unchecked
 
     def delete(self, row):
         self.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
@@ -157,13 +170,13 @@ class PhotoDescription(object):
         for r in range(row, self.ui.tableWidget.rowCount() - 1):
             self.ui.tableWidget.cellWidget(r, 2).clicked.disconnect()
             self._connect(self.ui.tableWidget.cellWidget(r, 2), r)
-        self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
-        self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
+        self.ui.verifycheckBox.setCheckState(QtGui.Qt.Unchecked)
+        self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = QtGui.Qt.Unchecked
         self.ui.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.CurrentChanged)
 
     def table_item_changed(self):
-        self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
-        self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = Qt.Unchecked
+        self.ui.verifycheckBox.setCheckState(QtGui.Qt.Unchecked)
+        self.check_state_dict[self.mw.photo_list[self.current_photo_id]] = QtGui.Qt.Unchecked
         self._display_peoples()
 
     def _display_peoples(self):
@@ -179,7 +192,7 @@ class PhotoDescription(object):
             self.ui.photo_view.setText('没有照片可显示')
             return
         photo_path = self.mw.photo_list[self.current_photo_id]
-        self.pix_map = QPixmap(photo_path)
+        self.pix_map = QtGui.QPixmap(photo_path)
         faces_data = self.mw.photo_info_dict.get(photo_path).get('faces')
         name_info_list, coordinate_list = self._conversion_data(faces_data)
         tmp_name_info_list = self.tmp_info.get(photo_path)
@@ -192,11 +205,12 @@ class PhotoDescription(object):
         self._mark_face(coordinate_list)
         pix_map = self.pix_map.scaled(
             self.ui.photo_view.size(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
+            QtGui.Qt.KeepAspectRatio,
+            QtGui.Qt.SmoothTransformation
         )
         self.ui.photo_view.setPixmap(pix_map)
-        self.ui.photo_index_label.setText('{}/{}'.format(self.current_photo_id + 1, len(self.mw.photo_list)))
+        self.ui.photo_index_label.setText('{}/{}'.format(self.current_photo_id + 1,
+                                                         len(self.mw.photo_list)))
         self._set_verify_checkbox(photo_path)
         self.view.display_photo(photo_path)
         self._display_peoples()
@@ -223,7 +237,7 @@ class PhotoDescription(object):
         for row, (id_, name) in enumerate(name_info_list):
             self.ui.tableWidget.insertRow(row)
             for col, item in enumerate([id_, name]):
-                item = QTableWidgetItem(item)
+                item = QtWidgets.QTableWidgetItem(item)
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.ui.tableWidget.setItem(row, col, item)
             del_button = self._create_button('删除', self.del_icon_path)
@@ -231,7 +245,7 @@ class PhotoDescription(object):
             self.ui.tableWidget.setCellWidget(row, 2, del_button)
         self.ui.tableWidget.insertRow(row+1)
         for col in range(2):
-            item = QTableWidgetItem('')
+            item = QtWidgets.QTableWidgetItem('')
             item.setTextAlignment(QtCore.Qt.AlignCenter)
             self.ui.tableWidget.setItem(row+1, col, item)
         add_button = self._create_button('添加', self.add_icon_path)
@@ -243,31 +257,31 @@ class PhotoDescription(object):
         if photo_info:
             verify_state_code = photo_info.get('verify_state', 0)
             if verify_state_code == 1:
-                original_verify_state = Qt.Checked
+                original_verify_state = QtGui.Qt.Checked
             else:
-                original_verify_state = Qt.Unchecked
+                original_verify_state = QtGui.Qt.Unchecked
         else:
-            original_verify_state = Qt.Unchecked
+            original_verify_state = QtGui.Qt.Unchecked
         current_check_state = self.check_state_dict.get(photo_path, original_verify_state)
-        if current_check_state == Qt.Checked:
+        if current_check_state == QtGui.Qt.Checked:
             self.ui.verifycheckBox.stateChanged.disconnect()
-            self.ui.verifycheckBox.setCheckState(Qt.Checked)
+            self.ui.verifycheckBox.setCheckState(QtGui.Qt.Checked)
             self.ui.verifycheckBox.stateChanged.connect(static(self.checked))
         else:
-            self.ui.verifycheckBox.setCheckState(Qt.Unchecked)
+            self.ui.verifycheckBox.setCheckState(QtGui.Qt.Unchecked)
 
     def _mark_face(self, coordinate_list):
-        painter = QPainter(self.pix_map)
+        painter = QtGui.QPainter(self.pix_map)
         for id_, coordinate in coordinate_list:
             x, y, w, h = coordinate
-            font = QFont()
+            font = QtGui.QFont()
             font.setPixelSize(h/3)
             painter.setFont(font)
-            pen = QPen(QtCore.Qt.yellow)
+            pen = QtGui.QPen(QtCore.Qt.yellow)
             painter.setPen(pen)
-            pos = QRect(x, y, w, h)
+            pos = QtCore.QRect(x, y, w, h)
             painter.drawText(pos, 0, f'{id_}')
-            pen = QPen(QtCore.Qt.red)
+            pen = QtGui.QPen(QtCore.Qt.red)
             pen.setWidth(2)
             painter.setPen(pen)
             painter.drawRect(x, y, w, h)
@@ -285,4 +299,4 @@ class PhotoDescription(object):
                 "label_size": (size.width(), size.height())
             }
             self.mw.interaction.checked(checked_info)
-            self.check_state_dict[photo_path] = Qt.Checked
+            self.check_state_dict[photo_path] = QtGui.Qt.Checked

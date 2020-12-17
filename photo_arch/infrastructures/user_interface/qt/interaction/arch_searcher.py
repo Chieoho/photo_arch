@@ -8,9 +8,7 @@
 import os
 import glob
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from photo_arch.use_cases.interfaces.dataset import GroupOutputData, PhotoOutputData
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
@@ -25,11 +23,11 @@ from photo_arch.adapters.controller.arch_searcher import Controller, Repo
 class View(object):
     def __init__(self, mw_: MainWindow):
         self.ui: Ui_MainWindow = mw_.ui
-        self.ui.photo_list_widget_search.setViewMode(QListWidget.IconMode)
-        self.ui.photo_list_widget_search.setIconSize(QSize(100, 100))
+        self.ui.photo_list_widget_search.setViewMode(QtWidgets.QListWidget.IconMode)
+        self.ui.photo_list_widget_search.setIconSize(QtCore.QSize(100, 100))
         self.ui.photo_list_widget_search.setFixedHeight(132)
         self.ui.photo_list_widget_search.setWrapping(False)
-        self.ui.photo_list_widget_search.setMovement(QListWidget.Static)
+        self.ui.photo_list_widget_search.setMovement(QtWidgets.QListWidget.Static)
 
     def get_search_keys(self):
         title_keys = self.ui.group_title_search.text()
@@ -40,7 +38,7 @@ class View(object):
     def display_group_list(self, group_arch_code_list):
         self.ui.group_list_widget_search.clear()
         for group_arch_code in group_arch_code_list:
-            item = QListWidgetItem(group_arch_code)
+            item = QtWidgets.QListWidgetItem(group_arch_code)
             self.ui.group_list_widget_search.addItem(item)
 
     def clear_group_info(self, widget_suffix='_in_group_search'):
@@ -66,10 +64,10 @@ class View(object):
             thumb_path = os.path.join(head, 'thumbs', tail)
             if not os.path.exists(thumb_path):
                 thumb_path = os.path.join(head, 'thumbs', photo_sn)
-            item = QListWidgetItem(QIcon(thumb_path), tail.split('·')[-1])
+            item = QtWidgets.QListWidgetItem(QtGui.QIcon(thumb_path), tail.split('·')[-1])
             self.ui.photo_list_widget_search.addItem(item)
             if i in range(3):
-                QApplication.processEvents()
+                QtWidgets.QApplication.processEvents()
 
     def get_path_info(self):
         year = self.ui.year_in_group_search.text()
@@ -82,10 +80,10 @@ class View(object):
     def display_thumbs(self, thumb_paths):
         self.ui.photo_list_widget_search.clear()
         for i, fp in enumerate(thumb_paths):
-            item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1].split('-')[-1])  # 只显示张序号
+            item = QtWidgets.QListWidgetItem(QtGui.QIcon(fp), os.path.split(fp)[1].split('-')[-1])  # 只显示张序号
             self.ui.photo_list_widget_search.addItem(item)
             if i in range(3):
-                QApplication.processEvents()  # 前n张一张接一张显示
+                QtWidgets.QApplication.processEvents()  # 前n张一张接一张显示
 
     def display_photo_info(self, photo_info, widget_suffix='_in_photo_search'):
         for k, v in photo_info.items():
@@ -103,11 +101,11 @@ class View(object):
         self.ui.photo_view_search.clear()
 
     def display_image(self, path):
-        pix_map = QPixmap(path)
+        pix_map = QtGui.QPixmap(path)
         scaled_pix_map = pix_map.scaled(
             self.ui.photo_view_search.size(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
+            QtGui.Qt.KeepAspectRatio,
+            QtGui.Qt.SmoothTransformation
         )
         self.ui.photo_view_search.setPixmap(scaled_pix_map)
 

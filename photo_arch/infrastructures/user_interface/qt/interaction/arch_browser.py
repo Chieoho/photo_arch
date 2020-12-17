@@ -9,10 +9,7 @@ import os
 import glob
 from collections import defaultdict
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from photo_arch.use_cases.interfaces.dataset import GroupOutputData, PhotoOutputData
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, extend_slot
@@ -30,13 +27,13 @@ class View(object):
         self.tv_browse_pre_sel_text = ''
         self.tv_browse_pre_sel_item = None
 
-        self.ui.photo_list_widget.setViewMode(QListWidget.IconMode)
-        self.ui.photo_list_widget.setIconSize(QSize(100, 100))
+        self.ui.photo_list_widget.setViewMode(QtWidgets.QListWidget.IconMode)
+        self.ui.photo_list_widget.setIconSize(QtCore.QSize(100, 100))
         self.ui.photo_list_widget.setFixedHeight(132)
         self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
-        self.ui.photo_list_widget.setMovement(QListWidget.Static)
+        self.ui.photo_list_widget.setMovement(QtWidgets.QListWidget.Static)
 
-        self.ui.photo_view_in_arch.setAlignment(QtCore.Qt.AlignCenter)
+        self.ui.photo_view_in_arch.setAlignment(QtGui.Qt.AlignCenter)
 
     def display_group(self, group, widget_suffix='_in_group_arch'):
         for k, v in group.items():
@@ -48,14 +45,14 @@ class View(object):
     def _fill_model_from_dict(self, parent, d):
         if isinstance(d, dict):
             for k, v in d.items():
-                child = QStandardItem(str(k))
+                child = QtGui.QStandardItem(str(k))
                 parent.appendRow(child)
                 self._fill_model_from_dict(child, v)
         elif isinstance(d, list):
             for v in d:
                 self._fill_model_from_dict(parent, v)
         else:
-            item = QStandardItem(str(d))
+            item = QtGui.QStandardItem(str(d))
             parent.appendRow(item)
             if self.tv_browse_pre_sel_text == d:
                 self.tv_browse_pre_sel_item = item
@@ -74,8 +71,8 @@ class View(object):
                 data[fc][ye][rp].append(group_name)
             else:
                 data[fc][rp][ye].append(group_name)
-        model = QStandardItemModel()
-        model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
+        model = QtGui.QStandardItemModel()
+        model.setHorizontalHeaderItem(0, QtGui.QStandardItem("照片档案"))
         self.tv_browse_pre_sel_text = self._get_tv_browse_sel_text()
         self._fill_model_from_dict(model.invisibleRootItem(), data)
         self.ui.arch_tree_view_browse.setModel(model)
@@ -127,8 +124,8 @@ class ArchBrowser(object):
         pix_map = self.pix_map.scaled(
             w,
             h,
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
+            QtGui.Qt.KeepAspectRatio,
+            QtGui.Qt.SmoothTransformation
         )
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 
@@ -137,7 +134,7 @@ class ArchBrowser(object):
         if not indexes:
             return
         self._clear_data()
-        index: QModelIndex = indexes[0]
+        index: QtCore.QModelIndex = indexes[0]
         if index.child(0, 0).data():  # 点击的不是组名则返回
             return
         parent = index.parent()
@@ -180,10 +177,10 @@ class ArchBrowser(object):
             '*.*'
         )
         for i, fp in enumerate(glob.iglob(path)):
-            item = QListWidgetItem(QIcon(fp), os.path.split(fp)[1].split('-')[-1])  # 只显示张序号
+            item = QtWidgets.QListWidgetItem(QtGui.QIcon(fp), os.path.split(fp)[1].split('-')[-1])  # 只显示张序号
             self.ui.photo_list_widget.addItem(item)
             if i in range(3):
-                QApplication.processEvents()  # 前n张一张接一张显示
+                QtWidgets.QApplication.processEvents()  # 前n张一张接一张显示
 
     def display_photo(self):
         item_list = self.ui.photo_list_widget.selectedItems()
@@ -209,11 +206,11 @@ class ArchBrowser(object):
             self.group_folder,
             photo_name
         )
-        self.pix_map = QPixmap(path)
+        self.pix_map = QtGui.QPixmap(path)
         pix_map = self.pix_map.scaled(
             self.ui.photo_view_in_arch.size(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
+            QtGui.Qt.KeepAspectRatio,
+            QtGui.Qt.SmoothTransformation
         )
         self.ui.photo_view_in_arch.setPixmap(pix_map)
 

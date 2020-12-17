@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../icon/archives.png</normaloff>../icon/archives.png</iconset>
+    <normaloff>icon/archives.png</normaloff>icon/archives.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="iconSize">
        <size>
@@ -75,7 +75,7 @@ QTabBar::tab:selected{
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/dirtree.png</normaloff>../icon/dirtree.png</iconset>
+         <normaloff>icon/dirtree.png</normaloff>icon/dirtree.png</iconset>
        </attribute>
        <attribute name="title">
         <string>组著录</string>
@@ -163,7 +163,7 @@ QTabBar::tab:selected{
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>../icon/open.png</normaloff>../icon/open.png</iconset>
+                <normaloff>icon/open.png</normaloff>icon/open.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -281,7 +281,7 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../icon/cancel.png</normaloff>../icon/cancel.png</iconset>
+                   <normaloff>icon/cancel.png</normaloff>icon/cancel.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -344,7 +344,7 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../icon/add_file.png</normaloff>../icon/add_file.png</iconset>
+                   <normaloff>icon/add_file.png</normaloff>icon/add_file.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -834,7 +834,7 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../icon/save.png</normaloff>../icon/save.png</iconset>
+                   <normaloff>icon/save.png</normaloff>icon/save.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -1286,7 +1286,7 @@ padding-bottom: 8px;</string>
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/face.png</normaloff>../icon/face.png</iconset>
+         <normaloff>icon/face.png</normaloff>icon/face.png</iconset>
        </attribute>
        <attribute name="title">
         <string>人脸识别</string>
@@ -1360,7 +1360,7 @@ padding-bottom: 8px;</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../icon/stop.png</normaloff>../icon/stop.png</iconset>
+               <normaloff>icon/stop.png</normaloff>icon/stop.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1423,7 +1423,7 @@ padding-bottom: 8px;</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../icon/run.png</normaloff>../icon/run.png</iconset>
+               <normaloff>icon/run.png</normaloff>icon/run.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1794,7 +1794,7 @@ padding-bottom: 8px;</string>
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/photo.png</normaloff>../icon/photo.png</iconset>
+         <normaloff>icon/photo.png</normaloff>icon/photo.png</iconset>
        </attribute>
        <attribute name="title">
         <string>张著录</string>
@@ -2138,7 +2138,7 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../icon/previous.png</normaloff>../icon/previous.png</iconset>
+                   <normaloff>icon/previous.png</normaloff>icon/previous.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -2222,7 +2222,7 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../icon/next.png</normaloff>../icon/next.png</iconset>
+                   <normaloff>icon/next.png</normaloff>icon/next.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -2787,7 +2787,7 @@ padding-bottom: 8px;</string>
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/training.png</normaloff>../icon/training.png</iconset>
+         <normaloff>icon/training.png</normaloff>icon/training.png</iconset>
        </attribute>
        <attribute name="title">
         <string>模型训练</string>
@@ -3040,7 +3040,7 @@ padding-bottom: 8px;</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../icon/start_training.png</normaloff>../icon/start_training.png</iconset>
+               <normaloff>icon/start_training.png</normaloff>icon/start_training.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -3099,7 +3099,7 @@ padding-bottom: 8px;</string>
       <widget class="QWidget" name="search_face_tab">
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/search_face.png</normaloff>../icon/search_face.png</iconset>
+         <normaloff>icon/search_face.png</normaloff>icon/search_face.png</iconset>
        </attribute>
        <attribute name="title">
         <string>人脸搜索</string>
@@ -3356,7 +3356,7 @@ padding-bottom: 8px;</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../icon/search_face.png</normaloff>../icon/search_face.png</iconset>
+               <normaloff>icon/search_face.png</normaloff>icon/search_face.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -3400,7 +3400,7 @@ padding-bottom: 8px;</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../icon/search_face.png</normaloff>../icon/search_face.png</iconset>
+               <normaloff>icon/search_face.png</normaloff>icon/search_face.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -3468,7 +3468,7 @@ padding-bottom: 8px;</string>
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/browse_arch.png</normaloff>../icon/browse_arch.png</iconset>
+         <normaloff>icon/browse_arch.png</normaloff>icon/browse_arch.png</iconset>
        </attribute>
        <attribute name="title">
         <string>档案浏览</string>
@@ -4438,7 +4438,7 @@ padding-bottom: 8px;</string>
       <widget class="QWidget" name="search_archives_tab">
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/search_arch.png</normaloff>../icon/search_arch.png</iconset>
+         <normaloff>icon/search_arch.png</normaloff>icon/search_arch.png</iconset>
        </attribute>
        <attribute name="title">
         <string>档案搜索</string>
@@ -4620,7 +4620,7 @@ padding-bottom: 8px;</string>
                   </property>
                   <property name="icon">
                    <iconset>
-                    <normaloff>../icon/search.png</normaloff>../icon/search.png</iconset>
+                    <normaloff>icon/search.png</normaloff>icon/search.png</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -5531,7 +5531,7 @@ padding-bottom: 8px;</string>
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/arch_transfer.png</normaloff>../icon/arch_transfer.png</iconset>
+         <normaloff>icon/arch_transfer.png</normaloff>icon/arch_transfer.png</iconset>
        </attribute>
        <attribute name="title">
         <string>档案移交</string>
@@ -5909,7 +5909,7 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../icon/package.png</normaloff>../icon/package.png</iconset>
+                   <normaloff>icon/package.png</normaloff>icon/package.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -6449,7 +6449,7 @@ padding-bottom: 8px;</string>
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>../icon/setting.png</normaloff>../icon/setting.png</iconset>
+         <normaloff>icon/setting.png</normaloff>icon/setting.png</iconset>
        </attribute>
        <attribute name="title">
         <string>系统设置</string>
@@ -6480,7 +6480,7 @@ padding-bottom: 8px;</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../icon/open.png</normaloff>../icon/open.png</iconset>
+            <normaloff>icon/open.png</normaloff>icon/open.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -6609,7 +6609,7 @@ padding-bottom: 8px;</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../icon/open.png</normaloff>../icon/open.png</iconset>
+            <normaloff>icon/open.png</normaloff>icon/open.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -6750,31 +6750,31 @@ padding-bottom: 8px;</string>
   </action>
  </widget>
  <tabstops>
-  <tabstop>group_title_search</tabstop>
-  <tabstop>peoples_search</tabstop>
-  <tabstop>time_search</tabstop>
-  <tabstop>search_btn</tabstop>
-  <tabstop>group_list_widget_search</tabstop>
-  <tabstop>photo_list_widget_search</tabstop>
-  <tabstop>arch_code_in_group_search</tabstop>
-  <tabstop>fonds_code_in_group_search</tabstop>
-  <tabstop>arch_category_code_in_group_search</tabstop>
-  <tabstop>retention_period_in_group_search</tabstop>
-  <tabstop>year_in_group_search</tabstop>
-  <tabstop>department_in_group_search</tabstop>
-  <tabstop>group_code_in_group_search</tabstop>
-  <tabstop>author_in_group_search</tabstop>
-  <tabstop>group_title_in_group_search</tabstop>
-  <tabstop>folder_size_in_group_search</tabstop>
-  <tabstop>photographer_in_group_search</tabstop>
-  <tabstop>taken_time_in_group_search</tabstop>
-  <tabstop>taken_locations_in_group_search</tabstop>
-  <tabstop>photo_num_in_group_search</tabstop>
-  <tabstop>security_classification_in_group_search</tabstop>
-  <tabstop>reference_code_in_group_search</tabstop>
-  <tabstop>opening_state_in_group_search</tabstop>
-  <tabstop>arch_code_in_photo_search</tabstop>
-  <tabstop>photo_code_in_photo_search</tabstop>
+  <tabstop>order_combobox_browse</tabstop>
+  <tabstop>arch_tree_view_browse</tabstop>
+  <tabstop>photo_list_widget</tabstop>
+  <tabstop>arch_code_in_group_arch</tabstop>
+  <tabstop>fonds_code_in_group_arch</tabstop>
+  <tabstop>arch_category_code_in_group_arch</tabstop>
+  <tabstop>retention_period_in_group_arch</tabstop>
+  <tabstop>year_in_group_arch</tabstop>
+  <tabstop>department_in_group_arch</tabstop>
+  <tabstop>group_code_in_group_arch</tabstop>
+  <tabstop>author_in_group_arch</tabstop>
+  <tabstop>group_title_in_group_arch</tabstop>
+  <tabstop>folder_size_in_group_arch</tabstop>
+  <tabstop>photographer_in_group_arch</tabstop>
+  <tabstop>taken_time_in_group_arch</tabstop>
+  <tabstop>taken_locations_in_group_arch</tabstop>
+  <tabstop>photo_num_in_group_arch</tabstop>
+  <tabstop>security_classification_in_group_arch</tabstop>
+  <tabstop>reference_code_in_group_arch</tabstop>
+  <tabstop>opening_state_in_group_arch</tabstop>
+  <tabstop>arch_code_in_photo_arch</tabstop>
+  <tabstop>photo_code_in_photo_arch</tabstop>
+  <tabstop>format_in_photo_arch</tabstop>
+  <tabstop>group_caption_in_group_arch</tabstop>
+  <tabstop>peoples_in_photo_arch</tabstop>
   <tabstop>format_in_photo_search</tabstop>
   <tabstop>group_caption_in_group_search</tabstop>
   <tabstop>peoples_in_photo_search</tabstop>
@@ -6844,34 +6844,39 @@ padding-bottom: 8px;</string>
   <tabstop>select_description_dir_btn</tabstop>
   <tabstop>open_dir_btn</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>arch_tree_view_browse</tabstop>
-  <tabstop>order_combobox_browse</tabstop>
-  <tabstop>arch_code_in_group_arch</tabstop>
-  <tabstop>photo_list_widget</tabstop>
-  <tabstop>photo_num_in_group_arch</tabstop>
-  <tabstop>group_title_in_group_arch</tabstop>
-  <tabstop>opening_state_in_group_arch</tabstop>
-  <tabstop>group_caption_in_group_arch</tabstop>
-  <tabstop>arch_code_in_photo_arch</tabstop>
-  <tabstop>group_code_in_group_arch</tabstop>
+  <tabstop>peoples_search</tabstop>
+  <tabstop>group_title_search</tabstop>
+  <tabstop>search_btn</tabstop>
+  <tabstop>time_search</tabstop>
+  <tabstop>photographer_in_group_search</tabstop>
+  <tabstop>department_in_group_search</tabstop>
+  <tabstop>photo_num_in_group_search</tabstop>
+  <tabstop>arch_code_in_photo_search</tabstop>
+  <tabstop>security_classification_in_group_search</tabstop>
+  <tabstop>retention_period_in_group_search</tabstop>
   <tabstop>security_classification_in_group</tabstop>
-  <tabstop>year_in_group_arch</tabstop>
-  <tabstop>photographer_in_group_arch</tabstop>
-  <tabstop>folder_size_in_group_arch</tabstop>
-  <tabstop>reference_code_in_group_arch</tabstop>
-  <tabstop>author_in_group_arch</tabstop>
-  <tabstop>peoples_in_photo_arch</tabstop>
+  <tabstop>fonds_code_in_group_search</tabstop>
+  <tabstop>author_in_group_search</tabstop>
+  <tabstop>group_code_in_group_search</tabstop>
+  <tabstop>taken_locations_in_group_search</tabstop>
+  <tabstop>year_in_group_search</tabstop>
+  <tabstop>photo_code_in_photo_search</tabstop>
   <tabstop>opening_state_in_group</tabstop>
-  <tabstop>retention_period_in_group_arch</tabstop>
-  <tabstop>security_classification_in_group_arch</tabstop>
-  <tabstop>taken_locations_in_group_arch</tabstop>
-  <tabstop>department_in_group_arch</tabstop>
-  <tabstop>photo_code_in_photo_arch</tabstop>
-  <tabstop>taken_time_in_group_arch</tabstop>
-  <tabstop>format_in_photo_arch</tabstop>
+  <tabstop>arch_code_in_group_search</tabstop>
+  <tabstop>taken_time_in_group_search</tabstop>
+  <tabstop>folder_size_in_group_search</tabstop>
+  <tabstop>arch_category_code_in_group_search</tabstop>
+  <tabstop>reference_code_in_group_search</tabstop>
+  <tabstop>group_title_in_group_search</tabstop>
+  <tabstop>opening_state_in_group_search</tabstop>
   <tabstop>reference_code_in_group</tabstop>
-  <tabstop>fonds_code_in_group_arch</tabstop>
-  <tabstop>arch_category_code_in_group_arch</tabstop>
+  <tabstop>group_list_widget_search</tabstop>
+  <tabstop>photo_list_widget_search</tabstop>
+  <tabstop>searchface_select_photo_btn</tabstop>
+  <tabstop>searchface_list_widget</tabstop>
+  <tabstop>searchface_retieve_dir_line</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>searchface_select_retrieve_dir_btn</tabstop>
  </tabstops>
  <resources/>
  <connections/>

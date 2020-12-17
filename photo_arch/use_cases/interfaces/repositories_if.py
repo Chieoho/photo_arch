@@ -95,7 +95,6 @@ class RepoIf(metaclass=ABCMeta):
         :return:
         """
 
-
     @abstractmethod
     def add_setting(self, setting_info: dict) -> bool:
         """

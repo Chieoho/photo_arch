@@ -12,10 +12,7 @@ from distutils.dir_util import copy_tree
 import os
 
 from dataclasses import dataclass
-from PyQt5 import QtCore
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import (
     static, table_widget_to_xls)
@@ -70,14 +67,14 @@ class View(object):
     def _fill_model_from_dict(self, parent, d):
         if isinstance(d, dict):
             for k, v in d.items():
-                child = QStandardItem(str(k))
+                child = QtGui.QStandardItem(str(k))
                 parent.appendRow(child)
                 self._fill_model_from_dict(child, v)
         elif isinstance(d, list):
             for v in d:
                 self._fill_model_from_dict(parent, v)
         else:
-            parent.appendRow(QStandardItem(str(d)))
+            parent.appendRow(QtGui.QStandardItem(str(d)))
 
     def display_transfer_arch(self, arch, priority_key='年度'):
         data = defaultdict(lambda: defaultdict(dict))
@@ -89,8 +86,8 @@ class View(object):
                 data[fc][ye] = rp
             else:
                 data[fc][rp] = ye
-        model = QStandardItemModel()
-        model.setHorizontalHeaderItem(0, QStandardItem("照片档案"))
+        model = QtGui.QStandardItemModel()
+        model.setHorizontalHeaderItem(0, QtGui.QStandardItem("照片档案"))
         self._fill_model_from_dict(model.invisibleRootItem(), data)
         self.ui.arch_tree_view_transfer.setModel(model)
         self.ui.arch_tree_view_transfer.expandAll()
@@ -99,36 +96,36 @@ class View(object):
         caption = Caption()
         for key in caption.__dict__:
             widget = getattr(self.ui, f'{key}_in_transfer')
-            if isinstance(widget, QComboBox):
+            if isinstance(widget, QtWidgets.QComboBox):
                 setattr(caption, key, widget.currentText())
-            elif isinstance(widget, QLineEdit):
+            elif isinstance(widget, QtWidgets.QLineEdit):
                 setattr(caption, key, widget.text())
         return caption
 
     def display_caption(self, caption: Caption):
         for key in caption.__dict__:
             widget = getattr(self.ui, f'{key}_in_transfer')
-            if isinstance(widget, QComboBox):
+            if isinstance(widget, QtWidgets.QComboBox):
                 widget.setCurrentText(getattr(caption, key))
-            elif isinstance(widget, QLineEdit):
+            elif isinstance(widget, QtWidgets.QLineEdit):
                 widget.setText(getattr(caption, key))
 
     def get_label(self):
         label = Label()
         for key in label.__dict__:
             widget = getattr(self.ui, f'{key}_in_transfer')
-            if isinstance(widget, QComboBox):
+            if isinstance(widget, QtWidgets.QComboBox):
                 setattr(label, key, widget.currentText())
-            elif isinstance(widget, QLineEdit):
+            elif isinstance(widget, QtWidgets.QLineEdit):
                 setattr(label, key, widget.text())
         return label
 
     def display_label(self, label: Label):
         for key in label.__dict__:
             widget = getattr(self.ui, f'{key}_in_transfer')
-            if isinstance(widget, QComboBox):
+            if isinstance(widget, QtWidgets.QComboBox):
                 widget.setCurrentText(getattr(label, key))
-            elif isinstance(widget, QLineEdit):
+            elif isinstance(widget, QtWidgets.QLineEdit):
                 widget.setText(getattr(label, key))
 
 
@@ -146,8 +143,8 @@ class ArchTransfer(object):
         self.cd_info_dict = defaultdict(dict)
         self.current_cd = ''
 
-        self.ui.partition_list_widget.setViewMode(QListWidget.IconMode)
-        self.ui.partition_list_widget.setIconSize(QSize(160, 160))
+        self.ui.partition_list_widget.setViewMode(QtWidgets.QListWidget.IconMode)
+        self.ui.partition_list_widget.setIconSize(QtCore.QSize(160, 160))
         self.ui.partition_list_widget.setFixedHeight(218)
         self.ui.partition_list_widget.setWrapping(False)  # 只一行显示
 
@@ -162,8 +159,8 @@ class ArchTransfer(object):
 
         catalog_tw = self.ui.cd_catalog_table_widget
         catalog_tw.verticalHeader().setVisible(True)
-        catalog_tw.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        catalog_tw.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
+        catalog_tw.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        catalog_tw.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
 
     def display_arch(self, priority_key):
         _, arch = self.controller.list_arch()
@@ -179,7 +176,7 @@ class ArchTransfer(object):
         if (selected_name1 in self.selected_condition_list) or \
                 (selected_name2 in self.selected_condition_list):
             return
-        item = QListWidgetItem(selected_name1)
+        item = QtWidgets.QListWidgetItem(selected_name1)
         self.ui.selected_arch_list_widget.addItem(item)
         self.selected_condition_list.append(selected_name1)
         self.partition()
@@ -242,7 +239,7 @@ class ArchTransfer(object):
 
     def _display_partition_res(self):
         for i, p in enumerate(self.partition_list, 1):
-            item = QListWidgetItem(QIcon(self.disk_icon_path), f'{p["selected_cond"]} {i}号')
+            item = QtWidgets.QListWidgetItem(QtGui.QIcon(self.disk_icon_path), f'{p["selected_cond"]} {i}号')
             self.ui.partition_list_widget.addItem(item)
 
     def display_cd_info(self):
@@ -297,7 +294,7 @@ class ArchTransfer(object):
                     item_text = gi.get(key, '')
                 else:
                     item_text = pi.get(key, '')
-                item = QTableWidgetItem(str(item_text))
+                item = QtWidgets.QTableWidgetItem(str(item_text))
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.ui.cd_catalog_table_widget.setItem(row, col, item)
 

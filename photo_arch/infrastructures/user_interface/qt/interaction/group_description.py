@@ -12,9 +12,7 @@ import time
 from distutils.dir_util import copy_tree
 import shutil
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2 import QtWidgets, QtGui
 
 from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData, PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, calc_md5, make_thumb
@@ -35,7 +33,7 @@ class View(object):
             widget_name = k + widget_suffix
             if hasattr(self.ui, widget_name):
                 widget = getattr(self.ui, widget_name)
-                if isinstance(widget, QComboBox):
+                if isinstance(widget, QtWidgets.QComboBox):
                     if v:
                         widget.setCurrentText(v)
                     else:
@@ -47,9 +45,9 @@ class View(object):
         group_in = GroupInputData()
         for k in group_in.__dict__.keys():
             widget = getattr(self.ui, k+'_in_group')
-            if isinstance(widget, QComboBox):
+            if isinstance(widget, QtWidgets.QComboBox):
                 value = widget.currentText()
-            elif isinstance(widget, QTextEdit):
+            elif isinstance(widget, QtWidgets.QTextEdit):
                 value = widget.toPlainText()
             else:
                 value = widget.text()
@@ -98,9 +96,9 @@ class GroupDescription(object):
         self.view.display_group(GroupOutputData().__dict__)
 
     def select_dir(self):
-        current_work_path = QFileDialog.getExistingDirectory(
+        current_work_path = QtWidgets.QFileDialog.getExistingDirectory(
             self.ui.treeWidget, "选择文件夹",
-            options=QFileDialog.ShowDirsOnly
+            options=QtWidgets.QFileDialog.ShowDirsOnly
         )
         if not current_work_path:
             return
@@ -270,25 +268,25 @@ class GroupDescription(object):
         group_folder = item.text(0)
         if group_folder == self.current_work_path:
             return
-        if item.checkState(0) == Qt.Unchecked:
+        if item.checkState(0) == QtGui.Qt.Unchecked:
             first_photo = self._find_fist_photo(group_folder)
             first_photo_md5 = calc_md5(first_photo)
             _, group = self.controller.get_group(first_photo_md5)
             if group:
-                item.setCheckState(0, Qt.Checked)
+                item.setCheckState(0, QtGui.Qt.Checked)
             else:
                 self.mw.msg_box('未完成组著录，请先完成')
         else:
-            item.setCheckState(0, Qt.Unchecked)
+            item.setCheckState(0, QtGui.Qt.Unchecked)
 
     def cancel_folder_item(self):
-        item_value = QTreeWidgetItemIterator(self.ui.treeWidget).value()
+        item_value = QtWidgets.QTreeWidgetItemIterator(self.ui.treeWidget).value()
         if item_value is None:
             return
         child_count = item_value.childCount()
         for i in range(child_count):
-            if item_value.child(i).checkState(0) == Qt.Checked:
-                item_value.child(i).setCheckState(0, Qt.Unchecked)
+            if item_value.child(i).checkState(0) == QtGui.Qt.Checked:
+                item_value.child(i).setCheckState(0, QtGui.Qt.Unchecked)
 
     def add_folder_item(self):
         arch_code_info = {
@@ -298,11 +296,11 @@ class GroupDescription(object):
         root_item = self.ui.treeWidget.invisibleRootItem().child(0)
         if root_item is None:
             return
-        item_iterator = QTreeWidgetItemIterator(self.ui.treeWidget)
+        item_iterator = QtWidgets.QTreeWidgetItemIterator(self.ui.treeWidget)
         items_value = item_iterator.value()
         for i in range(items_value.childCount()):
             item = items_value.child(i)
-            if item.checkState(0) == Qt.Checked:
+            if item.checkState(0) == QtGui.Qt.Checked:
                 path = item.text(0)
                 group_abspath = os.path.join(self.current_work_path, path)
                 dst_abspath = self.description_path_info.get(group_abspath, '')
@@ -337,19 +335,19 @@ class GroupDescription(object):
         self.ui.pausecontinue_btn.setText('停止')
         self.ui.run_state_label.setText("停止")
 
-        self.ui.verifycheckBox.setCheckState(False)
+        self.ui.verifycheckBox.setCheckState(QtGui.Qt.CheckState.Unchecked)
 
     def _generate_dir_tree(self, root_arch_info, file_arch_list):
         root_path, root_arch_code = root_arch_info
         _, volume_name = os.path.split(root_path)
         self.ui.treeWidget.setColumnWidth(0, int(520*self.mw.dt_width/1920))  # 设置列宽
         self.ui.treeWidget.clear()
-        root = QTreeWidgetItem(self.ui.treeWidget)
+        root = QtWidgets.QTreeWidgetItem(self.ui.treeWidget)
         root.setText(0, root_path)
         for name, arch_code in file_arch_list:
-            child = QTreeWidgetItem(root)
+            child = QtWidgets.QTreeWidgetItem(root)
             child.setText(0, name)
-            child.setCheckState(0, Qt.Unchecked)
+            child.setCheckState(0, QtGui.Qt.Unchecked)
         self.ui.treeWidget.expandAll()
 
     def _generate_tree_by_path(self, root_path):

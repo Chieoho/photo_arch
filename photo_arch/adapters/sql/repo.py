@@ -90,7 +90,6 @@ class SearchFacesModel(Base):
     parent_path = Column(String(2048))
 
 
-
 class Repo(RepoIf):
     def __init__(self, session):
         self.session = session

@@ -8,8 +8,7 @@
 import time
 import typing
 
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import *
+from PySide2 import QtWidgets, QtCore
 
 from photo_arch.use_cases.interfaces.dataset import PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
@@ -47,7 +46,7 @@ class Recognition(object):
             if self.mw.interaction != typing.Any:
                 break
             else:
-                QApplication.processEvents()
+                QtWidgets.QApplication.processEvents()
         overlay.hide()
 
         if self.mw.run_state != RecognizeState.running:
@@ -104,7 +103,7 @@ class Recognition(object):
         for row in range(self.ui.tableWidget.rowCount(), -1, -1):
             self.ui.tableWidget.removeRow(row)
 
-        self.ui.verifycheckBox.setCheckState(False)
+        self.ui.verifycheckBox.setCheckState(QtCore.Qt.CheckState.Unchecked)
         self.ui.photo_index_label.clear()
 
     def periodic_update(self):
