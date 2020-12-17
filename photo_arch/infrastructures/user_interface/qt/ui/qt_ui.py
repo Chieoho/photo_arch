@@ -813,12 +813,12 @@ class Ui_MainWindow(object):
         self.gridLayout_16 = QGridLayout(self.frame_7)
         self.gridLayout_16.setObjectName(u"gridLayout_16")
         self.gridLayout_16.setContentsMargins(0, -1, -1, -1)
-        self.select_dir_radioButton = QRadioButton(self.frame_7)
-        self.select_dir_radioButton.setObjectName(u"select_dir_radioButton")
-        self.select_dir_radioButton.setFont(font)
-        self.select_dir_radioButton.setChecked(True)
+        self.selected_dir_radioButton = QRadioButton(self.frame_7)
+        self.selected_dir_radioButton.setObjectName(u"selected_dir_radioButton")
+        self.selected_dir_radioButton.setFont(font)
+        self.selected_dir_radioButton.setChecked(True)
 
-        self.gridLayout_16.addWidget(self.select_dir_radioButton, 0, 0, 1, 1)
+        self.gridLayout_16.addWidget(self.selected_dir_radioButton, 0, 0, 1, 1)
 
         self.current_dir_radioButton = QRadioButton(self.frame_7)
         self.current_dir_radioButton.setObjectName(u"current_dir_radioButton")
@@ -2943,8 +2943,8 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.retention_period_in_group, self.year_in_group)
         QWidget.setTabOrder(self.year_in_group, self.tableWidget)
         QWidget.setTabOrder(self.tableWidget, self.save_group_btn)
-        QWidget.setTabOrder(self.save_group_btn, self.select_dir_radioButton)
-        QWidget.setTabOrder(self.select_dir_radioButton, self.group_title_in_group)
+        QWidget.setTabOrder(self.save_group_btn, self.selected_dir_radioButton)
+        QWidget.setTabOrder(self.selected_dir_radioButton, self.group_title_in_group)
         QWidget.setTabOrder(self.group_title_in_group, self.fonds_code_in_photo)
         QWidget.setTabOrder(self.fonds_code_in_photo, self.year_in_photo)
         QWidget.setTabOrder(self.year_in_photo, self.package_path_in_setting)
@@ -3018,7 +3018,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(5)
+        self.tabWidget.setCurrentIndex(2)
         self.search_btn.setDefault(True)
 
 
@@ -3101,9 +3101,9 @@ class Ui_MainWindow(object):
         self.photo_view.setText("")
         self.label_33.setText(QCoreApplication.translate("MainWindow", u"\u7ec4\u53f7", None))
 #if QT_CONFIG(tooltip)
-        self.select_dir_radioButton.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u663e\u793a\u672c\u6b21\u8bc6\u522b\u6240\u9009\u76ee\u5f55\u4e0b\u7684\u7167\u7247</span></p></body></html>", None))
+        self.selected_dir_radioButton.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u663e\u793a\u672c\u6b21\u8bc6\u522b\u6240\u9009\u76ee\u5f55\u4e0b\u7684\u7167\u7247</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.select_dir_radioButton.setText(QCoreApplication.translate("MainWindow", u"\u672c\u6b21\u8bc6\u522b", None))
+        self.selected_dir_radioButton.setText(QCoreApplication.translate("MainWindow", u"\u672c\u6b21\u8bc6\u522b", None))
 #if QT_CONFIG(tooltip)
         self.current_dir_radioButton.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u663e\u793a\u5f53\u524d\u5de5\u4f5c\u76ee\u5f55\u4e0b\u7684\u7167\u7247</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)

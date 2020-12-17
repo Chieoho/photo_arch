@@ -33,15 +33,6 @@ class PhotoDescription(object):
         self.setting = setting
         self.view = View(mw_)
 
-        self.photo_radio_map = {
-            'all_photo_radioButton': 1,
-            'part_recognition_radioButton': 2,
-            'all_recognition_radioButton': 3
-        }
-        self.dir_radio_map = {
-            'select_dir_radioButton': ('本次识别', 1),
-            'current_dir_radioButton': ('当前目录', 2)
-        }
         self.pix_map = None
         self.tmp_info = {}
         self.add_icon_path = './icon/add.png'
@@ -61,8 +52,8 @@ class PhotoDescription(object):
         self.ui.pre_btn.clicked.connect(static(self.pre_photo))
         self.ui.next_btn.clicked.connect(static(self.next_photo))
         self.ui.tableWidget.itemChanged.connect(static(self.table_item_changed))
-        self.ui.select_dir_radioButton.toggled.connect(static(self.dir_choose))
-        self.ui.current_dir_radioButton.toggled.connect(static(self.dir_choose))
+        self.ui.selected_dir_radioButton.toggled.connect(static(self.selected_dir))
+        self.ui.current_dir_radioButton.toggled.connect(static(self.current_dir))
 
         self.ui.all_photo_radioButton.setEnabled(False)
         self.ui.part_recognition_radioButton.setEnabled(False)
@@ -109,10 +100,17 @@ class PhotoDescription(object):
         self.current_photo_id = 0
         self._display_recognizable()
 
-    def dir_choose(self, check_state):
+    def selected_dir(self, check_state):
+        dir_scope, self.mw.dir_type = '本次识别', 1
+        self._dir_choose(check_state, dir_scope)
+
+    def current_dir(self, check_state):
+        dir_scope, self.mw.dir_type = '当前目录', 2
+        self._dir_choose(check_state, dir_scope)
+
+    def _dir_choose(self, check_state, dir_scope):
         if check_state is False:
             return
-        dir_scope, self.mw.dir_type = self.dir_radio_map[self.mw.sender().objectName()]
         self.ui.all_photo_radioButton.setText(f'显示{dir_scope}所有照片(Alt+Q)')
         self.ui.part_recognition_radioButton.setText(f'显示{dir_scope}部分识别照片(Alt+W)')
         self.ui.all_recognition_radioButton.setText(f'显示{dir_scope}全部识别照片(Alt+E)')
