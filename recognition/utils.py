@@ -423,14 +423,15 @@ def get_filePath_with_creationDate_as_dict(folder):
     result = {}
     for f in os.listdir(folder):
         fullFileName = folder + "\\" + f
-        t = os.stat(fullFileName)
-        mtime = np.min([t.st_ctime, t.st_mtime, t.st_atime])
-        mtime = str(mtime)
-        i = 0
-        while mtime+"_"*i in result:
-            i += 1
-        mtime = mtime+"_"*i
-        result[mtime] = fullFileName
+        if os.path.isfile(fullFileName):
+            t = os.stat(fullFileName)
+            mtime = np.min([t.st_ctime, t.st_mtime, t.st_atime])
+            mtime = str(mtime)
+            i = 0
+            while mtime+"_"*i in result:
+                i += 1
+            mtime = mtime+"_"*i
+            result[mtime] = fullFileName
     return result
 
 

@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
@@ -177,7 +177,7 @@ QTabBar::tab:selected{
              </widget>
             </item>
             <item row="1" column="0" colspan="3">
-             <widget class="QTreeWidget" name="treeWidget">
+             <widget class="QTreeWidget" name="tree_widget_group">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -3105,8 +3105,8 @@ padding-bottom: 8px;</string>
         <string>人脸搜索</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_26">
-        <item row="1" column="0" colspan="2">
-         <widget class="QLabel" name="label_94">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_96">
           <property name="font">
            <font>
             <family>新宋体</family>
@@ -3114,14 +3114,24 @@ padding-bottom: 8px;</string>
            </font>
           </property>
           <property name="text">
-           <string>请选择待检索的目录：</string>
+           <string>请指定待检索人物的照片：</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="0" column="3">
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
          <widget class="QPushButton" name="searchface_select_photo_btn">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -3156,18 +3166,21 @@ padding-bottom: 8px;</string>
           </property>
          </widget>
         </item>
-        <item row="8" column="0" colspan="7">
-         <widget class="QListWidget" name="searchface_list_widget">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
+        <item row="0" column="3">
+         <spacer name="horizontalSpacer_25">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-         </widget>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
-        <item row="6" column="0" colspan="2">
-         <widget class="QLabel" name="label_95">
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_94">
           <property name="font">
            <font>
             <family>新宋体</family>
@@ -3175,30 +3188,14 @@ padding-bottom: 8px;</string>
            </font>
           </property>
           <property name="text">
-           <string>检索结果：</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="label_96">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>请指定待检索人物的照片：</string>
+           <string>请选择待检索的目录：</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="1" column="1">
          <widget class="QLineEdit" name="searchface_retieve_dir_line">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -3214,17 +3211,7 @@ padding-bottom: 8px;</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QLineEdit" name="lineEdit">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
+        <item row="1" column="2">
          <widget class="QPushButton" name="searchface_select_retrieve_dir_btn">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -3259,27 +3246,8 @@ padding-bottom: 8px;</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="4">
-         <spacer name="horizontalSpacer_25">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="3" colspan="4">
-         <widget class="QLabel" name="searchface_dst_show_view">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_95">
           <property name="font">
            <font>
             <family>新宋体</family>
@@ -3287,14 +3255,83 @@ padding-bottom: 8px;</string>
            </font>
           </property>
           <property name="text">
-           <string>展示检索出的照片</string>
+           <string>检索结果：</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="4" column="0" colspan="5">
+        <item row="2" column="0" colspan="4">
+         <widget class="QSplitter" name="splitter_6">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QLabel" name="searchface_src_view">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>332</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>新宋体</family>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>待检索人物的照片</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="searchface_dst_show_view">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>新宋体</family>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>展示检索出的照片</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="4">
+         <widget class="QListWidget" name="searchface_list_widget">
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="4">
          <widget class="QFrame" name="frame_6">
           <property name="minimumSize">
            <size>
@@ -3427,34 +3464,6 @@ padding-bottom: 8px;</string>
             </spacer>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="3">
-         <widget class="QLabel" name="searchface_src_view">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>332</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>待检索人物的照片</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
          </widget>
         </item>
        </layout>
@@ -6750,6 +6759,54 @@ padding-bottom: 8px;</string>
   </action>
  </widget>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>dir_lineEdit</tabstop>
+  <tabstop>open_dir_btn</tabstop>
+  <tabstop>tree_widget_group</tabstop>
+  <tabstop>fonds_code_in_group</tabstop>
+  <tabstop>arch_category_code_in_group</tabstop>
+  <tabstop>retention_period_in_group</tabstop>
+  <tabstop>year_in_group</tabstop>
+  <tabstop>department_in_group</tabstop>
+  <tabstop>group_code_in_group</tabstop>
+  <tabstop>group_title_in_group</tabstop>
+  <tabstop>author_in_group</tabstop>
+  <tabstop>folder_size_in_group</tabstop>
+  <tabstop>photographer_in_group</tabstop>
+  <tabstop>taken_time_in_group</tabstop>
+  <tabstop>taken_locations_in_group</tabstop>
+  <tabstop>photo_num_in_group</tabstop>
+  <tabstop>security_classification_in_group</tabstop>
+  <tabstop>reference_code_in_group</tabstop>
+  <tabstop>opening_state_in_group</tabstop>
+  <tabstop>group_caption_in_group</tabstop>
+  <tabstop>save_group_btn</tabstop>
+  <tabstop>selected_dir_radioButton</tabstop>
+  <tabstop>current_dir_radioButton</tabstop>
+  <tabstop>all_photo_radioButton</tabstop>
+  <tabstop>part_recognition_radioButton</tabstop>
+  <tabstop>all_recognition_radioButton</tabstop>
+  <tabstop>arch_code_in_photo</tabstop>
+  <tabstop>fonds_code_in_photo</tabstop>
+  <tabstop>arch_category_code_in_photo</tabstop>
+  <tabstop>year_in_photo</tabstop>
+  <tabstop>group_code_in_photo</tabstop>
+  <tabstop>photographer_in_photo</tabstop>
+  <tabstop>taken_time_in_photo</tabstop>
+  <tabstop>taken_locations_in_photo</tabstop>
+  <tabstop>format_in_photo</tabstop>
+  <tabstop>security_classification_in_photo</tabstop>
+  <tabstop>reference_code_in_photo</tabstop>
+  <tabstop>photo_code_in_photo</tabstop>
+  <tabstop>peoples_in_photo</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>verifycheckBox</tabstop>
+  <tabstop>thresh_lineEdit</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>searchface_select_photo_btn</tabstop>
+  <tabstop>searchface_retieve_dir_line</tabstop>
+  <tabstop>searchface_select_retrieve_dir_btn</tabstop>
+  <tabstop>searchface_list_widget</tabstop>
   <tabstop>order_combobox_browse</tabstop>
   <tabstop>arch_tree_view_browse</tabstop>
   <tabstop>photo_list_widget</tabstop>
@@ -6775,108 +6832,60 @@ padding-bottom: 8px;</string>
   <tabstop>format_in_photo_arch</tabstop>
   <tabstop>group_caption_in_group_arch</tabstop>
   <tabstop>peoples_in_photo_arch</tabstop>
+  <tabstop>group_title_search</tabstop>
+  <tabstop>peoples_search</tabstop>
+  <tabstop>time_search</tabstop>
+  <tabstop>search_btn</tabstop>
+  <tabstop>group_list_widget_search</tabstop>
+  <tabstop>photo_list_widget_search</tabstop>
+  <tabstop>arch_code_in_group_search</tabstop>
+  <tabstop>fonds_code_in_group_search</tabstop>
+  <tabstop>arch_category_code_in_group_search</tabstop>
+  <tabstop>retention_period_in_group_search</tabstop>
+  <tabstop>year_in_group_search</tabstop>
+  <tabstop>department_in_group_search</tabstop>
+  <tabstop>group_code_in_group_search</tabstop>
+  <tabstop>author_in_group_search</tabstop>
+  <tabstop>group_title_in_group_search</tabstop>
+  <tabstop>folder_size_in_group_search</tabstop>
+  <tabstop>photographer_in_group_search</tabstop>
+  <tabstop>taken_time_in_group_search</tabstop>
+  <tabstop>taken_locations_in_group_search</tabstop>
+  <tabstop>photo_num_in_group_search</tabstop>
+  <tabstop>security_classification_in_group_search</tabstop>
+  <tabstop>reference_code_in_group_search</tabstop>
+  <tabstop>opening_state_in_group_search</tabstop>
+  <tabstop>arch_code_in_photo_search</tabstop>
+  <tabstop>photo_code_in_photo_search</tabstop>
   <tabstop>format_in_photo_search</tabstop>
   <tabstop>group_caption_in_group_search</tabstop>
   <tabstop>peoples_in_photo_search</tabstop>
-  <tabstop>photo_num_in_group</tabstop>
-  <tabstop>taken_locations_in_group</tabstop>
-  <tabstop>taken_time_in_group</tabstop>
-  <tabstop>photographer_in_group</tabstop>
-  <tabstop>folder_size_in_group</tabstop>
-  <tabstop>author_in_group</tabstop>
-  <tabstop>fonds_code_in_group</tabstop>
-  <tabstop>peoples_in_photo</tabstop>
-  <tabstop>photographer_in_photo</tabstop>
-  <tabstop>taken_time_in_photo</tabstop>
-  <tabstop>taken_locations_in_photo</tabstop>
-  <tabstop>format_in_photo</tabstop>
-  <tabstop>security_classification_in_photo</tabstop>
-  <tabstop>reference_code_in_photo</tabstop>
-  <tabstop>photo_code_in_photo</tabstop>
-  <tabstop>fonds_name_in_setting</tabstop>
-  <tabstop>fonds_code_in_setting</tabstop>
-  <tabstop>all_photo_radioButton</tabstop>
-  <tabstop>group_caption_in_group</tabstop>
-  <tabstop>part_recognition_radioButton</tabstop>
-  <tabstop>group_code_in_photo</tabstop>
-  <tabstop>all_recognition_radioButton</tabstop>
-  <tabstop>group_code_in_group</tabstop>
-  <tabstop>retention_period_in_group</tabstop>
-  <tabstop>year_in_group</tabstop>
-  <tabstop>tableWidget</tabstop>
-  <tabstop>save_group_btn</tabstop>
-  <tabstop>selected_dir_radioButton</tabstop>
-  <tabstop>group_title_in_group</tabstop>
-  <tabstop>fonds_code_in_photo</tabstop>
-  <tabstop>year_in_photo</tabstop>
-  <tabstop>package_path_in_setting</tabstop>
-  <tabstop>arch_category_code_in_photo</tabstop>
-  <tabstop>thresh_lineEdit</tabstop>
-  <tabstop>department_in_group</tabstop>
-  <tabstop>arch_code_in_photo</tabstop>
-  <tabstop>verifycheckBox</tabstop>
-  <tabstop>current_dir_radioButton</tabstop>
-  <tabstop>arch_category_code_in_group</tabstop>
-  <tabstop>description_path_in_setting</tabstop>
   <tabstop>order_combobox_transfer</tabstop>
   <tabstop>arch_tree_view_transfer</tabstop>
   <tabstop>selected_arch_list_widget</tabstop>
+  <tabstop>cd_size_line_edit</tabstop>
   <tabstop>across_year_combo_box</tabstop>
   <tabstop>across_period_combo_box</tabstop>
-  <tabstop>packeage_btn</tabstop>
-  <tabstop>cd_size_line_edit</tabstop>
-  <tabstop>operation_date_in_transfer</tabstop>
-  <tabstop>group_codes_in_transfer</tabstop>
-  <tabstop>cd_catalog_table_widget</tabstop>
-  <tabstop>cd_num_in_transfer</tabstop>
-  <tabstop>fonds_code_in_transfer</tabstop>
-  <tabstop>fonds_name_in_transfer</tabstop>
   <tabstop>partition_list_widget</tabstop>
+  <tabstop>cd_catalog_table_widget</tabstop>
   <tabstop>title_in_transfer</tabstop>
-  <tabstop>photo_num_in_transfer</tabstop>
   <tabstop>cd_model_in_transfer</tabstop>
   <tabstop>file_type_in_transfer</tabstop>
-  <tabstop>cd_type_in_transfer</tabstop>
+  <tabstop>operation_date_in_transfer</tabstop>
   <tabstop>operator_in_transfer</tabstop>
-  <tabstop>select_package_dir_btn</tabstop>
-  <tabstop>treeWidget</tabstop>
-  <tabstop>dir_lineEdit</tabstop>
+  <tabstop>fonds_name_in_transfer</tabstop>
+  <tabstop>fonds_code_in_transfer</tabstop>
+  <tabstop>group_codes_in_transfer</tabstop>
+  <tabstop>photo_num_in_transfer</tabstop>
+  <tabstop>cd_type_in_transfer</tabstop>
+  <tabstop>cd_num_in_transfer</tabstop>
+  <tabstop>packeage_btn</tabstop>
+  <tabstop>fonds_name_in_setting</tabstop>
+  <tabstop>fonds_code_in_setting</tabstop>
+  <tabstop>description_path_in_setting</tabstop>
   <tabstop>select_description_dir_btn</tabstop>
-  <tabstop>open_dir_btn</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>peoples_search</tabstop>
-  <tabstop>group_title_search</tabstop>
-  <tabstop>search_btn</tabstop>
-  <tabstop>time_search</tabstop>
-  <tabstop>photographer_in_group_search</tabstop>
-  <tabstop>department_in_group_search</tabstop>
-  <tabstop>photo_num_in_group_search</tabstop>
-  <tabstop>arch_code_in_photo_search</tabstop>
-  <tabstop>security_classification_in_group_search</tabstop>
-  <tabstop>retention_period_in_group_search</tabstop>
-  <tabstop>security_classification_in_group</tabstop>
-  <tabstop>fonds_code_in_group_search</tabstop>
-  <tabstop>author_in_group_search</tabstop>
-  <tabstop>group_code_in_group_search</tabstop>
-  <tabstop>taken_locations_in_group_search</tabstop>
-  <tabstop>year_in_group_search</tabstop>
-  <tabstop>photo_code_in_photo_search</tabstop>
-  <tabstop>opening_state_in_group</tabstop>
-  <tabstop>arch_code_in_group_search</tabstop>
-  <tabstop>taken_time_in_group_search</tabstop>
-  <tabstop>folder_size_in_group_search</tabstop>
-  <tabstop>arch_category_code_in_group_search</tabstop>
-  <tabstop>reference_code_in_group_search</tabstop>
-  <tabstop>group_title_in_group_search</tabstop>
-  <tabstop>opening_state_in_group_search</tabstop>
-  <tabstop>reference_code_in_group</tabstop>
-  <tabstop>group_list_widget_search</tabstop>
-  <tabstop>photo_list_widget_search</tabstop>
-  <tabstop>searchface_select_photo_btn</tabstop>
-  <tabstop>searchface_list_widget</tabstop>
-  <tabstop>searchface_retieve_dir_line</tabstop>
-  <tabstop>lineEdit</tabstop>
-  <tabstop>searchface_select_retrieve_dir_btn</tabstop>
+  <tabstop>package_path_in_setting</tabstop>
+  <tabstop>select_package_dir_btn</tabstop>
  </tabstops>
  <resources/>
  <connections/>
