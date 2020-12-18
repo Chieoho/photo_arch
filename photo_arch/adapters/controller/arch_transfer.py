@@ -8,7 +8,7 @@
 from typing import Tuple
 
 from photo_arch.use_cases.arch_transfer import ArchTransfer
-from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.sql.data_access import Repo
 from photo_arch.adapters.presenter.arch_transfer import Presenter
 
 

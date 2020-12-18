@@ -6,7 +6,7 @@
 @time: 2020/11/25 10:44
 """
 from photo_arch.use_cases.arch_browser import ArchBrowser
-from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.sql.data_access import Repo
 from photo_arch.adapters.presenter.arch_browser import Presenter
 
 

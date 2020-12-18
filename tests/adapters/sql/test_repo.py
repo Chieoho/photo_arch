@@ -8,7 +8,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from photo_arch.domains.photo_group import PhotoGroup, Photo
-from photo_arch.adapters.sql.repo import Repo, Base
+from photo_arch.adapters.sql.data_access import Repo
+from photo_arch.adapters.sql.repo import Base
 
 engine = create_engine('sqlite:///test.db')
 Base.metadata.create_all(engine)

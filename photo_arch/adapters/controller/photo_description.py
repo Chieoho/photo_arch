@@ -6,7 +6,7 @@
 @time: 2020/11/25 10:43
 """
 from photo_arch.use_cases.photo_description import PhotoDescription
-from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.sql.data_access import Repo
 from photo_arch.adapters.presenter.photo_description import Presenter
 
 

@@ -8,7 +8,7 @@
 from photo_arch.use_cases.interfaces.dataset import GroupInputData
 from photo_arch.use_cases.group_description import GroupDescription
 from photo_arch.adapters.presenter.group_description import Presenter
-from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.sql.data_access import Repo
 
 
 class Controller(object):

@@ -8,7 +8,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from photo_arch.adapters.sql import Base, create_database
-from multiprocessing import Process
+# from multiprocessing import Process
 
 
 class DB(object):
@@ -16,7 +16,7 @@ class DB(object):
     password = '123456'
     ip = '192.168.66.50'
     port = 3306
-    name = 'auto_test'
+    name = 'photo_arch'
     # uri = f'mysql+pymysql://{db_username}:{db_password}@{db_ip}:{db_port}/{db_name}?charset=utf8mb4'
     uri = 'sqlite:///photo_arch.db'
 
@@ -36,17 +36,17 @@ def make_session(engine_):
 session = make_session(engine)
 
 
-class UpdateProcess(Process):
-    def __init__(self, path):
-        self.path = path
-        super().__init__()
-
-    def run(self) -> None:
-        engine.dispose()
-
-        from photo_arch.adapters.sql.repo import RepoGeneral
-        repo_ = RepoGeneral(make_session(engine))
-        repo_.update('face', {'photo_path': [self.path]}, {'faces': self.path})
+# class UpdateProcess(Process):
+#     def __init__(self, path):
+#         self.path = path
+#         super().__init__()
+#
+#     def run(self) -> None:
+#         engine.dispose()
+#
+#         from photo_arch.adapters.sql.repo import RepoGeneral
+#         repo_ = RepoGeneral(make_session(engine))
+#         repo_.update('face', {'photo_path': [self.path]}, {'faces': self.path})
 
 
 if __name__ == '__main__':
@@ -62,9 +62,9 @@ if __name__ == '__main__':
     # repo.add('face', [{'photo_path': 'test3'}])
     # print(repo.join_query(('face', 'photo'), ('photo_path', 'photo_path'),
     #                       [['face_id', 'verify_state'], ['photo_id', 'photo_path']]))
-    p1 = UpdateProcess('test1')
-    p2 = UpdateProcess('test2')
-    p3 = UpdateProcess('test3')
-    for p in [p1, p2, p3]:
-        p.start()
-        p.join()
+    # p1 = UpdateProcess('test1')
+    # p2 = UpdateProcess('test2')
+    # p3 = UpdateProcess('test3')
+    # for p in [p1, p2, p3]:
+    #     p.start()
+    #     p.join()

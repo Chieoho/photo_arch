@@ -6,7 +6,7 @@
 @time: 2020/12/10 15:20
 """
 from photo_arch.use_cases.arch_searcher import ArchSearcher
-from photo_arch.adapters.sql.repo import Repo
+from photo_arch.adapters.sql.data_access import Repo
 from photo_arch.adapters.presenter.arch_searcher import Presenter
 
 
