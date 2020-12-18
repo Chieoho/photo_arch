@@ -14,8 +14,8 @@ from photo_arch.infrastructures.user_interface.qt.interaction.utils import stati
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
 
-from photo_arch.infrastructures.databases.db_setting import session
 from photo_arch.adapters.controller.setting import Controller, Repo
+from photo_arch.infrastructures.databases.db_setting import session
 
 
 class View(object):
