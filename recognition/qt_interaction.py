@@ -70,5 +70,8 @@ class QtInteraction(object):
     def get_retrieve_result(self, file_path, dir_path) -> list:
         return self._rcn.get_retrieve_result(file_path, dir_path)
 
+    def get_retrieve_info(self) -> dict:
+        return self._rcn.get_retrieve_info()
+
 
 

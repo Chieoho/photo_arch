@@ -370,11 +370,12 @@ class SearchImagesProcess(Process):
     src_embedding = None
 
 
-    def __init__(self, search_queue):
+    def __init__(self, search_queue, retrived_queue):
         super(SearchImagesProcess, self).__init__()
         self.event = Event()
         self.event.set()  # 设置为True
         self.search_queue = search_queue
+        self.retrived_queue = retrived_queue
 
 
     def pause(self):
@@ -459,8 +460,11 @@ class SearchImagesProcess(Process):
             src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
                 searchfacesDatas = []
+                searchface = {}
+                box_list = []
+                embedding_list = []
                 for j, box in enumerate(np.asarray(det)):
-                    searchface = {}
+
                     (startX, startY, endX, endY) = box.astype("int")
                     bb = np.zeros(4, dtype=np.int32)
                     bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
@@ -476,13 +480,18 @@ class SearchImagesProcess(Process):
                     with self.graph.as_default():
                         embedding = get_embedding(self.facenet_model, scaled)
 
-                    searchface['photo_path'] = imgPath
-                    searchface['face_box'] = str([startX / scale, startY / scale, endX / scale, endY / scale])
-                    searchface['embedding'] = str(list(embedding))
-                    searchface['parent_path'] = src_dir
-                    searchfacesDatas.append(searchface)
+                    box_list.append([startX / scale, startY / scale, endX / scale, endY / scale])
+                    embedding_list.append(list(embedding))
+
+                searchface['photo_path'] = imgPath
+                searchface['face_box'] = str(box_list)
+                searchface['embedding'] = str(embedding_list)
+                searchface['parent_path'] = src_dir
+                searchfacesDatas.append(searchface)
 
                 sql_repo.add('searchfaces', searchfacesDatas)
+
+            self.retrived_queue.put(imgPath)
 
 
 
@@ -497,6 +506,7 @@ class Recognition(object):
         self.verify_queue = Queue()  # 用来填充核验信息
         self.search_queue = Queue()  # 用来填充以图搜图的图片路径
         self.done_queue = Manager().Queue() # 返回识别结果信息
+        self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
         self.jobs_proc = []   # 将进程对象放进list
         self.pendingTotalImgsNum = 0 #待处理的图片总数量
 
@@ -507,6 +517,10 @@ class Recognition(object):
         self.part_recognized_pic_num = 0 # 部分识别出人脸的图片的总数
         self.all_recognized_pic_num = 0  # 全部识别出人脸的图片的总数
         self.handled_pic_num = 0 # 已处理图片的总数
+
+        # 返回UI层的检索信息
+        self.retrived_pic_num = 0  # 已检索的图片数量
+        self.pendingRetrieveTotalImgsNum = 0  # 待检索的图片总数量
 
         # 用于本次识别
         self.part_recog_img_list = []
@@ -530,7 +544,7 @@ class Recognition(object):
 
 
         # 开启以图搜图子进程
-        self.searchImagesProc = SearchImagesProcess(self.search_queue)
+        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue)
         self.searchImagesProc.daemon = True
         self.searchImagesProc.start()
 
@@ -614,7 +628,12 @@ class Recognition(object):
                 parentPath = os.path.abspath(os.path.join(dummy, ".."))
                 arch_code = volume_num + '-{0:0>4}'.format(i + 1)
                 newPath = os.path.abspath(os.path.join(parentPath, arch_code)) + extension
-                os.rename(all_files[key], newPath)
+                if all_files[key] != newPath :
+                    os.rename(all_files[key], newPath)
+                    # 修改缩略图的路径
+                    old0, old1 = os.path.split(all_files[key])
+                    new0, new1 = os.path.split(newPath)
+                    os.rename(os.path.abspath(os.path.join(old0, 'thumbs', old1)), os.path.abspath(os.path.join(new0, 'thumbs', new1)))
 
                 # 件著录信息
                 photoInfo['arch_code'] = arch_code  # 件的档号
@@ -860,6 +879,10 @@ class Recognition(object):
 
     def start_retrieve(self, file_path, dir_path):
         ret = 0
+
+        self.retrived_pic_num = 0
+        self.pendingRetrieveTotalImgsNum = 0
+
         # 判断该dir_path路径是否已经检索过了
         parent_path_list = self.sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('parent_path'))
         if len(parent_path_list) > 0:
@@ -868,9 +891,12 @@ class Recognition(object):
 
         # 判断该dir_path路径是否有照片
         img_list = glob.glob(os.path.abspath(os.path.join(dir_path, '*.*[jpg,png]')))
-        if len(img_list) == 0:
+        pic_num = len(img_list)
+        if pic_num == 0:
             ret = -1
             return ret
+        else:
+            self.pendingRetrieveTotalImgsNum = pic_num
 
         if self.search_queue.empty() == True:
             self.searchImagesProc.resume()
@@ -878,6 +904,8 @@ class Recognition(object):
             self.search_queue.put(os.path.abspath(file_path))
             for imgPath in img_list:
                 self.search_queue.put(imgPath)
+
+        return ret
 
 
     def get_retrieve_result(self, file_path, dir_path) -> list:
@@ -895,8 +923,10 @@ class Recognition(object):
         des_embedding_list = self.sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('photo_path', 'face_box', 'embedding'))
         for ele_dict in des_embedding_list:
             photo_path.append(ele_dict['photo_path'])
-            retrive_des_box.append(eval(ele_dict['face_box']))
-            retrive_des_embedding.append((eval(ele_dict['embedding'])))
+            for box in eval(ele_dict['face_box']):
+                retrive_des_box.append(box)
+            for emd in eval(ele_dict['embedding']):
+                retrive_des_embedding.append(emd)
 
         dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(retrive_src_embedding), axis=1)
         dist = list(dist)
@@ -908,6 +938,19 @@ class Recognition(object):
             retrive_results_face_box.append(retrive_des_box[index])
 
         return retrive_results_photo_path, retrive_results_face_box
+
+
+    def get_retrieve_info(self) -> dict:
+        retrivedResultInfo = {}
+        self.retrived_pic_num += self.retrived_queue.qsize()  # 已检索过的图片数量
+        for _ in range(self.retrived_queue.qsize()):
+            _ = self.retrived_queue.get()
+
+        retrivedResultInfo['total_to_retrieve_photo_num'] = self.pendingRetrieveTotalImgsNum
+        retrivedResultInfo['retrieved_photo_num'] = self.retrived_pic_num
+
+        return retrivedResultInfo
+
 
 
 
