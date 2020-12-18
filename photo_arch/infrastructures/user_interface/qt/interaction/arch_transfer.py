@@ -344,13 +344,13 @@ class ArchTransfer(object):
         table_widget_to_xls(self.ui.cd_catalog_table_widget, xls_path)
 
     def _gen_caption_file(self, cd_name, cd_path):
-        caption = self.cd_info_dict[cd_name]['caption']
+        caption = self.cd_info_dict[cd_name].get('caption') or self.view.get_caption()
         caption_text = self._gen_caption_text(caption)
         with open(os.path.join(cd_path, 'SM.txt'), 'wb') as fw:
             fw.write(caption_text.encode())
 
     def _gen_label_file(self, cd_name, cd_path):
-        label = self.cd_info_dict[cd_name]['label']
+        label = self.cd_info_dict[cd_name].get('label') or self.view.get_label()
         label_text = self._gen_label_text(label)
         with open(os.path.join(cd_path, '标签.txt'), 'wb') as fw:
             fw.write(label_text.encode())

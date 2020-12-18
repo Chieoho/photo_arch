@@ -70,10 +70,10 @@ class GroupDescription(object):
         self.group_tmp_info = {}
 
         height = int(self.mw.dt_height*30/1080)
-        self.ui.treeWidget.setStyleSheet('#treeWidget::item{height:%spx;}' % height)
+        self.ui.tree_widget_group.setStyleSheet('#treeWidget::item{height:%spx;}' % height)
         self.ui.open_dir_btn.clicked.connect(static(self.select_dir))
-        self.ui.treeWidget.itemDoubleClicked.connect(static(self.item_click))
-        self.ui.treeWidget.itemClicked.connect(static(self.display_group))
+        self.ui.tree_widget_group.itemDoubleClicked.connect(static(self.tick_item))
+        self.ui.tree_widget_group.itemSelectionChanged.connect(static(self.display_group))
         self.ui.add_folder_btn.clicked.connect(static(self.add_folder_item))
         self.ui.cancel_folder_btn.clicked.connect(static(self.cancel_folder_item))
         self.ui.save_group_btn.clicked.connect(static(self.save_and_copy_group))
@@ -97,7 +97,7 @@ class GroupDescription(object):
 
     def select_dir(self):
         current_work_path = QtWidgets.QFileDialog.getExistingDirectory(
-            self.ui.treeWidget, "选择文件夹",
+            self.ui.tree_widget_group, "选择文件夹",
             options=QtWidgets.QFileDialog.ShowDirsOnly
         )
         if not current_work_path:
@@ -108,7 +108,11 @@ class GroupDescription(object):
         self._generate_tree_by_path(self.current_work_path)
         self._reset_state()
 
-    def display_group(self, item):
+    def display_group(self):
+        item_list = self.ui.tree_widget_group.selectedItems()
+        if not item_list:
+            return
+        item = item_list[0]
         if item.text(0) == self.current_work_path:
             return
         self._keep_tmp_info(self.current_folder)
@@ -180,11 +184,11 @@ class GroupDescription(object):
         self.ui.group_code_in_group.setText(group_code)
 
     def save_and_copy_group(self):
-        self._save_group_and_move_folder()
+        self._save_group_and_remove_folder()
         self._copy_arch_and_gen_thumbs()
         self.mw.msg_box('保存成功', msg_type='info')
 
-    def _save_group_and_move_folder(self):
+    def _save_group_and_remove_folder(self):
         group_arch_code = self.ui.arch_code_in_group.text()
         if not group_arch_code:
             return
@@ -194,18 +198,20 @@ class GroupDescription(object):
         group_data.first_photo_md5 = first_photo_md5
         _, group_info = self.controller.get_group(first_photo_md5)
         if group_info:
-            self._move_old_group(group_info, group_data)
+            self._remove_old_group(group_info, group_data)
             self.controller.update_group(group_data)
         else:
             self.controller.add_group(group_data)
 
-    def _move_old_group(self, old_group: dict, new_group: GroupInputData):
+    def _remove_old_group(self, old_group: dict, new_group: GroupInputData):
         _ = self
         old_folder_name = old_group.get('group_path')
-        new_folder_name = new_group.group_path
         old_group_path = self._get_group_folder_path(old_folder_name)
         if os.path.exists(old_group_path):
-            shutil.move(old_group_path, self._get_group_folder_path(new_folder_name))
+            new_folder_name = new_group.group_path
+            new_group_path = self._get_group_folder_path(new_folder_name)
+            if new_group_path != old_group_path:
+                shutil.rmtree(old_group_path)
 
     def _get_group_folder_path(self, group_folder_name):
         group_code, _, _ = group_folder_name.split(' ')
@@ -222,7 +228,8 @@ class GroupDescription(object):
         source_path, dst_abspath = self._get_src_dst_path()
         self.description_path_info[source_path] = os.path.join(dst_abspath)
         self.arch_code_info[source_path] = self.ui.arch_code_in_group.text()
-        copy_tree(source_path, dst_abspath)
+        if source_path != dst_abspath:
+            copy_tree(source_path, dst_abspath)
         self._gen_thumbs(source_path, dst_abspath)
 
     def _get_src_dst_path(self, current_folder=None):
@@ -264,7 +271,7 @@ class GroupDescription(object):
                 first_photo = f
         return first_photo
 
-    def item_click(self, item):
+    def tick_item(self, item):
         group_folder = item.text(0)
         if group_folder == self.current_work_path:
             return
@@ -280,7 +287,7 @@ class GroupDescription(object):
             item.setCheckState(0, QtGui.Qt.Unchecked)
 
     def cancel_folder_item(self):
-        item_value = QtWidgets.QTreeWidgetItemIterator(self.ui.treeWidget).value()
+        item_value = QtWidgets.QTreeWidgetItemIterator(self.ui.tree_widget_group).value()
         if item_value is None:
             return
         child_count = item_value.childCount()
@@ -293,10 +300,10 @@ class GroupDescription(object):
             "root": {},
             "children": {}
         }
-        root_item = self.ui.treeWidget.invisibleRootItem().child(0)
+        root_item = self.ui.tree_widget_group.invisibleRootItem().child(0)
         if root_item is None:
             return
-        item_iterator = QtWidgets.QTreeWidgetItemIterator(self.ui.treeWidget)
+        item_iterator = QtWidgets.QTreeWidgetItemIterator(self.ui.tree_widget_group)
         items_value = item_iterator.value()
         for i in range(items_value.childCount()):
             item = items_value.child(i)
@@ -340,15 +347,15 @@ class GroupDescription(object):
     def _generate_dir_tree(self, root_arch_info, file_arch_list):
         root_path, root_arch_code = root_arch_info
         _, volume_name = os.path.split(root_path)
-        self.ui.treeWidget.setColumnWidth(0, int(520*self.mw.dt_width/1920))  # 设置列宽
-        self.ui.treeWidget.clear()
-        root = QtWidgets.QTreeWidgetItem(self.ui.treeWidget)
+        self.ui.tree_widget_group.setColumnWidth(0, int(520*self.mw.dt_width/1920))  # 设置列宽
+        self.ui.tree_widget_group.clear()
+        root = QtWidgets.QTreeWidgetItem(self.ui.tree_widget_group)
         root.setText(0, root_path)
         for name, arch_code in file_arch_list:
             child = QtWidgets.QTreeWidgetItem(root)
             child.setText(0, name)
             child.setCheckState(0, QtGui.Qt.Unchecked)
-        self.ui.treeWidget.expandAll()
+        self.ui.tree_widget_group.expandAll()
 
     def _generate_tree_by_path(self, root_path):
         file_list = filter(lambda p: os.path.isdir(os.path.join(root_path, p)), os.listdir(root_path))

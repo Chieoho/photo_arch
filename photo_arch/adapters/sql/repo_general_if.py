@@ -20,7 +20,7 @@ class RepoGeneralIf(metaclass=ABCMeta):
             records: List[dict]
             ) -> bool:
         """
-        往table添加一条记录
+        往table添加多条记录
         :param table: 表名 如：photo
         :param records: 记录信息列表
         :return: 成功返回True，失败返回False
