@@ -7,7 +7,7 @@
 """
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from photo_arch.domains.photo_group import PhotoGroup, Photo
+from photo_arch.domains.photo_group import Group, Photo
 from photo_arch.adapters.sql.data_access import Repo
 from photo_arch.adapters.sql.repo import Base
 
@@ -19,13 +19,13 @@ session_obj = scoped_session(session_factory)
 
 def test_add_group():
     repo = Repo(session_obj())
-    add_group_res = repo.add_group(PhotoGroup())
+    add_group_res = repo.add_group(Group())
     assert add_group_res is True
 
 
 def test_add_photo():
     repo = Repo(session_obj())
-    add_photo_res = repo.add_photo(Photo(PhotoGroup(), peoples='张三'))
+    add_photo_res = repo.add_photo(Photo(Group(), peoples='张三'))
     assert add_photo_res is True
 
 

@@ -258,7 +258,7 @@ class ArchTransfer(object):
                 self.view.display_caption(caption)
                 self.view.display_label(label)
             else:
-                self._display_default_caption()
+                self._display_default_caption(cd_name)
                 self._display_default_label(row)
             self.current_cd = cd_name
         else:
@@ -298,7 +298,8 @@ class ArchTransfer(object):
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.ui.cd_catalog_table_widget.setItem(row, col, item)
 
-    def _display_default_caption(self):
+    def _display_default_caption(self, cd_name):
+        self.ui.title_in_transfer.setText(cd_name)
         operation_date = time.strftime('%Y%m%d')
         self.ui.operation_date_in_transfer.setText(operation_date)
         self.ui.operator_in_transfer.setText(self.setting.fonds_name)

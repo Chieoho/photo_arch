@@ -5,11 +5,11 @@
 @author: Jaden Wu
 @time: 2020/11/12 9:39
 """
-from photo_arch.domains.photo_group import PhotoGroup, Photo
+from photo_arch.domains.photo_group import Group, Photo
 
 
 group_code = '0001'
-photo_group = PhotoGroup(group_code=group_code)
+photo_group = Group(group_code=group_code)
 
 
 def test_inherit_group():

@@ -7,7 +7,7 @@
 """
 from abc import ABCMeta, abstractmethod
 from typing import List
-from photo_arch.domains.photo_group import PhotoGroup, Photo
+from photo_arch.domains.photo_group import Group, Photo
 
 
 class RepoIf(metaclass=ABCMeta):
@@ -15,14 +15,14 @@ class RepoIf(metaclass=ABCMeta):
     数据存储接口
     """
     @abstractmethod
-    def add_group(self, group: PhotoGroup) -> bool:
+    def add_group(self, group: Group) -> bool:
         """
         :param group:
         :return:
         """
 
     @abstractmethod
-    def update_group(self, group: PhotoGroup) -> bool:
+    def update_group(self, group: Group) -> bool:
         """
         :param group:
         :return:

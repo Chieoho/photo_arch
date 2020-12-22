@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class PhotoGroup(object):
+class Group(object):
     group_path: str = ''
     arch_code: str = ''
     fonds_code: str = ''
@@ -37,7 +37,7 @@ class PhotoGroup(object):
 
 @dataclass
 class Photo(object):
-    group: PhotoGroup
+    group: Group
     arch_code: str = ''
     photo_code: str = ''
     peoples: str = ''

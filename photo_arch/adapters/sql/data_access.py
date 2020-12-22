@@ -6,7 +6,7 @@
 @time: 2020/12/18 10:52
 """
 from typing import List
-from photo_arch.domains.photo_group import PhotoGroup, Photo
+from photo_arch.domains.photo_group import Group, Photo
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
 from photo_arch.adapters.sql.repo import RepoGeneral, PhotoGroupModel, PhotoModel, SettingModel
 
@@ -19,14 +19,14 @@ class Repo(RepoIf):
     def __del__(self):
         self.session.close()
 
-    def add_group(self, group: PhotoGroup) -> bool:
+    def add_group(self, group: Group) -> bool:
         group_dict = group.to_dict()
         new_group = PhotoGroupModel(**group_dict)
         self.session.add(new_group)
         self.session.commit()
         return True
 
-    def update_group(self, group: PhotoGroup) -> bool:
+    def update_group(self, group: Group) -> bool:
         first_photo_md5 = group.first_photo_md5
         group_dict = group.to_dict()
         self.repo_general.update('photo_group', {'first_photo_md5': [first_photo_md5]}, group_dict)
