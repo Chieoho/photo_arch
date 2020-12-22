@@ -17,7 +17,7 @@ unhandled_photo_num = 100
 class Interaction(UiInterface):
     def __init__(self):
         self.arch_code_info = {}
-        time.sleep(1)
+        time.sleep(10)
 
     def start(self, params) -> dict:
         print('start')

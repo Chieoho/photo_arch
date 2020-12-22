@@ -8,8 +8,11 @@
 from collections import defaultdict
 import time
 from typing import List
-from distutils.dir_util import copy_tree
+import shutil
 import os
+import glob
+from copy import deepcopy
+from operator import itemgetter
 
 from dataclasses import dataclass
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -204,8 +207,36 @@ class ArchTransfer(object):
                 folder_size = float(gi['folder_size'])
                 # 组大小大于或等于光盘容量
                 if folder_size >= cd_size:
-                    for _ in range(int(folder_size//cd_size) + 1):
-                        partition = {'group_list': [gi], 'selected_cond': selected_cond}
+                    group_abspath = os.path.join(
+                        self.setting.description_path,
+                        '照片档案',
+                        gi['year'],
+                        gi['retention_period'],
+                        gi['group_path'],
+                        '*.*')
+                    photo_used_size, photo_list = 0, []
+                    for pf in glob.iglob(group_abspath):
+                        pf_size = os.stat(pf).st_size / 1024 / 1024
+                        photo_used_size += pf_size
+                        if photo_used_size < cd_size:
+                            photo_list.append(pf)
+                        else:
+                            photo_used_size -= pf_size
+                            gi_copy = deepcopy(gi)
+                            gi_copy.update({'photo_num': len(photo_list)})
+                            partition = {'used_size': photo_used_size, 'group_list': [gi_copy],
+                                         'selected_cond': selected_cond, 'photo_list': photo_list,
+                                         'arch_code': gi_copy['arch_code']}
+                            self.partition_list.append(partition)
+                            photo_used_size, photo_list = 0, []
+                            photo_used_size += pf_size
+                            photo_list.append(pf)
+                    if photo_used_size > 0:
+                        gi_copy = deepcopy(gi)
+                        gi_copy.update({'photo_num': len(photo_list)})
+                        partition = {'used_size': photo_used_size, 'group_list': [gi_copy],
+                                     'selected_cond': selected_cond, 'photo_list': photo_list,
+                                     'arch_code': gi_copy['arch_code']}
                         self.partition_list.append(partition)
                 # 组大小小于光盘容量
                 else:
@@ -214,15 +245,17 @@ class ArchTransfer(object):
                         group_list.append(gi)
                     else:
                         used_size -= folder_size
-                        partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond}
+                        partition = {'used_size': used_size, 'group_list': group_list,
+                                     'selected_cond': selected_cond, 'arch_code': group_list[0]['arch_code']}
                         self.partition_list.append(partition)
                         used_size, group_list = 0, []
                         used_size += folder_size
                         group_list.append(gi)
             if used_size > 0:
-                partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond}
+                partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond,
+                             'arch_code': group_list[0]['arch_code']}
                 self.partition_list.append(partition)
-
+        self.partition_list = sorted(self.partition_list, key=itemgetter('arch_code'))
         self._display_partition_res()
 
     def _get_selected_group(self):
@@ -333,7 +366,15 @@ class ArchTransfer(object):
                     gi['retention_period'],
                     group_name)
                 dst_abspath = os.path.join(cd_path, group_name)
-                copy_tree(src_abspath, dst_abspath)
+                if os.path.exists(dst_abspath):
+                    shutil.rmtree(dst_abspath)
+                if 'photo_list' in self.partition_list[r]:
+                    for photo_path in self.partition_list[r]['photo_list']:
+                        if not os.path.exists(dst_abspath):
+                            os.makedirs(dst_abspath)
+                        shutil.copy2(photo_path, dst_abspath)
+                else:
+                    shutil.copytree(src_abspath, dst_abspath, ignore=shutil.ignore_patterns('thumbs'))
             self._gen_catalog_file(cd_path)
             self._gen_caption_file(cd_name, cd_path)
             self._gen_label_file(cd_name, cd_path)

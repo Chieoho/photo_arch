@@ -296,6 +296,7 @@ class GroupDescription(object):
                 item_value.child(i).setCheckState(0, QtGui.Qt.Unchecked)
 
     def add_folder_item(self):
+        self.mw.overlay(self.ui.tree_widget_group)
         arch_code_info = {
             "root": {},
             "children": {}

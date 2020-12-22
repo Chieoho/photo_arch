@@ -36,11 +36,11 @@ class InitRecognition(Thread):
 
 
 class Overlay(QtWidgets.QWidget):
-    def __init__(self, parent, text, dynamic=True, max_dot_num=3):
+    def __init__(self, parent, text, is_dynamic=True, max_dot_num=3):
         QtWidgets.QWidget.__init__(self, parent)
         self.setWindowFlag(QtGui.Qt.WindowStaysOnTopHint)
         self.resize(parent.size())
-        if dynamic:
+        if is_dynamic:
             self.ori_text = text
             self.text = text + ' ' * max_dot_num
             self.timer = QtCore.QTimer()
@@ -110,3 +110,13 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 QtWidgets.QMessageBox.Ok)
         else:
             pass
+
+    def overlay(self, widget, msg='后台初始化未完成，请稍等', is_dynamic=True):
+        overlay = Overlay(widget, msg, is_dynamic=is_dynamic)
+        overlay.show()
+        while 1:
+            if self.interaction != typing.Any:
+                break
+            else:
+                QtWidgets.QApplication.processEvents()
+        overlay.hide()
