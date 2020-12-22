@@ -141,7 +141,9 @@ class PhotoDescription(object):
             self._display_recognizable()
 
     def _create_button(self, name, ico_path):
-        button = QtWidgets.QPushButton(QtGui.QIcon(QtGui.QPixmap(ico_path)), name,
+        pixmap = QtGui.QPixmap()
+        pixmap.load(ico_path)
+        button = QtWidgets.QPushButton(QtGui.QIcon(pixmap), name,
                                        self.ui.tableWidget)
         button.setFlat(True)
         return button
@@ -190,7 +192,8 @@ class PhotoDescription(object):
             self.ui.photo_view.setText('没有照片可显示')
             return
         photo_path = self.mw.photo_list[self.current_photo_id]
-        self.pix_map = QtGui.QPixmap(photo_path)
+        self.pix_map = QtGui.QPixmap()
+        self.pix_map.load(photo_path)
         faces_data = self.mw.photo_info_dict.get(photo_path).get('faces')
         name_info_list, coordinate_list = self._conversion_data(faces_data)
         tmp_name_info_list = self.tmp_info.get(photo_path)

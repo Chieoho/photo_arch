@@ -70,7 +70,7 @@ class GroupDescription(object):
         self.group_tmp_info = {}
 
         height = int(self.mw.dt_height*30/1080)
-        self.ui.tree_widget_group.setStyleSheet('#treeWidget::item{height:%spx;}' % height)
+        self.ui.tree_widget_group.setStyleSheet('#tree_widget_group::item{height:%spx;}' % height)
         self.ui.open_dir_btn.clicked.connect(static(self.select_dir))
         self.ui.tree_widget_group.itemDoubleClicked.connect(static(self.tick_item))
         self.ui.tree_widget_group.itemSelectionChanged.connect(static(self.display_group))

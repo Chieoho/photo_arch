@@ -200,7 +200,8 @@ class ArchSearcher(object):
         path = os.path.join(group_folder_path, photo_name)
         if not os.path.exists(path):
             path = os.path.join(group_folder_path, photo_sn)
-        self.pix_map = QtGui.QPixmap(path)
+        self.pix_map = QtGui.QPixmap()
+        self.pix_map.load(path)
         self.view.display_image(self.pix_map)
 
     def resize_image(self, event):

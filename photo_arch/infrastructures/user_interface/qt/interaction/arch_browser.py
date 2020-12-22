@@ -208,7 +208,8 @@ class ArchBrowser(object):
         path = os.path.join(group_folder_path, photo_name)
         if not os.path.exists(path):
             path = os.path.join(group_folder_path, photo_name.split('-')[-1])
-        self.pix_map = QtGui.QPixmap(path)
+        self.pix_map = QtGui.QPixmap()
+        self.pix_map.load(path)
         pix_map = self.pix_map.scaled(
             self.ui.photo_view_in_arch.size(),
             QtGui.Qt.KeepAspectRatio,
