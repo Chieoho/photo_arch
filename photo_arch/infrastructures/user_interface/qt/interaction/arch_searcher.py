@@ -37,6 +37,7 @@ class View(object):
 
     def display_group_list(self, group_arch_code_list):
         self.ui.group_list_widget_search.clear()
+        self.ui.photo_list_widget_search.clear()
         for group_arch_code in group_arch_code_list:
             item = QtWidgets.QListWidgetItem(group_arch_code)
             self.ui.group_list_widget_search.addItem(item)
@@ -137,6 +138,8 @@ class ArchSearcher(object):
         else:
             res, group_arch_code_list = self.controller.search_groups(title_key_list, year_key_list)
             self.view.display_group_list(group_arch_code_list)
+        self.view.clear_group_info()
+        self.view.clear_photo_info()
 
     def display_group_info(self):
         item_list = self.ui.group_list_widget_search.selectedItems()

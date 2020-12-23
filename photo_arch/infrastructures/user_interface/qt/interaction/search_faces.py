@@ -49,6 +49,7 @@ class SearchFaces(object):
         pix_map = QPixmap(self.file_path)
         pix_map = pix_map.scaled(self.ui.searchface_src_view.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.ui.searchface_src_view.setPixmap(pix_map)
+        self.ui.lineEdit.setText(self.file_path)
 
     def select_pending_retrieve_dir(self):
         self.dir_path = QtWidgets.QFileDialog.getExistingDirectory(self.ui.search_face_tab, "请选择待检索的目录", os.getcwd())
@@ -56,6 +57,7 @@ class SearchFaces(object):
 
 
     def start_retrieve(self):
+        self.ui.searchface_list_widget.clear()
         if self.file_path == '':
             self.mw.msg_box('请指定待检索人物的照片.')
         elif self.dir_path == '':
@@ -69,9 +71,14 @@ class SearchFaces(object):
 
 
     def get_retrieve_result(self):
-        self.retrive_results_photo_path, self.retrive_results_face_box = self.mw.interaction.get_retrieve_result(self.file_path, self.dir_path)
-        print(self.retrive_results_photo_path)
-        self.list_photo_thumb(self.retrive_results_photo_path)
+        if self.file_path == '':
+            self.mw.msg_box('请指定待检索人物的照片.')
+        elif self.dir_path == '':
+            self.mw.msg_box('请选择待检索的目录.')
+        else:
+            self.retrive_results_photo_path, self.retrive_results_face_box = self.mw.interaction.get_retrieve_result(self.file_path, self.dir_path)
+            print(self.retrive_results_photo_path)
+            self.list_photo_thumb(self.retrive_results_photo_path)
 
 
     def display_photo(self):

@@ -200,13 +200,19 @@ class ArchTransfer(object):
             return
         selected_group_list = self._get_selected_group()
         self.partition_list = []
-        selected_cond, used_size, group_list = '', 0, []
+        selected_cond_list, used_size, group_list = [], 0, []
         for sc_sgl in selected_group_list:
             selected_cond, sgl = sc_sgl
             for gi in sgl:
                 folder_size = float(gi['folder_size'])
                 # 组大小大于或等于光盘容量
                 if folder_size >= cd_size:
+                    if self.ui.across_year_combo_box.currentText() == '否':
+                        self.mw.msg_box('当前条件下，不能完成分盘，请用大容量光盘或允许年度跨盘')
+                        return
+                    if self.ui.across_period_combo_box.currentText() == '否':
+                        self.mw.msg_box('当前条件下，不能完成分盘，请用大容量光盘或允许期限跨盘')
+                        return
                     group_abspath = os.path.join(
                         self.setting.description_path,
                         '照片档案',
@@ -225,7 +231,7 @@ class ArchTransfer(object):
                             gi_copy = deepcopy(gi)
                             gi_copy.update({'photo_num': len(photo_list)})
                             partition = {'used_size': photo_used_size, 'group_list': [gi_copy],
-                                         'selected_cond': selected_cond, 'photo_list': photo_list,
+                                         'selected_cond': [selected_cond], 'photo_list': photo_list,
                                          'arch_code': gi_copy['arch_code']}
                             self.partition_list.append(partition)
                             photo_used_size, photo_list = 0, []
@@ -235,7 +241,7 @@ class ArchTransfer(object):
                         gi_copy = deepcopy(gi)
                         gi_copy.update({'photo_num': len(photo_list)})
                         partition = {'used_size': photo_used_size, 'group_list': [gi_copy],
-                                     'selected_cond': selected_cond, 'photo_list': photo_list,
+                                     'selected_cond': [selected_cond], 'photo_list': photo_list,
                                      'arch_code': gi_copy['arch_code']}
                         self.partition_list.append(partition)
                 # 组大小小于光盘容量
@@ -243,18 +249,20 @@ class ArchTransfer(object):
                     used_size += folder_size
                     if used_size < cd_size:
                         group_list.append(gi)
+                        selected_cond_list.append(selected_cond)
                     else:
                         used_size -= folder_size
                         partition = {'used_size': used_size, 'group_list': group_list,
-                                     'selected_cond': selected_cond, 'arch_code': group_list[0]['arch_code']}
+                                     'selected_cond': selected_cond_list, 'arch_code': group_list[0]['arch_code']}
                         self.partition_list.append(partition)
-                        used_size, group_list = 0, []
+                        selected_cond_list, used_size, group_list = [], 0, []
                         used_size += folder_size
                         group_list.append(gi)
-            if used_size > 0:
-                partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond,
-                             'arch_code': group_list[0]['arch_code']}
-                self.partition_list.append(partition)
+                        selected_cond_list.append(selected_cond)
+        if used_size > 0:
+            partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond_list,
+                         'arch_code': group_list[0]['arch_code']}
+            self.partition_list.append(partition)
         self.partition_list = sorted(self.partition_list, key=itemgetter('arch_code'))
         self._display_partition_res()
 
@@ -272,7 +280,22 @@ class ArchTransfer(object):
 
     def _display_partition_res(self):
         for i, p in enumerate(self.partition_list, 1):
-            item = QtWidgets.QListWidgetItem(QtGui.QIcon(self.disk_icon_path), f'{p["selected_cond"]} {i}号')
+            icon = QtGui.QIcon()
+            pixmap = QtGui.QPixmap()
+            pixmap.load(self.disk_icon_path)
+            painter = QtGui.QPainter(pixmap)
+            font = QtGui.QFont()
+            font.setPixelSize(85)
+            painter.setFont(font)
+            selected_cond_list = p['selected_cond']
+            if len(selected_cond_list) >= 2:
+                selected_label = '\n'.join([selected_cond_list[0], selected_cond_list[-1]])
+            else:
+                selected_label = selected_cond_list[0]
+            painter.drawText(pixmap.rect(), QtGui.Qt.AlignCenter, f'{selected_label}\n\n\n\n')
+            painter.end()
+            icon.addPixmap(pixmap)
+            item = QtWidgets.QListWidgetItem(icon, f'{i}号')
             self.ui.partition_list_widget.addItem(item)
 
     def display_cd_info(self):
@@ -291,7 +314,7 @@ class ArchTransfer(object):
                 self.view.display_caption(caption)
                 self.view.display_label(label)
             else:
-                self._display_default_caption(cd_name)
+                self._display_default_caption()
                 self._display_default_label(row)
             self.current_cd = cd_name
         else:
@@ -331,8 +354,7 @@ class ArchTransfer(object):
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.ui.cd_catalog_table_widget.setItem(row, col, item)
 
-    def _display_default_caption(self, cd_name):
-        self.ui.title_in_transfer.setText(cd_name)
+    def _display_default_caption(self):
         operation_date = time.strftime('%Y%m%d')
         self.ui.operation_date_in_transfer.setText(operation_date)
         self.ui.operator_in_transfer.setText(self.setting.fonds_name)

@@ -44,13 +44,14 @@ class RecognizeProcess(Process):
 
     face_rank_rule_by_top = True
 
-    def __init__(self, done_queue, data_queue, param_queue):
+    def __init__(self, done_queue, data_queue, param_queue, from_queue):
         super(RecognizeProcess, self).__init__()
         self.event = Event()
         self.event.set() # 设置为True
         self.done_queue = done_queue # 写入返回数据
         self.data_queue = data_queue
         self.param_queue = param_queue
+        self.from_queue = from_queue
 
     def pause(self):
         if self.is_alive():
@@ -79,6 +80,7 @@ class RecognizeProcess(Process):
                 self.facenet_model = load_model('model/facenet_keras.h5')
                 print('######:识别 load model')
 
+
         engine.dispose()
         sql_repo = RepoGeneral(make_session(engine))
 
@@ -86,6 +88,10 @@ class RecognizeProcess(Process):
             if self.data_queue.empty() == True:
                 print('#### 识别:队列空,子进程暂停')
                 self.pause()
+            else:
+                if self.from_queue.empty(): # 如果为空，说明不是通过‘识别’按钮进来的
+                    self.pause()
+                    print('#### 识别:等待点击识别按钮')
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
             imgPath = self.data_queue.get()
@@ -503,6 +509,7 @@ class Recognition(object):
 
         self.data_queue = Queue() # 点击“添加”按钮的时候,用来写入图片路径
         self.param_queue = Queue()
+        self.from_queue = Queue()  # 在进行人脸识别的时候，判断是否通过'识别'按钮进行识别操作的
         self.verify_queue = Queue()  # 用来填充核验信息
         self.search_queue = Queue()  # 用来填充以图搜图的图片路径
         self.done_queue = Manager().Queue() # 返回识别结果信息
@@ -530,7 +537,7 @@ class Recognition(object):
 
         # 实例化识别子进程
         for i in range(os.cpu_count()):
-            proc = RecognizeProcess(self.done_queue, self.data_queue, self.param_queue)
+            proc = RecognizeProcess(self.done_queue, self.data_queue, self.param_queue, self.from_queue)
             proc.daemon = True
             proc.start()
             print('### pid %d will start' % i)
@@ -581,8 +588,12 @@ class Recognition(object):
             return ret
 
 
+        for _ in range(self.from_queue.qsize()):
+            self.from_queue.get()
+
         for _ in range(len(self.jobs_proc)):
             self.param_queue.put(json.dumps(params, ensure_ascii=False)) # 为了让每个子进程都能得到这个param参数
+            self.from_queue.put('from_recognition_func')
 
         for job in self.jobs_proc:
             if not self.data_queue.empty():
@@ -607,6 +618,9 @@ class Recognition(object):
         photoDbData = []
         faceDbData = []
         self.pending_dirs_list.clear()
+        # 清空队列,py3.9才有clear函数(这里是py3.6版本),故用下面的方法清空队列
+        for _ in range(self.data_queue.qsize()):
+            self.data_queue.get()
 
         print('########:', arch_num_info)
 
@@ -635,44 +649,60 @@ class Recognition(object):
                     new0, new1 = os.path.split(newPath)
                     os.rename(os.path.abspath(os.path.join(old0, 'thumbs', old1)), os.path.abspath(os.path.join(new0, 'thumbs', new1)))
 
-                # 件著录信息
-                photoInfo['arch_code'] = arch_code  # 件的档号
-                photoInfo['photo_path'] = newPath
-                photoInfo['fonds_code'] = split_arch_code[0]          #全宗号
-                photoInfo['arch_category_code'] =  split_arch_code[1].split('·')[0]  #门类
-                photoInfo['year'] = split_arch_code[1].split('·')[1] #年
-                photoInfo['group_code'] = volume_num  # 组号
-                photoInfo['photo_code'] = '{0:0>4}'.format(i + 1) #件号
-                extName = extension.split('.')[-1].upper() # 格式
-                if extName in ['JPG', 'JPEG']:
-                    photoInfo['format'] = 'JPGE'
-                else:
-                    photoInfo['format'] = extName
-                photoInfo['photographer'] = photo_group_info[0]['photographer'] # 拍摄者
-                photoInfo['taken_time'] = photo_group_info[0]['taken_time'] # 拍摄时间
-                photoInfo['taken_locations'] = photo_group_info[0]['taken_locations'] # 拍摄地点
-                photoInfo['security_classification'] = photo_group_info[0]['security_classification'] # 密级
-                photoInfo['reference_code'] = photo_group_info[0]['reference_code'] # 参见号
                 file = open(newPath, "rb")
                 md.update(file.read())
-                photoInfo['md5'] = md.hexdigest()
+                md5 = md.hexdigest()
                 file.close()
-                photoDbData.append(photoInfo)
-                # 人脸信息
-                faceInfo['photo_path'] = newPath
-                faceInfo['photo_archival_code'] = arch_code
-                faceInfo['recog_state'] = 0
-                faceInfo['verify_state'] = 0
-                faceInfo['trained_state'] = 0
-                faceInfo['parent_path'] = parentPath
-                faceDbData.append(faceInfo)
+
+
+                query_result_list = self.sql_repo.query('photo', {"md5": [md5]}, ('arch_code', 'md5'))
+                if len(query_result_list) == 1:
+                    # 更新件著录信息
+                    self.sql_repo.update('photo', {"md5": [md5]}, new_info={'photo_path': newPath, 'arch_code': arch_code, 'fonds_code': split_arch_code[0], 'arch_category_code': split_arch_code[1].split('·')[0],
+                                                                            'year': split_arch_code[1].split('·')[1], 'group_code': volume_num, 'photographer': photo_group_info[0]['photographer'], 'taken_time': photo_group_info[0]['taken_time'],
+                                                                            'taken_locations': photo_group_info[0]['taken_locations'], 'security_classification': photo_group_info[0]['security_classification'],
+                                                                            'reference_code': photo_group_info[0]['reference_code']})
+                    self.sql_repo.update('face', {"photo_archival_code": [query_result_list[0]['arch_code']]}, new_info={'photo_path': newPath, 'photo_archival_code': arch_code, 'parent_path': parentPath})
+
+                else:
+                    # 新增件著录信息
+                    photoInfo['arch_code'] = arch_code  # 件的档号
+                    photoInfo['photo_path'] = newPath
+                    photoInfo['fonds_code'] = split_arch_code[0]          #全宗号
+                    photoInfo['arch_category_code'] =  split_arch_code[1].split('·')[0]  #门类
+                    photoInfo['year'] = split_arch_code[1].split('·')[1] #年
+                    photoInfo['group_code'] = volume_num  # 组号
+                    # 件号,格式 没有在更新字段中
+                    photoInfo['photo_code'] = '{0:0>4}'.format(i + 1)  # 件号
+                    extName = extension.split('.')[-1].upper() # 格式
+                    if extName in ['JPG', 'JPEG']:
+                        photoInfo['format'] = 'JPGE'
+                    else:
+                        photoInfo['format'] = extName
+                    photoInfo['photographer'] = photo_group_info[0]['photographer'] # 拍摄者
+                    photoInfo['taken_time'] = photo_group_info[0]['taken_time'] # 拍摄时间
+                    photoInfo['taken_locations'] = photo_group_info[0]['taken_locations'] # 拍摄地点
+                    photoInfo['security_classification'] = photo_group_info[0]['security_classification'] # 密级
+                    photoInfo['reference_code'] = photo_group_info[0]['reference_code'] # 参见号
+                    photoInfo['md5'] = md5
+                    photoDbData.append(photoInfo)
+
+                    # 人脸信息
+                    faceInfo['photo_path'] = newPath
+                    faceInfo['photo_archival_code'] = arch_code
+                    faceInfo['recog_state'] = 0
+                    faceInfo['verify_state'] = 0
+                    faceInfo['trained_state'] = 0
+                    faceInfo['parent_path'] = parentPath
+                    faceDbData.append(faceInfo)
                 # 图片路径写入队列
                 self.data_queue.put(newPath)
             self.pending_dirs_list.append(os.path.abspath(volume_name))
 
         self.pendingTotalImgsNum = self.data_queue.qsize()
-        self.sql_repo.add('photo', photoDbData)
-        self.sql_repo.add('face', faceDbData)
+        if len(photoDbData) > 0:
+            self.sql_repo.add('photo', photoDbData)
+            self.sql_repo.add('face', faceDbData)
 
         return ret
 
@@ -883,6 +913,8 @@ class Recognition(object):
         self.retrived_pic_num = 0
         self.pendingRetrieveTotalImgsNum = 0
 
+        print('########: 开始进行人脸检索.')
+
         # 判断该dir_path路径是否已经检索过了
         parent_path_list = self.sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('parent_path'))
         if len(parent_path_list) > 0:
@@ -922,9 +954,9 @@ class Recognition(object):
 
         des_embedding_list = self.sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('photo_path', 'face_box', 'embedding'))
         for ele_dict in des_embedding_list:
-            photo_path.append(ele_dict['photo_path'])
             for box in eval(ele_dict['face_box']):
                 retrive_des_box.append(box)
+                photo_path.append(ele_dict['photo_path'])
             for emd in eval(ele_dict['embedding']):
                 retrive_des_embedding.append(emd)
 

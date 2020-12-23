@@ -22,7 +22,7 @@ class Presenter(PresenterIf):
         self.view_model = ViewModel()
 
     def update_arch_vm(self, group_info_list):
-        self.view_model.arch.clear()
+        self.view_model.arch = []
         for group_info in group_info_list:
             group = deepcopy(self.view_model.group)
             for k in group.keys():

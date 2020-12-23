@@ -9,7 +9,6 @@ import os
 import glob
 from pathlib import Path
 import time
-from distutils.dir_util import copy_tree
 import shutil
 
 from PySide2 import QtWidgets, QtGui
@@ -198,20 +197,17 @@ class GroupDescription(object):
         group_data.first_photo_md5 = first_photo_md5
         _, group_info = self.controller.get_group(first_photo_md5)
         if group_info:
-            self._remove_old_group(group_info, group_data)
+            self._remove_old_group(group_info)
             self.controller.update_group(group_data)
         else:
             self.controller.add_group(group_data)
 
-    def _remove_old_group(self, old_group: dict, new_group: GroupInputData):
+    def _remove_old_group(self, old_group: dict):
         _ = self
         old_folder_name = old_group.get('group_path')
         old_group_path = self._get_group_folder_path(old_folder_name)
         if os.path.exists(old_group_path):
-            new_folder_name = new_group.group_path
-            new_group_path = self._get_group_folder_path(new_folder_name)
-            if new_group_path != old_group_path:
-                shutil.rmtree(old_group_path)
+            shutil.rmtree(old_group_path)
 
     def _get_group_folder_path(self, group_folder_name):
         group_code, _, _ = group_folder_name.split(' ')
@@ -228,8 +224,9 @@ class GroupDescription(object):
         source_path, dst_abspath = self._get_src_dst_path()
         self.description_path_info[source_path] = os.path.join(dst_abspath)
         self.arch_code_info[source_path] = self.ui.arch_code_in_group.text()
-        if source_path != dst_abspath:
-            copy_tree(source_path, dst_abspath)
+        if os.path.exists(dst_abspath):
+            shutil.rmtree(dst_abspath)
+        shutil.copytree(source_path, dst_abspath)
         self._gen_thumbs(source_path, dst_abspath)
 
     def _get_src_dst_path(self, current_folder=None):
@@ -314,8 +311,11 @@ class GroupDescription(object):
                 dst_abspath = self.description_path_info.get(group_abspath, '')
                 arch_code = self.arch_code_info.get(group_abspath, '')
                 arch_code_info["children"].update({dst_abspath: arch_code})
-        self.mw.interaction.set_arch_code(arch_code_info)
-        self._reset_state()
+        if self.mw.interaction.set_arch_code(arch_code_info):
+            self.mw.msg_box('添加成功', 'info')
+            self._reset_state()
+        else:
+            self.mw.msg_box('添加失败')
 
     def _reset_state(self):
         self.ui.radio_btn_group.setExclusive(False)

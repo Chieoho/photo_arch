@@ -3022,7 +3022,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(7)
         self.search_btn.setDefault(True)
 
 
@@ -3248,13 +3248,13 @@ class Ui_MainWindow(object):
         self.label_82.setText(QCoreApplication.translate("MainWindow", u"\u5149\u76d8\u578b\u53f7", None))
         self.label_87.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u540d\u79f0", None))
         self.label_73.setText(QCoreApplication.translate("MainWindow", u"\u5e74\u5ea6\u8de8\u76d8", None))
-        self.across_year_combo_box.setItemText(0, QCoreApplication.translate("MainWindow", u"\u5426", None))
-        self.across_year_combo_box.setItemText(1, QCoreApplication.translate("MainWindow", u"\u662f", None))
+        self.across_year_combo_box.setItemText(0, QCoreApplication.translate("MainWindow", u"\u662f", None))
+        self.across_year_combo_box.setItemText(1, QCoreApplication.translate("MainWindow", u"\u5426", None))
 
         self.label_89.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u6b62\u7ec4\u53f7", None))
         self.label_90.setText(QCoreApplication.translate("MainWindow", u"\u76d8\u53f7", None))
-        self.across_period_combo_box.setItemText(0, QCoreApplication.translate("MainWindow", u"\u5426", None))
-        self.across_period_combo_box.setItemText(1, QCoreApplication.translate("MainWindow", u"\u662f", None))
+        self.across_period_combo_box.setItemText(0, QCoreApplication.translate("MainWindow", u"\u662f", None))
+        self.across_period_combo_box.setItemText(1, QCoreApplication.translate("MainWindow", u"\u5426", None))
 
         self.label_88.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u53f7", None))
         self.packeage_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5305", None))

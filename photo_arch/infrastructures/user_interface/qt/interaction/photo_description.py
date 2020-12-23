@@ -286,6 +286,7 @@ class PhotoDescription(object):
             pen.setWidth(2)
             painter.setPen(pen)
             painter.drawRect(x, y, w, h)
+            painter.end()
 
     def checked(self):
         if self.ui.verifycheckBox.isChecked() and self.mw.photo_list:
