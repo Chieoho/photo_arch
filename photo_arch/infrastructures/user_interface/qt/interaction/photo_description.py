@@ -6,6 +6,7 @@
 @time: 2020/11/23 9:24
 """
 import json
+import math
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -276,17 +277,17 @@ class PhotoDescription(object):
         for id_, coordinate in coordinate_list:
             x, y, w, h = coordinate
             font = QtGui.QFont()
-            font.setPixelSize(h/3)
+            font.setPixelSize(round(0.53 * h))
             painter.setFont(font)
-            pen = QtGui.QPen(QtCore.Qt.yellow)
+            pen = QtGui.QPen(QtCore.Qt.cyan)
             painter.setPen(pen)
             pos = QtCore.QRect(x, y, w, h)
             painter.drawText(pos, 0, f'{id_}')
             pen = QtGui.QPen(QtCore.Qt.red)
-            pen.setWidth(2)
+            width = round(0.05 * h - (0.2 * math.exp(0.01 * h)))
+            pen.setWidth(width if width > 4 else 4)
             painter.setPen(pen)
             painter.drawRect(x, y, w, h)
-            # painter.end()
 
     def checked(self):
         if self.ui.verifycheckBox.isChecked() and self.mw.photo_list:

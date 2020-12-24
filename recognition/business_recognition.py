@@ -190,11 +190,9 @@ class RecognizeProcess(Process):
                         str(j): str(list(unknown_embedding))
                     })
 
-                    if j < len(det_arr)-1 :
+                    if j < len(det_arr) :
                         if who_name != '':
                             peoples += '{},'.format(who_name)
-                    else:
-                        peoples += '{}'.format(who_name)
 
 
                 if curFaceRecNum == face_nums:
@@ -218,6 +216,8 @@ class RecognizeProcess(Process):
             sql_repo.update('face', {"photo_path": [imgPath]},
                             new_info={'faces': jsonFaces, 'recog_state': face_recog_state, 'parent_path': os.path.abspath(imgPath + os.path.sep + ".."),
                                       'embeddings': jsonEmbeddings })
+            if peoples.endswith(','):
+                peoples = peoples[0:-1]
             sql_repo.update('photo', {"photo_path": [imgPath]}, new_info={'peoples': peoples})
 
 
@@ -323,11 +323,10 @@ class VerifyProcess(Process):
                     'landmark': self.faces_list[id]['landmark']
                 })
 
-                if id < len(orig_faces_id) - 1:
+                if id < len(orig_faces_id) :
                     if name != '' and name != '已删除':
                         peoples += '{},'.format(name)
-                else:
-                    peoples += '{}'.format(name)
+
 
                 # if name != '':
                     # (startX, startY, endX, endY) = eval(self.faces_list[id]['box'])
@@ -361,6 +360,9 @@ class VerifyProcess(Process):
             jsonFaces = json.dumps(new_faces, ensure_ascii=False)
             verifyState = 1
             sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})
+
+            if peoples.endswith(','):
+                peoples = peoples[0:-1]
             sql_repo.update('photo', {"photo_path": [self.img_path]}, new_info={'peoples': peoples})
 
 

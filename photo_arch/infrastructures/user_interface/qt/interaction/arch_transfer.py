@@ -249,7 +249,8 @@ class ArchTransfer(object):
                     used_size += folder_size
                     if used_size < cd_size:
                         group_list.append(gi)
-                        selected_cond_list.append(selected_cond)
+                        if selected_cond not in selected_cond_list:
+                            selected_cond_list.append(selected_cond)
                     else:
                         used_size -= folder_size
                         partition = {'used_size': used_size, 'group_list': group_list,
@@ -258,7 +259,8 @@ class ArchTransfer(object):
                         selected_cond_list, used_size, group_list = [], 0, []
                         used_size += folder_size
                         group_list.append(gi)
-                        selected_cond_list.append(selected_cond)
+                        if selected_cond not in selected_cond_list:
+                            selected_cond_list.append(selected_cond)
         if used_size > 0:
             partition = {"used_size": used_size, 'group_list': group_list, 'selected_cond': selected_cond_list,
                          'arch_code': group_list[0]['arch_code']}
