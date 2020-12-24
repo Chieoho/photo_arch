@@ -25,6 +25,7 @@ class SearchFaces(object):
         self.dir_path = ''
         self.retrieve_results_photo_path = []
         self.retrieve_results_face_box = []
+        self.timer = QtCore.QTimer()
 
         self.ui.searchface_list_widget.setViewMode(QtWidgets.QListWidget.IconMode)
         self.ui.searchface_list_widget.setIconSize(QtCore.QSize(200, 100))
@@ -38,6 +39,7 @@ class SearchFaces(object):
         self.ui.searchface_select_retrieve_dir_btn.clicked.connect(static(self.select_pending_retrieve_dir))
         self.ui.searchface_start.clicked.connect(static(self.start_retrieve))
         self.ui.searchface_retrieve_result_btn.clicked.connect(static(self.get_retrieve_result))
+        self.timer.timeout.connect(static(self.get_retrieve_info))
 
     def select_pending_retrieve_photo(self):
         self.file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
@@ -63,6 +65,9 @@ class SearchFaces(object):
             self.mw.msg_box('请选择待检索的目录.')
         else:
             self.mw.overlay(self.ui.searchface_dst_show_view)
+            self.ui.searchface_start.setEnabled(False)
+            self.ui.searchface_retrieve_result_btn.setEnabled(False)
+            self.timer.start(1000)
             ret = self.mw.interaction.start_retrieve(self.file_path, self.dir_path)
             if ret == -1:
                 self.mw.msg_box('待检索的目录下面没有照片.')
@@ -119,3 +124,14 @@ class SearchFaces(object):
         pen.setWidth(5)
         painter.setPen(pen)
         painter.drawRect(x, y, w, h)
+
+    def get_retrieve_info(self):
+        retrieve_info = self.mw.interaction.get_retrieve_info()
+        total_num = retrieve_info.get('total_to_retrieve_photo_num')
+        retrieved_num = retrieve_info.get('retrieved_photo_num')
+        self.ui.searchface_dst_show_view.setText(f'已检索{retrieved_num}/{total_num}')
+        if retrieved_num == total_num:
+            self.ui.searchface_start.setEnabled(True)
+            self.ui.searchface_retrieve_result_btn.setEnabled(True)
+            self.timer.stop()
+            self.mw.msg_box('检索完成')

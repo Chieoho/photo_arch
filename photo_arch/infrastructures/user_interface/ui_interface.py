@@ -112,3 +112,10 @@ class UiInterface(metaclass=ABCMeta):
          获取检索结果
          :return:
          """
+
+    @abstractmethod
+    def get_retrieve_info(self):
+        """
+        获取人脸检索进度
+        :return:
+        """

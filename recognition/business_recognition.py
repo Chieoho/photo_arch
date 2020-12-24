@@ -533,7 +533,7 @@ class Recognition(object):
         self.part_recog_img_list = []
         self.all_recog_img_list = []
 
-        self.sql_repo = RepoGeneral(engine)
+        self.sql_repo = RepoGeneral(session)
 
         # 实例化识别子进程
         for i in range(os.cpu_count()):
@@ -934,20 +934,20 @@ class Recognition(object):
         if pic_num == 0:
             ret = -1
             return ret
-        else:
-            self.pendingRetrieveTotalImgsNum = pic_num
 
         if self.search_queue.empty() == True:
             self.searchImagesProc.resume()
 
             if len(photo_path_list) == 0: # 表明数据库没有该路径，需要提取特征向量
                 self.search_queue.put(os.path.abspath(file_path))
+                self.pendingRetrieveTotalImgsNum += 1
 
-            # 该dir_path路径没有被检索过
+                # 该dir_path路径没有被检索过
             if len(parent_path_list) == 0:
                 for imgPath in img_list:
                     self.search_queue.put(imgPath)
 
+                self.pendingRetrieveTotalImgsNum += len(img_list)
         return ret
 
 

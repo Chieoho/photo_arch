@@ -199,12 +199,13 @@ class GroupDescription(object):
         group_data: GroupInputData = self.view.get_group_input()
         group_data.first_photo_md5 = first_photo_md5
         _, group_info = self.controller.get_group(first_photo_md5)
+        is_path_changed = False
         if group_info:
             self._remove_old_group(group_info)
             self.controller.update_group(group_data)
+            is_path_changed = not (group_info.get('group_path') == group_data.group_path)
         else:
             self.controller.add_group(group_data)
-        is_path_changed = not (group_info.get('group_path') == group_data.group_path)
         return is_path_changed
 
     def _remove_old_group(self, old_group: dict):
