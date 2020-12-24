@@ -58,7 +58,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>4</number>
       </property>
       <property name="iconSize">
        <size>
@@ -3293,7 +3293,7 @@ padding-bottom: 8px;</string>
             </font>
            </property>
            <property name="text">
-            <string>待检索人物的照片</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -3313,7 +3313,7 @@ padding-bottom: 8px;</string>
             </font>
            </property>
            <property name="text">
-            <string>展示检索出的照片</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>

@@ -27,7 +27,7 @@ from multiprocessing import Process, Event, Queue, Manager
 from recognition.utils import *
 
 from photo_arch.adapters.sql.repo import RepoGeneral
-from photo_arch.infrastructures.databases.db_setting import engine, make_session
+from photo_arch.infrastructures.databases.db_setting import engine, make_session, session
 
 
 
@@ -533,7 +533,7 @@ class Recognition(object):
         self.part_recog_img_list = []
         self.all_recog_img_list = []
 
-        self.sql_repo = RepoGeneral(make_session(engine))
+        self.sql_repo = RepoGeneral(engine)
 
         # 实例化识别子进程
         for i in range(os.cpu_count()):
@@ -643,10 +643,14 @@ class Recognition(object):
                 arch_code = volume_num + '-{0:0>4}'.format(i + 1)
                 newPath = os.path.abspath(os.path.join(parentPath, arch_code)) + extension
                 if all_files[key] != newPath :
+                    if os.path.exists(newPath): # 如果文件存在,则删除后再重命名
+                        os.remove(newPath)
                     os.rename(all_files[key], newPath)
                     # 修改缩略图的路径
                     old0, old1 = os.path.split(all_files[key])
                     new0, new1 = os.path.split(newPath)
+                    if os.path.exists(os.path.abspath(os.path.join(new0, 'thumbs', new1))):
+                        os.remove(os.path.abspath(os.path.join(new0, 'thumbs', new1)))
                     os.rename(os.path.abspath(os.path.join(old0, 'thumbs', old1)), os.path.abspath(os.path.join(new0, 'thumbs', new1)))
 
                 file = open(newPath, "rb")
@@ -915,11 +919,14 @@ class Recognition(object):
 
         print('########: 开始进行人脸检索.')
 
+        # 判断数据库是否有该路径
+        photo_path_list = self.sql_repo.query('searchfaces', {"photo_path": [os.path.abspath(file_path)]}, ('photo_path'))
         # 判断该dir_path路径是否已经检索过了
         parent_path_list = self.sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('parent_path'))
-        if len(parent_path_list) > 0:
+        if len(parent_path_list) > 0 and  len(photo_path_list) > 0: # 表明人物和待检索目录都在数据库里面已存在
             ret = -2
             return ret
+
 
         # 判断该dir_path路径是否有照片
         img_list = glob.glob(os.path.abspath(os.path.join(dir_path, '*.*[jpg,png]')))
@@ -933,9 +940,13 @@ class Recognition(object):
         if self.search_queue.empty() == True:
             self.searchImagesProc.resume()
 
-            self.search_queue.put(os.path.abspath(file_path))
-            for imgPath in img_list:
-                self.search_queue.put(imgPath)
+            if len(photo_path_list) == 0: # 表明数据库没有该路径，需要提取特征向量
+                self.search_queue.put(os.path.abspath(file_path))
+
+            # 该dir_path路径没有被检索过
+            if len(parent_path_list) == 0:
+                for imgPath in img_list:
+                    self.search_queue.put(imgPath)
 
         return ret
 
@@ -950,9 +961,17 @@ class Recognition(object):
         retrive_results_face_box = []
 
         src_embedding_list = self.sql_repo.query('searchfaces', {"photo_path": [os.path.abspath(file_path)]}, ('embedding'))
-        retrive_src_embedding = eval(src_embedding_list[0]['embedding'])
+        if len(src_embedding_list) == 1:
+            retrive_src_embedding = eval(src_embedding_list[0]['embedding'])
+        else:
+            return retrive_results_photo_path, retrive_results_face_box
+
 
         des_embedding_list = self.sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('photo_path', 'face_box', 'embedding'))
+        if len(des_embedding_list) == 0:
+            return retrive_results_photo_path, retrive_results_face_box
+
+
         for ele_dict in des_embedding_list:
             for box in eval(ele_dict['face_box']):
                 retrive_des_box.append(box)

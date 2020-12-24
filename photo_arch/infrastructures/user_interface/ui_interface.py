@@ -100,7 +100,7 @@ class UiInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def start_retrieve(self) -> int:
+    def start_retrieve(self, file_path, dir_path) -> int:
         """
         开始检索人物
         :return:
@@ -112,6 +112,3 @@ class UiInterface(metaclass=ABCMeta):
          获取检索结果
          :return:
          """
-
-
-

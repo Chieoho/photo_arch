@@ -183,9 +183,12 @@ class GroupDescription(object):
         self.ui.group_code_in_group.setText(group_code)
 
     def save_and_copy_group(self):
-        self._save_group_and_remove_folder()
+        is_path_changed = self._save_group_and_remove_folder()
         self._copy_arch_and_gen_thumbs()
-        self.mw.msg_box('保存成功', msg_type='info')
+        if is_path_changed:
+            self.mw.msg_box('保存成功，组路径已变，若已添加请重新添加', msg_type='info')
+        else:
+            self.mw.msg_box('保存成功', msg_type='info')
 
     def _save_group_and_remove_folder(self):
         group_arch_code = self.ui.arch_code_in_group.text()
@@ -201,6 +204,8 @@ class GroupDescription(object):
             self.controller.update_group(group_data)
         else:
             self.controller.add_group(group_data)
+        is_path_changed = not (group_info.get('group_path') == group_data.group_path)
+        return is_path_changed
 
     def _remove_old_group(self, old_group: dict):
         _ = self

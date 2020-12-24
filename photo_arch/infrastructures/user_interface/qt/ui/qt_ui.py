@@ -3022,7 +3022,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(7)
+        self.tabWidget.setCurrentIndex(4)
         self.search_btn.setDefault(True)
 
 
@@ -3171,8 +3171,8 @@ class Ui_MainWindow(object):
         self.label_94.setText(QCoreApplication.translate("MainWindow", u"\u8bf7\u9009\u62e9\u5f85\u68c0\u7d22\u7684\u76ee\u5f55\uff1a", None))
         self.searchface_select_retrieve_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9", None))
         self.label_95.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u7d22\u7ed3\u679c\uff1a", None))
-        self.searchface_src_view.setText(QCoreApplication.translate("MainWindow", u"\u5f85\u68c0\u7d22\u4eba\u7269\u7684\u7167\u7247", None))
-        self.searchface_dst_show_view.setText(QCoreApplication.translate("MainWindow", u"\u5c55\u793a\u68c0\u7d22\u51fa\u7684\u7167\u7247", None))
+        self.searchface_src_view.setText("")
+        self.searchface_dst_show_view.setText("")
         self.searchface_start.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u68c0\u7d22", None))
         self.searchface_retrieve_result_btn.setText(QCoreApplication.translate("MainWindow", u"\u67e5\u770b\u68c0\u7d22\u7ed3\u679c", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_face_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u641c\u7d22", None))
