@@ -8,6 +8,8 @@
 import os
 import glob
 from collections import defaultdict
+import math
+import json
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -29,7 +31,7 @@ class View(object):
 
         self.ui.photo_list_widget.setViewMode(QtWidgets.QListWidget.IconMode)
         self.ui.photo_list_widget.setIconSize(QtCore.QSize(100, 100))
-        self.ui.photo_list_widget.setFixedHeight(132)
+        self.ui.photo_list_widget.setFixedHeight(146)  # 考虑滚动条
         self.ui.photo_list_widget.setWrapping(False)  # 只一行显示
         self.ui.photo_list_widget.setMovement(QtWidgets.QListWidget.Static)
 
@@ -185,9 +187,9 @@ class ArchBrowser(object):
     def display_photo(self):
         item_list = self.ui.photo_list_widget.selectedItems()
         if item_list:
-            photo_sn = item_list[0].text()
+            item_text = item_list[0].text()  # photo_sn + format
             group_arch_code = self.ui.arch_code_in_group_arch.text()
-            photo_name = f'{group_arch_code}-{photo_sn}'
+            photo_name = f'{group_arch_code}-{item_text}'
             self._display_photo_info(photo_name)
             self._display_image(photo_name)
 
@@ -210,12 +212,30 @@ class ArchBrowser(object):
             path = os.path.join(group_folder_path, photo_name.split('-')[-1])
         self.pix_map = QtGui.QPixmap()
         self.pix_map.load(path)
+        self._mark_face(self.pix_map, photo_name)
         pix_map = self.pix_map.scaled(
             self.ui.photo_view_in_arch.size(),
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation
         )
         self.ui.photo_view_in_arch.setPixmap(pix_map)
+
+    def _mark_face(self, pixmap, photo_name):
+        painter = QtGui.QPainter(pixmap)
+        photo_arch_code, _ = photo_name.split('.')
+        face_info = self.controller.get_face_info(photo_arch_code)
+        face_list = json.loads(face_info['faces'])
+        box_list = []
+        for face in face_list:
+            if face['name']:
+                box_list.append(json.loads(face['box']))
+        for (x1, y1, x2, y2) in box_list:
+            x, y, w, h = x1, y1, (x2 - x1), (y2 - y1)
+            pen = QtGui.QPen(QtCore.Qt.red)
+            width = round(0.37 * math.log(h) + 0.024 * h)
+            pen.setWidth(width)
+            painter.setPen(pen)
+            painter.drawRect(x, y, w, h)
 
     def display_arch(self, priority_key):
         _, arch = self.controller.browse_arch()

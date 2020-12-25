@@ -7,6 +7,8 @@
 """
 import os
 import glob
+import json
+import math
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -25,7 +27,7 @@ class View(object):
         self.ui: Ui_MainWindow = mw_.ui
         self.ui.photo_list_widget_search.setViewMode(QtWidgets.QListWidget.IconMode)
         self.ui.photo_list_widget_search.setIconSize(QtCore.QSize(100, 100))
-        self.ui.photo_list_widget_search.setFixedHeight(132)
+        self.ui.photo_list_widget_search.setFixedHeight(146)
         self.ui.photo_list_widget_search.setWrapping(False)
         self.ui.photo_list_widget_search.setMovement(QtWidgets.QListWidget.Static)
 
@@ -171,18 +173,18 @@ class ArchSearcher(object):
             item_text = item_list[0].text()
             item_text_slices = item_text.split('-')
             part_group_arch_code = '-'.join(item_text_slices[0: -1])
-            photo_sn = item_text_slices[-1]
+            photo_sn_and_format = item_text_slices[-1]
             if len(item_text.split('.')[0]) > 4:
                 group_arch_code = f'{self.setting.fonds_code}-ZP·{part_group_arch_code}'
                 _, data = self.controller.get_group(group_arch_code)
                 self.view.display_group_info(data)
                 group_arch_code = data['arch_code']
-                photo_name = f'{group_arch_code}-{photo_sn}'
+                photo_name = f'{group_arch_code}-{photo_sn_and_format}'
             else:
                 group_arch_code = self.ui.arch_code_in_group_search.text()
-                photo_name = f'{group_arch_code}-{photo_sn}'
+                photo_name = f'{group_arch_code}-{photo_sn_and_format}'
             self._display_photo_info(photo_name)
-            self._display_image(photo_name, photo_sn)
+            self._display_image(photo_name, photo_sn_and_format)
         else:
             self.view.clear_photo_info()
 
@@ -205,7 +207,25 @@ class ArchSearcher(object):
             path = os.path.join(group_folder_path, photo_sn)
         self.pix_map = QtGui.QPixmap()
         self.pix_map.load(path)
+        self._mark_face(self.pix_map, photo_name)
         self.view.display_image(self.pix_map)
+
+    def _mark_face(self, pixmap, photo_name):
+        painter = QtGui.QPainter(pixmap)
+        photo_arch_code, _ = photo_name.split('.')
+        face_info = self.controller.get_face_info(photo_arch_code)
+        face_list = json.loads(face_info['faces'])
+        box_list = []
+        for face in face_list:
+            if face['name']:
+                box_list.append(json.loads(face['box']))
+        for (x1, y1, x2, y2) in box_list:
+            x, y, w, h = x1, y1, (x2 - x1), (y2 - y1)
+            pen = QtGui.QPen(QtCore.Qt.red)
+            width = round(0.37 * math.log(h) + 0.024 * h)
+            pen.setWidth(width)
+            painter.setPen(pen)
+            painter.drawRect(x, y, w, h)
 
     def resize_image(self, event):
         if not self.pix_map:

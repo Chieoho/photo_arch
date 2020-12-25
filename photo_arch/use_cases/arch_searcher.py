@@ -42,3 +42,11 @@ class ArchSearcher(object):
             photo_info = PhotoOutputData().__dict__
         self.presenter.update_photo_model(photo_info)
         return True
+
+    def get_face_info(self, photo_arch_code):
+        face_info_list = self.repo.get_face_info(photo_arch_code)
+        if face_info_list:
+            face_info = face_info_list[-1]
+        else:
+            face_info = {}
+        return face_info

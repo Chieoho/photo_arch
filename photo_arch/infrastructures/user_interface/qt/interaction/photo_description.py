@@ -279,13 +279,13 @@ class PhotoDescription(object):
             font = QtGui.QFont()
             font.setPixelSize(round(0.53 * h))
             painter.setFont(font)
-            pen = QtGui.QPen(QtCore.Qt.cyan)
+            pen = QtGui.QPen(QtCore.Qt.yellow)
             painter.setPen(pen)
             pos = QtCore.QRect(x, y, w, h)
             painter.drawText(pos, 0, f'{id_}')
             pen = QtGui.QPen(QtCore.Qt.red)
-            width = round(0.05 * h - (0.2 * math.exp(0.01 * h)))
-            pen.setWidth(width if width > 4 else 4)
+            width = round(0.37 * math.log(h) + 0.024 * h)  # 1.1, 0.036
+            pen.setWidth(width)
             painter.setPen(pen)
             painter.drawRect(x, y, w, h)
 

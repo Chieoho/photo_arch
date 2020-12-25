@@ -29,3 +29,7 @@ class Controller(object):
         res = self.arch_browser.get_photo_info(photo_arch_code)
         photo = self.presenter.view_model.photo
         return res, photo
+
+    def get_face_info(self, photo_arch_code):
+        face_info = self.arch_browser.get_face_info(photo_arch_code)
+        return face_info

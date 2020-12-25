@@ -29,7 +29,7 @@ class SearchFaces(object):
 
         self.ui.searchface_list_widget.setViewMode(QtWidgets.QListWidget.IconMode)
         self.ui.searchface_list_widget.setIconSize(QtCore.QSize(200, 100))
-        self.ui.searchface_list_widget.setFixedHeight(132)
+        self.ui.searchface_list_widget.setFixedHeight(146)
         self.ui.searchface_list_widget.setWrapping(False)
 
         self.ui.searchface_dst_show_view.setAlignment(QtCore.Qt.AlignCenter)

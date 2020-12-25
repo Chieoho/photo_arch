@@ -116,3 +116,7 @@ class Repo(RepoIf):
     def update_setting(self, setting_info: dict) -> bool:
         self.repo_general.update('setting', {'setting_id': [1]}, setting_info)
         return True
+
+    def get_face_info(self, photo_arch_code) -> List[dict]:
+        face_info_list = self.repo_general.query('face', cond={'photo_archival_code': [photo_arch_code]})
+        return face_info_list

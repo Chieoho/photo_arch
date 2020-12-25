@@ -114,3 +114,11 @@ class RepoIf(metaclass=ABCMeta):
         :param setting_info:
         :return:
         """
+
+    @abstractmethod
+    def get_face_info(self, photo_arch_code):
+        """
+        获取照片人脸信息
+        :param photo_arch_code:
+        :return:
+        """
