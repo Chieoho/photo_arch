@@ -215,12 +215,20 @@ class ArchSearcher(object):
         photo_arch_code, _ = photo_name.split('.')
         face_info = self.controller.get_face_info(photo_arch_code)
         face_list = json.loads(face_info['faces'])
-        box_list = []
+        box_name_list = []
         for face in face_list:
-            if face['name']:
-                box_list.append(json.loads(face['box']))
-        for (x1, y1, x2, y2) in box_list:
+            name = face['name']
+            if name:
+                box_name_list.append((json.loads(face['box']), name))
+        for (x1, y1, x2, y2), name in box_name_list:
             x, y, w, h = x1, y1, (x2 - x1), (y2 - y1)
+            font = QtGui.QFont()
+            font.setPixelSize(round(0.35 * h))
+            painter.setFont(font)
+            pen = QtGui.QPen(QtCore.Qt.yellow)
+            painter.setPen(pen)
+            pos = QtCore.QRect(x, y, w, h)
+            painter.drawText(pos, 0, name[0])
             pen = QtGui.QPen(QtCore.Qt.red)
             width = round(0.37 * math.log(h) + 0.024 * h)
             pen.setWidth(width)
