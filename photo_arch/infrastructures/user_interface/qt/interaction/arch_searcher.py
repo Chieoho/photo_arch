@@ -9,6 +9,7 @@ import os
 import glob
 import json
 import math
+import re
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -37,12 +38,16 @@ class View(object):
         year_keys = self.ui.time_search.text()
         return title_keys, peoples_keys, year_keys
 
-    def display_group_list(self, group_arch_code_list):
-        self.ui.group_list_widget_search.clear()
+    def display_group_list(self, group_arch_code_list, fonds_code):
+        self.ui.group_tree_widget_search.clear()
         self.ui.photo_list_widget_search.clear()
+        root = QtWidgets.QTreeWidgetItem(self.ui.group_tree_widget_search)
+        root.setText(0, fonds_code)
         for group_arch_code in group_arch_code_list:
-            item = QtWidgets.QListWidgetItem(group_arch_code)
-            self.ui.group_list_widget_search.addItem(item)
+            child = QtWidgets.QTreeWidgetItem(root)
+            child.setText(0, group_arch_code)
+            child.setCheckState(0, QtGui.Qt.Unchecked)
+        self.ui.group_tree_widget_search.expandAll()
 
     def clear_group_info(self, widget_suffix='_in_group_search'):
         for k in GroupOutputData.__dict__:
@@ -59,7 +64,7 @@ class View(object):
                 widget.setText(v)
 
     def display_photo_list(self, photo_info_list):
-        self.ui.group_list_widget_search.clear()
+        self.ui.group_tree_widget_search.clear()
         self.ui.photo_list_widget_search.clear()
         for i, photo_path in enumerate(photo_info_list):
             head, tail = os.path.split(photo_path)
@@ -103,13 +108,13 @@ class View(object):
                 widget.clear()
         self.ui.photo_view_search.clear()
 
-    def display_image(self, pix_map):
-        scaled_pix_map = pix_map.scaled(
+    def display_image(self, pixmap):
+        scaled_pixmap = pixmap.scaled(
             self.ui.photo_view_search.size(),
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation
         )
-        self.ui.photo_view_search.setPixmap(scaled_pix_map)
+        self.ui.photo_view_search.setPixmap(scaled_pixmap)
 
 
 class ArchSearcher(object):
@@ -120,33 +125,33 @@ class ArchSearcher(object):
         self.controller = Controller(Repo(session))
         self.view = View(mw_)
 
-        self.pix_map = None
+        self.pixmap = None
 
         self.ui.search_btn.clicked.connect(static(self.search))
-        self.ui.group_list_widget_search.itemSelectionChanged.connect(static(self.display_group_info))
+        self.ui.group_tree_widget_search.itemSelectionChanged.connect(static(self.display_group_info))
         self.ui.photo_list_widget_search.itemSelectionChanged.connect(static(self.display_photo))
         extend_slot(self.ui.photo_view_search.resizeEvent, static(self.resize_image))
 
     def search(self):
-        title_keys, people_keys, year_keys = self.view.get_search_keys()
-        title_key_list = title_keys.split(' ')
-        year_key_list = year_keys.split(' ')
+        title_keys, people_keys, year_keys = map(lambda s: s.strip(), self.view.get_search_keys())
+        title_key_list = re.split(r'\s+', title_keys)
+        year_key_list = re.split(r'\s+', year_keys)
         if people_keys:
-            people_key_list = people_keys.split(' ')
+            people_key_list = re.split(r'\s+', people_keys)
             res, photo_info_list = self.controller.search_photos(title_key_list, people_key_list,
                                                                  year_key_list)
             self.view.display_photo_list(photo_info_list)
 
         else:
             res, group_arch_code_list = self.controller.search_groups(title_key_list, year_key_list)
-            self.view.display_group_list(group_arch_code_list)
+            self.view.display_group_list(group_arch_code_list, self.setting.fonds_code)
         self.view.clear_group_info()
         self.view.clear_photo_info()
 
     def display_group_info(self):
-        item_list = self.ui.group_list_widget_search.selectedItems()
+        item_list = self.ui.group_tree_widget_search.selectedItems()
         if item_list:
-            group_arch_code = item_list[0].text()
+            group_arch_code = item_list[0].text(0)
             _, data = self.controller.get_group(group_arch_code)
             self.view.display_group_info(data)
             self._list_photo_thumb()
@@ -205,10 +210,10 @@ class ArchSearcher(object):
         path = os.path.join(group_folder_path, photo_name)
         if not os.path.exists(path):
             path = os.path.join(group_folder_path, photo_sn)
-        self.pix_map = QtGui.QPixmap()
-        self.pix_map.load(path)
-        self._mark_face(self.pix_map, photo_name)
-        self.view.display_image(self.pix_map)
+        self.pixmap = QtGui.QPixmap()
+        self.pixmap.load(path)
+        self._mark_face(self.pixmap, photo_name)
+        self.view.display_image(self.pixmap)
 
     def _mark_face(self, pixmap, photo_name):
         painter = QtGui.QPainter(pixmap)
@@ -236,14 +241,14 @@ class ArchSearcher(object):
             painter.drawRect(x, y, w, h)
 
     def resize_image(self, event):
-        if not self.pix_map:
+        if not self.pixmap:
             return
         size = event.size()
-        w, h = size.width() - 1, size.height() - 1  # wow
-        pix_map = self.pix_map.scaled(
+        w, h = size.width() - 1, size.height() - 1
+        pixmap = self.pixmap.scaled(
             w,
             h,
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation
         )
-        self.ui.photo_view_search.setPixmap(pix_map)
+        self.ui.photo_view_search.setPixmap(pixmap)

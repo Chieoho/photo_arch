@@ -353,7 +353,6 @@ class ArchTransfer(object):
                 else:
                     item_text = pi.get(key, '')
                 item = QtWidgets.QTableWidgetItem(str(item_text))
-                item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.ui.cd_catalog_table_widget.setItem(row, col, item)
 
     def _display_default_caption(self):

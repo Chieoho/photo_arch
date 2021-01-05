@@ -1303,164 +1303,6 @@ class Ui_MainWindow(object):
         icon13 = QIcon()
         icon13.addFile(u"icon/training.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.training_tab, icon13, "")
-        self.search_face_tab = QWidget()
-        self.search_face_tab.setObjectName(u"search_face_tab")
-        self.gridLayout_26 = QGridLayout(self.search_face_tab)
-        self.gridLayout_26.setObjectName(u"gridLayout_26")
-        self.label_96 = QLabel(self.search_face_tab)
-        self.label_96.setObjectName(u"label_96")
-        self.label_96.setFont(font)
-        self.label_96.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.gridLayout_26.addWidget(self.label_96, 0, 0, 1, 1)
-
-        self.lineEdit = QLineEdit(self.search_face_tab)
-        self.lineEdit.setObjectName(u"lineEdit")
-        self.lineEdit.setFont(font)
-
-        self.gridLayout_26.addWidget(self.lineEdit, 0, 1, 1, 1)
-
-        self.searchface_select_photo_btn = QPushButton(self.search_face_tab)
-        self.searchface_select_photo_btn.setObjectName(u"searchface_select_photo_btn")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.searchface_select_photo_btn.sizePolicy().hasHeightForWidth())
-        self.searchface_select_photo_btn.setSizePolicy(sizePolicy6)
-        self.searchface_select_photo_btn.setFont(font)
-        self.searchface_select_photo_btn.setStyleSheet(u"padding-left: 30px; \n"
-"padding-right: 30px;\n"
-"padding-top: 8px; \n"
-"padding-bottom: 8px;")
-        icon14 = QIcon()
-        icon14.addFile(u"C:/Users/lizd/.designer/icon/open.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.searchface_select_photo_btn.setIcon(icon14)
-        self.searchface_select_photo_btn.setIconSize(QSize(24, 24))
-
-        self.gridLayout_26.addWidget(self.searchface_select_photo_btn, 0, 2, 1, 1)
-
-        self.horizontalSpacer_25 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout_26.addItem(self.horizontalSpacer_25, 0, 3, 1, 1)
-
-        self.label_94 = QLabel(self.search_face_tab)
-        self.label_94.setObjectName(u"label_94")
-        self.label_94.setFont(font)
-        self.label_94.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.gridLayout_26.addWidget(self.label_94, 1, 0, 1, 1)
-
-        self.searchface_retieve_dir_line = QLineEdit(self.search_face_tab)
-        self.searchface_retieve_dir_line.setObjectName(u"searchface_retieve_dir_line")
-        sizePolicy5.setHeightForWidth(self.searchface_retieve_dir_line.sizePolicy().hasHeightForWidth())
-        self.searchface_retieve_dir_line.setSizePolicy(sizePolicy5)
-        self.searchface_retieve_dir_line.setFont(font)
-
-        self.gridLayout_26.addWidget(self.searchface_retieve_dir_line, 1, 1, 1, 1)
-
-        self.searchface_select_retrieve_dir_btn = QPushButton(self.search_face_tab)
-        self.searchface_select_retrieve_dir_btn.setObjectName(u"searchface_select_retrieve_dir_btn")
-        sizePolicy6.setHeightForWidth(self.searchface_select_retrieve_dir_btn.sizePolicy().hasHeightForWidth())
-        self.searchface_select_retrieve_dir_btn.setSizePolicy(sizePolicy6)
-        self.searchface_select_retrieve_dir_btn.setFont(font)
-        self.searchface_select_retrieve_dir_btn.setStyleSheet(u"padding-left: 30px; \n"
-"padding-right: 30px;\n"
-"padding-top: 8px; \n"
-"padding-bottom: 8px;")
-        self.searchface_select_retrieve_dir_btn.setIcon(icon14)
-        self.searchface_select_retrieve_dir_btn.setIconSize(QSize(24, 24))
-
-        self.gridLayout_26.addWidget(self.searchface_select_retrieve_dir_btn, 1, 2, 1, 1)
-
-        self.label_95 = QLabel(self.search_face_tab)
-        self.label_95.setObjectName(u"label_95")
-        self.label_95.setFont(font)
-        self.label_95.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.gridLayout_26.addWidget(self.label_95, 4, 0, 1, 1)
-
-        self.splitter_6 = QSplitter(self.search_face_tab)
-        self.splitter_6.setObjectName(u"splitter_6")
-        sizePolicy.setHeightForWidth(self.splitter_6.sizePolicy().hasHeightForWidth())
-        self.splitter_6.setSizePolicy(sizePolicy)
-        self.splitter_6.setOrientation(Qt.Horizontal)
-        self.searchface_src_view = QLabel(self.splitter_6)
-        self.searchface_src_view.setObjectName(u"searchface_src_view")
-        sizePolicy.setHeightForWidth(self.searchface_src_view.sizePolicy().hasHeightForWidth())
-        self.searchface_src_view.setSizePolicy(sizePolicy)
-        self.searchface_src_view.setMinimumSize(QSize(0, 332))
-        self.searchface_src_view.setFont(font)
-        self.searchface_src_view.setAlignment(Qt.AlignCenter)
-        self.splitter_6.addWidget(self.searchface_src_view)
-        self.searchface_dst_show_view = QLabel(self.splitter_6)
-        self.searchface_dst_show_view.setObjectName(u"searchface_dst_show_view")
-        sizePolicy.setHeightForWidth(self.searchface_dst_show_view.sizePolicy().hasHeightForWidth())
-        self.searchface_dst_show_view.setSizePolicy(sizePolicy)
-        self.searchface_dst_show_view.setFont(font)
-        self.searchface_dst_show_view.setAlignment(Qt.AlignCenter)
-        self.splitter_6.addWidget(self.searchface_dst_show_view)
-
-        self.gridLayout_26.addWidget(self.splitter_6, 2, 0, 1, 4)
-
-        self.searchface_list_widget = QListWidget(self.search_face_tab)
-        self.searchface_list_widget.setObjectName(u"searchface_list_widget")
-        self.searchface_list_widget.setFont(font)
-
-        self.gridLayout_26.addWidget(self.searchface_list_widget, 5, 0, 1, 4)
-
-        self.frame_6 = QFrame(self.search_face_tab)
-        self.frame_6.setObjectName(u"frame_6")
-        self.frame_6.setMinimumSize(QSize(0, 45))
-        self.frame_6.setFrameShape(QFrame.StyledPanel)
-        self.frame_6.setFrameShadow(QFrame.Raised)
-        self.gridLayout_29 = QGridLayout(self.frame_6)
-        self.gridLayout_29.setObjectName(u"gridLayout_29")
-        self.horizontalSpacer_24 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout_29.addItem(self.horizontalSpacer_24, 0, 3, 1, 1)
-
-        self.searchface_start = QPushButton(self.frame_6)
-        self.searchface_start.setObjectName(u"searchface_start")
-        sizePolicy3.setHeightForWidth(self.searchface_start.sizePolicy().hasHeightForWidth())
-        self.searchface_start.setSizePolicy(sizePolicy3)
-        self.searchface_start.setMaximumSize(QSize(300, 16777215))
-        self.searchface_start.setFont(font)
-        self.searchface_start.setFocusPolicy(Qt.NoFocus)
-        self.searchface_start.setStyleSheet(u"padding-left: 30px; \n"
-"padding-right: 30px;\n"
-"padding-top: 8px; \n"
-"padding-bottom: 8px;")
-        icon15 = QIcon()
-        icon15.addFile(u"icon/search_face.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.searchface_start.setIcon(icon15)
-        self.searchface_start.setIconSize(QSize(24, 24))
-
-        self.gridLayout_29.addWidget(self.searchface_start, 0, 0, 1, 1)
-
-        self.searchface_retrieve_result_btn = QPushButton(self.frame_6)
-        self.searchface_retrieve_result_btn.setObjectName(u"searchface_retrieve_result_btn")
-        sizePolicy3.setHeightForWidth(self.searchface_retrieve_result_btn.sizePolicy().hasHeightForWidth())
-        self.searchface_retrieve_result_btn.setSizePolicy(sizePolicy3)
-        self.searchface_retrieve_result_btn.setMaximumSize(QSize(300, 16777215))
-        self.searchface_retrieve_result_btn.setFont(font)
-        self.searchface_retrieve_result_btn.setFocusPolicy(Qt.NoFocus)
-        self.searchface_retrieve_result_btn.setStyleSheet(u"padding-left: 30px; \n"
-"padding-right: 30px;\n"
-"padding-top: 8px; \n"
-"padding-bottom: 8px;")
-        self.searchface_retrieve_result_btn.setIcon(icon15)
-        self.searchface_retrieve_result_btn.setIconSize(QSize(24, 24))
-
-        self.gridLayout_29.addWidget(self.searchface_retrieve_result_btn, 0, 2, 1, 1)
-
-        self.horizontalSpacer_26 = QSpacerItem(60, 20, QSizePolicy.Fixed, QSizePolicy.Minimum)
-
-        self.gridLayout_29.addItem(self.horizontalSpacer_26, 0, 1, 1, 1)
-
-
-        self.gridLayout_26.addWidget(self.frame_6, 3, 0, 1, 4)
-
-        self.tabWidget.addTab(self.search_face_tab, icon15, "")
         self.arch_browser_tab = QWidget()
         self.arch_browser_tab.setObjectName(u"arch_browser_tab")
         self.arch_browser_tab.setFont(font)
@@ -1890,26 +1732,233 @@ class Ui_MainWindow(object):
 
         self.gridLayout_17.addWidget(self.splitter_4, 0, 0, 1, 1)
 
+        icon14 = QIcon()
+        icon14.addFile(u"icon/browse_arch.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.tabWidget.addTab(self.arch_browser_tab, icon14, "")
+        self.search_face_tab = QWidget()
+        self.search_face_tab.setObjectName(u"search_face_tab")
+        self.gridLayout_26 = QGridLayout(self.search_face_tab)
+        self.gridLayout_26.setObjectName(u"gridLayout_26")
+        self.splitter_6 = QSplitter(self.search_face_tab)
+        self.splitter_6.setObjectName(u"splitter_6")
+        self.splitter_6.setOrientation(Qt.Horizontal)
+        self.widget_11 = QWidget(self.splitter_6)
+        self.widget_11.setObjectName(u"widget_11")
+        self.widget_11.setMaximumSize(QSize(450, 16777215))
+        self.widget_11.setFont(font)
+        self.gridLayout_29 = QGridLayout(self.widget_11)
+        self.gridLayout_29.setObjectName(u"gridLayout_29")
+        self.open_photo_btn = QPushButton(self.widget_11)
+        self.open_photo_btn.setObjectName(u"open_photo_btn")
+        sizePolicy6 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.open_photo_btn.sizePolicy().hasHeightForWidth())
+        self.open_photo_btn.setSizePolicy(sizePolicy6)
+        self.open_photo_btn.setFont(font)
+        self.open_photo_btn.setStyleSheet(u"padding-left: 30px; \n"
+"padding-right: 30px;\n"
+"padding-top: 8px; \n"
+"padding-bottom: 8px;")
+        icon15 = QIcon()
+        icon15.addFile(u"C:/Users/lizd/.designer/icon/open.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.open_photo_btn.setIcon(icon15)
+        self.open_photo_btn.setIconSize(QSize(24, 24))
+
+        self.gridLayout_29.addWidget(self.open_photo_btn, 0, 2, 1, 1)
+
+        self.retrieve_photo_path = QLineEdit(self.widget_11)
+        self.retrieve_photo_path.setObjectName(u"retrieve_photo_path")
+        sizePolicy6.setHeightForWidth(self.retrieve_photo_path.sizePolicy().hasHeightForWidth())
+        self.retrieve_photo_path.setSizePolicy(sizePolicy6)
+        self.retrieve_photo_path.setFont(font)
+
+        self.gridLayout_29.addWidget(self.retrieve_photo_path, 0, 1, 1, 1)
+
+        self.frame_6 = QFrame(self.widget_11)
+        self.frame_6.setObjectName(u"frame_6")
+        self.frame_6.setMinimumSize(QSize(0, 30))
+        self.frame_6.setFrameShape(QFrame.StyledPanel)
+        self.frame_6.setFrameShadow(QFrame.Raised)
+        self.gridLayout_33 = QGridLayout(self.frame_6)
+        self.gridLayout_33.setObjectName(u"gridLayout_33")
+        self.retrieve_btn = QPushButton(self.frame_6)
+        self.retrieve_btn.setObjectName(u"retrieve_btn")
+        sizePolicy3.setHeightForWidth(self.retrieve_btn.sizePolicy().hasHeightForWidth())
+        self.retrieve_btn.setSizePolicy(sizePolicy3)
+        self.retrieve_btn.setMaximumSize(QSize(300, 16777215))
+        self.retrieve_btn.setFont(font)
+        self.retrieve_btn.setFocusPolicy(Qt.NoFocus)
+        self.retrieve_btn.setStyleSheet(u"padding-left: 30px; \n"
+"padding-right: 30px;\n"
+"padding-top: 8px; \n"
+"padding-bottom: 8px;")
         icon16 = QIcon()
-        icon16.addFile(u"icon/browse_arch.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.tabWidget.addTab(self.arch_browser_tab, icon16, "")
-        self.search_archives_tab = QWidget()
-        self.search_archives_tab.setObjectName(u"search_archives_tab")
-        self.gridLayout_58 = QGridLayout(self.search_archives_tab)
-        self.gridLayout_58.setObjectName(u"gridLayout_58")
-        self.splitter_11 = QSplitter(self.search_archives_tab)
+        icon16.addFile(u"icon/search.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.retrieve_btn.setIcon(icon16)
+        self.retrieve_btn.setIconSize(QSize(24, 24))
+
+        self.gridLayout_33.addWidget(self.retrieve_btn, 0, 1, 1, 1)
+
+        self.horizontalSpacer_26 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout_33.addItem(self.horizontalSpacer_26, 0, 2, 1, 1)
+
+        self.horizontalSpacer_29 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout_33.addItem(self.horizontalSpacer_29, 0, 0, 1, 1)
+
+
+        self.gridLayout_29.addWidget(self.frame_6, 2, 0, 1, 3)
+
+        self.frame_12 = QFrame(self.widget_11)
+        self.frame_12.setObjectName(u"frame_12")
+        self.frame_12.setFrameShape(QFrame.StyledPanel)
+        self.frame_12.setFrameShadow(QFrame.Raised)
+        self.gridLayout_34 = QGridLayout(self.frame_12)
+        self.gridLayout_34.setObjectName(u"gridLayout_34")
+        self.export_btn_search_face = QPushButton(self.frame_12)
+        self.export_btn_search_face.setObjectName(u"export_btn_search_face")
+        sizePolicy3.setHeightForWidth(self.export_btn_search_face.sizePolicy().hasHeightForWidth())
+        self.export_btn_search_face.setSizePolicy(sizePolicy3)
+        self.export_btn_search_face.setFont(font)
+        self.export_btn_search_face.setStyleSheet(u"padding-left: 30px; \n"
+"padding-right: 30px;\n"
+"padding-top: 8px; \n"
+"padding-bottom: 8px;")
+        icon17 = QIcon()
+        icon17.addFile(u"icon/export.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.export_btn_search_face.setIcon(icon17)
+        self.export_btn_search_face.setIconSize(QSize(24, 24))
+
+        self.gridLayout_34.addWidget(self.export_btn_search_face, 0, 1, 1, 1)
+
+        self.horizontalSpacer_24 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout_34.addItem(self.horizontalSpacer_24, 0, 0, 1, 1)
+
+        self.horizontalSpacer_25 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout_34.addItem(self.horizontalSpacer_25, 0, 2, 1, 1)
+
+
+        self.gridLayout_29.addWidget(self.frame_12, 4, 0, 1, 3)
+
+        self.label_94 = QLabel(self.widget_11)
+        self.label_94.setObjectName(u"label_94")
+        self.label_94.setFont(font)
+        self.label_94.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.gridLayout_29.addWidget(self.label_94, 1, 0, 1, 1)
+
+        self.select_retrieve_dir_btn = QPushButton(self.widget_11)
+        self.select_retrieve_dir_btn.setObjectName(u"select_retrieve_dir_btn")
+        sizePolicy6.setHeightForWidth(self.select_retrieve_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_retrieve_dir_btn.setSizePolicy(sizePolicy6)
+        self.select_retrieve_dir_btn.setFont(font)
+        self.select_retrieve_dir_btn.setStyleSheet(u"padding-left: 30px; \n"
+"padding-right: 30px;\n"
+"padding-top: 8px; \n"
+"padding-bottom: 8px;")
+        self.select_retrieve_dir_btn.setIcon(icon15)
+        self.select_retrieve_dir_btn.setIconSize(QSize(24, 24))
+
+        self.gridLayout_29.addWidget(self.select_retrieve_dir_btn, 1, 2, 1, 1)
+
+        self.label_96 = QLabel(self.widget_11)
+        self.label_96.setObjectName(u"label_96")
+        self.label_96.setFont(font)
+        self.label_96.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.gridLayout_29.addWidget(self.label_96, 0, 0, 1, 1)
+
+        self.retieve_dir = QLineEdit(self.widget_11)
+        self.retieve_dir.setObjectName(u"retieve_dir")
+        sizePolicy5.setHeightForWidth(self.retieve_dir.sizePolicy().hasHeightForWidth())
+        self.retieve_dir.setSizePolicy(sizePolicy5)
+        self.retieve_dir.setFont(font)
+
+        self.gridLayout_29.addWidget(self.retieve_dir, 1, 1, 1, 1)
+
+        self.tree_widget_search_face = QTreeWidget(self.widget_11)
+        self.tree_widget_search_face.setObjectName(u"tree_widget_search_face")
+        sizePolicy7 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.tree_widget_search_face.sizePolicy().hasHeightForWidth())
+        self.tree_widget_search_face.setSizePolicy(sizePolicy7)
+        self.tree_widget_search_face.setFont(font)
+
+        self.gridLayout_29.addWidget(self.tree_widget_search_face, 3, 0, 1, 3)
+
+        self.splitter_6.addWidget(self.widget_11)
+        self.widget_12 = QWidget(self.splitter_6)
+        self.widget_12.setObjectName(u"widget_12")
+        sizePolicy4.setHeightForWidth(self.widget_12.sizePolicy().hasHeightForWidth())
+        self.widget_12.setSizePolicy(sizePolicy4)
+        self.widget_12.setFont(font)
+        self.gridLayout_32 = QGridLayout(self.widget_12)
+        self.gridLayout_32.setObjectName(u"gridLayout_32")
+        self.splitter_11 = QSplitter(self.widget_12)
         self.splitter_11.setObjectName(u"splitter_11")
         self.splitter_11.setOrientation(Qt.Vertical)
-        self.splitter_12 = QSplitter(self.splitter_11)
-        self.splitter_12.setObjectName(u"splitter_12")
-        self.splitter_12.setOrientation(Qt.Horizontal)
-        self.widget_21 = QWidget(self.splitter_12)
+        self.splitter_10 = QSplitter(self.splitter_11)
+        self.splitter_10.setObjectName(u"splitter_10")
+        self.splitter_10.setOrientation(Qt.Horizontal)
+        self.target_view_search_face = QLabel(self.splitter_10)
+        self.target_view_search_face.setObjectName(u"target_view_search_face")
+        sizePolicy.setHeightForWidth(self.target_view_search_face.sizePolicy().hasHeightForWidth())
+        self.target_view_search_face.setSizePolicy(sizePolicy)
+        self.target_view_search_face.setMinimumSize(QSize(0, 0))
+        self.target_view_search_face.setFont(font)
+        self.target_view_search_face.setAlignment(Qt.AlignCenter)
+        self.splitter_10.addWidget(self.target_view_search_face)
+        self.result_view_search_face = QLabel(self.splitter_10)
+        self.result_view_search_face.setObjectName(u"result_view_search_face")
+        sizePolicy.setHeightForWidth(self.result_view_search_face.sizePolicy().hasHeightForWidth())
+        self.result_view_search_face.setSizePolicy(sizePolicy)
+        self.result_view_search_face.setFont(font)
+        self.result_view_search_face.setAlignment(Qt.AlignCenter)
+        self.splitter_10.addWidget(self.result_view_search_face)
+        self.splitter_11.addWidget(self.splitter_10)
+        self.list_widget_search_face = QListWidget(self.splitter_11)
+        self.list_widget_search_face.setObjectName(u"list_widget_search_face")
+        sizePolicy4.setHeightForWidth(self.list_widget_search_face.sizePolicy().hasHeightForWidth())
+        self.list_widget_search_face.setSizePolicy(sizePolicy4)
+        self.list_widget_search_face.setFont(font)
+        self.splitter_11.addWidget(self.list_widget_search_face)
+
+        self.gridLayout_32.addWidget(self.splitter_11, 0, 0, 1, 1)
+
+        self.splitter_6.addWidget(self.widget_12)
+
+        self.gridLayout_26.addWidget(self.splitter_6, 0, 0, 1, 1)
+
+        icon18 = QIcon()
+        icon18.addFile(u"icon/search_face.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.tabWidget.addTab(self.search_face_tab, icon18, "")
+        self.search_archives_tab = QWidget()
+        self.search_archives_tab.setObjectName(u"search_archives_tab")
+        self.search_archives_tab.setFont(font)
+        self.gridLayout_30 = QGridLayout(self.search_archives_tab)
+        self.gridLayout_30.setObjectName(u"gridLayout_30")
+        self.splitter_9 = QSplitter(self.search_archives_tab)
+        self.splitter_9.setObjectName(u"splitter_9")
+        self.splitter_9.setFont(font)
+        self.splitter_9.setOrientation(Qt.Horizontal)
+        self.widget_21 = QWidget(self.splitter_9)
         self.widget_21.setObjectName(u"widget_21")
-        self.widget_21.setMinimumSize(QSize(280, 0))
-        self.widget_21.setMaximumSize(QSize(16777215, 16777215))
+        self.widget_21.setMinimumSize(QSize(0, 0))
+        self.widget_21.setMaximumSize(QSize(400, 16777215))
         self.widget_21.setFont(font)
         self.gridLayout_54 = QGridLayout(self.widget_21)
         self.gridLayout_54.setObjectName(u"gridLayout_54")
+        self.group_title_search = QLineEdit(self.widget_21)
+        self.group_title_search.setObjectName(u"group_title_search")
+        self.group_title_search.setFont(font)
+
+        self.gridLayout_54.addWidget(self.group_title_search, 0, 1, 1, 1)
+
         self.peoples_search = QLineEdit(self.widget_21)
         self.peoples_search.setObjectName(u"peoples_search")
         self.peoples_search.setFont(font)
@@ -1922,37 +1971,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout_54.addWidget(self.label_210, 1, 0, 1, 1)
 
-        self.group_title_search = QLineEdit(self.widget_21)
-        self.group_title_search.setObjectName(u"group_title_search")
-        self.group_title_search.setFont(font)
-
-        self.gridLayout_54.addWidget(self.group_title_search, 0, 1, 1, 1)
-
-        self.group_list_widget_search = QListWidget(self.widget_21)
-        self.group_list_widget_search.setObjectName(u"group_list_widget_search")
-        self.group_list_widget_search.setFont(font)
-        self.group_list_widget_search.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.group_list_widget_search.setSelectionBehavior(QAbstractItemView.SelectItems)
-
-        self.gridLayout_54.addWidget(self.group_list_widget_search, 4, 0, 1, 2)
-
         self.label_211 = QLabel(self.widget_21)
         self.label_211.setObjectName(u"label_211")
         self.label_211.setFont(font)
 
         self.gridLayout_54.addWidget(self.label_211, 2, 0, 1, 1)
-
-        self.label_187 = QLabel(self.widget_21)
-        self.label_187.setObjectName(u"label_187")
-        self.label_187.setFont(font)
-
-        self.gridLayout_54.addWidget(self.label_187, 0, 0, 1, 1)
-
-        self.time_search = QLineEdit(self.widget_21)
-        self.time_search.setObjectName(u"time_search")
-        self.time_search.setFont(font)
-
-        self.gridLayout_54.addWidget(self.time_search, 2, 1, 1, 1)
 
         self.frame_19 = QFrame(self.widget_21)
         self.frame_19.setObjectName(u"frame_19")
@@ -1976,9 +1999,7 @@ class Ui_MainWindow(object):
 "padding-right: 30px;\n"
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
-        icon17 = QIcon()
-        icon17.addFile(u"icon/search.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.search_btn.setIcon(icon17)
+        self.search_btn.setIcon(icon16)
         self.search_btn.setIconSize(QSize(24, 24))
         self.search_btn.setAutoDefault(True)
 
@@ -1991,8 +2012,71 @@ class Ui_MainWindow(object):
 
         self.gridLayout_54.addWidget(self.frame_19, 3, 0, 1, 2)
 
-        self.splitter_12.addWidget(self.widget_21)
-        self.widget_22 = QWidget(self.splitter_12)
+        self.label_187 = QLabel(self.widget_21)
+        self.label_187.setObjectName(u"label_187")
+        self.label_187.setFont(font)
+
+        self.gridLayout_54.addWidget(self.label_187, 0, 0, 1, 1)
+
+        self.time_search = QLineEdit(self.widget_21)
+        self.time_search.setObjectName(u"time_search")
+        self.time_search.setFont(font)
+
+        self.gridLayout_54.addWidget(self.time_search, 2, 1, 1, 1)
+
+        self.frame_11 = QFrame(self.widget_21)
+        self.frame_11.setObjectName(u"frame_11")
+        self.frame_11.setMinimumSize(QSize(0, 30))
+        self.frame_11.setFont(font)
+        self.frame_11.setFrameShape(QFrame.StyledPanel)
+        self.frame_11.setFrameShadow(QFrame.Raised)
+        self.gridLayout_31 = QGridLayout(self.frame_11)
+        self.gridLayout_31.setObjectName(u"gridLayout_31")
+        self.horizontalSpacer_27 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout_31.addItem(self.horizontalSpacer_27, 0, 0, 1, 1)
+
+        self.pushButton = QPushButton(self.frame_11)
+        self.pushButton.setObjectName(u"pushButton")
+        sizePolicy5.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
+        self.pushButton.setSizePolicy(sizePolicy5)
+        self.pushButton.setFont(font)
+        self.pushButton.setFocusPolicy(Qt.TabFocus)
+        self.pushButton.setStyleSheet(u"padding-left: 30px; \n"
+"padding-right: 30px;\n"
+"padding-top: 8px; \n"
+"padding-bottom: 8px;")
+        self.pushButton.setIcon(icon17)
+        self.pushButton.setIconSize(QSize(24, 24))
+        self.pushButton.setAutoDefault(True)
+
+        self.gridLayout_31.addWidget(self.pushButton, 0, 1, 1, 1)
+
+        self.horizontalSpacer_28 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout_31.addItem(self.horizontalSpacer_28, 0, 2, 1, 1)
+
+
+        self.gridLayout_54.addWidget(self.frame_11, 5, 0, 1, 2)
+
+        self.group_tree_widget_search = QTreeWidget(self.widget_21)
+        self.group_tree_widget_search.setObjectName(u"group_tree_widget_search")
+        self.group_tree_widget_search.setFont(font)
+        self.group_tree_widget_search.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.group_tree_widget_search.setSelectionBehavior(QAbstractItemView.SelectItems)
+
+        self.gridLayout_54.addWidget(self.group_tree_widget_search, 4, 0, 1, 2)
+
+        self.splitter_9.addWidget(self.widget_21)
+        self.splitter_8 = QSplitter(self.splitter_9)
+        self.splitter_8.setObjectName(u"splitter_8")
+        self.splitter_8.setFont(font)
+        self.splitter_8.setOrientation(Qt.Vertical)
+        self.splitter_7 = QSplitter(self.splitter_8)
+        self.splitter_7.setObjectName(u"splitter_7")
+        self.splitter_7.setFont(font)
+        self.splitter_7.setOrientation(Qt.Horizontal)
+        self.widget_22 = QWidget(self.splitter_7)
         self.widget_22.setObjectName(u"widget_22")
         self.widget_22.setFont(font)
         self.gridLayout_55 = QGridLayout(self.widget_22)
@@ -2344,8 +2428,8 @@ class Ui_MainWindow(object):
 
         self.gridLayout_55.addWidget(self.group_caption_in_group_search, 12, 0, 1, 4)
 
-        self.splitter_12.addWidget(self.widget_22)
-        self.widget_23 = QWidget(self.splitter_12)
+        self.splitter_7.addWidget(self.widget_22)
+        self.widget_23 = QWidget(self.splitter_7)
         self.widget_23.setObjectName(u"widget_23")
         self.widget_23.setMinimumSize(QSize(600, 0))
         self.widget_23.setFont(font)
@@ -2357,11 +2441,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_56.addWidget(self.photo_view_search, 0, 0, 1, 1)
 
-        self.splitter_12.addWidget(self.widget_23)
-        self.splitter_11.addWidget(self.splitter_12)
-        self.widget_24 = QWidget(self.splitter_11)
+        self.splitter_7.addWidget(self.widget_23)
+        self.splitter_8.addWidget(self.splitter_7)
+        self.widget_24 = QWidget(self.splitter_8)
         self.widget_24.setObjectName(u"widget_24")
         self.widget_24.setMaximumSize(QSize(16777215, 16777215))
+        self.widget_24.setFont(font)
         self.gridLayout_57 = QGridLayout(self.widget_24)
         self.gridLayout_57.setObjectName(u"gridLayout_57")
         self.photo_list_widget_search = QListWidget(self.widget_24)
@@ -2372,13 +2457,14 @@ class Ui_MainWindow(object):
 
         self.gridLayout_57.addWidget(self.photo_list_widget_search, 0, 0, 1, 1)
 
-        self.splitter_11.addWidget(self.widget_24)
+        self.splitter_8.addWidget(self.widget_24)
+        self.splitter_9.addWidget(self.splitter_8)
 
-        self.gridLayout_58.addWidget(self.splitter_11, 0, 0, 1, 1)
+        self.gridLayout_30.addWidget(self.splitter_9, 0, 0, 1, 1)
 
-        icon18 = QIcon()
-        icon18.addFile(u"icon/search_arch.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.tabWidget.addTab(self.search_archives_tab, icon18, "")
+        icon19 = QIcon()
+        icon19.addFile(u"icon/search_arch.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.tabWidget.addTab(self.search_archives_tab, icon19, "")
         self.arch_transfer_tab = QWidget()
         self.arch_transfer_tab.setObjectName(u"arch_transfer_tab")
         self.arch_transfer_tab.setFont(font)
@@ -2539,9 +2625,9 @@ class Ui_MainWindow(object):
 "padding-right: 30px;\n"
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
-        icon19 = QIcon()
-        icon19.addFile(u"icon/package.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.packeage_btn.setIcon(icon19)
+        icon20 = QIcon()
+        icon20.addFile(u"icon/package.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.packeage_btn.setIcon(icon20)
         self.packeage_btn.setIconSize(QSize(24, 24))
 
         self.gridLayout_27.addWidget(self.packeage_btn, 0, 1, 1, 1)
@@ -2770,9 +2856,9 @@ class Ui_MainWindow(object):
 
         self.gridLayout_23.addWidget(self.splitter_5, 0, 0, 1, 1)
 
-        icon20 = QIcon()
-        icon20.addFile(u"icon/arch_transfer.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.tabWidget.addTab(self.arch_transfer_tab, icon20, "")
+        icon21 = QIcon()
+        icon21.addFile(u"icon/arch_transfer.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.tabWidget.addTab(self.arch_transfer_tab, icon21, "")
         self.setting_tab = QWidget()
         self.setting_tab.setObjectName(u"setting_tab")
         self.setting_tab.setFont(font)
@@ -2886,9 +2972,9 @@ class Ui_MainWindow(object):
 
         self.gridLayout_28.addItem(self.verticalSpacer_12, 2, 1, 1, 1)
 
-        icon21 = QIcon()
-        icon21.addFile(u"icon/setting.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.tabWidget.addTab(self.setting_tab, icon21, "")
+        icon22 = QIcon()
+        icon22.addFile(u"icon/setting.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.tabWidget.addTab(self.setting_tab, icon22, "")
 
         self.gridLayout_24.addWidget(self.tabWidget, 0, 0, 1, 1)
 
@@ -2935,12 +3021,12 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.peoples_in_photo, self.tableWidget)
         QWidget.setTabOrder(self.tableWidget, self.verifycheckBox)
         QWidget.setTabOrder(self.verifycheckBox, self.thresh_lineEdit)
-        QWidget.setTabOrder(self.thresh_lineEdit, self.lineEdit)
-        QWidget.setTabOrder(self.lineEdit, self.searchface_select_photo_btn)
-        QWidget.setTabOrder(self.searchface_select_photo_btn, self.searchface_retieve_dir_line)
-        QWidget.setTabOrder(self.searchface_retieve_dir_line, self.searchface_select_retrieve_dir_btn)
-        QWidget.setTabOrder(self.searchface_select_retrieve_dir_btn, self.searchface_list_widget)
-        QWidget.setTabOrder(self.searchface_list_widget, self.order_combobox_browse)
+        QWidget.setTabOrder(self.thresh_lineEdit, self.retrieve_photo_path)
+        QWidget.setTabOrder(self.retrieve_photo_path, self.open_photo_btn)
+        QWidget.setTabOrder(self.open_photo_btn, self.retieve_dir)
+        QWidget.setTabOrder(self.retieve_dir, self.select_retrieve_dir_btn)
+        QWidget.setTabOrder(self.select_retrieve_dir_btn, self.list_widget_search_face)
+        QWidget.setTabOrder(self.list_widget_search_face, self.order_combobox_browse)
         QWidget.setTabOrder(self.order_combobox_browse, self.arch_tree_view_browse)
         QWidget.setTabOrder(self.arch_tree_view_browse, self.photo_list_widget)
         QWidget.setTabOrder(self.photo_list_widget, self.arch_code_in_group_arch)
@@ -2969,8 +3055,8 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.group_title_search, self.peoples_search)
         QWidget.setTabOrder(self.peoples_search, self.time_search)
         QWidget.setTabOrder(self.time_search, self.search_btn)
-        QWidget.setTabOrder(self.search_btn, self.group_list_widget_search)
-        QWidget.setTabOrder(self.group_list_widget_search, self.photo_list_widget_search)
+        QWidget.setTabOrder(self.search_btn, self.group_tree_widget_search)
+        QWidget.setTabOrder(self.group_tree_widget_search, self.photo_list_widget_search)
         QWidget.setTabOrder(self.photo_list_widget_search, self.arch_code_in_group_search)
         QWidget.setTabOrder(self.arch_code_in_group_search, self.fonds_code_in_group_search)
         QWidget.setTabOrder(self.fonds_code_in_group_search, self.arch_category_code_in_group_search)
@@ -3022,8 +3108,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(4)
-        self.search_btn.setDefault(True)
+        self.tabWidget.setCurrentIndex(5)
+        self.search_btn.setDefault(False)
+        self.pushButton.setDefault(False)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -3166,16 +3253,6 @@ class Ui_MainWindow(object):
         self.train_btn.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u8bad\u7ec3", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" color:#868686;\">\u5982\u679c\u6a21\u578b\u7cbe\u5ea6\u5c0f\u4e8e0.9\uff0c\u5efa\u8bae\u8fdb\u4e00\u6b65\u5f3a\u5316\u8bad\u7ec3\u3002</span></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.training_tab), QCoreApplication.translate("MainWindow", u"\u6a21\u578b\u8bad\u7ec3", None))
-        self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u8bf7\u6307\u5b9a\u5f85\u68c0\u7d22\u4eba\u7269\u7684\u7167\u7247\uff1a", None))
-        self.searchface_select_photo_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00", None))
-        self.label_94.setText(QCoreApplication.translate("MainWindow", u"\u8bf7\u9009\u62e9\u5f85\u68c0\u7d22\u7684\u76ee\u5f55\uff1a", None))
-        self.searchface_select_retrieve_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9", None))
-        self.label_95.setText(QCoreApplication.translate("MainWindow", u"\u68c0\u7d22\u7ed3\u679c\uff1a", None))
-        self.searchface_src_view.setText("")
-        self.searchface_dst_show_view.setText("")
-        self.searchface_start.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u68c0\u7d22", None))
-        self.searchface_retrieve_result_btn.setText(QCoreApplication.translate("MainWindow", u"\u67e5\u770b\u68c0\u7d22\u7ed3\u679c", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_face_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u641c\u7d22", None))
         self.order_combobox_browse.setItemText(0, QCoreApplication.translate("MainWindow", u"\u5e74\u5ea6", None))
         self.order_combobox_browse.setItemText(1, QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))
 
@@ -3204,10 +3281,36 @@ class Ui_MainWindow(object):
         self.label_57.setText(QCoreApplication.translate("MainWindow", u"\u53c2\u89c1\u53f7", None))
         self.photo_view_in_arch.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_browser_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u6d4f\u89c8", None))
+        self.open_photo_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00", None))
+        self.retrieve_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
+        self.export_btn_search_face.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
+        self.label_94.setText(QCoreApplication.translate("MainWindow", u"\u76ee\u5f55", None))
+        self.select_retrieve_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9", None))
+        self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u7167\u7247", None))
+        ___qtreewidgetitem = self.tree_widget_search_face.headerItem()
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"\u7167\u7247\u6863\u6848", None));
+#if QT_CONFIG(tooltip)
+        self.tree_widget_search_face.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53ef\u52fe\u9009\u5bfc\u51fa</span></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(whatsthis)
+        self.tree_widget_search_face.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><br/></p></body></html>", None))
+#endif // QT_CONFIG(whatsthis)
+        self.target_view_search_face.setText("")
+        self.result_view_search_face.setText("")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_face_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u641c\u7d22", None))
         self.label_210.setText(QCoreApplication.translate("MainWindow", u"\u4eba\u7269", None))
         self.label_211.setText(QCoreApplication.translate("MainWindow", u"\u65f6\u95f4", None))
-        self.label_187.setText(QCoreApplication.translate("MainWindow", u"\u9898\u540d", None))
         self.search_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
+        self.label_187.setText(QCoreApplication.translate("MainWindow", u"\u9898\u540d", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
+        ___qtreewidgetitem1 = self.group_tree_widget_search.headerItem()
+        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"\u7167\u7247\u6863\u6848", None));
+#if QT_CONFIG(tooltip)
+        self.group_tree_widget_search.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53ef\u52fe\u9009\u5bfc\u51fa</span></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(whatsthis)
+        self.group_tree_widget_search.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><br/></p></body></html>", None))
+#endif // QT_CONFIG(whatsthis)
         self.label_188.setText(QCoreApplication.translate("MainWindow", u"\u4eba\u7269\uff1a", None))
         self.label_189.setText(QCoreApplication.translate("MainWindow", u"\u5927\u5c0f/MB", None))
         self.label_190.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))
