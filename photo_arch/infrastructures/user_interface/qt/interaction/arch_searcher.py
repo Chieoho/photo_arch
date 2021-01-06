@@ -243,11 +243,8 @@ class ArchSearcher(object):
     def resize_image(self, event):
         if not self.pixmap:
             return
-        size = event.size()
-        w, h = size.width() - 1, size.height() - 1
         pixmap = self.pixmap.scaled(
-            w,
-            h,
+            event.size(),
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation
         )

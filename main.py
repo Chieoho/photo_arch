@@ -41,7 +41,7 @@ def main():
     mw = MainWindow(app)
     mw.resize(int(mw.dt_width*SCALE), int(mw.dt_height*SCALE))
     ax = int((mw.dt_width - mw.width()) / 2)
-    ay = int((mw.dt_height - mw.height()) / 2) - 100
+    ay = int((mw.dt_height - mw.height()) / 2) - 50
     mw.move(ax, ay)
     init_modules(mw)
     mw.show()

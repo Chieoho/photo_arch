@@ -10,6 +10,12 @@
     <height>944</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>1</width>
+    <height>1</height>
+   </size>
+  </property>
   <property name="font">
    <font>
     <family>新宋体</family>
@@ -4080,16 +4086,16 @@ padding-bottom: 8px;</string>
        <attribute name="title">
         <string>人脸搜索</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_26">
+       <layout class="QGridLayout" name="gridLayout_36">
         <item row="0" column="0">
-         <widget class="QSplitter" name="splitter_6">
+         <widget class="QSplitter" name="splitter_11">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="QWidget" name="widget_11" native="true">
            <property name="maximumSize">
             <size>
-             <width>450</width>
+             <width>320</width>
              <height>16777215</height>
             </size>
            </property>
@@ -4115,10 +4121,8 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">padding-left: 30px; 
-padding-right: 30px;
-padding-top: 8px; 
-padding-bottom: 8px;</string>
+               <string notr="true">padding: 3px; 
+</string>
               </property>
               <property name="text">
                <string>打开</string>
@@ -4343,10 +4347,8 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">padding-left: 30px; 
-padding-right: 30px;
-padding-top: 8px; 
-padding-bottom: 8px;</string>
+               <string notr="true">padding: 3px; 
+</string>
               </property>
               <property name="text">
                <string>选择</string>
@@ -4424,40 +4426,52 @@ padding-bottom: 8px;</string>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="widget_12" native="true">
+          <widget class="QSplitter" name="splitter_10">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="font">
-            <font>
-             <family>新宋体</family>
-             <pointsize>14</pointsize>
-            </font>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_32">
-            <item row="0" column="0">
-             <widget class="QSplitter" name="splitter_11">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <widget class="QSplitter" name="splitter_10">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
+           <widget class="QSplitter" name="splitter_6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <widget class="QWidget" name="widget_12" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_32">
+              <item row="0" column="0">
                <widget class="QLabel" name="target_view_search_face">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>1</width>
+                  <height>1</height>
                  </size>
                 </property>
                 <property name="font">
@@ -4473,12 +4487,36 @@ padding-bottom: 8px;</string>
                  <set>Qt::AlignCenter</set>
                 </property>
                </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="widget_13" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_35">
+              <item row="0" column="0">
                <widget class="QLabel" name="result_view_search_face">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>1</width>
+                  <height>1</height>
+                 </size>
                 </property>
                 <property name="font">
                  <font>
@@ -4493,10 +4531,34 @@ padding-bottom: 8px;</string>
                  <set>Qt::AlignCenter</set>
                 </property>
                </widget>
-              </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+           <widget class="QWidget" name="widget_14" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>160</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>新宋体</family>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_26">
+             <item row="0" column="0">
               <widget class="QListWidget" name="list_widget_search_face">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -4508,9 +4570,9 @@ padding-bottom: 8px;</string>
                 </font>
                </property>
               </widget>
-             </widget>
-            </item>
-           </layout>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </item>
@@ -7018,7 +7080,6 @@ padding-bottom: 8px;</string>
   <tabstop>open_photo_btn</tabstop>
   <tabstop>retieve_dir</tabstop>
   <tabstop>select_retrieve_dir_btn</tabstop>
-  <tabstop>list_widget_search_face</tabstop>
   <tabstop>order_combobox_browse</tabstop>
   <tabstop>arch_tree_view_browse</tabstop>
   <tabstop>photo_list_widget</tabstop>

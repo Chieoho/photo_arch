@@ -109,7 +109,7 @@ class ArchBrowser(object):
         self.controller = Controller(Repo(session))
         self.view = View(mw_)
 
-        self.pix_map = None
+        self.pixmap = None
         self.group_folder = ''
 
         self.ui.photo_list_widget.itemSelectionChanged.connect(static(self.display_photo))
@@ -119,17 +119,17 @@ class ArchBrowser(object):
         self.ui.order_combobox_browse.currentTextChanged.connect(static(self.display_arch))
 
     def resize_image(self, event):
-        if not self.pix_map:
+        if not self.pixmap:
             return
         size = event.size()
         w, h = size.width() - 1, size.height() - 1  # wow
-        pix_map = self.pix_map.scaled(
+        pixmap = self.pixmap.scaled(
             w,
             h,
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation
         )
-        self.ui.photo_view_in_arch.setPixmap(pix_map)
+        self.ui.photo_view_in_arch.setPixmap(pixmap)
 
     def show_group(self, item_selection):
         indexes = item_selection.indexes()
@@ -210,15 +210,15 @@ class ArchBrowser(object):
         path = os.path.join(group_folder_path, photo_name)
         if not os.path.exists(path):
             path = os.path.join(group_folder_path, photo_name.split('-')[-1])
-        self.pix_map = QtGui.QPixmap()
-        self.pix_map.load(path)
-        self._mark_face(self.pix_map, photo_name)
-        pix_map = self.pix_map.scaled(
+        self.pixmap = QtGui.QPixmap()
+        self.pixmap.load(path)
+        self._mark_face(self.pixmap, photo_name)
+        pixmap = self.pixmap.scaled(
             self.ui.photo_view_in_arch.size(),
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation
         )
-        self.ui.photo_view_in_arch.setPixmap(pix_map)
+        self.ui.photo_view_in_arch.setPixmap(pixmap)
 
     def _mark_face(self, pixmap, photo_name):
         painter = QtGui.QPainter(pixmap)

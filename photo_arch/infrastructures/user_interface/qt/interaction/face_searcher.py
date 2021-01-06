@@ -35,6 +35,7 @@ class SearchFaces(object):
         self.ui.list_widget_search_face.setFixedHeight(146)
         self.ui.list_widget_search_face.setWrapping(False)
 
+        self.ui.target_view_search_face.setAlignment(QtCore.Qt.AlignCenter)
         self.ui.result_view_search_face.setAlignment(QtCore.Qt.AlignCenter)
 
         self.ui.list_widget_search_face.itemSelectionChanged.connect(static(self.display_photo))
@@ -135,14 +136,11 @@ class SearchFaces(object):
         else:
             self.mw.msg_box('未检索到结果,请确认指定的路径是否进行过人脸检索,或者重新开始检索!')
 
-    def resize_target_image(self, event):
+    def resize_target_image(self, event: QtGui.QResizeEvent):
         if not self.target_pixmap:
             return
-        size = event.size()
-        w, h = size.width() - 1, size.height() - 1
         pixmap = self.target_pixmap.scaled(
-            w,
-            h,
+            event.size(),
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation
         )

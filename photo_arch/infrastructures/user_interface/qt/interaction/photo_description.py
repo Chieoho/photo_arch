@@ -34,7 +34,7 @@ class PhotoDescription(object):
         self.setting = setting
         self.view = View(mw_)
 
-        self.pix_map = None
+        self.pixmap = None
         self.tmp_info = {}
         self.add_icon_path = './icon/add.png'
         self.del_icon_path = './icon/cancel.png'
@@ -69,13 +69,15 @@ class PhotoDescription(object):
         self.ui.verifycheckBox.stateChanged.connect(static(self.checked))
 
     def resize_image(self, event):
-        if not self.pix_map:
+        if not self.pixmap:
             return
         size = event.size()
         w, h = size.width() - 1, size.height() - 1  # wow
-        pix_map = self.pix_map.scaled(w, h, QtGui.Qt.KeepAspectRatio,
-                                      QtGui.Qt.SmoothTransformation)
-        self.ui.photo_view.setPixmap(pix_map)
+        pixmap = self.pixmap.scaled(
+            w, h,
+            QtGui.Qt.KeepAspectRatio,
+            QtGui.Qt.SmoothTransformation)
+        self.ui.photo_view.setPixmap(pixmap)
 
     def all_photo(self, check_state):
         self.mw.photo_type = 1
@@ -193,8 +195,8 @@ class PhotoDescription(object):
             self.ui.photo_view.setText('没有照片可显示')
             return
         photo_path = self.mw.photo_list[self.current_photo_id]
-        self.pix_map = QtGui.QPixmap()
-        self.pix_map.load(photo_path)
+        self.pixmap = QtGui.QPixmap()
+        self.pixmap.load(photo_path)
         faces_data = self.mw.photo_info_dict.get(photo_path).get('faces')
         name_info_list, coordinate_list = self._conversion_data(faces_data)
         tmp_name_info_list = self.tmp_info.get(photo_path)
@@ -205,12 +207,12 @@ class PhotoDescription(object):
             self._update_table_widget(tmp_name_info_list)
         self.ui.tableWidget.itemChanged.connect(static(self.table_item_changed))
         self._mark_face(coordinate_list)
-        pix_map = self.pix_map.scaled(
+        pixmap = self.pixmap.scaled(
             self.ui.photo_view.size(),
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation
         )
-        self.ui.photo_view.setPixmap(pix_map)
+        self.ui.photo_view.setPixmap(pixmap)
         self.ui.photo_index_label.setText('{}/{}'.format(self.current_photo_id + 1,
                                                          len(self.mw.photo_list)))
         self._set_verify_checkbox(photo_path)
@@ -273,7 +275,7 @@ class PhotoDescription(object):
             self.ui.verifycheckBox.setCheckState(QtGui.Qt.Unchecked)
 
     def _mark_face(self, coordinate_list):
-        painter = QtGui.QPainter(self.pix_map)
+        painter = QtGui.QPainter(self.pixmap)
         for id_, coordinate in coordinate_list:
             x, y, w, h = coordinate
             font = QtGui.QFont()
