@@ -10,6 +10,7 @@ import glob
 import json
 import math
 import re
+from collections import defaultdict
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -41,12 +42,29 @@ class View(object):
     def display_group_list(self, group_arch_code_list, fonds_code):
         self.ui.group_tree_widget_search.clear()
         self.ui.photo_list_widget_search.clear()
+
+        data = defaultdict(lambda: defaultdict(list))
+        for group_arch_code in group_arch_code_list:
+            year, period, _ = group_arch_code.split('·')[1].split('-')
+            data[year][period].append(group_arch_code)
+
         root = QtWidgets.QTreeWidgetItem(self.ui.group_tree_widget_search)
         root.setText(0, fonds_code)
-        for group_arch_code in group_arch_code_list:
-            child = QtWidgets.QTreeWidgetItem(root)
-            child.setText(0, group_arch_code)
-            child.setCheckState(0, QtGui.Qt.Unchecked)
+        root.setFlags(root.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
+
+        for year in data:
+            one = QtWidgets.QTreeWidgetItem(root)
+            one.setText(0, year)
+            one.setFlags(one.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
+            for period in data[year]:
+                two = QtWidgets.QTreeWidgetItem(one)
+                two.setText(0, period)
+                two.setFlags(two.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
+                for group_arch_code in data[year][period]:
+                    three = QtWidgets.QTreeWidgetItem(two)
+                    three.setText(0, group_arch_code)
+                    three.setCheckState(0, QtGui.Qt.Unchecked)
+
         self.ui.group_tree_widget_search.expandAll()
 
     def clear_group_info(self, widget_suffix='_in_group_search'):
@@ -131,6 +149,7 @@ class ArchSearcher(object):
         self.ui.group_tree_widget_search.itemSelectionChanged.connect(static(self.display_group_info))
         self.ui.photo_list_widget_search.itemSelectionChanged.connect(static(self.display_photo))
         extend_slot(self.ui.photo_view_search.resizeEvent, static(self.resize_image))
+        self.ui.export_btn_search.clicked.connect(static(self.expert))
 
     def search(self):
         title_keys, people_keys, year_keys = map(lambda s: s.strip(), self.view.get_search_keys())
@@ -240,7 +259,7 @@ class ArchSearcher(object):
             painter.setPen(pen)
             painter.drawRect(x, y, w, h)
 
-    def resize_image(self, event):
+    def resize_image(self, event: QtGui.QResizeEvent):
         if not self.pixmap:
             return
         pixmap = self.pixmap.scaled(
@@ -249,3 +268,10 @@ class ArchSearcher(object):
             QtGui.Qt.SmoothTransformation
         )
         self.ui.photo_view_search.setPixmap(pixmap)
+
+    def expert(self):
+        expert_path = QtWidgets.QFileDialog.getExistingDirectory(
+            self.ui.search_archives_tab, "选择文件夹",
+            options=QtWidgets.QFileDialog.ShowDirsOnly
+        )
+        print(expert_path)

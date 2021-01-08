@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1238, 944)
+        MainWindow.resize(1126, 905)
         MainWindow.setMinimumSize(QSize(1, 1))
         font = QFont()
         font.setFamily(u"\u65b0\u5b8b\u4f53")
@@ -1972,7 +1972,7 @@ class Ui_MainWindow(object):
         self.widget_21 = QWidget(self.splitter_9)
         self.widget_21.setObjectName(u"widget_21")
         self.widget_21.setMinimumSize(QSize(0, 0))
-        self.widget_21.setMaximumSize(QSize(400, 16777215))
+        self.widget_21.setMaximumSize(QSize(350, 16777215))
         self.widget_21.setFont(font)
         self.gridLayout_54 = QGridLayout(self.widget_21)
         self.gridLayout_54.setObjectName(u"gridLayout_54")
@@ -2059,21 +2059,21 @@ class Ui_MainWindow(object):
 
         self.gridLayout_31.addItem(self.horizontalSpacer_27, 0, 0, 1, 1)
 
-        self.pushButton = QPushButton(self.frame_11)
-        self.pushButton.setObjectName(u"pushButton")
-        sizePolicy5.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy5)
-        self.pushButton.setFont(font)
-        self.pushButton.setFocusPolicy(Qt.TabFocus)
-        self.pushButton.setStyleSheet(u"padding-left: 30px; \n"
+        self.export_btn_search = QPushButton(self.frame_11)
+        self.export_btn_search.setObjectName(u"export_btn_search")
+        sizePolicy5.setHeightForWidth(self.export_btn_search.sizePolicy().hasHeightForWidth())
+        self.export_btn_search.setSizePolicy(sizePolicy5)
+        self.export_btn_search.setFont(font)
+        self.export_btn_search.setFocusPolicy(Qt.TabFocus)
+        self.export_btn_search.setStyleSheet(u"padding-left: 30px; \n"
 "padding-right: 30px;\n"
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
-        self.pushButton.setIcon(icon17)
-        self.pushButton.setIconSize(QSize(24, 24))
-        self.pushButton.setAutoDefault(True)
+        self.export_btn_search.setIcon(icon17)
+        self.export_btn_search.setIconSize(QSize(24, 24))
+        self.export_btn_search.setAutoDefault(True)
 
-        self.gridLayout_31.addWidget(self.pushButton, 0, 1, 1, 1)
+        self.gridLayout_31.addWidget(self.export_btn_search, 0, 1, 1, 1)
 
         self.horizontalSpacer_28 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -3130,9 +3130,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(5)
+        self.tabWidget.setCurrentIndex(6)
         self.search_btn.setDefault(False)
-        self.pushButton.setDefault(False)
+        self.export_btn_search.setDefault(False)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -3310,7 +3310,7 @@ class Ui_MainWindow(object):
         self.select_retrieve_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9", None))
         self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u7167\u7247", None))
         ___qtreewidgetitem = self.tree_widget_search_face.headerItem()
-        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"\u7167\u7247\u6863\u6848", None));
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"\u641c\u7d22\u7ed3\u679c", None));
 #if QT_CONFIG(tooltip)
         self.tree_widget_search_face.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53ef\u52fe\u9009\u5bfc\u51fa</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
@@ -3324,9 +3324,9 @@ class Ui_MainWindow(object):
         self.label_211.setText(QCoreApplication.translate("MainWindow", u"\u65f6\u95f4", None))
         self.search_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
         self.label_187.setText(QCoreApplication.translate("MainWindow", u"\u9898\u540d", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
+        self.export_btn_search.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
         ___qtreewidgetitem1 = self.group_tree_widget_search.headerItem()
-        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"\u7167\u7247\u6863\u6848", None));
+        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"\u641c\u7d22\u7ed3\u679c", None));
 #if QT_CONFIG(tooltip)
         self.group_tree_widget_search.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53ef\u52fe\u9009\u5bfc\u51fa</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)

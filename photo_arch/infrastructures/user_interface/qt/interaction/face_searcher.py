@@ -43,9 +43,9 @@ class SearchFaces(object):
         self.ui.select_retrieve_dir_btn.clicked.connect(static(self.select_retrieve_dir))
         self.ui.retrieve_btn.clicked.connect(static(self.start_retrieve))
         self.timer.timeout.connect(static(self.get_retrieve_info))
-
         extend_slot(self.ui.target_view_search_face.resizeEvent, static(self.resize_target_image))
         extend_slot(self.ui.result_view_search_face.resizeEvent, static(self.resize_result_image))
+        self.ui.export_btn_search_face.clicked.connect(static(self.expert))
 
     def select_retrieve_photo(self):
         self.file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
@@ -98,7 +98,46 @@ class SearchFaces(object):
         )
         self.ui.result_view_search_face.setPixmap(scaled_pixmap)
 
-    def list_photo_thumb(self, retrieve_results_photo_path):
+    def display_result(self, retrieve_results_photo_path):
+        self._list_photo_thumb(retrieve_results_photo_path)
+        self._display_photo_tree(retrieve_results_photo_path)
+
+    def _attach(self, trunk, branch):
+        parts = branch.split('\\', 1)
+        if '\\' not in parts[1]:  # 已到文件层
+            if parts[0] not in trunk:
+                trunk[parts[0]] = {parts[1]: None}  # 文件夹不存在则创建（字典相当于文件夹）
+            else:
+                trunk[parts[0]][parts[1]] = None  # 文件夹存在，则放文件
+        else:
+            node, others = parts
+            if node not in trunk:
+                trunk[node] = {}
+            self._attach(trunk[node], others)
+
+    def _path_dict_to_tree(self, parent, k, v):
+        if isinstance(v, dict):
+            child = QtWidgets.QTreeWidgetItem(parent)
+            child.setText(0, k)
+            child.setFlags(child.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
+            for k, v in v.items():
+                self._path_dict_to_tree(child, k, v)
+        else:
+            child = QtWidgets.QTreeWidgetItem(parent)
+            child.setText(0, k)
+            child.setCheckState(0, QtGui.Qt.Unchecked)
+
+    def _display_photo_tree(self, retrieve_results_photo_path):
+        path_dict = {}
+        for fp in retrieve_results_photo_path:
+            self._attach(path_dict, fp)
+        root = QtWidgets.QTreeWidgetItem(self.ui.tree_widget_search_face)
+        root.setText(0, [*path_dict.keys()][0])
+        root.setFlags(root.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
+        self._path_dict_to_tree(root, 'k', [*path_dict.values()][0])
+        self.ui.tree_widget_search_face.expandAll()
+
+    def _list_photo_thumb(self, retrieve_results_photo_path):
         self.ui.result_view_search_face.clear()
         self.ui.list_widget_search_face.clear()
         for i, fp in enumerate(retrieve_results_photo_path):
@@ -132,7 +171,7 @@ class SearchFaces(object):
         self.retrieve_results_photo_path, self.retrieve_results_face_box = \
             self.mw.interaction.get_retrieve_result(self.file_path, self.dir_path)
         if len(self.retrieve_results_photo_path) > 0 and len(self.retrieve_results_face_box) > 0:
-            self.list_photo_thumb(self.retrieve_results_photo_path)
+            self.display_result(self.retrieve_results_photo_path)
         else:
             self.mw.msg_box('未检索到结果,请确认指定的路径是否进行过人脸检索,或者重新开始检索!')
 
@@ -158,3 +197,9 @@ class SearchFaces(object):
             QtGui.Qt.SmoothTransformation
         )
         self.ui.result_view_search_face.setPixmap(pixmap)
+
+    def expert(self):
+        expert_path = QtWidgets.QFileDialog.getExistingDirectory(
+            self.ui.search_face_tab, "选择文件夹",
+            options=QtWidgets.QFileDialog.ShowDirsOnly)
+        print(expert_path)

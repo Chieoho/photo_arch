@@ -139,13 +139,31 @@ class Interaction(UiInterface):
         retrieve_results_photo_path = []
         retrieve_results_face_box = []
 
-        retrieve_results_photo_path.append(os.path.abspath(r'D:\公司历年团建活动\待检索目录\10.jpg'))
+        retrieve_results_photo_path.append(
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录\单人照\12.jpg'))
         retrieve_results_face_box.append([419.0, 169.0, 686.0, 528.0])
 
-        retrieve_results_photo_path.append(os.path.abspath(r'D:\公司历年团建活动\待检索目录\11.jpg'))
+        retrieve_results_photo_path.append(
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录\合照\两人照\13.png'))
+        retrieve_results_face_box.append([410.0, 93.0, 478.0, 182.0])
+
+        retrieve_results_photo_path.append(
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录\合照\两人照\14.jpg'))
+        retrieve_results_face_box.append([410.0, 93.0, 478.0, 182.0])
+
+        retrieve_results_photo_path.append(
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录\合照\两人照\15.jpg'))
+        retrieve_results_face_box.append([410.0, 93.0, 478.0, 182.0])
+
+        retrieve_results_photo_path.append(
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录\合照\三人照\10.jpg'))
         retrieve_results_face_box.append([410.0, 93.0, 478.0, 182.0])
 
         return retrieve_results_photo_path, retrieve_results_face_box
 
     def get_retrieve_info(self):
-        pass
+        info = {
+            'total_to_retrieve_photo_num': 7,
+            'retrieved_photo_num': 7
+        }
+        return info

@@ -97,8 +97,7 @@ class GroupDescription(object):
     def select_dir(self):
         current_work_path = QtWidgets.QFileDialog.getExistingDirectory(
             self.ui.tree_widget_group, "选择文件夹",
-            options=QtWidgets.QFileDialog.ShowDirsOnly
-        )
+            options=QtWidgets.QFileDialog.ShowDirsOnly)
         if not current_work_path:
             return
         self.ui.tabWidget.setCurrentWidget(self.ui.group_tab)
