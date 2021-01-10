@@ -1745,7 +1745,7 @@ class Ui_MainWindow(object):
         self.splitter_11.setOrientation(Qt.Horizontal)
         self.widget_11 = QWidget(self.splitter_11)
         self.widget_11.setObjectName(u"widget_11")
-        self.widget_11.setMaximumSize(QSize(320, 16777215))
+        self.widget_11.setMaximumSize(QSize(360, 16777215))
         self.widget_11.setFont(font)
         self.gridLayout_29 = QGridLayout(self.widget_11)
         self.gridLayout_29.setObjectName(u"gridLayout_29")
@@ -3130,7 +3130,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(6)
+        self.tabWidget.setCurrentIndex(5)
         self.search_btn.setDefault(False)
         self.export_btn_search.setDefault(False)
 

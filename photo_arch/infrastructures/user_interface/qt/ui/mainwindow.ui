@@ -64,7 +64,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="iconSize">
        <size>
@@ -4095,7 +4095,7 @@ padding-bottom: 8px;</string>
           <widget class="QWidget" name="widget_11" native="true">
            <property name="maximumSize">
             <size>
-             <width>320</width>
+             <width>360</width>
              <height>16777215</height>
             </size>
            </property>

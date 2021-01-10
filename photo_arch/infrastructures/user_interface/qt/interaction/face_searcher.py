@@ -131,10 +131,8 @@ class SearchFaces(object):
         path_dict = {}
         for fp in retrieve_results_photo_path:
             self._attach(path_dict, fp)
-        root = QtWidgets.QTreeWidgetItem(self.ui.tree_widget_search_face)
-        root.setText(0, [*path_dict.keys()][0])
-        root.setFlags(root.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
-        self._path_dict_to_tree(root, 'k', [*path_dict.values()][0])
+        self. _path_dict_to_tree(self.ui.tree_widget_search_face,  [*path_dict.keys()][0],
+                                 [*path_dict.values()][0])
         self.ui.tree_widget_search_face.expandAll()
 
     def _list_photo_thumb(self, retrieve_results_photo_path):
