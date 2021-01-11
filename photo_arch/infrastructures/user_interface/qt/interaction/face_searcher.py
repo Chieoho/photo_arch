@@ -115,24 +115,23 @@ class SearchFaces(object):
                 trunk[node] = {}
             self._attach(trunk[node], others)
 
-    def _path_dict_to_tree(self, parent, k, v):
-        if isinstance(v, dict):
-            child = QtWidgets.QTreeWidgetItem(parent)
-            child.setText(0, k)
-            child.setFlags(child.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
-            for k, v in v.items():
-                self._path_dict_to_tree(child, k, v)
-        else:
-            child = QtWidgets.QTreeWidgetItem(parent)
-            child.setText(0, k)
-            child.setCheckState(0, QtGui.Qt.Unchecked)
+    def _path_dict_to_tree(self, parent, d):
+        for k, v in d.items():
+            if isinstance(v, dict):
+                child = QtWidgets.QTreeWidgetItem(parent)
+                child.setText(0, k)
+                child.setFlags(child.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
+                self._path_dict_to_tree(child, v)
+            else:
+                child = QtWidgets.QTreeWidgetItem(parent)
+                child.setText(0, k)
+                child.setCheckState(0, QtGui.Qt.Unchecked)
 
     def _display_photo_tree(self, retrieve_results_photo_path):
         path_dict = {}
         for fp in retrieve_results_photo_path:
             self._attach(path_dict, fp)
-        self. _path_dict_to_tree(self.ui.tree_widget_search_face,  [*path_dict.keys()][0],
-                                 [*path_dict.values()][0])
+        self. _path_dict_to_tree(self.ui.tree_widget_search_face,  path_dict)
         self.ui.tree_widget_search_face.expandAll()
 
     def _list_photo_thumb(self, retrieve_results_photo_path):
