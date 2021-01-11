@@ -16,7 +16,6 @@ from photo_arch.infrastructures.user_interface.qt.interaction.recognition import
 from photo_arch.infrastructures.user_interface.qt.interaction.photo_description import PhotoDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 from photo_arch.infrastructures.user_interface.qt.interaction.special import Special
-from photo_arch.infrastructures.user_interface.qt.interaction.face_searcher import SearchFaces
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_searcher import ArchSearcher
 
 SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
@@ -29,7 +28,6 @@ def init_modules(mw_):
     ce(Recognition)(mw_, setting)
     ce(PhotoDescription)(mw_, setting)
     ce(Training)(mw_, setting)
-    ce(SearchFaces)(mw_, setting)
     ce(ArchSearcher)(mw_, setting)
     arch_browser = ce(ArchBrowser)(mw_, setting)
     arch_transfer = ce(ArchTransfer)(mw_, setting)
