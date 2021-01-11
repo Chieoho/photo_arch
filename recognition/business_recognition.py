@@ -512,10 +512,10 @@ class Recognition(object):
         self.data_queue = Queue() # 点击“添加”按钮的时候,用来写入图片路径
         self.param_queue = Queue()
         self.from_queue = Queue()  # 在进行人脸识别的时候，判断是否通过'识别'按钮进行识别操作的
+        self.done_queue = Manager().Queue()  # 返回识别结果信息
         self.verify_queue = Queue()  # 用来填充核验信息
-        self.search_queue = Queue()  # 用来填充以图搜图的图片路径
-        self.done_queue = Manager().Queue() # 返回识别结果信息
-        self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
+        # self.search_queue = Queue()  # 用来填充以图搜图的图片路径
+        # self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
         self.jobs_proc = []   # 将进程对象放进list
         self.pendingTotalImgsNum = 0 #待处理的图片总数量
 
@@ -553,9 +553,9 @@ class Recognition(object):
 
 
         # 开启以图搜图子进程
-        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue)
-        self.searchImagesProc.daemon = True
-        self.searchImagesProc.start()
+        # self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue)
+        # self.searchImagesProc.daemon = True
+        # self.searchImagesProc.start()
 
 
     def initRecognitionInfo(self):
@@ -766,6 +766,7 @@ class Recognition(object):
                 total_img_list = self.all_recog_img_list
                 recog_state = [1]
 
+            total_img_list = sorted(total_img_list)
             for img in total_img_list:
                 face_dict = self.sql_repo.query('face', {"photo_path": [img], "recog_state": recog_state}, ('faces', 'verify_state'))
                 photo_dict = self.sql_repo.query('photo', {"photo_path": [img]}, (
@@ -784,10 +785,14 @@ class Recognition(object):
                     recog_state = [1]
 
                 photo_path_dict = self.sql_repo.query('face', {"parent_path": [dirPath], "recog_state": recog_state}, ('photo_path'))
-                for img in photo_path_dict:
-                    face_dict = self.sql_repo.query('face', {"photo_path": [img['photo_path']], "recog_state": recog_state},
+                img_list = []
+                for item in photo_path_dict:
+                    img_list.append(item['photo_path'])
+                img_list = sorted(img_list)
+                for img in img_list:
+                    face_dict = self.sql_repo.query('face', {"photo_path": [img], "recog_state": recog_state},
                                                ('faces', 'verify_state'))
-                    photo_dict = self.sql_repo.query('photo', {"photo_path": [img['photo_path']]}, (
+                    photo_dict = self.sql_repo.query('photo', {"photo_path": [img]}, (
                         'photo_path', 'arch_code', 'photo_code', 'peoples', 'format', 'fonds_code',
                         'arch_category_code', 'year', 'group_code', 'photographer', 'taken_time',
                         'taken_locations', 'security_classification', 'reference_code'))
