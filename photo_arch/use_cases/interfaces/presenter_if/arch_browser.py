@@ -29,3 +29,10 @@ class PresenterIf(metaclass=ABCMeta):
         :param photo_info:
         :return:
         """
+
+    @abstractmethod
+    def update_photo_path_model(self, photo_info) -> bool:
+        """
+        :param photo_info:
+        :return:
+        """
