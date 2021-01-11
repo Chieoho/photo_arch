@@ -56,6 +56,9 @@ class Setting(object):
         self.ui.select_description_dir_btn.clicked.connect(static(self.select_description_dir))
         self.ui.select_package_dir_btn.clicked.connect(static(self.select_package_dir))
 
+        self.ui.select_description_dir_btn.setStyleSheet(self.mw.button_style_sheet)
+        self.ui.select_package_dir_btn.setStyleSheet(self.mw.button_style_sheet)
+
         self._get_setting()
 
     def _get_setting(self):

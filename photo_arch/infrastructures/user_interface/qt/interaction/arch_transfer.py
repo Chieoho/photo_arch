@@ -160,6 +160,8 @@ class ArchTransfer(object):
         self.ui.partition_list_widget.itemSelectionChanged.connect(static(self.display_cd_info))
         self.ui.packeage_btn.clicked.connect(static(self.package))
 
+        self.ui.packeage_btn.setStyleSheet(self.mw.button_style_sheet)
+
         catalog_tw = self.ui.cd_catalog_table_widget
         catalog_tw.verticalHeader().setVisible(True)
         catalog_tw.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)

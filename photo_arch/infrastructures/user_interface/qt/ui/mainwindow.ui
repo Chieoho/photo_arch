@@ -64,7 +64,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>4</number>
       </property>
       <property name="iconSize">
        <size>
@@ -789,10 +789,16 @@ padding-bottom: 8px;</string>
             </item>
             <item row="14" column="0" colspan="4">
              <widget class="QFrame" name="frame_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>32</height>
+                <height>50</height>
                </size>
               </property>
               <property name="font">
@@ -808,6 +814,12 @@ padding-bottom: 8px;</string>
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QGridLayout" name="gridLayout_13">
+               <property name="topMargin">
+                <number>3</number>
+               </property>
+               <property name="bottomMargin">
+                <number>3</number>
+               </property>
                <item row="0" column="0">
                 <spacer name="horizontalSpacer_8">
                  <property name="orientation">
@@ -823,6 +835,18 @@ padding-bottom: 8px;</string>
                </item>
                <item row="0" column="1">
                 <widget class="QPushButton" name="save_group_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <family>新宋体</family>
@@ -5647,10 +5671,16 @@ padding-bottom: 8px;</string>
             </item>
             <item row="19" column="0" colspan="8">
              <widget class="QFrame" name="frame_10">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>45</height>
+                <height>50</height>
                </size>
               </property>
               <property name="frameShape">
@@ -5660,6 +5690,12 @@ padding-bottom: 8px;</string>
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QGridLayout" name="gridLayout_27">
+               <property name="topMargin">
+                <number>3</number>
+               </property>
+               <property name="bottomMargin">
+                <number>3</number>
+               </property>
                <item row="0" column="0">
                 <spacer name="horizontalSpacer_19">
                  <property name="orientation">
@@ -5675,6 +5711,18 @@ padding-bottom: 8px;</string>
                </item>
                <item row="0" column="1">
                 <widget class="QPushButton" name="packeage_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>42</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <family>新宋体</family>
@@ -5759,6 +5807,12 @@ padding-bottom: 8px;</string>
             </item>
             <item row="4" column="0" colspan="8">
              <widget class="QTableWidget" name="cd_catalog_table_widget">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -6037,6 +6091,18 @@ padding-bottom: 8px;</string>
             </item>
             <item row="2" column="0" colspan="8">
              <widget class="QListWidget" name="partition_list_widget">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>1</width>
+                <height>1</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <family>新宋体</family>

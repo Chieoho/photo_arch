@@ -352,18 +352,24 @@ class Ui_MainWindow(object):
 
         self.frame_4 = QFrame(self.widget_2)
         self.frame_4.setObjectName(u"frame_4")
-        self.frame_4.setMinimumSize(QSize(0, 32))
+        sizePolicy3.setHeightForWidth(self.frame_4.sizePolicy().hasHeightForWidth())
+        self.frame_4.setSizePolicy(sizePolicy3)
+        self.frame_4.setMinimumSize(QSize(0, 50))
         self.frame_4.setFont(font)
         self.frame_4.setFrameShape(QFrame.StyledPanel)
         self.frame_4.setFrameShadow(QFrame.Raised)
         self.gridLayout_13 = QGridLayout(self.frame_4)
         self.gridLayout_13.setObjectName(u"gridLayout_13")
+        self.gridLayout_13.setContentsMargins(-1, 3, -1, 3)
         self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.gridLayout_13.addItem(self.horizontalSpacer_8, 0, 0, 1, 1)
 
         self.save_group_btn = QPushButton(self.frame_4)
         self.save_group_btn.setObjectName(u"save_group_btn")
+        sizePolicy3.setHeightForWidth(self.save_group_btn.sizePolicy().hasHeightForWidth())
+        self.save_group_btn.setSizePolicy(sizePolicy3)
+        self.save_group_btn.setMinimumSize(QSize(0, 40))
         self.save_group_btn.setFont(font)
         self.save_group_btn.setStyleSheet(u"padding-left: 30px; \n"
 "padding-right: 30px;\n"
@@ -2415,17 +2421,23 @@ class Ui_MainWindow(object):
 
         self.frame_10 = QFrame(self.widget_10)
         self.frame_10.setObjectName(u"frame_10")
-        self.frame_10.setMinimumSize(QSize(0, 45))
+        sizePolicy3.setHeightForWidth(self.frame_10.sizePolicy().hasHeightForWidth())
+        self.frame_10.setSizePolicy(sizePolicy3)
+        self.frame_10.setMinimumSize(QSize(0, 50))
         self.frame_10.setFrameShape(QFrame.StyledPanel)
         self.frame_10.setFrameShadow(QFrame.Raised)
         self.gridLayout_27 = QGridLayout(self.frame_10)
         self.gridLayout_27.setObjectName(u"gridLayout_27")
+        self.gridLayout_27.setContentsMargins(-1, 3, -1, 3)
         self.horizontalSpacer_19 = QSpacerItem(307, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.gridLayout_27.addItem(self.horizontalSpacer_19, 0, 0, 1, 1)
 
         self.packeage_btn = QPushButton(self.frame_10)
         self.packeage_btn.setObjectName(u"packeage_btn")
+        sizePolicy3.setHeightForWidth(self.packeage_btn.sizePolicy().hasHeightForWidth())
+        self.packeage_btn.setSizePolicy(sizePolicy3)
+        self.packeage_btn.setMinimumSize(QSize(0, 42))
         self.packeage_btn.setFont(font)
         self.packeage_btn.setStyleSheet(u"padding-left: 30px; \n"
 "padding-right: 30px;\n"
@@ -2496,6 +2508,8 @@ class Ui_MainWindow(object):
         __qtablewidgetitem11.setFont(font1);
         self.cd_catalog_table_widget.setHorizontalHeaderItem(8, __qtablewidgetitem11)
         self.cd_catalog_table_widget.setObjectName(u"cd_catalog_table_widget")
+        sizePolicy4.setHeightForWidth(self.cd_catalog_table_widget.sizePolicy().hasHeightForWidth())
+        self.cd_catalog_table_widget.setSizePolicy(sizePolicy4)
         self.cd_catalog_table_widget.setFont(font)
         self.cd_catalog_table_widget.setStyleSheet(u"   QHeaderView::section{\n"
 "            border-top:0px solid #D8D8D8;\n"
@@ -2578,6 +2592,9 @@ class Ui_MainWindow(object):
 
         self.partition_list_widget = QListWidget(self.widget_10)
         self.partition_list_widget.setObjectName(u"partition_list_widget")
+        sizePolicy4.setHeightForWidth(self.partition_list_widget.sizePolicy().hasHeightForWidth())
+        self.partition_list_widget.setSizePolicy(sizePolicy4)
+        self.partition_list_widget.setMinimumSize(QSize(1, 1))
         self.partition_list_widget.setFont(font)
         self.partition_list_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
@@ -2909,7 +2926,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(5)
+        self.tabWidget.setCurrentIndex(6)
         self.search_btn.setDefault(False)
         self.export_btn_search.setDefault(False)
 
