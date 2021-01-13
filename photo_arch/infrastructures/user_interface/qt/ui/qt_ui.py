@@ -203,12 +203,13 @@ class Ui_MainWindow(object):
         self.gridLayout_8.setContentsMargins(12, -1, -1, -1)
         self.frame = QFrame(self.widget_2)
         self.frame.setObjectName(u"frame")
-        self.frame.setMinimumSize(QSize(0, 32))
+        self.frame.setMinimumSize(QSize(0, 65))
         self.frame.setFont(font)
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
         self.gridLayout_11 = QGridLayout(self.frame)
         self.gridLayout_11.setObjectName(u"gridLayout_11")
+        self.gridLayout_11.setContentsMargins(-1, 3, -1, 3)
         self.label_2 = QLabel(self.frame)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setMaximumSize(QSize(120, 16777215))
@@ -1323,7 +1324,7 @@ class Ui_MainWindow(object):
         self.splitter_3.setOrientation(Qt.Horizontal)
         self.widget_5 = QWidget(self.splitter_3)
         self.widget_5.setObjectName(u"widget_5")
-        self.widget_5.setMinimumSize(QSize(280, 0))
+        self.widget_5.setMinimumSize(QSize(280, 1))
         self.widget_5.setMaximumSize(QSize(16777215, 16777215))
         self.widget_5.setFont(font)
         self.gridLayout_19 = QGridLayout(self.widget_5)
@@ -1753,8 +1754,8 @@ class Ui_MainWindow(object):
         self.splitter_9.setOrientation(Qt.Horizontal)
         self.widget_21 = QWidget(self.splitter_9)
         self.widget_21.setObjectName(u"widget_21")
-        self.widget_21.setMinimumSize(QSize(0, 0))
-        self.widget_21.setMaximumSize(QSize(350, 16777215))
+        self.widget_21.setMinimumSize(QSize(240, 1))
+        self.widget_21.setMaximumSize(QSize(300, 16777215))
         self.widget_21.setFont(font)
         self.gridLayout_54 = QGridLayout(self.widget_21)
         self.gridLayout_54.setObjectName(u"gridLayout_54")
@@ -1887,6 +1888,7 @@ class Ui_MainWindow(object):
         self.splitter_7.setOrientation(Qt.Horizontal)
         self.widget_22 = QWidget(self.splitter_7)
         self.widget_22.setObjectName(u"widget_22")
+        self.widget_22.setMaximumSize(QSize(750, 16777215))
         self.widget_22.setFont(font)
         self.gridLayout_55 = QGridLayout(self.widget_22)
         self.gridLayout_55.setObjectName(u"gridLayout_55")
@@ -2508,8 +2510,8 @@ class Ui_MainWindow(object):
         __qtablewidgetitem11.setFont(font1);
         self.cd_catalog_table_widget.setHorizontalHeaderItem(8, __qtablewidgetitem11)
         self.cd_catalog_table_widget.setObjectName(u"cd_catalog_table_widget")
-        sizePolicy4.setHeightForWidth(self.cd_catalog_table_widget.sizePolicy().hasHeightForWidth())
-        self.cd_catalog_table_widget.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.cd_catalog_table_widget.sizePolicy().hasHeightForWidth())
+        self.cd_catalog_table_widget.setSizePolicy(sizePolicy)
         self.cd_catalog_table_widget.setFont(font)
         self.cd_catalog_table_widget.setStyleSheet(u"   QHeaderView::section{\n"
 "            border-top:0px solid #D8D8D8;\n"
@@ -2592,8 +2594,8 @@ class Ui_MainWindow(object):
 
         self.partition_list_widget = QListWidget(self.widget_10)
         self.partition_list_widget.setObjectName(u"partition_list_widget")
-        sizePolicy4.setHeightForWidth(self.partition_list_widget.sizePolicy().hasHeightForWidth())
-        self.partition_list_widget.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.partition_list_widget.sizePolicy().hasHeightForWidth())
+        self.partition_list_widget.setSizePolicy(sizePolicy)
         self.partition_list_widget.setMinimumSize(QSize(1, 1))
         self.partition_list_widget.setFont(font)
         self.partition_list_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -2926,7 +2928,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(6)
+        self.tabWidget.setCurrentIndex(5)
         self.search_btn.setDefault(False)
         self.export_btn_search.setDefault(False)
 

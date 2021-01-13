@@ -64,7 +64,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="iconSize">
        <size>
@@ -425,7 +425,7 @@ padding-bottom: 8px;</string>
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>32</height>
+                <height>65</height>
                </size>
               </property>
               <property name="font">
@@ -441,6 +441,12 @@ padding-bottom: 8px;</string>
                <enum>QFrame::Raised</enum>
               </property>
               <layout class="QGridLayout" name="gridLayout_11">
+               <property name="topMargin">
+                <number>3</number>
+               </property>
+               <property name="bottomMargin">
+                <number>3</number>
+               </property>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_2">
                  <property name="maximumSize">
@@ -3154,7 +3160,7 @@ padding-bottom: 8px;</string>
             <property name="minimumSize">
              <size>
               <width>280</width>
-              <height>0</height>
+              <height>1</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -4131,13 +4137,13 @@ padding-bottom: 8px;</string>
           <widget class="QWidget" name="widget_21" native="true">
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>0</height>
+             <width>240</width>
+             <height>1</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>350</width>
+             <width>300</width>
              <height>16777215</height>
             </size>
            </property>
@@ -4455,6 +4461,12 @@ padding-bottom: 8px;</string>
              <enum>Qt::Horizontal</enum>
             </property>
             <widget class="QWidget" name="widget_22" native="true">
+             <property name="maximumSize">
+              <size>
+               <width>750</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <family>新宋体</family>

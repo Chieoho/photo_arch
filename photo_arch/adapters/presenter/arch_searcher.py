@@ -16,6 +16,7 @@ class ViewModel(object):
         self.photo_list: List[str] = []
         self.group: dict = GroupOutputData().__dict__
         self.photo: dict = PhotoOutputData().__dict__
+        self.photo_path: str = ''
 
 
 class Presenter(PresenterIf):
@@ -30,7 +31,7 @@ class Presenter(PresenterIf):
     def update_photo_list(self, photo_info_list: List[dict]):
         self.view_model.photo_list.clear()
         for pi in photo_info_list:
-            self.view_model.photo_list.append(pi['photo_path'])
+            self.view_model.photo_list.append(pi['arch_code'])
 
     def update_group_model(self, group_info) -> bool:
         for k in self.view_model.group.keys():
@@ -40,4 +41,8 @@ class Presenter(PresenterIf):
     def update_photo_model(self, photo_info) -> bool:
         for k in self.view_model.photo.keys():
             self.view_model.photo[k] = str(photo_info[k])
+        return True
+
+    def update_photo_path_model(self, photo_info) -> bool:
+        self.view_model.photo_path = str(photo_info.get('photo_path', ''))
         return True

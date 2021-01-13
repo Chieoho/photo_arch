@@ -78,7 +78,7 @@ class Repo(RepoIf):
                 'peoples': people_key_list,
                 'group_code': [gi['group_code'] for gi in group_list]
             },
-            ret_columns=('photo_path',)
+            ret_columns=('arch_code',)
         )
         return photo_list
 

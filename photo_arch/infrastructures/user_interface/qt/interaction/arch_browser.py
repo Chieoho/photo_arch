@@ -185,7 +185,11 @@ class ArchBrowser(object):
         )
         for i, fp in enumerate(glob.iglob(path)):
             photo_sn = os.path.split(fp)[1].split('-')[-1].split('.')[0]
-            item = QtWidgets.QListWidgetItem(QtGui.QIcon(fp), photo_sn)  # 只显示张序号
+            icon = QtGui.QIcon()
+            pixmap = QtGui.QPixmap()
+            pixmap.load(fp)
+            icon.addPixmap(pixmap)
+            item = QtWidgets.QListWidgetItem(icon, photo_sn)  # 只显示张序号
             self.ui.photo_list_widget.addItem(item)
             if i in range(3):
                 QtWidgets.QApplication.processEvents()  # 前n张一张接一张显示

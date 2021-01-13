@@ -43,6 +43,14 @@ class ArchSearcher(object):
         self.presenter.update_photo_model(photo_info)
         return True
 
+    def get_photo_path(self, photo_arch_code):
+        photo_list = self.repo.query_photo_by_arch_code(photo_arch_code)
+        if photo_list:
+            photo_info = photo_list[-1]
+            self.presenter.update_photo_path_model(photo_info)
+            return True
+        return False
+
     def get_face_info(self, photo_arch_code):
         face_info_list = self.repo.get_face_info(photo_arch_code)
         if face_info_list:
