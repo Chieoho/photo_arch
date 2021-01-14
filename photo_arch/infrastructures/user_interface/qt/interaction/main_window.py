@@ -101,15 +101,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def msg_box(self, msg: str, msg_type: str = 'warn'):
         if msg_type == 'warn':
-            QtWidgets.QMessageBox().warning(self.ui.centralwidget, '提示', msg,
-                                            QtWidgets.QMessageBox.Ok,
-                                            QtWidgets.QMessageBox.Ok)
+            self.warn_msg(msg)
         elif msg_type == 'info':
-            QtWidgets.QMessageBox().information(self.ui.centralwidget, '提示', msg,
-                                                QtWidgets.QMessageBox.Ok,
-                                                QtWidgets.QMessageBox.Ok)
+            self.info_msg(msg)
         else:
             pass
+
+    def warn_msg(self, msg):
+        QtWidgets.QMessageBox().warning(self.ui.centralwidget, '提示', msg,
+                                        QtWidgets.QMessageBox.Ok,
+                                        QtWidgets.QMessageBox.Ok)
+
+    def info_msg(self, msg):
+        QtWidgets.QMessageBox().information(self.ui.centralwidget, '提示', msg,
+                                            QtWidgets.QMessageBox.Ok,
+                                            QtWidgets.QMessageBox.Ok)
 
     def overlay(self, widget, msg='后台初始化未完成，请稍等', is_dynamic=True):
         overlay = Overlay(widget, msg, is_dynamic=is_dynamic)

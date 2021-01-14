@@ -293,13 +293,16 @@ class ArchSearcher(object):
                 self._get_checked_item(child, checked_item_list)
 
     def expert(self):
+        root = self.ui.group_tree_widget_search.invisibleRootItem()
+        checked_item_list = []
+        self._get_checked_item(root, checked_item_list)
+        if not checked_item_list:
+            self.mw.warn_msg('未勾选照片')
+            return
         expert_path = QtWidgets.QFileDialog.getExistingDirectory(
             self.ui.search_archives_tab, "选择文件夹",
             options=QtWidgets.QFileDialog.ShowDirsOnly)
         if expert_path:
-            root = self.ui.group_tree_widget_search.invisibleRootItem()
-            checked_item_list = []
-            self._get_checked_item(root, checked_item_list)
             checked_code_list = self._get_code(checked_item_list)
             checked_codes = map(lambda ac: re.sub(r'-', '-ZP·', ac, 1), checked_code_list)
             for photo_arch_code in checked_codes:
@@ -309,4 +312,6 @@ class ArchSearcher(object):
                 if not os.path.exists(dst_path):
                     os.makedirs(dst_path)
                 shutil.copy(photo_path, dst_path)
-            self.mw.msg_box('导出成功')
+            self.mw.info_msg('导出成功')
+        else:
+            self.mw.warn_msg('未选择导出文件夹')
