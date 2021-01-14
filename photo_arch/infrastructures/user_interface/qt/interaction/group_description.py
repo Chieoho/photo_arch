@@ -221,8 +221,7 @@ class GroupDescription(object):
             self.setting.description_path,
             '照片档案',
             year, retention_period,
-            group_folder_name
-        )
+            group_folder_name)
         return group_folder_path
 
     def _copy_arch_and_gen_thumbs(self):

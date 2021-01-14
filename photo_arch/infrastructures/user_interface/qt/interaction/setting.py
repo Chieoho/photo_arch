@@ -72,14 +72,12 @@ class Setting(object):
             self.fonds_name,
             self.fonds_code,
             self.description_path,
-            self.package_path
-        )
+            self.package_path)
 
     def select_description_dir(self):
         description_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self.ui.setting_tab, "选择文件夹",
-            options=QtWidgets.QFileDialog.ShowDirsOnly
-        )
+            options=QtWidgets.QFileDialog.ShowDirsOnly)
         if not description_dir:
             return
         self.description_path = os.path.abspath(description_dir)
@@ -88,8 +86,7 @@ class Setting(object):
     def select_package_dir(self):
         package_dir = QtWidgets.QFileDialog.getExistingDirectory(
             self.ui.setting_tab, "选择文件夹",
-            options=QtWidgets.QFileDialog.ShowDirsOnly
-        )
+            options=QtWidgets.QFileDialog.ShowDirsOnly)
         if not package_dir:
             return
         self.package_path = os.path.abspath(package_dir)

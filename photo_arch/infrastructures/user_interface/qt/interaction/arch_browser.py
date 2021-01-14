@@ -128,8 +128,7 @@ class ArchBrowser(object):
             w,
             h,
             QtGui.Qt.KeepAspectRatio,
-            QtGui.Qt.SmoothTransformation
-        )
+            QtGui.Qt.SmoothTransformation)
         self.ui.photo_view_in_arch.setPixmap(pixmap)
 
     def display_arch(self, priority_key):
@@ -181,8 +180,7 @@ class ArchBrowser(object):
             year, period,
             self.group_folder,
             'thumbs',
-            '*.*'
-        )
+            '*.*')
         for i, fp in enumerate(glob.iglob(path)):
             photo_sn = os.path.split(fp)[1].split('-')[-1].split('.')[0]
             icon = QtGui.QIcon()

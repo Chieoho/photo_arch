@@ -117,8 +117,7 @@ class Recognition(object):
                     time.sleep(1)
                     photo_info_list = self.mw.interaction.get_photos_info(
                         self.mw.photo_type,
-                        self.mw.dir_type
-                    )
+                        self.mw.dir_type)
                     self.mw.photo_list = list(map(lambda d: d['photo_path'], photo_info_list))
                     self.mw.photo_info_dict = {d['photo_path']: d for d in photo_info_list}
                     self._clear_data()

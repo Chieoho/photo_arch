@@ -210,8 +210,7 @@ class PhotoDescription(object):
         pixmap = self.pixmap.scaled(
             self.ui.photo_view.size(),
             QtGui.Qt.KeepAspectRatio,
-            QtGui.Qt.SmoothTransformation
-        )
+            QtGui.Qt.SmoothTransformation)
         self.ui.photo_view.setPixmap(pixmap)
         self.ui.photo_index_label.setText('{}/{}'.format(self.current_photo_id + 1,
                                                          len(self.mw.photo_list)))

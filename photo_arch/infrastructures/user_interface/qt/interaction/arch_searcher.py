@@ -113,8 +113,7 @@ class View(object):
         scaled_pixmap = pixmap.scaled(
             self.ui.photo_view_search.size(),
             QtGui.Qt.KeepAspectRatio,
-            QtGui.Qt.SmoothTransformation
-        )
+            QtGui.Qt.SmoothTransformation)
         self.ui.photo_view_search.setPixmap(scaled_pixmap)
 
 
@@ -281,8 +280,7 @@ class ArchSearcher(object):
         pixmap = self.pixmap.scaled(
             event.size(),
             QtGui.Qt.KeepAspectRatio,
-            QtGui.Qt.SmoothTransformation
-        )
+            QtGui.Qt.SmoothTransformation)
         self.ui.photo_view_search.setPixmap(pixmap)
 
     def _get_checked_item(self, parent: QtWidgets.QTreeWidgetItem, checked_item_list):
