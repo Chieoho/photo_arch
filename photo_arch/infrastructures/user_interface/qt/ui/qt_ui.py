@@ -814,7 +814,7 @@ class Ui_MainWindow(object):
 
         self.frame_7 = QFrame(self.widget_4)
         self.frame_7.setObjectName(u"frame_7")
-        self.frame_7.setMinimumSize(QSize(0, 37))
+        self.frame_7.setMinimumSize(QSize(0, 45))
         self.frame_7.setFont(font)
         self.frame_7.setFrameShape(QFrame.StyledPanel)
         self.frame_7.setFrameShadow(QFrame.Raised)
@@ -1039,7 +1039,7 @@ class Ui_MainWindow(object):
         self.frame_8 = QFrame(self.widget_4)
         self.frame_8.setObjectName(u"frame_8")
         self.frame_8.setEnabled(True)
-        self.frame_8.setMinimumSize(QSize(0, 35))
+        self.frame_8.setMinimumSize(QSize(0, 43))
         self.frame_8.setFont(font)
         self.frame_8.setLayoutDirection(Qt.LeftToRight)
         self.gridLayout_10 = QGridLayout(self.frame_8)
@@ -2928,7 +2928,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(5)
+        self.tabWidget.setCurrentIndex(6)
         self.search_btn.setDefault(False)
         self.export_btn_search.setDefault(False)
 

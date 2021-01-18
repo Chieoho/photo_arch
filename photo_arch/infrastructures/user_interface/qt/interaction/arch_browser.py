@@ -219,7 +219,9 @@ class ArchBrowser(object):
     def _mark_face(self, pixmap, photo_arch_code):
         painter = QtGui.QPainter(pixmap)
         face_info = self.controller.get_face_info(photo_arch_code)
-        face_list = json.loads(face_info['faces'])
+        faces = face_info.get('faces')
+        # faces为None，有可能是没有对应的key，或者对应key的值就是None
+        face_list = json.loads(faces if faces else '[]')
         box_name_list = []
         for face in face_list:
             name = face['name']

@@ -128,10 +128,11 @@ class ArchSearcher(object):
         self.pixmap = None
 
         self.ui.search_btn.clicked.connect(static(self.search))
-        self.ui.group_tree_widget_search.itemSelectionChanged.connect(static(self.display_group_info))
+        self.ui.group_tree_widget_search.itemSelectionChanged.connect(static(self.deal_tree_item_selected_changed))
         self.ui.photo_list_widget_search.itemSelectionChanged.connect(static(self.display_photo))
         extend_slot(self.ui.photo_view_search.resizeEvent, static(self.resize_image))
         self.ui.export_btn_search.clicked.connect(static(self.expert))
+        self.ui.group_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_checked_changed))
 
     def _attach(self, trunk, branch):
         parts = branch.split('-', 1)
@@ -166,6 +167,8 @@ class ArchSearcher(object):
         self.view.clear_group_info()
         self.view.clear_photo_info()
         self.ui.photo_list_widget_search.clear()
+        if not photo_arch_code_list:
+            self.mw.info_msg('未找到符合条件的档案')
 
     @staticmethod
     def _get_code(item_list):
@@ -187,33 +190,36 @@ class ArchSearcher(object):
         photo_thumbs = map(lambda c: re.sub(c, f'thumbs\\{c}', get_path(c)[1]), photo_codes)
         self.view.display_thumbs(photo_thumbs)
 
-    def display_group_info(self):
-        item_list = self.ui.group_tree_widget_search.selectedItems()
-        if item_list:
-            item = item_list[0]
-            arch_code = ''
-            cnt = 0
-            for cnt in range(5):
-                arch_code = f'{item.text(0)}-{arch_code}' if arch_code else f'{item.text(0)}'
-                item = item.parent()
-                if item is None:
-                    break
-            if cnt == 3:
-                group_arch_code = re.sub(r'-', '-ZP·', arch_code, 1)
+    def _display_group_info(self, item_list):
+        item = item_list[0]
+        arch_code = ''
+        cnt = 0
+        for cnt in range(5):
+            arch_code = f'{item.text(0)}-{arch_code}' if arch_code else f'{item.text(0)}'
+            item = item.parent()
+            if item is None:
+                break
+        if cnt == 3:
+            group_arch_code = re.sub(r'-', '-ZP·', arch_code, 1)
+            _, data = self.controller.get_group(group_arch_code)
+            self.view.display_group_info(data)
+            self._list_photo_thumb(item_list[0])
+        elif cnt == 4:
+            photo_arch_code = re.sub(r'-', '-ZP·', arch_code, 1)
+            group_arch_code = photo_arch_code[0: -5]
+            if self.ui.arch_code_in_group_search.text() != group_arch_code:
                 _, data = self.controller.get_group(group_arch_code)
                 self.view.display_group_info(data)
-                self._list_photo_thumb(item_list[0])
-            elif cnt == 4:
-                photo_arch_code = re.sub(r'-', '-ZP·', arch_code, 1)
-                group_arch_code = photo_arch_code[0: -5]
-                if self.ui.arch_code_in_group_search.text() != group_arch_code:
-                    _, data = self.controller.get_group(group_arch_code)
-                    self.view.display_group_info(data)
-                    self._list_photo_thumb(item_list[0].parent())
-                tree_item: QtWidgets.QTreeWidgetItem = item_list[0]
-                photo_index = tree_item.parent().indexOfChild(tree_item)
-                sel_item = self.ui.photo_list_widget_search.item(photo_index)
-                self.ui.photo_list_widget_search.setCurrentItem(sel_item)
+                self._list_photo_thumb(item_list[0].parent())
+            tree_item: QtWidgets.QTreeWidgetItem = item_list[0]
+            photo_index = tree_item.parent().indexOfChild(tree_item)
+            sel_item = self.ui.photo_list_widget_search.item(photo_index)
+            self.ui.photo_list_widget_search.setCurrentItem(sel_item)
+
+    def deal_tree_item_selected_changed(self):
+        item_list = self.ui.group_tree_widget_search.selectedItems()
+        if item_list:
+            self._display_group_info(item_list)
         else:
             self.view.clear_group_info()
             self.view.clear_photo_info()
@@ -270,7 +276,8 @@ class ArchSearcher(object):
                 self.ui.group_tree_widget_search.itemSelectionChanged.disconnect()
                 self.ui.group_tree_widget_search.setItemSelected(old_sel_item, False)
                 self.ui.group_tree_widget_search.setItemSelected(new_sel_item, True)
-                self.ui.group_tree_widget_search.itemSelectionChanged.connect(static(self.display_group_info))
+                self.ui.group_tree_widget_search.itemSelectionChanged.connect(
+                    static(self.deal_tree_item_selected_changed))
         else:
             self.view.clear_photo_info()
 
@@ -315,3 +322,10 @@ class ArchSearcher(object):
             self.mw.info_msg('导出成功')
         else:
             self.mw.warn_msg('未选择导出文件夹')
+
+    def deal_tree_item_checked_changed(self, item: QtWidgets.QTreeWidgetItem):
+        if item.checkState(0) != QtCore.Qt.CheckState.Checked:
+            return
+        if item.isSelected():
+            return
+        self._display_group_info([item])

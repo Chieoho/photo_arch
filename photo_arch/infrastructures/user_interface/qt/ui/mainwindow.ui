@@ -64,7 +64,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>6</number>
       </property>
       <property name="iconSize">
        <size>
@@ -1941,7 +1941,7 @@ padding-bottom: 8px;</string>
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>37</height>
+                <height>45</height>
                </size>
               </property>
               <property name="font">
@@ -2489,7 +2489,7 @@ padding-bottom: 8px;</string>
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>35</height>
+                <height>43</height>
                </size>
               </property>
               <property name="font">

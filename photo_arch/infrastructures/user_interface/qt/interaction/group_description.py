@@ -182,6 +182,10 @@ class GroupDescription(object):
         self.ui.group_code_in_group.setText(group_code)
 
     def save_and_copy_group(self):
+        group_arch_code = self.ui.arch_code_in_group.text()
+        if not group_arch_code:
+            self.mw.warn_msg('未进行著录，请先著录再保存')
+            return
         is_path_changed = self._save_group_and_remove_folder()
         self._copy_arch_and_gen_thumbs()
         if is_path_changed:
@@ -190,9 +194,6 @@ class GroupDescription(object):
             self.mw.msg_box('保存成功', msg_type='info')
 
     def _save_group_and_remove_folder(self):
-        group_arch_code = self.ui.arch_code_in_group.text()
-        if not group_arch_code:
-            return
         first_photo = self._find_fist_photo()
         first_photo_md5 = calc_md5(first_photo)
         group_data: GroupInputData = self.view.get_group_input()
@@ -315,6 +316,9 @@ class GroupDescription(object):
                 dst_abspath = self.description_path_info.get(group_abspath, '')
                 arch_code = self.arch_code_info.get(group_abspath, '')
                 arch_code_info["children"].update({dst_abspath: arch_code})
+        if not arch_code_info["children"]:
+            self.mw.warn_msg('未勾选文件夹')
+            return
         if self.mw.interaction.set_arch_code(arch_code_info):
             self.mw.msg_box('添加成功', 'info')
             self._reset_state()
