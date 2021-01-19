@@ -1755,21 +1755,31 @@ class Ui_MainWindow(object):
         self.widget_21 = QWidget(self.splitter_9)
         self.widget_21.setObjectName(u"widget_21")
         self.widget_21.setMinimumSize(QSize(240, 1))
-        self.widget_21.setMaximumSize(QSize(300, 16777215))
+        self.widget_21.setMaximumSize(QSize(320, 16777215))
         self.widget_21.setFont(font)
         self.gridLayout_54 = QGridLayout(self.widget_21)
         self.gridLayout_54.setObjectName(u"gridLayout_54")
-        self.group_title_search = QLineEdit(self.widget_21)
-        self.group_title_search.setObjectName(u"group_title_search")
-        self.group_title_search.setFont(font)
+        self.label_211 = QLabel(self.widget_21)
+        self.label_211.setObjectName(u"label_211")
+        self.label_211.setFont(font)
 
-        self.gridLayout_54.addWidget(self.group_title_search, 0, 1, 1, 1)
+        self.gridLayout_54.addWidget(self.label_211, 2, 0, 1, 1)
 
-        self.peoples_search = QLineEdit(self.widget_21)
-        self.peoples_search.setObjectName(u"peoples_search")
-        self.peoples_search.setFont(font)
+        self.start_date_search = QDateEdit(self.widget_21)
+        self.start_date_search.setObjectName(u"start_date_search")
+        sizePolicy3.setHeightForWidth(self.start_date_search.sizePolicy().hasHeightForWidth())
+        self.start_date_search.setSizePolicy(sizePolicy3)
+        self.start_date_search.setMinimumSize(QSize(0, 26))
+        self.start_date_search.setFont(font)
+        self.start_date_search.setDateTime(QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)))
 
-        self.gridLayout_54.addWidget(self.peoples_search, 1, 1, 1, 1)
+        self.gridLayout_54.addWidget(self.start_date_search, 2, 1, 1, 1)
+
+        self.label_187 = QLabel(self.widget_21)
+        self.label_187.setObjectName(u"label_187")
+        self.label_187.setFont(font)
+
+        self.gridLayout_54.addWidget(self.label_187, 0, 0, 1, 1)
 
         self.label_210 = QLabel(self.widget_21)
         self.label_210.setObjectName(u"label_210")
@@ -1777,11 +1787,26 @@ class Ui_MainWindow(object):
 
         self.gridLayout_54.addWidget(self.label_210, 1, 0, 1, 1)
 
-        self.label_211 = QLabel(self.widget_21)
-        self.label_211.setObjectName(u"label_211")
-        self.label_211.setFont(font)
+        self.end_date_search = QDateEdit(self.widget_21)
+        self.end_date_search.setObjectName(u"end_date_search")
+        sizePolicy3.setHeightForWidth(self.end_date_search.sizePolicy().hasHeightForWidth())
+        self.end_date_search.setSizePolicy(sizePolicy3)
+        self.end_date_search.setMinimumSize(QSize(0, 26))
+        self.end_date_search.setDateTime(QDateTime(QDate(2021, 1, 1), QTime(0, 0, 0)))
 
-        self.gridLayout_54.addWidget(self.label_211, 2, 0, 1, 1)
+        self.gridLayout_54.addWidget(self.end_date_search, 2, 2, 1, 1)
+
+        self.group_title_search = QLineEdit(self.widget_21)
+        self.group_title_search.setObjectName(u"group_title_search")
+        self.group_title_search.setFont(font)
+
+        self.gridLayout_54.addWidget(self.group_title_search, 0, 1, 1, 2)
+
+        self.peoples_search = QLineEdit(self.widget_21)
+        self.peoples_search.setObjectName(u"peoples_search")
+        self.peoples_search.setFont(font)
+
+        self.gridLayout_54.addWidget(self.peoples_search, 1, 1, 1, 2)
 
         self.frame_19 = QFrame(self.widget_21)
         self.frame_19.setObjectName(u"frame_19")
@@ -1818,19 +1843,15 @@ class Ui_MainWindow(object):
         self.gridLayout_59.addItem(self.horizontalSpacer_48, 0, 2, 1, 1)
 
 
-        self.gridLayout_54.addWidget(self.frame_19, 3, 0, 1, 2)
+        self.gridLayout_54.addWidget(self.frame_19, 4, 0, 1, 3)
 
-        self.label_187 = QLabel(self.widget_21)
-        self.label_187.setObjectName(u"label_187")
-        self.label_187.setFont(font)
+        self.group_tree_widget_search = QTreeWidget(self.widget_21)
+        self.group_tree_widget_search.setObjectName(u"group_tree_widget_search")
+        self.group_tree_widget_search.setFont(font)
+        self.group_tree_widget_search.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.group_tree_widget_search.setSelectionBehavior(QAbstractItemView.SelectItems)
 
-        self.gridLayout_54.addWidget(self.label_187, 0, 0, 1, 1)
-
-        self.time_search = QLineEdit(self.widget_21)
-        self.time_search.setObjectName(u"time_search")
-        self.time_search.setFont(font)
-
-        self.gridLayout_54.addWidget(self.time_search, 2, 1, 1, 1)
+        self.gridLayout_54.addWidget(self.group_tree_widget_search, 5, 0, 1, 3)
 
         self.frame_11 = QFrame(self.widget_21)
         self.frame_11.setObjectName(u"frame_11")
@@ -1867,15 +1888,7 @@ class Ui_MainWindow(object):
         self.gridLayout_31.addItem(self.horizontalSpacer_28, 0, 2, 1, 1)
 
 
-        self.gridLayout_54.addWidget(self.frame_11, 5, 0, 1, 2)
-
-        self.group_tree_widget_search = QTreeWidget(self.widget_21)
-        self.group_tree_widget_search.setObjectName(u"group_tree_widget_search")
-        self.group_tree_widget_search.setFont(font)
-        self.group_tree_widget_search.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.group_tree_widget_search.setSelectionBehavior(QAbstractItemView.SelectItems)
-
-        self.gridLayout_54.addWidget(self.group_tree_widget_search, 4, 0, 1, 2)
+        self.gridLayout_54.addWidget(self.frame_11, 6, 0, 1, 3)
 
         self.splitter_9.addWidget(self.widget_21)
         self.splitter_8 = QSplitter(self.splitter_9)
@@ -2873,8 +2886,7 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.group_caption_in_group_arch, self.peoples_in_photo_arch)
         QWidget.setTabOrder(self.peoples_in_photo_arch, self.group_title_search)
         QWidget.setTabOrder(self.group_title_search, self.peoples_search)
-        QWidget.setTabOrder(self.peoples_search, self.time_search)
-        QWidget.setTabOrder(self.time_search, self.search_btn)
+        QWidget.setTabOrder(self.peoples_search, self.search_btn)
         QWidget.setTabOrder(self.search_btn, self.group_tree_widget_search)
         QWidget.setTabOrder(self.group_tree_widget_search, self.photo_list_widget_search)
         QWidget.setTabOrder(self.photo_list_widget_search, self.arch_code_in_group_search)
@@ -2928,7 +2940,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(6)
+        self.tabWidget.setCurrentIndex(5)
         self.search_btn.setDefault(False)
         self.export_btn_search.setDefault(False)
 
@@ -3101,11 +3113,12 @@ class Ui_MainWindow(object):
         self.label_57.setText(QCoreApplication.translate("MainWindow", u"\u53c2\u89c1\u53f7", None))
         self.photo_view_in_arch.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_browser_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u6d4f\u89c8", None))
-        self.label_210.setText(QCoreApplication.translate("MainWindow", u"\u4eba\u7269", None))
         self.label_211.setText(QCoreApplication.translate("MainWindow", u"\u65f6\u95f4", None))
-        self.search_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
+        self.start_date_search.setDisplayFormat(QCoreApplication.translate("MainWindow", u"yyyy/MM/dd", None))
         self.label_187.setText(QCoreApplication.translate("MainWindow", u"\u9898\u540d", None))
-        self.export_btn_search.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
+        self.label_210.setText(QCoreApplication.translate("MainWindow", u"\u4eba\u7269", None))
+        self.end_date_search.setDisplayFormat(QCoreApplication.translate("MainWindow", u"yyyy/MM/dd", None))
+        self.search_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
         ___qtreewidgetitem = self.group_tree_widget_search.headerItem()
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"\u641c\u7d22\u7ed3\u679c", None));
 #if QT_CONFIG(tooltip)
@@ -3114,6 +3127,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(whatsthis)
         self.group_tree_widget_search.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><br/></p></body></html>", None))
 #endif // QT_CONFIG(whatsthis)
+        self.export_btn_search.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
         self.label_188.setText(QCoreApplication.translate("MainWindow", u"\u4eba\u7269\uff1a", None))
         self.label_189.setText(QCoreApplication.translate("MainWindow", u"\u5927\u5c0f/MB", None))
         self.label_190.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))

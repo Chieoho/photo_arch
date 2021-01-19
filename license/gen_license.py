@@ -5,16 +5,14 @@
 @author: Jaden Wu
 @time: 2021/1/15 10:31
 """
-import uuid
 import json
 import base64
 import rsa
-
-
-info = {'mac_addr': hex(uuid.getnode())}
+from get_characteristic import get_characteristic
 
 
 def gen_lic():
+    info = get_characteristic()
     message = json.dumps(info).encode('utf8')
     with open('public.pem', 'rb') as fr:
         pub_key = rsa.PublicKey.load_pkcs1(fr.read())

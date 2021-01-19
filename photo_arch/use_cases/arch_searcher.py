@@ -20,8 +20,8 @@ class ArchSearcher(object):
         self.presenter.update_group_list(group_info_list)
         return True
 
-    def search_photos(self, title_key_list: list, people_key_list: list, year_key_list: list):
-        photo_info_list = self.repo.search_photos(title_key_list, people_key_list, year_key_list)
+    def search_photos(self, title_key_list: list, people_key_list: list, start: str, end: str):
+        photo_info_list = self.repo.search_photos(title_key_list, people_key_list, start, end)
         self.presenter.update_photo_list(photo_info_list)
         return True
 

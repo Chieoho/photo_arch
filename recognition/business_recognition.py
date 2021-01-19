@@ -29,6 +29,16 @@ from recognition.utils import *
 from photo_arch.adapters.sql.repo import RepoGeneral
 from photo_arch.infrastructures.databases.db_setting import engine, make_session, session
 
+# 禁用GPU后,下面的config代码也就无效了
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+if tf.__version__.startswith('1.'):  # tensorflow 1
+    config = tf.ConfigProto()  # allow_soft_placement=True
+    config.gpu_options.allow_growth = True #不全部占满显存, 按需分配
+    sess = tf.Session(config=config)
+else:  # tensorflow 2
+    gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
 
 
 class RecognizeProcess(Process):
@@ -285,8 +295,8 @@ class VerifyProcess(Process):
             # self.canvasH = checkedInfoDict['label_size'][1]
 
 
-            # faces_name = []
-            # faces_embedding = []
+            faces_name = []
+            faces_embedding = []
 
             new_faces = []
             peoples = ''
@@ -307,7 +317,8 @@ class VerifyProcess(Process):
                 new_faces_id.append(int(item['id']))
                 new_faces_name.append(item['name'])
 
-            # embeddings_dict = sql_repo.query('face', {"photo_path": [self.img_path]}, ('embeddings'))
+            embeddings_dict = sql_repo.query('face', {"photo_path": [self.img_path]}, ('embeddings'))
+            embeddings_dict = eval(embeddings_dict[0]['embeddings'])
 
             for id in orig_faces_id:
                 if id in new_faces_id: # 没有删除
@@ -322,6 +333,10 @@ class VerifyProcess(Process):
                     'name': name,
                     'landmark': self.faces_list[id]['landmark']
                 })
+
+                embedding = np.asarray(eval(embeddings_dict[id][str(id)]))
+                faces_embedding.append(embedding)
+                faces_name.append(name)
 
                 if id < len(orig_faces_id) :
                     if name != '' and name != '已删除':
@@ -356,7 +371,7 @@ class VerifyProcess(Process):
                 # else:
                 #     print('核验---id:{},name:{}'.format(id, name))
 
-            # saveData('data/data.npz', faces_name, faces_embedding)
+            saveData('data/data.npz', faces_name, faces_embedding)
             jsonFaces = json.dumps(new_faces, ensure_ascii=False)
             verifyState = 1
             sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})

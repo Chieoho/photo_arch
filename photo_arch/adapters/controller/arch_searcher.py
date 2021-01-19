@@ -20,8 +20,8 @@ class Controller(object):
         arch_code_list = self.presenter.view_model.group_list
         return res, arch_code_list
 
-    def search_photos(self, title_key_list: list, people_key_list: list, year_key_list: list):
-        res = self.arch_searcher.search_photos(title_key_list, people_key_list, year_key_list)
+    def search_photos(self, title_key_list: list, people_key_list: list, start: str, end: str):
+        res = self.arch_searcher.search_photos(title_key_list, people_key_list, start, end)
         photo_info_list = self.presenter.view_model.photo_list
         return res, photo_info_list
 

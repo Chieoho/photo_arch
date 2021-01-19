@@ -64,7 +64,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="iconSize">
        <size>
@@ -4143,7 +4143,7 @@ padding-bottom: 8px;</string>
            </property>
            <property name="maximumSize">
             <size>
-             <width>300</width>
+             <width>320</width>
              <height>16777215</height>
             </size>
            </property>
@@ -4154,23 +4154,64 @@ padding-bottom: 8px;</string>
             </font>
            </property>
            <layout class="QGridLayout" name="gridLayout_54">
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="group_title_search">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_211">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
               </property>
+              <property name="text">
+               <string>时间</string>
+              </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="peoples_search">
+            <item row="2" column="1">
+             <widget class="QDateEdit" name="start_date_search">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>26</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
+              </property>
+              <property name="dateTime">
+               <datetime>
+                <hour>0</hour>
+                <minute>0</minute>
+                <second>0</second>
+                <year>2010</year>
+                <month>1</month>
+                <day>1</day>
+               </datetime>
+              </property>
+              <property name="displayFormat">
+               <string>yyyy/MM/dd</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_187">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>题名</string>
               </property>
              </widget>
             </item>
@@ -4187,20 +4228,56 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_211">
+            <item row="2" column="2">
+             <widget class="QDateEdit" name="end_date_search">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>26</height>
+               </size>
+              </property>
+              <property name="dateTime">
+               <datetime>
+                <hour>0</hour>
+                <minute>0</minute>
+                <second>0</second>
+                <year>2021</year>
+                <month>1</month>
+                <day>1</day>
+               </datetime>
+              </property>
+              <property name="displayFormat">
+               <string>yyyy/MM/dd</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" colspan="2">
+             <widget class="QLineEdit" name="group_title_search">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
               </property>
-              <property name="text">
-               <string>时间</string>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="2">
+             <widget class="QLineEdit" name="peoples_search">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
               </property>
              </widget>
             </item>
-            <item row="3" column="0" colspan="2">
+            <item row="4" column="0" colspan="3">
              <widget class="QFrame" name="frame_19">
               <property name="minimumSize">
                <size>
@@ -4294,30 +4371,34 @@ padding-bottom: 8px;</string>
               </layout>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_187">
+            <item row="5" column="0" colspan="3">
+             <widget class="QTreeWidget" name="group_tree_widget_search">
               <property name="font">
                <font>
                 <family>新宋体</family>
                 <pointsize>14</pointsize>
                </font>
               </property>
-              <property name="text">
-               <string>题名</string>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;可勾选导出&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
+              <property name="whatsThis">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectItems</enum>
+              </property>
+              <column>
+               <property name="text">
+                <string>搜索结果</string>
+               </property>
+              </column>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="time_search">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0" colspan="2">
+            <item row="6" column="0" colspan="3">
              <widget class="QFrame" name="frame_11">
               <property name="minimumSize">
                <size>
@@ -4409,33 +4490,6 @@ padding-bottom: 8px;</string>
                 </spacer>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item row="4" column="0" colspan="2">
-             <widget class="QTreeWidget" name="group_tree_widget_search">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;可勾选导出&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="whatsThis">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="editTriggers">
-               <set>QAbstractItemView::NoEditTriggers</set>
-              </property>
-              <property name="selectionBehavior">
-               <enum>QAbstractItemView::SelectItems</enum>
-              </property>
-              <column>
-               <property name="text">
-                <string>搜索结果</string>
-               </property>
-              </column>
              </widget>
             </item>
            </layout>
@@ -6681,7 +6735,6 @@ padding-bottom: 8px;</string>
   <tabstop>peoples_in_photo_arch</tabstop>
   <tabstop>group_title_search</tabstop>
   <tabstop>peoples_search</tabstop>
-  <tabstop>time_search</tabstop>
   <tabstop>search_btn</tabstop>
   <tabstop>group_tree_widget_search</tabstop>
   <tabstop>photo_list_widget_search</tabstop>

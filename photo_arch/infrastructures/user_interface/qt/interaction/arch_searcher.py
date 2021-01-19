@@ -35,12 +35,17 @@ class View(object):
 
         self.ui.search_btn.setStyleSheet(self.mw.button_style_sheet)
         self.ui.export_btn_search.setStyleSheet(self.mw.button_style_sheet)
+        self.ui.start_date_search.setDate(QtCore.QDate.currentDate().addYears(-10))
+        self.ui.end_date_search.setDate(QtCore.QDate.currentDate())
 
     def get_search_keys(self):
         title_keys = self.ui.group_title_search.text()
         peoples_keys = self.ui.peoples_search.text()
-        year_keys = self.ui.time_search.text()
-        return title_keys, peoples_keys, year_keys
+        start_date = self.ui.start_date_search.date()
+        end_date = self.ui.end_date_search.date()
+        start_date_str = start_date.toString('yyyyMMdd')
+        end_date_str = end_date.toString('yyyyMMdd')
+        return title_keys, peoples_keys, start_date_str, end_date_str
 
     def _photo_dict_to_tree(self, parent, d):
         for k, v in d.items():
@@ -154,14 +159,14 @@ class ArchSearcher(object):
         self.view.display_photo_tree(photo_dict)
 
     def search(self):
-        title_keys, people_keys, year_keys = map(lambda s: s.strip(), self.view.get_search_keys())
+        title_keys, people_keys, start_date, end_date = map(lambda s: s.strip(), self.view.get_search_keys())
         title_key_list = re.split(r'\s+', title_keys)
-        year_key_list = re.split(r'\s+', year_keys)
         people_key_list = re.split(r'\s+', people_keys)
         res, photo_arch_code_list = self.controller.search_photos(
             title_key_list,
             people_key_list,
-            year_key_list)
+            start_date,
+            end_date)
         photo_arch_codes = map(lambda ac: ac.replace('ZP·', ''), photo_arch_code_list)
         self._display_photo_tree(photo_arch_codes)
         self.view.clear_group_info()
