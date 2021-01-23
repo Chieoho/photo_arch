@@ -17,6 +17,7 @@ from photo_arch.infrastructures.user_interface.qt.interaction.photo_description 
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 from photo_arch.infrastructures.user_interface.qt.interaction.special import Special
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_searcher import ArchSearcher
+from license import check_license as cl
 
 SCALE = 0.786  # 初始窗体宽高和屏幕分辨率的比例
 ce = for_all_methods(catch_exception)
@@ -35,6 +36,8 @@ def init_modules(mw_):
 
 
 def main():
+    if cl.check_lic(cl.get_lic_info()) is False:
+        return
     app = QtWidgets.QApplication(sys.argv)
     mw = MainWindow(app)
     mw.resize(int(mw.dt_width*SCALE), int(mw.dt_height*SCALE))

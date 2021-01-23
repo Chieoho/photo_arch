@@ -305,6 +305,7 @@ class GroupDescription(object):
         }
         root_item = self.ui.tree_widget_group.invisibleRootItem().child(0)
         if root_item is None:
+            self.mw.warn_msg('未打开工作目录')
             return
         item_iterator = QtWidgets.QTreeWidgetItemIterator(self.ui.tree_widget_group)
         items_value = item_iterator.value()

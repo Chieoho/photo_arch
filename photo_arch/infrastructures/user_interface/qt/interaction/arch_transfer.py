@@ -376,7 +376,8 @@ class ArchTransfer(object):
         self.ui.cd_num_in_transfer.setText(f'{row+1}号')
 
     def package(self):
-        for r in range(self.ui.partition_list_widget.count()):
+        partition_cnt = self.ui.partition_list_widget.count()
+        for r in range(partition_cnt):
             item = self.ui.partition_list_widget.item(r)
             item.setSelected(True)
             cd_name = item.text()
@@ -403,7 +404,10 @@ class ArchTransfer(object):
             self._gen_catalog_file(cd_path)
             self._gen_caption_file(cd_name, cd_path)
             self._gen_label_file(cd_name, cd_path)
-        self.mw.msg_box('打包成功', 'info')
+        if partition_cnt:
+            self.mw.info_msg('打包成功')
+        else:
+            self.mw.warn_msg('未分盘，请先分盘')
 
     def _gen_catalog_file(self, cd_path):
         xls_name = '目录.xls'
