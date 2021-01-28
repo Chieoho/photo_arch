@@ -52,11 +52,13 @@ class View(object):
             if isinstance(v, dict):
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setText(0, k)
+                child.setToolTip(0, k)
                 child.setFlags(child.flags() | QtGui.Qt.ItemIsTristate | QtGui.Qt.ItemIsUserCheckable)
                 self._photo_dict_to_tree(child, v)
             else:
                 child = QtWidgets.QTreeWidgetItem(parent)
                 child.setText(0, k)
+                child.setToolTip(0, k)
                 child.setCheckState(0, QtGui.Qt.Unchecked)
 
     def display_photo_tree(self, photo_dict):
@@ -132,12 +134,12 @@ class ArchSearcher(object):
         self.ui.photo_list_widget_search.doubleClicked.connect(static(self.check_thumb))
 
     def _attach(self, trunk, branch):
-        parts = branch.split('-', 1)
-        if '-' not in parts[1]:
+        parts = branch[0], branch[1:]
+        if len(parts[1]) == 1:
             if parts[0] not in trunk:
-                trunk[parts[0]] = {parts[1]: None}
+                trunk[parts[0]] = {parts[1][0]: None}
             else:
-                trunk[parts[0]][parts[1]] = None
+                trunk[parts[0]][parts[1][0]] = None
         else:
             node, others = parts
             if node not in trunk:
@@ -154,12 +156,18 @@ class ArchSearcher(object):
         title_keys, people_keys, start_date, end_date = map(lambda s: s.strip(), self.view.get_search_keys())
         title_key_list = re.split(r'\s+', title_keys)
         people_key_list = re.split(r'\s+', people_keys)
-        res, photo_arch_code_list = self.controller.search_photos(
+        res, photo_info_list = self.controller.search_photos(
             title_key_list,
             people_key_list,
             start_date,
             end_date)
-        photo_arch_codes = map(lambda ac: ac.replace('ZP·', ''), photo_arch_code_list)
+        photo_arch_codes = []
+        for pa, gt, pe in photo_info_list:
+            pa_parts = pa.split('-')
+            pa_parts[-2] += f' {gt}'
+            if pe:
+                pa_parts[-1] += f' {pe}'
+            photo_arch_codes.append(pa_parts)
         self.ui.group_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
         self.ui.group_tree_widget_search.itemChanged.disconnect()
         self._display_photo_tree(photo_arch_codes)
@@ -167,17 +175,17 @@ class ArchSearcher(object):
         self.view.clear_group_info()
         self.view.clear_photo_info()
         self.ui.photo_list_widget_search.clear()
-        if not photo_arch_code_list:
+        if not photo_info_list:
             self.mw.info_msg('未找到符合条件的档案')
 
     @staticmethod
     def _get_code(item_list):
         code_list = []
         for item in item_list:
-            code = item.text(0)
+            code = item.text(0).split(' ')[0]
             parent = item.parent()
             while parent:
-                code = f'{parent.text(0)}-{code}'
+                code = f'{parent.text(0).split(" ")[0]}-{code}'
                 parent = parent.parent()
             code_list.append(code)
         return code_list
@@ -195,7 +203,8 @@ class ArchSearcher(object):
         arch_code = ''
         cnt = 0
         for cnt in range(5):
-            arch_code = f'{item.text(0)}-{arch_code}' if arch_code else f'{item.text(0)}'
+            item_text = item.text(0).split(' ')[0]
+            arch_code = f'{item_text}-{arch_code}' if arch_code else f'{item_text}'
             item = item.parent()
             if item is None:
                 break
@@ -265,7 +274,7 @@ class ArchSearcher(object):
         part, name = parts[0], '-'.join(parts[1:])
         for i in range(parent.childCount()):
             child = parent.child(i)
-            if child.text(0) == part:
+            if child.text(0).split(' ')[0] == part:
                 if child.childCount() == 0:
                     return child
                 return self._get_corresponding_child(child, name)
@@ -312,6 +321,9 @@ class ArchSearcher(object):
                 self._get_checked_item(child, checked_item_list)
 
     def expert(self):
+        if not self.setting.lic_ctrl_info.enable_export:
+            self.mw.warn_msg('目前license不支持导出！')
+            return
         root = self.ui.group_tree_widget_search.invisibleRootItem()
         checked_item_list = []
         self._get_checked_item(root, checked_item_list)

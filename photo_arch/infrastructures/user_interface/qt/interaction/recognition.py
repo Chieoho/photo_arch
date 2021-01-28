@@ -39,8 +39,10 @@ class Recognition(object):
         self.ui.pausecontinue_btn.setStyleSheet(self.mw.button_style_sheet)
 
     def run(self):
+        if self.setting.lic_ctrl_info.remaining_photo_num <= 0:
+            self.mw.warn_msg('可识别照片数量为0，请导入有效license！')
+            return
         self.mw.overlay(self.ui.recognition_tab)
-
         if self.mw.run_state != RecognizeState.running:
             thresh = self.ui.thresh_lineEdit.text()
             size = self.ui.photo_view.size()

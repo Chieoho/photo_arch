@@ -123,3 +123,10 @@ class RepoIf(metaclass=ABCMeta):
         :param photo_arch_code:
         :return:
         """
+
+    @abstractmethod
+    def get_used_photo_num(self):
+        """
+        获取识别照片数量
+        :return:
+        """

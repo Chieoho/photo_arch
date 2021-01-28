@@ -77,6 +77,7 @@ class SettingModel(Base):
     fonds_code = Column(String(64))
     description_path = Column(String(2048))
     package_path = Column(String(2048))
+    license_path = Column(String(2048))
 
 
 class SearchFacesModel(Base):

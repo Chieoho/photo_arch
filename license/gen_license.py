@@ -8,28 +8,44 @@
 import json
 import base64
 import rsa
-from get_characteristic import get_characteristic
+from datetime import datetime
+from license.get_feature_code import get_feature_code
 
 
-def control_info():
+def control_info(start_date=None):
+    if not start_date:
+        start_date = datetime.strftime(datetime.now(), '%Y%m%d')
     ctrl_info = {
-        'max_photo_num': 10 ** 1,
-        'max_days': 2,
-        'use_gpu': True,
-        'enable_export': True
+        'max_photo_num': 100,
+        'start_date': start_date,
+        'max_days': 25,
+        'enable_gpu': False,
+        'enable_export': False
     }
     return ctrl_info
 
 
-def gen_lic():
-    info = get_characteristic()
-    info.update(control_info())
-    message = json.dumps(info).encode('utf8')
-    with open('public.pem', 'rb') as fr:
-        pub_key = rsa.PublicKey.load_pkcs1(fr.read())
-        with open('..\\license.cer', 'wb') as fw:
+def license_id():
+    lic_id = {
+        # 'key': '123456'
+    }
+    return lic_id
+
+
+def gen_lic(feature_code=None, start_date=None):
+    lic_info = license_id()
+    if not feature_code:
+        feature_code = get_feature_code()
+    lic_info.update({'feature_code': feature_code})
+    lic_info.update(control_info(start_date))
+    message = json.dumps(lic_info).encode('utf8')
+    with open('rsa_public_key.pem', 'rb') as fr:
+        pub_key = rsa.PublicKey.load_pkcs1_openssl_pem(fr.read())
+        with open(f"./certificate/license_{datetime.now().strftime('%Y%m%d%H%M%S')}.cer", 'wb') as fw:
             fw.write(base64.b64encode(rsa.encrypt(message, pub_key)))
 
 
 if __name__ == '__main__':
     gen_lic()
+    # gen_lic(start_date='20210101')
+    # gen_lic(feature_code='0bb488d4c857df71153cefb20ae457a3', start_date='20210101')

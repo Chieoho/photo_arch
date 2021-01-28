@@ -77,7 +77,7 @@ class Repo(RepoIf):
                 'peoples': people_key_list,
                 'group_code': [gi['group_code'] for gi in groups]
             },
-            ret_columns=('arch_code',)
+            ret_columns=('photo_path', 'arch_code', 'peoples')
         )
         return photo_list
 
@@ -119,3 +119,7 @@ class Repo(RepoIf):
     def get_face_info(self, photo_arch_code) -> List[dict]:
         face_info_list = self.repo_general.query('face', cond={'photo_archival_code': [photo_arch_code]})
         return face_info_list
+
+    def get_used_photo_num(self):
+        query_obj = self.session.query(PhotoModel)
+        return query_obj.count()

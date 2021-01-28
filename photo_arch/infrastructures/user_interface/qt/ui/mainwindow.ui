@@ -64,7 +64,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
@@ -394,7 +394,7 @@ padding-bottom: 8px;</string>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="widget_2" native="true">
+          <widget class="QWidget" name="group_description_widget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -423,7 +423,252 @@ padding-bottom: 8px;</string>
             <property name="leftMargin">
              <number>12</number>
             </property>
-            <item row="15" column="0" colspan="5">
+            <item row="4" column="4">
+             <widget class="QLineEdit" name="year_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="0">
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="10" column="4">
+             <widget class="QLineEdit" name="reference_code_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="4">
+             <widget class="QLineEdit" name="taken_time_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <spacer name="horizontalSpacer_24">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>25</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="1" colspan="4">
+             <widget class="QLineEdit" name="group_title_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_21">
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>部门</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="4">
+             <widget class="QLineEdit" name="group_code_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="fonds_code_in_group">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <spacer name="verticalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="9" column="1">
+             <widget class="QLineEdit" name="taken_locations_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="1">
+             <widget class="QComboBox" name="opening_state_in_group">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <item>
+               <property name="text">
+                <string>主动公开</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>依申请公开</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>不公开</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_42">
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>拍摄地点</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_23">
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>组题名</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="0" colspan="5">
              <widget class="QFrame" name="frame_4">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -526,13 +771,35 @@ padding-bottom: 8px;</string>
               </layout>
              </widget>
             </item>
-            <item row="8" column="1">
-             <widget class="QLineEdit" name="photographer_in_group">
+            <item row="9" column="4">
+             <widget class="QLineEdit" name="photo_num_in_group">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="3">
+             <widget class="QLabel" name="label_24">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>大小/MB</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -552,8 +819,8 @@ padding-bottom: 8px;</string>
               </property>
              </spacer>
             </item>
-            <item row="10" column="3">
-             <widget class="QLabel" name="label_45">
+            <item row="8" column="3">
+             <widget class="QLabel" name="label_26">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -561,15 +828,31 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="text">
-               <string>参见号</string>
+               <string>拍摄时间</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_27">
+            <item row="7" column="4">
+             <widget class="QLineEdit" name="folder_size_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0">
+             <widget class="QLabel" name="label_46">
               <property name="maximumSize">
                <size>
                 <width>120</width>
@@ -583,61 +866,7 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="text">
-               <string>拍摄者</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <spacer name="verticalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="7" column="3">
-             <widget class="QLabel" name="label_24">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>大小/MB</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_21">
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>部门</string>
+               <string>开放状态</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -667,99 +896,6 @@ padding-bottom: 8px;</string>
                 <string>Y</string>
                </property>
               </item>
-             </widget>
-            </item>
-            <item row="8" column="3">
-             <widget class="QLabel" name="label_26">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>拍摄时间</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="0">
-             <widget class="QLabel" name="label_46">
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>开放状态</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="4">
-             <widget class="QLineEdit" name="group_code_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="13" column="0" colspan="5">
-             <widget class="QTextEdit" name="group_caption_in_group">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLineEdit" name="fonds_code_in_group">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="4">
-             <widget class="QLineEdit" name="taken_time_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
              </widget>
             </item>
             <item row="10" column="1">
@@ -797,105 +933,6 @@ padding-bottom: 8px;</string>
               </item>
              </widget>
             </item>
-            <item row="14" column="0">
-             <spacer name="verticalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="10" column="0">
-             <widget class="QLabel" name="label_44">
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>密级</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QLineEdit" name="author_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_18">
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>保管期限</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="4">
-             <widget class="QLineEdit" name="photo_num_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="4">
-             <widget class="QLineEdit" name="reference_code_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="4">
              <widget class="QComboBox" name="arch_category_code_in_group">
               <property name="font">
@@ -921,8 +958,62 @@ padding-bottom: 8px;</string>
               </item>
              </widget>
             </item>
-            <item row="5" column="1">
-             <widget class="QLineEdit" name="department_in_group">
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_18">
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>保管期限</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="3">
+             <widget class="QLabel" name="label_17">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>年度</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="3">
+             <widget class="QLabel" name="label_43">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>张数</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QLineEdit" name="author_in_group">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -947,104 +1038,8 @@ padding-bottom: 8px;</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="4">
-             <widget class="QLineEdit" name="year_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" colspan="4">
-             <widget class="QLineEdit" name="group_title_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="3">
-             <widget class="QLabel" name="label_17">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>年度</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="1">
-             <widget class="QLineEdit" name="taken_locations_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="4">
-             <widget class="QLineEdit" name="folder_size_in_group">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="QLabel" name="label_16">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>门类代码</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_23">
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_3">
               <property name="maximumSize">
                <size>
                 <width>120</width>
@@ -1058,7 +1053,151 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="text">
-               <string>组题名</string>
+               <string>全宗号</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="label_27">
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>拍摄者</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_44">
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>密级</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="0" colspan="5">
+             <widget class="QTextEdit" name="group_caption_in_group">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_25">
+              <property name="maximumSize">
+               <size>
+                <width>120</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>责任者</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="QLineEdit" name="photographer_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="3">
+             <widget class="QLabel" name="label_45">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>参见号</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="department_in_group">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="3">
+             <widget class="QLabel" name="label_20">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>组号</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3">
+             <widget class="QLabel" name="label_16">
+              <property name="font">
+               <font>
+                <family>新宋体</family>
+                <pointsize>14</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>门类代码</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1187,144 +1326,18 @@ padding-bottom: 8px;</string>
               </layout>
              </widget>
             </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_42">
-              <property name="maximumSize">
+            <item row="15" column="0" colspan="5">
+             <widget class="QLabel" name="saving_processing">
+              <property name="minimumSize">
                <size>
-                <width>120</width>
-                <height>16777215</height>
+                <width>0</width>
+                <height>45</height>
                </size>
               </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
               <property name="text">
-               <string>拍摄地点</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               <string/>
               </property>
              </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QLabel" name="label_20">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>组号</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="3">
-             <widget class="QLabel" name="label_43">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>张数</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="1">
-             <widget class="QComboBox" name="opening_state_in_group">
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <item>
-               <property name="text">
-                <string>主动公开</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>依申请公开</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>不公开</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_3">
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>全宗号</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_25">
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>新宋体</family>
-                <pointsize>14</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>责任者</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <spacer name="horizontalSpacer_24">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>25</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -6445,70 +6458,9 @@ padding-bottom: 8px;</string>
        <attribute name="title">
         <string>系统设置</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_28">
-        <item row="6" column="3">
-         <widget class="QPushButton" name="select_package_dir_btn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">padding-left: 30px; 
-padding-right: 30px;
-padding-top: 8px; 
-padding-bottom: 8px;</string>
-          </property>
-          <property name="text">
-           <string>打开</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>icon/open.png</normaloff>icon/open.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QLabel" name="label_75">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>著录路径</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
-         <spacer name="verticalSpacer_9">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
+       <layout class="QGridLayout" name="gridLayout_32">
         <item row="0" column="1">
-         <spacer name="verticalSpacer_10">
+         <spacer name="verticalSpacer_12">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -6523,23 +6475,26 @@ padding-bottom: 8px;</string>
           </property>
          </spacer>
         </item>
-        <item row="3" column="1">
-         <widget class="QLabel" name="label_93">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
+        <item row="1" column="0">
+         <spacer name="horizontalSpacer_33">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-          <property name="text">
-           <string>全宗号</string>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
           </property>
-         </widget>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>245</width>
+            <height>49</height>
+           </size>
+          </property>
+         </spacer>
         </item>
-        <item row="6" column="2">
-         <widget class="QLineEdit" name="package_path_in_setting">
+        <item row="1" column="1">
+         <widget class="QGroupBox" name="groupBox_2">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -6550,84 +6505,99 @@ padding-bottom: 8px;</string>
             <pointsize>14</pointsize>
            </font>
           </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QLineEdit" name="fonds_code_in_setting">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
+          <property name="title">
+           <string>全宗信息</string>
           </property>
+          <layout class="QGridLayout" name="gridLayout_28">
+           <property name="topMargin">
+            <number>12</number>
+           </property>
+           <property name="bottomMargin">
+            <number>20</number>
+           </property>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_93">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>全宗号</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="fonds_name_in_setting">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <spacer name="horizontalSpacer_21">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="fonds_code_in_setting">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_92">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>全宗名称</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item row="5" column="4">
-         <spacer name="horizontalSpacer_21">
+        <item row="1" column="2">
+         <spacer name="horizontalSpacer_30">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>487</width>
+            <width>342</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
-        <item row="5" column="3">
-         <widget class="QPushButton" name="select_description_dir_btn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">padding-left: 30px; 
-padding-right: 30px;
-padding-top: 8px; 
-padding-bottom: 8px;</string>
-          </property>
-          <property name="text">
-           <string>打开</string>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>icon/open.png</normaloff>icon/open.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="2">
-         <widget class="QLineEdit" name="description_path_in_setting">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <spacer name="verticalSpacer_11">
+        <item row="2" column="2">
+         <spacer name="verticalSpacer_9">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -6637,88 +6607,498 @@ padding-bottom: 8px;</string>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
+            <height>50</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="3" column="0">
+         <spacer name="horizontalSpacer_34">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>245</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
-        <item row="6" column="4">
-         <spacer name="horizontalSpacer_22">
+        <item row="3" column="1">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>新宋体</family>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="title">
+           <string>路径设置</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_26">
+           <property name="topMargin">
+            <number>12</number>
+           </property>
+           <property name="bottomMargin">
+            <number>20</number>
+           </property>
+           <item row="0" column="3">
+            <spacer name="horizontalSpacer_22">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="description_path_in_setting">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="select_description_dir_btn">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">padding-left: 30px; 
+padding-right: 30px;
+padding-top: 8px; 
+padding-bottom: 8px;</string>
+             </property>
+             <property name="text">
+              <string>打开</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>icon/open.png</normaloff>icon/open.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="package_path_in_setting">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_75">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>著录路径</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="select_package_dir_btn">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">padding-left: 30px; 
+padding-right: 30px;
+padding-top: 8px; 
+padding-bottom: 8px;</string>
+             </property>
+             <property name="text">
+              <string>打开</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>icon/open.png</normaloff>icon/open.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_76">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>打包路径</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <spacer name="horizontalSpacer_31">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>487</width>
-            <height>20</height>
+            <width>345</width>
+            <height>140</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="4" column="2">
+         <spacer name="verticalSpacer_10">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>50</height>
            </size>
           </property>
          </spacer>
         </item>
         <item row="5" column="0">
-         <spacer name="horizontalSpacer_23">
+         <spacer name="horizontalSpacer_35">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
+           <enum>QSizePolicy::Preferred</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>10</width>
+            <width>245</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
-        <item row="1" column="2">
-         <widget class="QLineEdit" name="fonds_name_in_setting">
+        <item row="5" column="1">
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <family>新宋体</family>
             <pointsize>14</pointsize>
            </font>
           </property>
+          <property name="title">
+           <string>License信息</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_29">
+           <property name="topMargin">
+            <number>12</number>
+           </property>
+           <property name="bottomMargin">
+            <number>20</number>
+           </property>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_96">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>剩余天数</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="license_path_in_setting">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="license_remaining_photo_num">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;还可以识别的照片张数&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="license_enable_export">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_95">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;还可以识别的照片张数&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>剩余张数</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_97">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>开启GPU</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="license_enable_gpu">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="import_license_btn">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">padding: 8px 15px; 
+</string>
+             </property>
+             <property name="text">
+              <string>导入</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>icon/import.png</normaloff>icon/import.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_94">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>路径</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="license_remaining_days">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_98">
+             <property name="font">
+              <font>
+               <family>新宋体</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>开放导出</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <spacer name="horizontalSpacer_23">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="label_92">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>全宗名称</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QLabel" name="label_76">
-          <property name="font">
-           <font>
-            <family>新宋体</family>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>打包路径</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <spacer name="verticalSpacer_12">
+        <item row="5" column="2">
+         <spacer name="horizontalSpacer_32">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>345</width>
+            <height>220</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="6" column="2">
+         <spacer name="verticalSpacer_11">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>6</height>
+            <height>184</height>
            </size>
           </property>
          </spacer>
