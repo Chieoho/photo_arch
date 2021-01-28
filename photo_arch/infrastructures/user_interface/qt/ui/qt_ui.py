@@ -75,12 +75,6 @@ class Ui_MainWindow(object):
         self.gridLayout_6 = QGridLayout(self.widget)
         self.gridLayout_6.setObjectName(u"gridLayout_6")
         self.gridLayout_6.setContentsMargins(-1, -1, 12, -1)
-        self.label = QLabel(self.widget)
-        self.label.setObjectName(u"label")
-        self.label.setFont(font)
-
-        self.gridLayout_6.addWidget(self.label, 0, 0, 1, 1)
-
         self.dir_lineEdit = QLineEdit(self.widget)
         self.dir_lineEdit.setObjectName(u"dir_lineEdit")
         self.dir_lineEdit.setMinimumSize(QSize(0, 23))
@@ -105,6 +99,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_6.addWidget(self.open_dir_btn, 0, 2, 1, 1)
 
+        self.label = QLabel(self.widget)
+        self.label.setObjectName(u"label")
+        self.label.setFont(font)
+
+        self.gridLayout_6.addWidget(self.label, 0, 0, 1, 1)
+
         self.tree_widget_group = QTreeWidget(self.widget)
         font1 = QFont()
         font1.setFamily(u"\u65b0\u5b8b\u4f53")
@@ -128,12 +128,13 @@ class Ui_MainWindow(object):
 
         self.frame_3 = QFrame(self.widget)
         self.frame_3.setObjectName(u"frame_3")
-        self.frame_3.setMinimumSize(QSize(0, 0))
+        self.frame_3.setMinimumSize(QSize(0, 50))
         self.frame_3.setFont(font)
         self.frame_3.setFrameShape(QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QFrame.Raised)
         self.gridLayout_7 = QGridLayout(self.frame_3)
         self.gridLayout_7.setObjectName(u"gridLayout_7")
+        self.gridLayout_7.setContentsMargins(-1, 3, -1, 3)
         self.cancel_folder_btn = QPushButton(self.frame_3)
         self.cancel_folder_btn.setObjectName(u"cancel_folder_btn")
         sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -188,7 +189,13 @@ class Ui_MainWindow(object):
         self.gridLayout_7.addItem(self.horizontalSpacer_6, 0, 4, 1, 1)
 
 
-        self.gridLayout_6.addWidget(self.frame_3, 2, 0, 1, 3)
+        self.gridLayout_6.addWidget(self.frame_3, 3, 0, 1, 3)
+
+        self.adding_processing = QLabel(self.widget)
+        self.adding_processing.setObjectName(u"adding_processing")
+        self.adding_processing.setMinimumSize(QSize(0, 45))
+
+        self.gridLayout_6.addWidget(self.adding_processing, 2, 0, 1, 3)
 
         self.splitter.addWidget(self.widget)
         self.group_description_widget = QWidget(self.splitter)
@@ -211,10 +218,6 @@ class Ui_MainWindow(object):
         self.year_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.year_in_group, 4, 4, 1, 1)
-
-        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.gridLayout_8.addItem(self.verticalSpacer_5, 14, 0, 1, 1)
 
         self.reference_code_in_group = QLineEdit(self.group_description_widget)
         self.reference_code_in_group.setObjectName(u"reference_code_in_group")
@@ -259,6 +262,14 @@ class Ui_MainWindow(object):
         self.group_code_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.group_code_in_group, 5, 4, 1, 1)
+
+        self.saving_processing = QLabel(self.group_description_widget)
+        self.saving_processing.setObjectName(u"saving_processing")
+        sizePolicy3.setHeightForWidth(self.saving_processing.sizePolicy().hasHeightForWidth())
+        self.saving_processing.setSizePolicy(sizePolicy3)
+        self.saving_processing.setMinimumSize(QSize(0, 45))
+
+        self.gridLayout_8.addWidget(self.saving_processing, 14, 0, 1, 5)
 
         self.fonds_code_in_group = QLineEdit(self.group_description_widget)
         self.fonds_code_in_group.setObjectName(u"fonds_code_in_group")
@@ -341,7 +352,7 @@ class Ui_MainWindow(object):
         self.gridLayout_13.addItem(self.horizontalSpacer_11, 0, 2, 1, 1)
 
 
-        self.gridLayout_8.addWidget(self.frame_4, 16, 0, 1, 5)
+        self.gridLayout_8.addWidget(self.frame_4, 15, 0, 1, 5)
 
         self.photo_num_in_group = QLineEdit(self.group_description_widget)
         self.photo_num_in_group.setObjectName(u"photo_num_in_group")
@@ -568,12 +579,6 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_8.addWidget(self.frame, 0, 0, 1, 5)
-
-        self.saving_processing = QLabel(self.group_description_widget)
-        self.saving_processing.setObjectName(u"saving_processing")
-        self.saving_processing.setMinimumSize(QSize(0, 45))
-
-        self.gridLayout_8.addWidget(self.saving_processing, 15, 0, 1, 5)
 
         self.splitter.addWidget(self.group_description_widget)
 
@@ -3111,7 +3116,6 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u7167\u7247\u6863\u6848AI\u8f85\u52a9\u8457\u5f55\u7ba1\u7406\u7cfb\u7edfV1.0", None))
         self.actionexit.setText(QCoreApplication.translate("MainWindow", u"\u9000\u51fa(X)", None))
         self.action.setText(QCoreApplication.translate("MainWindow", u"\u5173\u4e8e...", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"\u5de5\u4f5c\u76ee\u5f55\uff1a", None))
 #if QT_CONFIG(tooltip)
         self.open_dir_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u5feb\u6377\u952e\uff1aCtrl+O</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
@@ -3119,12 +3123,15 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(shortcut)
         self.open_dir_btn.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+O", None))
 #endif // QT_CONFIG(shortcut)
+        self.label.setText(QCoreApplication.translate("MainWindow", u"\u5de5\u4f5c\u76ee\u5f55\uff1a", None))
 #if QT_CONFIG(tooltip)
         self.tree_widget_group.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u53cc\u51fb\u52fe\u9009</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.cancel_folder_btn.setText(QCoreApplication.translate("MainWindow", u"\u53d6\u6d88", None))
         self.add_folder_btn.setText(QCoreApplication.translate("MainWindow", u"\u6dfb\u52a0", None))
+        self.adding_processing.setText("")
         self.label_21.setText(QCoreApplication.translate("MainWindow", u"\u90e8\u95e8", None))
+        self.saving_processing.setText("")
         self.opening_state_in_group.setItemText(0, QCoreApplication.translate("MainWindow", u"\u4e3b\u52a8\u516c\u5f00", None))
         self.opening_state_in_group.setItemText(1, QCoreApplication.translate("MainWindow", u"\u4f9d\u7533\u8bf7\u516c\u5f00", None))
         self.opening_state_in_group.setItemText(2, QCoreApplication.translate("MainWindow", u"\u4e0d\u516c\u5f00", None))
@@ -3164,7 +3171,6 @@ class Ui_MainWindow(object):
         self.group_path_in_group.setText("")
         self.label_47.setText(QCoreApplication.translate("MainWindow", u"\u6863\u53f7\uff1a", None))
         self.arch_code_in_group.setText("")
-        self.saving_processing.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.group_tab), QCoreApplication.translate("MainWindow", u"\u7ec4\u8457\u5f55", None))
         self.pausecontinue_btn.setText(QCoreApplication.translate("MainWindow", u"\u505c\u6b62", None))
         self.recogni_btn.setText(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b", None))

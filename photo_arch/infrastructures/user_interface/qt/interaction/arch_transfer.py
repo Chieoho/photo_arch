@@ -194,6 +194,22 @@ class ArchTransfer(object):
             self.selected_condition_list.remove(item_text)
         self.partition()
 
+    def _check_photo_description(self, group_info) -> bool:
+        is_description = False
+        group_folder_name = group_info['group_path']
+        group_code = group_folder_name.split(' ')[0]
+        group_abspath = os.path.join(
+            self.setting.description_path,
+            '照片档案',
+            group_info['year'],
+            group_info['retention_period'],
+            group_folder_name)
+        for photo_path in os.listdir(group_abspath):
+            if group_code in photo_path:
+                is_description = True
+                break
+        return is_description
+
     def partition(self):
         self.cd_info_dict.clear()
         self.ui.partition_list_widget.clear()
@@ -206,6 +222,9 @@ class ArchTransfer(object):
         for sc_sgl in selected_group_list:
             selected_cond, sgl = sc_sgl
             for gi in sgl:
+                if self._check_photo_description(gi) is False:
+                    self.mw.warn_msg('移交列表中含有未进行张著录的组，请先完成张著录')
+                    return
                 folder_size = float(gi['folder_size'])
                 # 组大小大于或等于光盘容量
                 if folder_size >= cd_size:

@@ -187,9 +187,10 @@ class GroupDescription(object):
         if not group_arch_code:
             self.mw.warn_msg('未进行著录，请先著录再保存')
             return
-        is_path_changed = self._save_group_and_remove_folder()
-        overlay = Overlay(self.ui.saving_processing, '处理中')
+        overlay = Overlay(self.ui.saving_processing, '处理中...')
         overlay.show()
+        QtWidgets.QApplication.processEvents()
+        is_path_changed = self._save_group_and_remove_folder()
         self._copy_arch_and_gen_thumbs()
         overlay.hide()
         if is_path_changed:
@@ -324,8 +325,9 @@ class GroupDescription(object):
         if not arch_code_info["children"]:
             self.mw.warn_msg('未勾选文件夹')
             return
-        overlay = Overlay(self.ui.tree_widget_group, '处理中')
+        overlay = Overlay(self.ui.adding_processing, '处理中...')
         overlay.show()
+        QtWidgets.QApplication.processEvents()
         if self.mw.interaction.set_arch_code(arch_code_info):
             overlay.hide()
             self.mw.msg_box('添加成功', 'info')
