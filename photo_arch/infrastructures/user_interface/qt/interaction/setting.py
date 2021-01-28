@@ -14,7 +14,7 @@ from PySide2 import QtWidgets, QtCore
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
     MainWindow, Ui_MainWindow)
-from license.check_license import get_lic_info
+from license.check_license import get_lic_info, check_lic
 
 from photo_arch.adapters.controller.setting import Controller, Repo
 from photo_arch.infrastructures.databases.db_setting import session
@@ -138,7 +138,7 @@ class Setting(object):
         self.lic_ctrl_info.is_exist = os.path.exists(self.license_path)
         if self.lic_ctrl_info.is_exist:
             lic_info = get_lic_info(self.license_path)
-            self.lic_ctrl_info.is_valid = bool(lic_info)
+            self.lic_ctrl_info.is_valid = check_lic(lic_info)
             if self.lic_ctrl_info.is_valid:
                 start_date = lic_info.get('start_date')
                 passed_days = (datetime.now() - datetime.strptime(start_date, '%Y%m%d')).days

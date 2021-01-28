@@ -184,7 +184,8 @@ class ArchTransfer(object):
         item = QtWidgets.QListWidgetItem(selected_name1)
         self.ui.selected_arch_list_widget.addItem(item)
         self.selected_condition_list.append(selected_name1)
-        self.partition()
+        if self.partition() is False:
+            self.unselect_arch(item)
 
     def unselect_arch(self, item):
         row = self.ui.selected_arch_list_widget.row(item)
@@ -224,7 +225,7 @@ class ArchTransfer(object):
             for gi in sgl:
                 if self._check_photo_description(gi) is False:
                     self.mw.warn_msg('移交列表中含有未进行张著录的组，请先完成张著录')
-                    return
+                    return False
                 folder_size = float(gi['folder_size'])
                 # 组大小大于或等于光盘容量
                 if folder_size >= cd_size:

@@ -27,7 +27,7 @@ def control_info(start_date=None):
 
 def license_id():
     lic_id = {
-        # 'key': '123456'
+        'key': '123456'
     }
     return lic_id
 

@@ -23,15 +23,15 @@ def get_lic_info(lic_path='license.cer'):
         info = json.loads(message.decode('utf8'))
         return info
     except Exception as e:
-        print(e)
+        _ = e
+        return {}
 
 
 def check_lic(lic_info: dict):
     feature_code = get_feature_code()
     is_right_machine = (feature_code == lic_info.get('feature_code'))
-    print(lic_info)
     return is_right_machine
 
 
 if __name__ == '__main__':
-    print(check_lic(get_lic_info()))
+    print(check_lic(get_lic_info('.\\certificate\\license_20210128122630.cer')))
