@@ -83,12 +83,20 @@ class View(object):
     def display_thumbs(self, thumb_paths):
         self.ui.photo_list_widget_search.clear()
         for i, fp in enumerate(thumb_paths):
-            photo_sn = os.path.split(fp)[1].split('-')[-1].split('.')[0]
+            root = self.ui.group_tree_widget_search.invisibleRootItem()
+            photo_arch_code = os.path.split(fp)[1].split('.')[0]
+            name = photo_arch_code.replace('-ZP·', '-')
+            tree_item = self.get_corresponding_child(root, name)
+            photo_sn = photo_arch_code[-4:]
             icon = QtGui.QIcon()
             pixmap = QtGui.QPixmap()
             pixmap.load(fp)
             icon.addPixmap(pixmap)
-            item = QtWidgets.QListWidgetItem(icon, photo_sn)  # 只显示张序号
+            if tree_item.checkState(0) == QtCore.Qt.CheckState.Checked:
+                text = f'√{photo_sn}'
+            else:
+                text = photo_sn
+            item = QtWidgets.QListWidgetItem(icon, text)  # 只显示张序号
             self.ui.photo_list_widget_search.addItem(item)
             if i in range(3):
                 QtWidgets.QApplication.processEvents()  # 前n张一张接一张显示
@@ -114,6 +122,16 @@ class View(object):
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation)
         self.ui.photo_view_search.setPixmap(scaled_pixmap)
+
+    def get_corresponding_child(self, parent: QtWidgets.QTreeWidgetItem, name):
+        parts = name.split('-')
+        part, name = parts[0], '-'.join(parts[1:])
+        for i in range(parent.childCount()):
+            child = parent.child(i)
+            if child.text(0).split(' ')[0] == part:
+                if child.childCount() == 0:
+                    return child
+                return self.get_corresponding_child(child, name)
 
 
 class ArchSearcher(object):
@@ -269,21 +287,11 @@ class ArchSearcher(object):
         self._mark_face(self.pixmap, photo_arch_code)
         self.view.display_image(self.pixmap)
 
-    def _get_corresponding_child(self, parent: QtWidgets.QTreeWidgetItem, name):
-        parts = name.split('-')
-        part, name = parts[0], '-'.join(parts[1:])
-        for i in range(parent.childCount()):
-            child = parent.child(i)
-            if child.text(0).split(' ')[0] == part:
-                if child.childCount() == 0:
-                    return child
-                return self._get_corresponding_child(child, name)
-
     def display_photo(self):
         item_list = self.ui.photo_list_widget_search.selectedItems()
         if item_list:
             item = item_list[0]
-            photo_sn = item.text()
+            photo_sn = item.text()[-4:]
             group_arch_code = self.ui.arch_code_in_group_search.text()
             photo_arch_code = f'{group_arch_code}-{photo_sn}'
             self._display_photo_info(photo_arch_code)
@@ -296,7 +304,7 @@ class ArchSearcher(object):
                 self.ui.group_tree_widget_search.setItemSelected(old_sel_child, False)
             root = self.ui.group_tree_widget_search.invisibleRootItem()
             name = photo_arch_code.replace('-ZP·', '-')
-            new_sel_child = self._get_corresponding_child(root, name)
+            new_sel_child = self.view.get_corresponding_child(root, name)
             self.ui.group_tree_widget_search.setItemSelected(new_sel_child, True)
             self.ui.group_tree_widget_search.itemSelectionChanged.connect(static(self.deal_tree_item_selected_changed))
         else:
@@ -347,51 +355,30 @@ class ArchSearcher(object):
         else:
             self.mw.warn_msg('未选择导出文件夹')
 
-    @staticmethod
-    def _set_thumb_check_state(item: QtWidgets.QListWidgetItem, icon_path, check_state):
-        icon = QtGui.QIcon()
-        pixmap = QtGui.QPixmap()
-        pixmap.load(icon_path)
-        if check_state == QtCore.Qt.CheckState.Checked:
-            painter = QtGui.QPainter(pixmap)
-            pen = QtGui.QPen(QtCore.Qt.red)
-            pen.setWidth(3)
-            painter.setPen(pen)
-            painter.drawPolyline([
-                QtCore.QPoint(83, 13),
-                QtCore.QPoint(90, 20),
-                QtCore.QPoint(97, 3)
-            ])
-            painter.end()
-        icon.addPixmap(pixmap)
-        item.setIcon(icon)
-
     def check_thumb(self, index: QtCore.QModelIndex):
         photo_arch_code = self.ui.arch_code_in_photo_search.text()
         root = self.ui.group_tree_widget_search.invisibleRootItem()
         name = photo_arch_code.replace('-ZP·', '-')
-        corresponding_child: QtWidgets.QTreeWidgetItem = self._get_corresponding_child(root, name)
+        corresponding_child: QtWidgets.QTreeWidgetItem = self.view.get_corresponding_child(root, name)
         item: QtWidgets.QListWidgetItem = self.ui.photo_list_widget_search.item(index.row())
-        thumb_path = self.controller.get_photo_path(photo_arch_code)[1].replace(
-            photo_arch_code, f'thumbs\\{photo_arch_code}')
 
+        self.ui.group_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
+        self.ui.group_tree_widget_search.itemChanged.disconnect()
         if corresponding_child.checkState(0) == QtCore.Qt.CheckState.Checked:
-            self._set_thumb_check_state(item, thumb_path, QtCore.Qt.CheckState.Unchecked)
+            item.setText(item.text()[-4:])
             corresponding_child.setCheckState(0, QtCore.Qt.CheckState.Unchecked)
         else:
-            self._set_thumb_check_state(item, thumb_path, QtCore.Qt.CheckState.Checked)
+            item.setText(f'√{item.text()}')
             corresponding_child.setCheckState(0, QtCore.Qt.CheckState.Checked)
+        self.ui.group_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
 
     def deal_tree_item_changed(self, tree_item: QtWidgets.QTreeWidgetItem):
         if tree_item.child(0) is None:
-            self._display_group_info([tree_item])
-
             photo_index = tree_item.parent().indexOfChild(tree_item)
             item = self.ui.photo_list_widget_search.item(photo_index)
             if item:
-                photo_arch_code = self.ui.arch_code_in_photo_search.text()
-                thumb_path = self.controller.get_photo_path(photo_arch_code)[1].replace(
-                    photo_arch_code, f'thumbs\\{photo_arch_code}')
                 check_state = tree_item.checkState(0)
-                self._set_thumb_check_state(item, thumb_path, check_state)
-        QtWidgets.QApplication.processEvents()
+                if check_state == QtCore.Qt.CheckState.Checked:
+                    item.setText(f'√{item.text()}')
+                else:
+                    item.setText(item.text()[-4:])
