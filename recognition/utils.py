@@ -4,6 +4,7 @@ import os
 
 import cv2
 import joblib
+import platform
 import numpy as np
 from PIL import Image
 from sklearn.preprocessing import Normalizer, LabelEncoder
@@ -422,7 +423,10 @@ def fileTreeWidgetData(rootVolumePath, dbDataList):
 def get_filePath_with_creationDate_as_dict(folder):
     result = {}
     for f in os.listdir(folder):
-        fullFileName = folder + "\\" + f
+        if platform.system().lower() == 'windows':
+            fullFileName = folder + "\\" + f
+        else:
+            fullFileName = folder + "/" + f
         if os.path.isfile(fullFileName):
             t = os.stat(fullFileName)
             mtime = np.min([t.st_ctime, t.st_mtime, t.st_atime])

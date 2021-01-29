@@ -23,14 +23,35 @@ from sklearn.svm import SVC
 from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.model_selection import cross_val_score
 from multiprocessing import Process, Event, Queue, Manager
+import multiprocessing as mp
+import platform
 
 from recognition.utils import *
 
 from photo_arch.adapters.sql.repo import RepoGeneral
 from photo_arch.infrastructures.databases.db_setting import engine, make_session, session
+from license.check_license import get_lic_info
+
+
+def get_gpu_state():
+    engine.dispose()
+    sql_repo = RepoGeneral(make_session(engine))
+    license_path_list = sql_repo.query('setting',{'setting_id': [1]})
+    if len(license_path_list) == 1:
+        license_path = license_path_list[0]['license_path']
+        lic_info = get_lic_info(license_path)
+        if lic_info != None:
+            gpu_state = lic_info.get('enable_gpu')
+        else:
+            gpu_state = False
+    else:
+        gpu_state = False
+    print('@@@@@@@ gpu state:',gpu_state)
+    return gpu_state
 
 # 禁用GPU后,下面的config代码也就无效了
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+gpu_state = get_gpu_state()
+os.environ['CUDA_VISIBLE_DEVICES'] = '0' if gpu_state else '-1'
 if tf.__version__.startswith('1.'):  # tensorflow 1
     config = tf.ConfigProto()  # allow_soft_placement=True
     config.gpu_options.allow_growth = True #不全部占满显存, 按需分配
@@ -48,7 +69,7 @@ class RecognizeProcess(Process):
     margin = 32
 
     faceProp = 0.9
-    euclideanDist = 0.79
+    euclideanDist = 0.74
     canvasW = 2000
     canvasH = 2000
 
@@ -523,6 +544,9 @@ class Recognition(object):
     def __init__(self):
         os.makedirs('data', exist_ok=True)
         self.pending_dirs_list = []
+        
+        # # to ake sure multiprocess running on CUDA, you have to set start method as "spawn".解決CUDA error: initialization error.
+        mp.set_start_method('spawn') #设置进程启动方式,Windows平台默认使用的也是该启动方式.
 
         self.data_queue = Queue() # 点击“添加”按钮的时候,用来写入图片路径
         self.param_queue = Queue()
