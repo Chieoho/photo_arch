@@ -16,7 +16,7 @@ def get_mac_addr():
 
 
 def run_cmd(cmd):
-    out_bytes = subprocess.check_output(cmd)
+    out_bytes = subprocess.check_output(cmd, shell=True)
     return out_bytes
 
 
@@ -53,6 +53,7 @@ def get_feature_code():
 
 if __name__ == '__main__':
     print(f'机器特征码为：{get_feature_code()}')
+    input()
     # print(get_processor_id())
     # print(get_product_id())
     # print(get_driver_sn())
