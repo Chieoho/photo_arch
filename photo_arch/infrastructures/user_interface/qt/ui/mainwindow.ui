@@ -64,7 +64,7 @@ QTabBar::tab:selected{
 }</string>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="iconSize">
        <size>
@@ -4534,7 +4534,7 @@ padding-bottom: 8px;</string>
              </widget>
             </item>
             <item row="5" column="0" colspan="3">
-             <widget class="QTreeWidget" name="group_tree_widget_search">
+             <widget class="QTreeWidget" name="photo_tree_widget_search">
               <property name="font">
                <font>
                 <family>新宋体</family>
@@ -4542,7 +4542,7 @@ padding-bottom: 8px;</string>
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;可勾选导出&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;双击勾选或取消&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="whatsThis">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -4552,6 +4552,9 @@ padding-bottom: 8px;</string>
               </property>
               <property name="selectionBehavior">
                <enum>QAbstractItemView::SelectItems</enum>
+              </property>
+              <property name="expandsOnDoubleClick">
+               <bool>false</bool>
               </property>
               <column>
                <property name="text">
@@ -4610,6 +4613,9 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="focusPolicy">
                   <enum>Qt::TabFocus</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;导出勾选的照片&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="styleSheet">
                   <string notr="true">padding-left: 30px; 
@@ -7255,7 +7261,7 @@ padding-bottom: 8px;</string>
   <tabstop>group_title_search</tabstop>
   <tabstop>peoples_search</tabstop>
   <tabstop>search_btn</tabstop>
-  <tabstop>group_tree_widget_search</tabstop>
+  <tabstop>photo_tree_widget_search</tabstop>
   <tabstop>photo_list_widget_search</tabstop>
   <tabstop>arch_code_in_group_search</tabstop>
   <tabstop>fonds_code_in_group_search</tabstop>

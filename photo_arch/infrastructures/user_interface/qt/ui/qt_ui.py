@@ -1880,13 +1880,14 @@ class Ui_MainWindow(object):
 
         self.gridLayout_54.addWidget(self.frame_19, 4, 0, 1, 3)
 
-        self.group_tree_widget_search = QTreeWidget(self.widget_21)
-        self.group_tree_widget_search.setObjectName(u"group_tree_widget_search")
-        self.group_tree_widget_search.setFont(font)
-        self.group_tree_widget_search.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.group_tree_widget_search.setSelectionBehavior(QAbstractItemView.SelectItems)
+        self.photo_tree_widget_search = QTreeWidget(self.widget_21)
+        self.photo_tree_widget_search.setObjectName(u"photo_tree_widget_search")
+        self.photo_tree_widget_search.setFont(font)
+        self.photo_tree_widget_search.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.photo_tree_widget_search.setSelectionBehavior(QAbstractItemView.SelectItems)
+        self.photo_tree_widget_search.setExpandsOnDoubleClick(False)
 
-        self.gridLayout_54.addWidget(self.group_tree_widget_search, 5, 0, 1, 3)
+        self.gridLayout_54.addWidget(self.photo_tree_widget_search, 5, 0, 1, 3)
 
         self.frame_11 = QFrame(self.widget_21)
         self.frame_11.setObjectName(u"frame_11")
@@ -3036,8 +3037,8 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.peoples_in_photo_arch, self.group_title_search)
         QWidget.setTabOrder(self.group_title_search, self.peoples_search)
         QWidget.setTabOrder(self.peoples_search, self.search_btn)
-        QWidget.setTabOrder(self.search_btn, self.group_tree_widget_search)
-        QWidget.setTabOrder(self.group_tree_widget_search, self.photo_list_widget_search)
+        QWidget.setTabOrder(self.search_btn, self.photo_tree_widget_search)
+        QWidget.setTabOrder(self.photo_tree_widget_search, self.photo_list_widget_search)
         QWidget.setTabOrder(self.photo_list_widget_search, self.arch_code_in_group_search)
         QWidget.setTabOrder(self.arch_code_in_group_search, self.fonds_code_in_group_search)
         QWidget.setTabOrder(self.fonds_code_in_group_search, self.arch_category_code_in_group_search)
@@ -3088,7 +3089,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(5)
         self.search_btn.setDefault(False)
         self.export_btn_search.setDefault(False)
 
@@ -3270,14 +3271,17 @@ class Ui_MainWindow(object):
         self.label_210.setText(QCoreApplication.translate("MainWindow", u"\u4eba\u7269", None))
         self.end_date_search.setDisplayFormat(QCoreApplication.translate("MainWindow", u"yyyy/MM/dd", None))
         self.search_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
-        ___qtreewidgetitem = self.group_tree_widget_search.headerItem()
+        ___qtreewidgetitem = self.photo_tree_widget_search.headerItem()
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"\u641c\u7d22\u7ed3\u679c", None));
 #if QT_CONFIG(tooltip)
-        self.group_tree_widget_search.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53ef\u52fe\u9009\u5bfc\u51fa</span></p></body></html>", None))
+        self.photo_tree_widget_search.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53cc\u51fb\u52fe\u9009\u6216\u53d6\u6d88</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(whatsthis)
-        self.group_tree_widget_search.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><br/></p></body></html>", None))
+        self.photo_tree_widget_search.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><br/></p></body></html>", None))
 #endif // QT_CONFIG(whatsthis)
+#if QT_CONFIG(tooltip)
+        self.export_btn_search.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u5bfc\u51fa\u52fe\u9009\u7684\u7167\u7247</span></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
         self.export_btn_search.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
         self.label_206.setText(QCoreApplication.translate("MainWindow", u"\u5bc6\u7ea7", None))
         self.label_191.setText(QCoreApplication.translate("MainWindow", u"\u62cd\u6444\u5730\u70b9", None))
