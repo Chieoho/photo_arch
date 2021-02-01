@@ -13,9 +13,10 @@ from photo_arch.use_cases.interfaces.presenter_if.arch_searcher import Presenter
 class ViewModel(object):
     def __init__(self):
         self.group_list: List[str] = []
-        self.photo_list: List[str] = []
+        self.photo_list: List[tuple] = []
         self.group: dict = GroupOutputData().__dict__
         self.photo: dict = PhotoOutputData().__dict__
+        self.photo_path: str = ''
 
 
 class Presenter(PresenterIf):
@@ -30,7 +31,10 @@ class Presenter(PresenterIf):
     def update_photo_list(self, photo_info_list: List[dict]):
         self.view_model.photo_list.clear()
         for pi in photo_info_list:
-            self.view_model.photo_list.append(pi['photo_path'])
+            arch_code = pi['arch_code'].replace('ZP·', '')
+            group_title = ' '.join(pi['photo_path'].split('\\')[-2].split(' ')[2:])
+            peoples = pi['peoples']
+            self.view_model.photo_list.append((arch_code, group_title, peoples))
 
     def update_group_model(self, group_info) -> bool:
         for k in self.view_model.group.keys():
@@ -40,4 +44,8 @@ class Presenter(PresenterIf):
     def update_photo_model(self, photo_info) -> bool:
         for k in self.view_model.photo.keys():
             self.view_model.photo[k] = str(photo_info[k])
+        return True
+
+    def update_photo_path_model(self, photo_info) -> bool:
+        self.view_model.photo_path = str(photo_info.get('photo_path', ''))
         return True

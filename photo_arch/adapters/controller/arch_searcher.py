@@ -20,8 +20,8 @@ class Controller(object):
         arch_code_list = self.presenter.view_model.group_list
         return res, arch_code_list
 
-    def search_photos(self, title_key_list: list, people_key_list: list, year_key_list: list):
-        res = self.arch_searcher.search_photos(title_key_list, people_key_list, year_key_list)
+    def search_photos(self, title_key_list: list, people_key_list: list, start: str, end: str):
+        res = self.arch_searcher.search_photos(title_key_list, people_key_list, start, end)
         photo_info_list = self.presenter.view_model.photo_list
         return res, photo_info_list
 
@@ -34,6 +34,11 @@ class Controller(object):
         res = self.arch_searcher.get_photo_info(photo_arch_code)
         photo = self.presenter.view_model.photo
         return res, photo
+
+    def get_photo_path(self, photo_arch_code):
+        res = self.arch_searcher.get_photo_path(photo_arch_code)
+        photo_path = self.presenter.view_model.photo_path
+        return res, photo_path
 
     def get_face_info(self, photo_arch_code):
         face_info = self.arch_searcher.get_face_info(photo_arch_code)

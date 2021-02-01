@@ -55,6 +55,7 @@ class View(object):
                 self._fill_model_from_dict(parent, v)
         else:
             item = QtGui.QStandardItem(str(d))
+            item.setToolTip(d)
             parent.appendRow(item)
             if self.tv_browse_pre_sel_text == d:
                 self.tv_browse_pre_sel_item = item
@@ -127,9 +128,12 @@ class ArchBrowser(object):
             w,
             h,
             QtGui.Qt.KeepAspectRatio,
-            QtGui.Qt.SmoothTransformation
-        )
+            QtGui.Qt.SmoothTransformation)
         self.ui.photo_view_in_arch.setPixmap(pixmap)
+
+    def display_arch(self, priority_key):
+        _, arch = self.controller.browse_arch()
+        self.view.display_browse_arch(arch, priority_key)
 
     def show_group(self, item_selection):
         indexes = item_selection.indexes()
@@ -176,10 +180,14 @@ class ArchBrowser(object):
             year, period,
             self.group_folder,
             'thumbs',
-            '*.*'
-        )
+            '*.*')
         for i, fp in enumerate(glob.iglob(path)):
-            item = QtWidgets.QListWidgetItem(QtGui.QIcon(fp), os.path.split(fp)[1].split('-')[-1])  # 只显示张序号
+            photo_sn = os.path.split(fp)[1].split('-')[-1].split('.')[0]
+            icon = QtGui.QIcon()
+            pixmap = QtGui.QPixmap()
+            pixmap.load(fp)
+            icon.addPixmap(pixmap)
+            item = QtWidgets.QListWidgetItem(icon, photo_sn)  # 只显示张序号
             self.ui.photo_list_widget.addItem(item)
             if i in range(3):
                 QtWidgets.QApplication.processEvents()  # 前n张一张接一张显示
@@ -187,44 +195,33 @@ class ArchBrowser(object):
     def display_photo(self):
         item_list = self.ui.photo_list_widget.selectedItems()
         if item_list:
-            item_text = item_list[0].text()  # photo_sn + format
+            photo_sn = item_list[0].text()
             group_arch_code = self.ui.arch_code_in_group_arch.text()
-            photo_name = f'{group_arch_code}-{item_text}'
-            self._display_photo_info(photo_name)
-            self._display_image(photo_name)
+            photo_arch_code = f'{group_arch_code}-{photo_sn}'
+            self._display_photo_info(photo_arch_code)
+            self._display_image(photo_arch_code)
 
-    def _display_photo_info(self, photo_name):
-        photo_arch_code, _ = photo_name.split('.')
+    def _display_photo_info(self, photo_arch_code):
         _, photo_info = self.controller.get_photo_info(photo_arch_code)
         self.view.display_photo_info(photo_info)
 
-    def _display_image(self, photo_name):
-        group_code = self.group_folder.split(' ')[0]
-        year, period, _ = group_code.split('·')[1].split('-')
-        group_folder_path = os.path.join(
-            self.setting.description_path,
-            '照片档案',
-            year, period,
-            self.group_folder
-        )
-        path = os.path.join(group_folder_path, photo_name)
-        if not os.path.exists(path):
-            path = os.path.join(group_folder_path, photo_name.split('-')[-1])
+    def _display_image(self, photo_arch_code):
+        _, photo_path = self.controller.get_photo_path(photo_arch_code)
         self.pixmap = QtGui.QPixmap()
-        self.pixmap.load(path)
-        self._mark_face(self.pixmap, photo_name)
+        self.pixmap.load(photo_path)
+        self._mark_face(self.pixmap, photo_arch_code)
         pixmap = self.pixmap.scaled(
             self.ui.photo_view_in_arch.size(),
             QtGui.Qt.KeepAspectRatio,
-            QtGui.Qt.SmoothTransformation
-        )
+            QtGui.Qt.SmoothTransformation)
         self.ui.photo_view_in_arch.setPixmap(pixmap)
 
-    def _mark_face(self, pixmap, photo_name):
+    def _mark_face(self, pixmap, photo_arch_code):
         painter = QtGui.QPainter(pixmap)
-        photo_arch_code, _ = photo_name.split('.')
         face_info = self.controller.get_face_info(photo_arch_code)
-        face_list = json.loads(face_info['faces'])
+        faces = face_info.get('faces')
+        # faces为None，有可能是没有对应的key，或者对应key的值就是None
+        face_list = json.loads(faces if faces else '[]')
         box_name_list = []
         for face in face_list:
             name = face['name']
@@ -244,10 +241,6 @@ class ArchBrowser(object):
             pen.setWidth(width)
             painter.setPen(pen)
             painter.drawRect(x, y, w, h)
-
-    def display_arch(self, priority_key):
-        _, arch = self.controller.browse_arch()
-        self.view.display_browse_arch(arch, priority_key)
 
     def set_selected(self):
         selected_items = self.ui.photo_list_widget.selectedItems()

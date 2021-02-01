@@ -30,6 +30,11 @@ class Controller(object):
         photo = self.presenter.view_model.photo
         return res, photo
 
+    def get_photo_path(self, photo_arch_code):
+        res = self.arch_browser.get_photo_path(photo_arch_code)
+        photo_path = self.presenter.view_model.photo_path
+        return res, photo_path
+
     def get_face_info(self, photo_arch_code):
         face_info = self.arch_browser.get_face_info(photo_arch_code)
         return face_info

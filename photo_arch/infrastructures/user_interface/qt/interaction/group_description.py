@@ -11,12 +11,12 @@ from pathlib import Path
 import time
 import shutil
 
-from PySide2 import QtWidgets, QtGui
+from PySide2 import QtWidgets, QtGui, QtCore
 
 from photo_arch.use_cases.interfaces.dataset import GroupInputData, GroupOutputData, PhotoInDescription
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import static, calc_md5, make_thumb
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import (
-    MainWindow, Ui_MainWindow, RecognizeState)
+    MainWindow, Ui_MainWindow, RecognizeState, Overlay)
 from photo_arch.infrastructures.user_interface.qt.interaction.setting import Setting
 
 from photo_arch.infrastructures.databases.db_setting import session
@@ -105,6 +105,7 @@ class GroupDescription(object):
         self.ui.dir_lineEdit.setText(self.current_work_path)
         self._generate_tree_by_path(self.current_work_path)
         self._reset_state()
+        self.ui.tree_widget_group.itemChanged.connect(static(self.check_item))
 
     def display_group(self):
         item_list = self.ui.tree_widget_group.selectedItems()
@@ -182,17 +183,22 @@ class GroupDescription(object):
         self.ui.group_code_in_group.setText(group_code)
 
     def save_and_copy_group(self):
+        group_arch_code = self.ui.arch_code_in_group.text()
+        if not group_arch_code:
+            self.mw.warn_msg('未进行著录，请先著录再保存')
+            return
+        overlay = Overlay(self.ui.saving_processing, '处理中...')
+        overlay.show()
+        QtWidgets.QApplication.processEvents()
         is_path_changed = self._save_group_and_remove_folder()
         self._copy_arch_and_gen_thumbs()
+        overlay.hide()
         if is_path_changed:
             self.mw.msg_box('保存成功，组路径已变，若已添加请重新添加', msg_type='info')
         else:
             self.mw.msg_box('保存成功', msg_type='info')
 
     def _save_group_and_remove_folder(self):
-        group_arch_code = self.ui.arch_code_in_group.text()
-        if not group_arch_code:
-            return
         first_photo = self._find_fist_photo()
         first_photo_md5 = calc_md5(first_photo)
         group_data: GroupInputData = self.view.get_group_input()
@@ -221,8 +227,7 @@ class GroupDescription(object):
             self.setting.description_path,
             '照片档案',
             year, retention_period,
-            group_folder_name
-        )
+            group_folder_name)
         return group_folder_path
 
     def _copy_arch_and_gen_thumbs(self):
@@ -305,6 +310,7 @@ class GroupDescription(object):
         }
         root_item = self.ui.tree_widget_group.invisibleRootItem().child(0)
         if root_item is None:
+            self.mw.warn_msg('未打开工作目录')
             return
         item_iterator = QtWidgets.QTreeWidgetItemIterator(self.ui.tree_widget_group)
         items_value = item_iterator.value()
@@ -316,10 +322,18 @@ class GroupDescription(object):
                 dst_abspath = self.description_path_info.get(group_abspath, '')
                 arch_code = self.arch_code_info.get(group_abspath, '')
                 arch_code_info["children"].update({dst_abspath: arch_code})
+        if not arch_code_info["children"]:
+            self.mw.warn_msg('未勾选文件夹')
+            return
+        overlay = Overlay(self.ui.adding_processing, '处理中...')
+        overlay.show()
+        QtWidgets.QApplication.processEvents()
         if self.mw.interaction.set_arch_code(arch_code_info):
+            overlay.hide()
             self.mw.msg_box('添加成功', 'info')
             self._reset_state()
         else:
+            overlay.hide()
             self.mw.msg_box('添加失败')
 
     def _reset_state(self):
@@ -368,6 +382,8 @@ class GroupDescription(object):
         root_arch_info = (root_path, '')
         file_arch_list = [(fp, '') for fp in file_list]
         self._generate_dir_tree(root_arch_info, file_arch_list)
+        if not file_arch_list:
+            self.mw.warn_msg('请选择规范的文件夹')
 
     def _generate_tree_by_data(self, arch_code_info):
         root_arch = arch_code_info['root']
@@ -435,3 +451,13 @@ class GroupDescription(object):
         _, group_sn = self.controller.get_group_sn(year)
         group_sn = str(group_sn).zfill(4)
         return group_sn
+
+    def check_item(self, item: QtWidgets.QTreeWidgetItem):
+        if item.checkState(0) == QtCore.Qt.CheckState.Checked:
+            group_folder = item.text(0)
+            first_photo = self._find_fist_photo(group_folder)
+            first_photo_md5 = calc_md5(first_photo)
+            _, group = self.controller.get_group(first_photo_md5)
+            if not (first_photo_md5 and group):
+                item.setCheckState(0, QtCore.Qt.CheckState.Unchecked)
+                self.mw.warn_msg('该组未著录，请先著录再勾选')

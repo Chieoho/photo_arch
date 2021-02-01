@@ -6,6 +6,7 @@
 @time: 2020/12/18 10:52
 """
 from typing import List
+from sqlalchemy import or_
 from photo_arch.domains.photo_group import Group, Photo
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
 from photo_arch.adapters.sql.repo import RepoGeneral, PhotoGroupModel, PhotoModel, SettingModel
@@ -63,22 +64,20 @@ class Repo(RepoIf):
         return group_list
 
     def search_photos(self, title_key_list: list, people_key_list: list,
-                      year_key_list: list) -> List[dict]:
-        group_list = self.repo_general.query(
-            'photo_group',
-            cond={
-                'group_title': title_key_list,
-                'year': year_key_list
-            },
-            ret_columns=('group_code',)
+                      start: str, end: str) -> List[dict]:
+        group_obj = self.session.query(PhotoGroupModel).filter(
+            or_(*map(lambda k: PhotoGroupModel.group_title.like('%{}%'.format(k)), title_key_list)),
+            PhotoGroupModel.taken_time >= start,
+            PhotoGroupModel.taken_time <= end
         )
+        groups = map(lambda g: self.repo_general.row2dict(g, ('group_code', )), group_obj)
         photo_list = self.repo_general.query(
             'photo',
             cond={
                 'peoples': people_key_list,
-                'group_code': [gi['group_code'] for gi in group_list]
+                'group_code': [gi['group_code'] for gi in groups]
             },
-            ret_columns=('photo_path',)
+            ret_columns=('photo_path', 'arch_code', 'peoples')
         )
         return photo_list
 
@@ -120,3 +119,7 @@ class Repo(RepoIf):
     def get_face_info(self, photo_arch_code) -> List[dict]:
         face_info_list = self.repo_general.query('face', cond={'photo_archival_code': [photo_arch_code]})
         return face_info_list
+
+    def get_used_photo_num(self):
+        query_obj = self.session.query(PhotoModel)
+        return query_obj.count()

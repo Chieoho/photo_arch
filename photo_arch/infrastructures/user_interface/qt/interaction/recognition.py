@@ -39,8 +39,10 @@ class Recognition(object):
         self.ui.pausecontinue_btn.setStyleSheet(self.mw.button_style_sheet)
 
     def run(self):
+        if self.setting.lic_ctrl_info.remaining_photo_num <= 0:
+            self.mw.warn_msg('可识别照片数量为0，请导入有效license！')
+            return
         self.mw.overlay(self.ui.recognition_tab)
-
         if self.mw.run_state != RecognizeState.running:
             thresh = self.ui.thresh_lineEdit.text()
             size = self.ui.photo_view.size()
@@ -117,8 +119,7 @@ class Recognition(object):
                     time.sleep(1)
                     photo_info_list = self.mw.interaction.get_photos_info(
                         self.mw.photo_type,
-                        self.mw.dir_type
-                    )
+                        self.mw.dir_type)
                     self.mw.photo_list = list(map(lambda d: d['photo_path'], photo_info_list))
                     self.mw.photo_info_dict = {d['photo_path']: d for d in photo_info_list}
                     self._clear_data()

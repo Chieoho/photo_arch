@@ -22,3 +22,7 @@ class Controller(object):
     def get_setting(self):
         setting_list = self.setting.get_setting()
         return True, setting_list[0] if setting_list else {}
+
+    def get_used_photo_num(self):
+        used_photo_num = self.setting.get_used_photo_num()
+        return used_photo_num

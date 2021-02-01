@@ -24,3 +24,6 @@ class Setting(object):
 
     def get_setting(self):
         return self.repo.query_setting()
+
+    def get_used_photo_num(self):
+        return self.repo.get_used_photo_num()

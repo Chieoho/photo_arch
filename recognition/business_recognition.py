@@ -23,12 +23,43 @@ from sklearn.svm import SVC
 from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.model_selection import cross_val_score
 from multiprocessing import Process, Event, Queue, Manager
+import multiprocessing as mp
+import platform
 
 from recognition.utils import *
 
 from photo_arch.adapters.sql.repo import RepoGeneral
 from photo_arch.infrastructures.databases.db_setting import engine, make_session, session
+from license.check_license import get_lic_info
 
+
+def get_gpu_state():
+    engine.dispose()
+    sql_repo = RepoGeneral(make_session(engine))
+    license_path_list = sql_repo.query('setting',{'setting_id': [1]})
+    if len(license_path_list) == 1:
+        license_path = license_path_list[0]['license_path']
+        lic_info = get_lic_info(license_path)
+        if lic_info != None:
+            gpu_state = lic_info.get('enable_gpu')
+        else:
+            gpu_state = False
+    else:
+        gpu_state = False
+    print('@@@@@@@ gpu state:',gpu_state)
+    return gpu_state
+
+# 禁用GPU后,下面的config代码也就无效了
+gpu_state = get_gpu_state()
+os.environ['CUDA_VISIBLE_DEVICES'] = '0' if gpu_state else '-1'
+if tf.__version__.startswith('1.'):  # tensorflow 1
+    config = tf.ConfigProto()  # allow_soft_placement=True
+    config.gpu_options.allow_growth = True #不全部占满显存, 按需分配
+    sess = tf.Session(config=config)
+else:  # tensorflow 2
+    gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
 
 
 class RecognizeProcess(Process):
@@ -38,7 +69,7 @@ class RecognizeProcess(Process):
     margin = 32
 
     faceProp = 0.9
-    euclideanDist = 0.79
+    euclideanDist = 0.74
     canvasW = 2000
     canvasH = 2000
 
@@ -285,8 +316,8 @@ class VerifyProcess(Process):
             # self.canvasH = checkedInfoDict['label_size'][1]
 
 
-            # faces_name = []
-            # faces_embedding = []
+            faces_name = []
+            faces_embedding = []
 
             new_faces = []
             peoples = ''
@@ -307,7 +338,8 @@ class VerifyProcess(Process):
                 new_faces_id.append(int(item['id']))
                 new_faces_name.append(item['name'])
 
-            # embeddings_dict = sql_repo.query('face', {"photo_path": [self.img_path]}, ('embeddings'))
+            embeddings_dict = sql_repo.query('face', {"photo_path": [self.img_path]}, ('embeddings'))
+            embeddings_dict = eval(embeddings_dict[0]['embeddings'])
 
             for id in orig_faces_id:
                 if id in new_faces_id: # 没有删除
@@ -322,6 +354,10 @@ class VerifyProcess(Process):
                     'name': name,
                     'landmark': self.faces_list[id]['landmark']
                 })
+
+                embedding = np.asarray(eval(embeddings_dict[id][str(id)]))
+                faces_embedding.append(embedding)
+                faces_name.append(name)
 
                 if id < len(orig_faces_id) :
                     if name != '' and name != '已删除':
@@ -356,7 +392,7 @@ class VerifyProcess(Process):
                 # else:
                 #     print('核验---id:{},name:{}'.format(id, name))
 
-            # saveData('data/data.npz', faces_name, faces_embedding)
+            saveData('data/data.npz', faces_name, faces_embedding)
             jsonFaces = json.dumps(new_faces, ensure_ascii=False)
             verifyState = 1
             sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})
@@ -508,14 +544,17 @@ class Recognition(object):
     def __init__(self):
         os.makedirs('data', exist_ok=True)
         self.pending_dirs_list = []
+        
+        # # to ake sure multiprocess running on CUDA, you have to set start method as "spawn".解決CUDA error: initialization error.
+        mp.set_start_method('spawn') #设置进程启动方式,Windows平台默认使用的也是该启动方式.
 
         self.data_queue = Queue() # 点击“添加”按钮的时候,用来写入图片路径
         self.param_queue = Queue()
         self.from_queue = Queue()  # 在进行人脸识别的时候，判断是否通过'识别'按钮进行识别操作的
+        self.done_queue = Manager().Queue()  # 返回识别结果信息
         self.verify_queue = Queue()  # 用来填充核验信息
-        self.search_queue = Queue()  # 用来填充以图搜图的图片路径
-        self.done_queue = Manager().Queue() # 返回识别结果信息
-        self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
+        # self.search_queue = Queue()  # 用来填充以图搜图的图片路径
+        # self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
         self.jobs_proc = []   # 将进程对象放进list
         self.pendingTotalImgsNum = 0 #待处理的图片总数量
 
@@ -553,9 +592,9 @@ class Recognition(object):
 
 
         # 开启以图搜图子进程
-        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue)
-        self.searchImagesProc.daemon = True
-        self.searchImagesProc.start()
+        # self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue)
+        # self.searchImagesProc.daemon = True
+        # self.searchImagesProc.start()
 
 
     def initRecognitionInfo(self):
@@ -766,6 +805,7 @@ class Recognition(object):
                 total_img_list = self.all_recog_img_list
                 recog_state = [1]
 
+            total_img_list = sorted(total_img_list)
             for img in total_img_list:
                 face_dict = self.sql_repo.query('face', {"photo_path": [img], "recog_state": recog_state}, ('faces', 'verify_state'))
                 photo_dict = self.sql_repo.query('photo', {"photo_path": [img]}, (
@@ -784,10 +824,14 @@ class Recognition(object):
                     recog_state = [1]
 
                 photo_path_dict = self.sql_repo.query('face', {"parent_path": [dirPath], "recog_state": recog_state}, ('photo_path'))
-                for img in photo_path_dict:
-                    face_dict = self.sql_repo.query('face', {"photo_path": [img['photo_path']], "recog_state": recog_state},
+                img_list = []
+                for item in photo_path_dict:
+                    img_list.append(item['photo_path'])
+                img_list = sorted(img_list)
+                for img in img_list:
+                    face_dict = self.sql_repo.query('face', {"photo_path": [img], "recog_state": recog_state},
                                                ('faces', 'verify_state'))
-                    photo_dict = self.sql_repo.query('photo', {"photo_path": [img['photo_path']]}, (
+                    photo_dict = self.sql_repo.query('photo', {"photo_path": [img]}, (
                         'photo_path', 'arch_code', 'photo_code', 'peoples', 'format', 'fonds_code',
                         'arch_category_code', 'year', 'group_code', 'photographer', 'taken_time',
                         'taken_locations', 'security_classification', 'reference_code'))

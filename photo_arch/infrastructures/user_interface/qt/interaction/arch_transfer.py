@@ -160,6 +160,8 @@ class ArchTransfer(object):
         self.ui.partition_list_widget.itemSelectionChanged.connect(static(self.display_cd_info))
         self.ui.packeage_btn.clicked.connect(static(self.package))
 
+        self.ui.packeage_btn.setStyleSheet(self.mw.button_style_sheet)
+
         catalog_tw = self.ui.cd_catalog_table_widget
         catalog_tw.verticalHeader().setVisible(True)
         catalog_tw.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
@@ -182,7 +184,8 @@ class ArchTransfer(object):
         item = QtWidgets.QListWidgetItem(selected_name1)
         self.ui.selected_arch_list_widget.addItem(item)
         self.selected_condition_list.append(selected_name1)
-        self.partition()
+        if self.partition() is False:
+            self.unselect_arch(item)
 
     def unselect_arch(self, item):
         row = self.ui.selected_arch_list_widget.row(item)
@@ -191,6 +194,22 @@ class ArchTransfer(object):
         if item_text in self.selected_condition_list:
             self.selected_condition_list.remove(item_text)
         self.partition()
+
+    def _check_photo_description(self, group_info) -> bool:
+        is_description = False
+        group_folder_name = group_info['group_path']
+        group_code = group_folder_name.split(' ')[0]
+        group_abspath = os.path.join(
+            self.setting.description_path,
+            '照片档案',
+            group_info['year'],
+            group_info['retention_period'],
+            group_folder_name)
+        for photo_path in os.listdir(group_abspath):
+            if group_code in photo_path:
+                is_description = True
+                break
+        return is_description
 
     def partition(self):
         self.cd_info_dict.clear()
@@ -204,6 +223,9 @@ class ArchTransfer(object):
         for sc_sgl in selected_group_list:
             selected_cond, sgl = sc_sgl
             for gi in sgl:
+                if self._check_photo_description(gi) is False:
+                    self.mw.warn_msg('移交列表中含有未进行张著录的组，请先完成张著录')
+                    return False
                 folder_size = float(gi['folder_size'])
                 # 组大小大于或等于光盘容量
                 if folder_size >= cd_size:
@@ -374,7 +396,8 @@ class ArchTransfer(object):
         self.ui.cd_num_in_transfer.setText(f'{row+1}号')
 
     def package(self):
-        for r in range(self.ui.partition_list_widget.count()):
+        partition_cnt = self.ui.partition_list_widget.count()
+        for r in range(partition_cnt):
             item = self.ui.partition_list_widget.item(r)
             item.setSelected(True)
             cd_name = item.text()
@@ -401,7 +424,10 @@ class ArchTransfer(object):
             self._gen_catalog_file(cd_path)
             self._gen_caption_file(cd_name, cd_path)
             self._gen_label_file(cd_name, cd_path)
-        self.mw.msg_box('打包成功', 'info')
+        if partition_cnt:
+            self.mw.info_msg('打包成功')
+        else:
+            self.mw.warn_msg('未分盘，请先分盘')
 
     def _gen_catalog_file(self, cd_path):
         xls_name = '目录.xls'

@@ -77,6 +77,7 @@ class SettingModel(Base):
     fonds_code = Column(String(64))
     description_path = Column(String(2048))
     package_path = Column(String(2048))
+    license_path = Column(String(2048))
 
 
 class SearchFacesModel(Base):
@@ -115,7 +116,7 @@ class RepoGeneral(RepoGeneralIf):
         return False
 
     @staticmethod
-    def _row2dict(query_obj, col_names):
+    def row2dict(query_obj, col_names):
         d = {}
         if query_obj:
             for column in query_obj.__table__.columns:
@@ -145,7 +146,7 @@ class RepoGeneral(RepoGeneralIf):
               ret_columns: Tuple = ()) -> List[dict]:
         model = table_model_dict.get(table)
         if model and all(cond.values()):
-            row2dict = partial(self._row2dict, col_names=ret_columns)
+            row2dict = partial(self.row2dict, col_names=ret_columns)
             query_obj = self._query(model, cond)
             results = list(map(row2dict, query_obj))
             return results

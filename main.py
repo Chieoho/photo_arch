@@ -43,8 +43,8 @@ def main():
     ax = int((mw.dt_width - mw.width()) / 2)
     ay = int((mw.dt_height - mw.height()) / 2) - 50
     mw.move(ax, ay)
-    init_modules(mw)
     mw.show()
+    init_modules(mw)
     sys.exit(app.exec_())
 
 

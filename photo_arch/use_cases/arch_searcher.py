@@ -20,8 +20,8 @@ class ArchSearcher(object):
         self.presenter.update_group_list(group_info_list)
         return True
 
-    def search_photos(self, title_key_list: list, people_key_list: list, year_key_list: list):
-        photo_info_list = self.repo.search_photos(title_key_list, people_key_list, year_key_list)
+    def search_photos(self, title_key_list: list, people_key_list: list, start: str, end: str):
+        photo_info_list = self.repo.search_photos(title_key_list, people_key_list, start, end)
         self.presenter.update_photo_list(photo_info_list)
         return True
 
@@ -42,6 +42,14 @@ class ArchSearcher(object):
             photo_info = PhotoOutputData().__dict__
         self.presenter.update_photo_model(photo_info)
         return True
+
+    def get_photo_path(self, photo_arch_code):
+        photo_list = self.repo.query_photo_by_arch_code(photo_arch_code)
+        if photo_list:
+            photo_info = photo_list[-1]
+            self.presenter.update_photo_path_model(photo_info)
+            return True
+        return False
 
     def get_face_info(self, photo_arch_code):
         face_info_list = self.repo.get_face_info(photo_arch_code)
