@@ -95,9 +95,9 @@ class View(object):
             pixmap.load(fp)
             icon.addPixmap(pixmap)
             if tree_item.checkState(0) == QtCore.Qt.CheckState.Checked:
-                text = f'√{photo_sn}'
+                text = f'☑{photo_sn}'
             else:
-                text = photo_sn
+                text = f'☐{photo_sn}'
             item = QtWidgets.QListWidgetItem(icon, text)
             self.ui.photo_list_widget_search.addItem(item)
 
@@ -369,10 +369,10 @@ class ArchSearcher(object):
         self.ui.photo_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
         self.ui.photo_tree_widget_search.itemChanged.disconnect()
         if corresponding_child.checkState(0) == QtCore.Qt.CheckState.Checked:
-            item.setText(item.text()[-4:])
+            item.setText(item.text().replace('☑', '☐'))
             corresponding_child.setCheckState(0, QtCore.Qt.CheckState.Unchecked)
         else:
-            item.setText(f'√{item.text()}')
+            item.setText(item.text().replace('☐', '☑'))
             corresponding_child.setCheckState(0, QtCore.Qt.CheckState.Checked)
         self.ui.photo_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
 
@@ -386,9 +386,9 @@ class ArchSearcher(object):
                 if item:
                     check_state = tree_item.checkState(0)
                     if check_state == QtCore.Qt.CheckState.Checked:
-                        item.setText(f'√{item.text()}')
+                        item.setText(item.text().replace('☐', '☑'))
                     else:
-                        item.setText(item.text()[-4:])
+                        item.setText(item.text().replace('☑', '☐'))
 
     def tick_tree_item(self, tree_item: QtWidgets.QTreeWidgetItem):
         _ = self

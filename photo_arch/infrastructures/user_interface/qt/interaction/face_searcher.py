@@ -131,6 +131,7 @@ class SearchFaces(object):
         path_dict = {}
         for fp in retrieve_results_photo_path:
             self._attach(path_dict, fp)
+        self.ui.tree_widget_search_face.clear()
         self. _path_dict_to_tree(self.ui.tree_widget_search_face,  path_dict)
         self.ui.tree_widget_search_face.expandAll()
 
@@ -169,8 +170,6 @@ class SearchFaces(object):
             self.mw.interaction.get_retrieve_result(self.file_path, self.dir_path)
         if len(self.retrieve_results_photo_path) > 0 and len(self.retrieve_results_face_box) > 0:
             self.display_result(self.retrieve_results_photo_path)
-        else:
-            self.mw.msg_box('未检索到结果,请确认指定的路径是否进行过人脸检索,或者重新开始检索!')
 
     def resize_target_image(self, event: QtGui.QResizeEvent):
         if not self.target_pixmap:
