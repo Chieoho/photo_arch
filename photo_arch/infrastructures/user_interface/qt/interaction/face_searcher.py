@@ -300,7 +300,8 @@ class SearchFaces(object):
             lw = self.ui.list_widget_search_face
             row, width, x0 = 0, 0, 0
             for row in range(lw.count()):
-                width = lw.rectForIndex(lw.indexFromItem(lw.item(row))).width()
+                # width = lw.rectForIndex(lw.indexFromItem(lw.item(row))).width()
+                width = lw.visualItemRect(lw.item(row)).width()
                 if x0 + width > x:
                     break
                 x0 += width
