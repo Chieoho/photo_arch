@@ -1834,7 +1834,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon16 = QIcon()
-        icon16.addFile(u"E:/anyun/svn/faceRecognition/trunk/photo_arch/infrastructures/user_interface/qt/ui/icon/search.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon16.addFile(u"icon/search.png", QSize(), QIcon.Normal, QIcon.Off)
         self.retrieve_btn.setIcon(icon16)
         self.retrieve_btn.setIconSize(QSize(24, 24))
 
@@ -1867,7 +1867,7 @@ class Ui_MainWindow(object):
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
         icon17 = QIcon()
-        icon17.addFile(u"E:/anyun/svn/faceRecognition/trunk/photo_arch/infrastructures/user_interface/qt/ui/icon/export.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon17.addFile(u"icon/export.png", QSize(), QIcon.Normal, QIcon.Off)
         self.export_btn_search_face.setIcon(icon17)
         self.export_btn_search_face.setIconSize(QSize(24, 24))
 
@@ -2091,9 +2091,7 @@ class Ui_MainWindow(object):
 "padding-right: 30px;\n"
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
-        icon19 = QIcon()
-        icon19.addFile(u"icon/search.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.search_btn.setIcon(icon19)
+        self.search_btn.setIcon(icon16)
         self.search_btn.setIconSize(QSize(24, 24))
         self.search_btn.setAutoDefault(True)
 
@@ -2137,9 +2135,7 @@ class Ui_MainWindow(object):
 "padding-right: 30px;\n"
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
-        icon20 = QIcon()
-        icon20.addFile(u"icon/export.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.export_btn_search.setIcon(icon20)
+        self.export_btn_search.setIcon(icon17)
         self.export_btn_search.setIconSize(QSize(24, 24))
         self.export_btn_search.setAutoDefault(True)
 
@@ -2552,9 +2548,9 @@ class Ui_MainWindow(object):
 
         self.gridLayout_30.addWidget(self.splitter_9, 0, 0, 1, 1)
 
-        icon21 = QIcon()
-        icon21.addFile(u"icon/search_arch.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.tabWidget.addTab(self.search_archives_tab, icon21, "")
+        icon19 = QIcon()
+        icon19.addFile(u"icon/search_arch.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.tabWidget.addTab(self.search_archives_tab, icon19, "")
         self.arch_transfer_tab = QWidget()
         self.arch_transfer_tab.setObjectName(u"arch_transfer_tab")
         self.arch_transfer_tab.setFont(font)
@@ -2721,9 +2717,9 @@ class Ui_MainWindow(object):
 "padding-right: 30px;\n"
 "padding-top: 8px; \n"
 "padding-bottom: 8px;")
-        icon22 = QIcon()
-        icon22.addFile(u"icon/package.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.packeage_btn.setIcon(icon22)
+        icon20 = QIcon()
+        icon20.addFile(u"icon/package.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.packeage_btn.setIcon(icon20)
         self.packeage_btn.setIconSize(QSize(24, 24))
 
         self.gridLayout_27.addWidget(self.packeage_btn, 0, 1, 1, 1)
@@ -2957,9 +2953,9 @@ class Ui_MainWindow(object):
 
         self.gridLayout_23.addWidget(self.splitter_5, 0, 0, 1, 1)
 
-        icon23 = QIcon()
-        icon23.addFile(u"icon/arch_transfer.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.tabWidget.addTab(self.arch_transfer_tab, icon23, "")
+        icon21 = QIcon()
+        icon21.addFile(u"icon/arch_transfer.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.tabWidget.addTab(self.arch_transfer_tab, icon21, "")
         self.setting_tab = QWidget()
         self.setting_tab.setObjectName(u"setting_tab")
         self.setting_tab.setFont(font)
@@ -3195,9 +3191,9 @@ class Ui_MainWindow(object):
         self.import_license_btn.setFont(font)
         self.import_license_btn.setStyleSheet(u"padding: 8px 15px; \n"
 "")
-        icon24 = QIcon()
-        icon24.addFile(u"icon/import.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.import_license_btn.setIcon(icon24)
+        icon22 = QIcon()
+        icon22.addFile(u"icon/import.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.import_license_btn.setIcon(icon22)
         self.import_license_btn.setIconSize(QSize(24, 24))
 
         self.gridLayout_29.addWidget(self.import_license_btn, 0, 2, 1, 1)
@@ -3237,9 +3233,9 @@ class Ui_MainWindow(object):
 
         self.gridLayout_32.addItem(self.verticalSpacer_11, 6, 2, 1, 1)
 
-        icon25 = QIcon()
-        icon25.addFile(u"icon/setting.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.tabWidget.addTab(self.setting_tab, icon25, "")
+        icon23 = QIcon()
+        icon23.addFile(u"icon/setting.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.tabWidget.addTab(self.setting_tab, icon23, "")
 
         self.gridLayout_24.addWidget(self.tabWidget, 0, 0, 1, 1)
 

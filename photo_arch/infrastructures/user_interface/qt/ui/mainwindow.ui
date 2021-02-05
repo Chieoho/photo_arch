@@ -4390,7 +4390,7 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>E:/anyun/svn/faceRecognition/trunk/photo_arch/infrastructures/user_interface/qt/ui/icon/search.png</normaloff>E:/anyun/svn/faceRecognition/trunk/photo_arch/infrastructures/user_interface/qt/ui/icon/search.png</iconset>
+                   <normaloff>icon/search.png</normaloff>icon/search.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -4463,7 +4463,7 @@ padding-bottom: 8px;</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>E:/anyun/svn/faceRecognition/trunk/photo_arch/infrastructures/user_interface/qt/ui/icon/export.png</normaloff>E:/anyun/svn/faceRecognition/trunk/photo_arch/infrastructures/user_interface/qt/ui/icon/export.png</iconset>
+                   <normaloff>icon/export.png</normaloff>icon/export.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
