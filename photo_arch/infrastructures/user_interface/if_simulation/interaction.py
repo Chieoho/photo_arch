@@ -140,24 +140,28 @@ class Interaction(UiInterface):
         retrieve_results_face_box = []
 
         retrieve_results_photo_path.append(
-            os.path.abspath(r'G:\Git\photo_arch\待检索目录\单人照\12.jpg'))
-        retrieve_results_face_box.append([419.0, 169.0, 686.0, 528.0])
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录2\单人照\12.jpg'))
+        retrieve_results_face_box.append([142.0, 29.0, 302.0, 216.0])
 
         retrieve_results_photo_path.append(
-            os.path.abspath(r'G:\Git\photo_arch\待检索目录\合照\两人照\13.png'))
-        retrieve_results_face_box.append([410.0, 93.0, 478.0, 182.0])
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录2\合照\两人照\13.png'))
+        retrieve_results_face_box.append([375.0, 10.0, 495.0, 163.0])
 
         retrieve_results_photo_path.append(
-            os.path.abspath(r'G:\Git\photo_arch\待检索目录\合照\两人照\14.jpg'))
-        retrieve_results_face_box.append([410.0, 93.0, 478.0, 182.0])
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录2\合照\两人照\14.jpg'))
+        retrieve_results_face_box.append([248.0, 10.0, 455.0, 293.0])
 
         retrieve_results_photo_path.append(
-            os.path.abspath(r'G:\Git\photo_arch\待检索目录\合照\两人照\15.jpg'))
-        retrieve_results_face_box.append([410.0, 93.0, 478.0, 182.0])
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录2\合照\两人照\15.jpg'))
+        retrieve_results_face_box.append([284.0, 8.0, 422.0, 168.0])
 
         retrieve_results_photo_path.append(
-            os.path.abspath(r'G:\Git\photo_arch\待检索目录\合照\三人照\10.jpg'))
-        retrieve_results_face_box.append([410.0, 93.0, 478.0, 182.0])
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录2\合照\三人照\10.jpg'))
+        retrieve_results_face_box.append([428.0, 180.0, 695.0, 553.0])
+
+        retrieve_results_photo_path.append(
+            os.path.abspath(r'G:\Git\photo_arch\待检索目录2\16.jpg'))
+        retrieve_results_face_box.append([229.0, 19.0, 314.0, 77.0])
 
         return retrieve_results_photo_path, retrieve_results_face_box
 

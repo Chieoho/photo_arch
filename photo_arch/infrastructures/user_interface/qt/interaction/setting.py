@@ -27,6 +27,7 @@ class SettingData:
     description_path: str = ''
     package_path: str = ''
     license_path: str = ''
+    photo_path: str = ''
 
 
 class View(object):
@@ -39,6 +40,7 @@ class View(object):
         self.ui.description_path_in_setting.setText(setting_data.description_path)
         self.ui.package_path_in_setting.setText(setting_data.package_path)
         self.ui.license_path_in_setting.setText(setting_data.license_path)
+        self.ui.photo_path_in_setting.setText(setting_data.photo_path)
 
     
 @dataclass
@@ -63,6 +65,7 @@ class Setting(object):
         self.fonds_code = ''
         self.description_path = ''
         self.package_path = ''
+        self.photo_path = ''
         self.license_path = ''
         self.lic_ctrl_info = LicenseCtrlInfo()
 
@@ -71,9 +74,11 @@ class Setting(object):
         self.ui.description_path_in_setting.textChanged.connect(static(self.save_setting))
         self.ui.package_path_in_setting.textChanged.connect(static(self.save_setting))
         self.ui.license_path_in_setting.textChanged.connect(static(self.save_setting))
+        self.ui.photo_path_in_setting.textChanged.connect(static(self.save_setting))
 
         self.ui.select_description_dir_btn.clicked.connect(static(self.select_description_dir))
         self.ui.select_package_dir_btn.clicked.connect(static(self.select_package_dir))
+        self.ui.select_photo_dir_btn.clicked.connect(static(self.select_photo_dir))
         self.ui.import_license_btn.clicked.connect(static(self.select_license))
 
         self.ui.select_description_dir_btn.setStyleSheet(self.mw.button_style_sheet)
@@ -119,6 +124,15 @@ class Setting(object):
             return
         self.package_path = os.path.abspath(package_dir)
         self.ui.package_path_in_setting.setText(self.package_path)
+
+    def select_photo_dir(self):
+        photo_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            self.ui.setting_tab, "选择文件夹",
+            options=QtWidgets.QFileDialog.ShowDirsOnly)
+        if not photo_dir:
+            return
+        self.photo_path = os.path.abspath(photo_dir)
+        self.ui.photo_path_in_setting.setText(self.photo_path)
 
     def save_setting(self):
         setting_info = SettingData().__dict__

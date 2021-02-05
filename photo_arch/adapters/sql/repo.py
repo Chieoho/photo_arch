@@ -78,6 +78,7 @@ class SettingModel(Base):
     description_path = Column(String(2048))
     package_path = Column(String(2048))
     license_path = Column(String(2048))
+    photo_path = Column(String(2048))
 
 
 class SearchFacesModel(Base):

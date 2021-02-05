@@ -150,7 +150,8 @@ class ArchSearcher(object):
         self.ui.photo_list_widget_search.itemSelectionChanged.connect(static(self.display_photo))
         extend_slot(self.ui.photo_view_search.resizeEvent, static(self.resize_image))
         self.ui.export_btn_search.clicked.connect(static(self.expert))
-        self.ui.photo_list_widget_search.doubleClicked.connect(static(self.check_thumb))
+        self.ui.photo_list_widget_search.doubleClicked.connect(static(self.deal_dc_list_item))
+        self.ui.photo_list_widget_search.mousePressEvent = static(self.deal_press_list_widget)
 
     def _attach(self, trunk, branch):
         parts = branch[0], branch[1:]
@@ -359,13 +360,12 @@ class ArchSearcher(object):
         else:
             self.mw.warn_msg('未选择导出文件夹')
 
-    def check_thumb(self, index: QtCore.QModelIndex):
-        photo_arch_code = self.ui.arch_code_in_photo_search.text()
+    def _check_thumb(self, row):
+        item: QtWidgets.QListWidgetItem = self.ui.photo_list_widget_search.item(row)
+        photo_arch_code = f'{self.ui.arch_code_in_group_search.text()}-{item.text()[1:5]}'
         root = self.ui.photo_tree_widget_search.invisibleRootItem()
         name = photo_arch_code.replace('-ZP·', '-')
         corresponding_child: QtWidgets.QTreeWidgetItem = self.view.get_corresponding_child(root, name)
-        item: QtWidgets.QListWidgetItem = self.ui.photo_list_widget_search.item(index.row())
-
         self.ui.photo_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
         self.ui.photo_tree_widget_search.itemChanged.disconnect()
         if corresponding_child.checkState(0) == QtCore.Qt.CheckState.Checked:
@@ -375,6 +375,10 @@ class ArchSearcher(object):
             item.setText(item.text().replace('☐', '☑'))
             corresponding_child.setCheckState(0, QtCore.Qt.CheckState.Checked)
         self.ui.photo_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
+
+    def deal_dc_list_item(self, index: QtCore.QModelIndex):
+        row = index.row()
+        self._check_thumb(row)
 
     def deal_tree_item_changed(self, tree_item: QtWidgets.QTreeWidgetItem):
         if tree_item.child(0) is None:
@@ -396,3 +400,13 @@ class ArchSearcher(object):
             tree_item.setCheckState(0, QtCore.Qt.CheckState.Unchecked)
         else:
             tree_item.setCheckState(0, QtCore.Qt.CheckState.Checked)
+
+    def deal_press_list_widget(self, e: QtGui.QMouseEvent):
+        x, y = e.x(), e.y()
+        font_metrics = self.ui.photo_list_widget_search.fontMetrics()
+        ballot_box_width = font_metrics.width('☐')
+        if (27 <= x % 106 <= 27 + ballot_box_width) and (106 <= y <= 106 + ballot_box_width):
+            row = x // 106
+            self._check_thumb(row)
+        else:
+            QtWidgets.QListWidget.mousePressEvent(self.ui.photo_list_widget_search, e)
