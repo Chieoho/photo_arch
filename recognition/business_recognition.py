@@ -642,6 +642,176 @@ class SearchImagesProcess(Process):
             self.counter_queue.put(imgPath)
 
 
+class BackedSilenceProc(Process):
+    graph = None
+    mtcnn_detector = None
+    facenet_model = None
+    margin = 32
+    canvasH = 0
+    canvasW = 0
+
+    search_src_img_path = ''
+    src_embedding = None
+
+    timer = None
+
+    def __init__(self, silence_queue):
+        super(BackedSilenceProc, self).__init__()
+        self.event = Event()
+        self.event.set()  # 设置为True
+        # 在添加新照片之前保存的后台静默已检索的照片
+        self.last_file_list = []
+        self.backedSilenceDir = ''
+
+        self.silence_queue = silence_queue
+
+
+    def pause(self):
+        if self.is_alive():
+            print("后台静默子进程休眠")
+            self.event.clear()  # 设置为False, 让进程阻塞
+        else:
+            print("后台静默子进程结束")
+
+    def resume(self):
+        if self.is_alive():
+            self.event.set()  # 设置为True, 进程唤醒
+            print("后台静默子进程唤醒")
+        else:
+            print("后台静默子进程结束")
+
+    def fun_timer(self):
+        flag = False # 是否唤醒该进程的标志
+        if self.silence_queue.empty() == True:
+            flag = True
+
+        # print('检查目标目录是否有添加新照片!')
+        if self.backedSilenceDir != '':
+            fileData = glob.glob(os.path.abspath(os.path.join(self.backedSilenceDir, '**', '*.*[jpg,png]')), recursive=True)
+            if len(fileData) > 0:
+                des_files_list = list(set(fileData).difference(set(self.last_file_list)))
+                self.last_file_list.extend(des_files_list)
+                #print('#####  :', des_files_list)
+                if len(des_files_list) > 0:
+                    for file in des_files_list:
+                        self.silence_queue.put(file)
+                    if flag:
+                        self.resume()
+        else:
+            engine.dispose()
+            sql_repo = RepoGeneral(make_session(engine))
+            backedSilencePath_list = sql_repo.query('setting', {"setting_id": [1]}, ('photo_path'))
+            print('###### fun_timer backedSilencePath:', backedSilencePath_list[0]['photo_path'])
+            self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
+
+        # 每隔30s检查一次
+        global timer
+        timer = threading.Timer(30, self.fun_timer)
+        timer.start()
+
+
+    def run(self):
+        engine.dispose()
+        sql_repo = RepoGeneral(make_session(engine))
+        backedSilencePath_list = sql_repo.query('setting', {"setting_id": [1]}, ('photo_path',))
+        print('###### backedSilencePath:', backedSilencePath_list[0]['photo_path'])
+        self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
+
+        # 从数据库读取已存在的路径,赋给self.last_file_list
+        photo_path_list = sql_repo.query('searchfaces', {}, ('photo_path',))
+        if len(photo_path_list) > 0:
+            for item in photo_path_list:
+                self.last_file_list.append(item['photo_path'])
+
+        if self.graph == None:
+            self.graph = tf.get_default_graph()
+            print('######:检索 graph')
+
+        with self.graph.as_default():
+            if self.mtcnn_detector == None:
+                self.mtcnn_detector = MTCNN()
+                print('######:检索 mtcnn_detector')
+            if self.facenet_model == None:
+                self.facenet_model = load_model('model/facenet_keras.h5')
+                print('######:检索 load model')
+
+        timer = threading.Timer(5, self.fun_timer)
+        timer.start()
+        while 1:
+            if self.silence_queue.empty() == True:
+                print('#### 后台静默:队列空,子进程暂停')
+                self.pause()
+            self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
+
+            imgPath = self.silence_queue.get()
+            print('@@@@@: imgPath=%s' % imgPath)
+
+            det = []
+            rectangles = []
+
+            scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
+            img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+            (h, w) = img.shape[:2]
+            test_img = cv2.resize(img, (int(w * scale), int(h * scale)))
+            (h, w) = test_img.shape[:2]
+            with self.graph.as_default():
+                detect_faces = self.mtcnn_detector.detect_faces(test_img)
+
+            for face in detect_faces:
+                confidence = face['confidence']
+                if confidence > 0.9:
+                    box = face['box']
+                    (startX, startY, endX, endY) = box[0], box[1], box[0] + box[2], box[1] + box[3]
+                    tmp_box = [startX, startY, endX, endY]
+
+                    # 将超出图像边框的检测框过滤掉
+                    if endX > w or endY > h:
+                        print('检测框超出了图像边框的.')
+                        continue
+
+                    # print('MTCNN置信度:%f.' % confidence)
+                    det.append(tmp_box)
+                    # cf.append(confidence)
+                    rectangle = tmp_box + [face['confidence']] + list(face['keypoints']['left_eye']) + list(
+                        face['keypoints']['right_eye']) + list(face['keypoints']['nose']) + list(
+                        face['keypoints']['mouth_left']) + list(face['keypoints']['mouth_right'])
+                    # crop_img = test_img[int(rectangle[1]):int(rectangle[3]), int(rectangle[0]):int(rectangle[2])]
+                    rectangles.append(rectangle)
+
+            rectangles_array = np.array(rectangles)
+            rectangles_array[:, 0] = np.maximum(rectangles_array[:, 0] - self.margin / 2, 0)  # x1
+            rectangles_array[:, 1] = np.maximum(rectangles_array[:, 1] - self.margin / 2, 0)  # y1
+            rectangles_array[:, 2] = np.minimum(rectangles_array[:, 2] + self.margin / 2, w)  # x2
+            rectangles_array[:, 3] = np.minimum(rectangles_array[:, 3] + self.margin / 2, h)  # y2
+            rectanglesExd = rectangles_array.tolist()
+            squareRect = rect2square(np.array(rectanglesExd))  # 将长方形调整为正方形
+            face_nums = len(det)
+            src_dir = os.path.abspath(os.path.join(imgPath, ".."))
+            if face_nums > 0:
+                backedSearchfacesDatas = []
+                backedSearchface = {}
+                box_list = []
+                embedding_list = []
+                for j, box in enumerate(np.asarray(det)):
+                    (startX, startY, endX, endY) = box.astype("int")
+                    bb = np.zeros(4, dtype=np.int32)
+                    bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
+                    bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
+                    bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
+                    bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
+                    scaled, face_landmarks = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
+                    with self.graph.as_default():
+                        embedding = get_embedding(self.facenet_model, scaled)
+
+                    box_list.append([startX / scale, startY / scale, endX / scale, endY / scale])
+                    embedding_list.append(list(embedding))
+
+                backedSearchface['photo_path'] = imgPath
+                backedSearchface['face_box'] = str(box_list)
+                backedSearchface['embedding'] = str(embedding_list)
+                backedSearchface['parent_path'] = src_dir
+                backedSearchfacesDatas.append(backedSearchface)
+                sql_repo.add('searchfaces', backedSearchfacesDatas)
 
 
 
@@ -661,6 +831,7 @@ class Recognition(object):
         self.done_queue = Manager().Queue() # 返回识别结果信息
         self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
         self.counter_queue = Manager().Queue()  # 返回已检索图片个数的队列
+        self.silence_queue = Queue()  # 后台静默队列
         self.jobs_proc = []   # 将进程对象放进list
         self.pendingTotalImgsNum = 0 #待处理的图片总数量
 
@@ -702,6 +873,10 @@ class Recognition(object):
         self.searchImagesProc.daemon = True
         self.searchImagesProc.start()
 
+        # 开启后台静默以图搜图子进程
+        self.backedSilenceProc = BackedSilenceProc(self.silence_queue)
+        self.backedSilenceProc.daemon = True
+        self.backedSilenceProc.start()
 
     def initRecognitionInfo(self):
         self.noRecFaceImg = 0
@@ -1068,6 +1243,11 @@ class Recognition(object):
 
         self.retrived_pic_num = 0
         self.pendingRetrieveTotalImgsNum = 0
+
+        # 队列不为空, 表示后台正在进行以图搜图任务的特征提取
+        if self.silence_queue.empty() != True:
+            ret = -2
+            return ret
 
         print('########: 开始进行人脸检索.')
 

@@ -147,6 +147,7 @@ class ArchSearcher(object):
         self.ui.search_btn.clicked.connect(static(self.search))
         self.ui.photo_tree_widget_search.itemSelectionChanged.connect(static(self.deal_tree_item_selected_changed))
         self.ui.photo_tree_widget_search.itemDoubleClicked.connect(static(self.tick_tree_item))
+        self.ui.photo_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
         self.ui.photo_list_widget_search.itemSelectionChanged.connect(static(self.display_photo))
         extend_slot(self.ui.photo_view_search.resizeEvent, static(self.resize_image))
         self.ui.export_btn_search.clicked.connect(static(self.expert))
@@ -173,7 +174,7 @@ class ArchSearcher(object):
         self.view.display_photo_tree(photo_dict)
 
     def search(self):
-        title_keys, people_keys, start_date, end_date = map(lambda s: s.strip(), self.view.get_search_keys())
+        title_keys, people_keys, start_date, end_date = map(str.strip, self.view.get_search_keys())
         title_key_list = re.split(r'\s+', title_keys)
         people_key_list = re.split(r'\s+', people_keys)
         res, photo_info_list = self.controller.search_photos(
@@ -188,7 +189,6 @@ class ArchSearcher(object):
             if pe:
                 pa_parts[-1] += f' {pe}'
             photo_arch_codes.append(pa_parts)
-        self.ui.photo_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
         self.ui.photo_tree_widget_search.itemChanged.disconnect()
         self._display_photo_tree(photo_arch_codes)
         self.ui.photo_tree_widget_search.itemChanged.connect(static(self.deal_tree_item_changed))
