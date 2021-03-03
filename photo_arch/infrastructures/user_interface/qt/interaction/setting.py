@@ -81,9 +81,6 @@ class Setting(object):
         self.ui.select_photo_dir_btn.clicked.connect(static(self.select_photo_dir))
         self.ui.import_license_btn.clicked.connect(static(self.select_license))
 
-        self.ui.select_description_dir_btn.setStyleSheet(self.mw.button_style_sheet)
-        self.ui.select_package_dir_btn.setStyleSheet(self.mw.button_style_sheet)
-
         self._display_setting()
 
         self.timer = QtCore.QTimer()

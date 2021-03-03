@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import shutil
+from collections import defaultdict
 
 import cv2
 import glob
@@ -414,13 +415,14 @@ class SearchImagesProcess(Process):
     src_embedding = None
 
 
-    def __init__(self, search_queue, retrived_queue, counter_queue):
+    def __init__(self, search_queue, retrived_queue, counter_queue, search_faceList_queue):
         super(SearchImagesProcess, self).__init__()
         self.event = Event()
         self.event.set()  # 设置为True
         self.search_queue = search_queue
         self.retrived_queue = retrived_queue
         self.counter_queue = counter_queue
+        self.search_faceList_queue = search_faceList_queue
 
 
     def pause(self):
@@ -442,6 +444,8 @@ class SearchImagesProcess(Process):
         retrive_des_box = []
         retrive_des_embedding = []
         retriveResultInfo = []
+        tmp_photo_path = []
+        tmp_box = []
         if flag == 'searchfaces':
             des_embedding_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(parentPath)]}, ('photo_path', 'face_box', 'embedding'))
             for ele_dict in des_embedding_list:
@@ -459,13 +463,33 @@ class SearchImagesProcess(Process):
                 for i, emd in enumerate(eval(ele_dict['embeddings'])):
                     retrive_des_embedding.append(eval(emd[str(i)]))
 
-        dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(retrive_src_embedding), axis=1)
-        dist = list(dist)
-        sortDist = sorted(dist)
-        des_dist = [x for x in sortDist if x <= 0.8]
-        for x in des_dist:
-            index = dist.index(x)
-            retriveResultInfo.append({'photo_path': photo_path[index], 'face_box': retrive_des_box[index]})
+        for emb in retrive_src_embedding:
+            dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(emb), axis=1)
+            dist = list(dist)
+            sortDist = sorted(dist)
+            des_dist = [x for x in sortDist if x <= 0.9]
+            for x in des_dist:
+                index = dist.index(x)
+                tmp_photo_path.append(photo_path[index])
+                tmp_box.append(retrive_des_box[index])
+
+        # 将重复图片的box放在同一个list中
+        d = defaultdict(list)
+        for k, va in [(v, i) for i, v in enumerate(tmp_photo_path)]:
+            d[k].append(va)
+        for k, v in d.items():
+            face_box = []
+            for index in v:
+                face_box.append(tmp_box[index])
+            retriveResultInfo.append({'photo_path': k, 'face_box': face_box})
+
+        # dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(retrive_src_embedding), axis=1)
+        # dist = list(dist)
+        # sortDist = sorted(dist)
+        # des_dist = [x for x in sortDist if x <= 0.8]
+        # for x in des_dist:
+        #     index = dist.index(x)
+        #     retriveResultInfo.append({'photo_path': photo_path[index], 'face_box': retrive_des_box[index]})
 
         return retriveResultInfo
 
@@ -489,11 +513,14 @@ class SearchImagesProcess(Process):
 
         i = 0
         flag = False
+        src_embedding = []
+        searchfacesDatas = []
         while 1:
             if self.search_queue.empty() == True:
                 print('#### 检索:队列空,子进程暂停')
                 i = 0
                 flag = False
+                src_embedding.clear()
                 self.pause()
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
@@ -501,11 +528,15 @@ class SearchImagesProcess(Process):
             print('#####: imgPath=%s' % imgPath)
             if i == 0 :
                 srcPath = imgPath
+                face_list = eval(self.search_faceList_queue.get())
                 src_embedding_list = sql_repo.query('face', {"photo_path": [os.path.abspath(srcPath)]}, ('embeddings'))
                 if len(src_embedding_list) == 0:
                     src_embedding_list = sql_repo.query('searchfaces', {"photo_path": [os.path.abspath(srcPath)]}, ('embedding'))
                     if len(src_embedding_list) == 1: # 已存在searchfaces数据库
                         retrive_src_embedding = eval(src_embedding_list[0]['embedding'])
+                        for index in face_list:
+                            src_embedding.append(retrive_src_embedding[index])
+
                         flag = True
                         i += 1
                         self.counter_queue.put(imgPath)
@@ -515,6 +546,9 @@ class SearchImagesProcess(Process):
                 else: # 已存在face数据库
                     retrive_src_embedding = eval(src_embedding_list[0]['embeddings'])
                     retrive_src_embedding = eval(retrive_src_embedding[0]['0'])
+                    for index in face_list:
+                        src_embedding.append(eval(retrive_src_embedding[index][str(index)]))
+
                     flag = True
                     i += 1
                     self.counter_queue.put(imgPath)
@@ -526,7 +560,7 @@ class SearchImagesProcess(Process):
                     if len(parent_path_list) == 0:
                         parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(parentPath)]}, ('parent_path'))
                         if len(parent_path_list) > 0:
-                            retriveResultInfoList = self.calculate_euclid_distance(sql_repo, parentPath, retrive_src_embedding, 'searchfaces')
+                            retriveResultInfoList = self.calculate_euclid_distance(sql_repo, parentPath, src_embedding, 'searchfaces')
                             for ele_dict in retriveResultInfoList:
                                 self.retrived_queue.put(json.dumps(ele_dict, ensure_ascii=False))
 
@@ -594,7 +628,6 @@ class SearchImagesProcess(Process):
             face_nums = len(det)
             src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
-                searchfacesDatas = []
                 searchface = {}
                 box_list = []
                 embedding_list = []
@@ -624,22 +657,49 @@ class SearchImagesProcess(Process):
                 searchface['parent_path'] = src_dir
                 searchfacesDatas.append(searchface)
 
-                sql_repo.add('searchfaces', searchfacesDatas)
-
                 if imgPath == srcPath and flag == False:
-                    retrive_src_embedding = embedding_list[0]
+                    for index in face_list:
+                        src_embedding.append(embedding_list[index])
                 else:
-                    dist = np.linalg.norm(np.asarray(embedding_list) - np.asarray(retrive_src_embedding), axis=1)
-                    dist = list(dist)
-                    sortDist = sorted(dist)
-                    des_dist = [x for x in sortDist if x <= 0.8]
-                    for x in des_dist:
-                        index = dist.index(x)
-                        retriveResultInfo = {'photo_path': imgPath, 'face_box': box_list[index]}
+                    tmp_photo_path = []
+                    tmp_box = []
+                    for emb in src_embedding:
+                        dist = np.linalg.norm(np.asarray(embedding_list) - np.asarray(emb), axis=1)
+                        dist = list(dist)
+                        sortDist = sorted(dist)
+                        des_dist = [x for x in sortDist if x <= 0.9]
+                        for x in des_dist:
+                            index = dist.index(x)
+                            tmp_photo_path.append(imgPath)
+                            tmp_box.append(box_list[index])
+
+                    # 将重复图片的box放在同一个list中
+                    d = defaultdict(list)
+                    for k, va in [(v, i) for i, v in enumerate(tmp_photo_path)]:
+                        d[k].append(va)
+                    for k, v in d.items():
+                        face_box = []
+                        for index in v:
+                            face_box.append(tmp_box[index])
+                        retriveResultInfo = {'photo_path': k, 'face_box': face_box}
                         self.retrived_queue.put(json.dumps(retriveResultInfo, ensure_ascii=False))
+
+                    # dist = np.linalg.norm(np.asarray(embedding_list) - np.asarray(retrive_src_embedding), axis=1)
+                    # dist = list(dist)
+                    # sortDist = sorted(dist)
+                    # des_dist = [x for x in sortDist if x <= 0.8]
+                    # for x in des_dist:
+                    #     index = dist.index(x)
+                    #     retriveResultInfo = {'photo_path': imgPath, 'face_box': box_list[index]}
+                    #     self.retrived_queue.put(json.dumps(retriveResultInfo, ensure_ascii=False))
 
 
             self.counter_queue.put(imgPath)
+            # 未在数据库中的检索目录，等待处理完了再写入数据库
+            if  self.search_queue.empty() == True:
+                sql_repo.add('searchfaces', searchfacesDatas)
+                searchfacesDatas.clear()
+
 
 
 class BackedSilenceProc(Process):
@@ -828,6 +888,7 @@ class Recognition(object):
         self.from_queue = Queue()  # 在进行人脸识别的时候，判断是否通过'识别'按钮进行识别操作的
         self.verify_queue = Queue()  # 用来填充核验信息
         self.search_queue = Queue()  # 用来填充以图搜图的图片路径
+        self.search_faceList_queue = Queue()  # 用来填充指定的搜索目标的序号
         self.done_queue = Manager().Queue() # 返回识别结果信息
         self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
         self.counter_queue = Manager().Queue()  # 返回已检索图片个数的队列
@@ -853,6 +914,10 @@ class Recognition(object):
 
         self.sql_repo = RepoGeneral(session)
 
+        self.graph = tf.get_default_graph()
+        # mtcnn方法检测人脸
+        self.mtcnn_detector = MTCNN()
+
         # 实例化识别子进程
         for i in range(os.cpu_count()):
             proc = RecognizeProcess(self.done_queue, self.data_queue, self.param_queue, self.from_queue)
@@ -869,7 +934,7 @@ class Recognition(object):
 
 
         # 开启以图搜图子进程
-        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue, self.counter_queue)
+        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue, self.counter_queue, self.search_faceList_queue)
         self.searchImagesProc.daemon = True
         self.searchImagesProc.start()
 
@@ -1238,7 +1303,7 @@ class Recognition(object):
         return length
 
 
-    def start_retrieve(self, file_path, dir_path):
+    def start_retrieve(self, file_path, dir_path, face_list):
         ret = 0
 
         self.retrived_pic_num = 0
@@ -1252,15 +1317,13 @@ class Recognition(object):
         print('########: 开始进行人脸检索.')
 
         # 判断该dir_path路径是否有照片
-        img_list = glob.glob(os.path.abspath(os.path.join(dir_path, '*.*[jpg,png]')))
+        img_list = glob.glob(os.path.abspath(os.path.join(dir_path, '**', '*.*[jpg,png]')), recursive=True)
         pic_num = len(img_list)
         if pic_num == 0:
             ret = -1
             return ret
 
         if self.search_queue.empty() == True:
-            self.searchImagesProc.resume()
-
             # 不管数据库没有该路径，都把待检索的人物的路径第一个放入队列
             self.search_queue.put(os.path.abspath(file_path))
             self.pendingRetrieveTotalImgsNum += 1
@@ -1268,7 +1331,11 @@ class Recognition(object):
             for imgPath in img_list:
                 self.search_queue.put(imgPath)
 
+            self.search_faceList_queue.put(json.dumps(face_list, ensure_ascii=False))
+
             self.pendingRetrieveTotalImgsNum += len(img_list)
+            # 唤醒子进程
+            self.searchImagesProc.resume()
         return ret
 
 
@@ -1301,7 +1368,50 @@ class Recognition(object):
 
         return retrivedResultInfo
 
+    def get_faces_coordinates(self, imgPath) -> list:
+        det = []
+        faces = []
+        canvasW = 2000
+        canvasH = 2000
 
+        if imgPath == '':
+            return faces
+
+        scale = calculate_img_scaling(imgPath, canvasH, canvasW)
+        img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+        (h, w) = img.shape[:2]
+        test_img = cv2.resize(img, (int(w * scale), int(h * scale)))
+        (h, w) = test_img.shape[:2]
+        with self.graph.as_default():
+            detect_faces = self.mtcnn_detector.detect_faces(test_img)
+
+        for face in detect_faces:
+            confidence = face['confidence']
+            if confidence > 0.9:
+                box = face['box']
+                (startX, startY, endX, endY) = box[0], box[1], box[0] + box[2], box[1] + box[3]
+                tmp_box = [startX, startY, endX, endY]
+
+                # 将超出图像边框的检测框过滤掉
+                if endX > w or endY > h:
+                    print('检测框超出了图像边框的.')
+                    continue
+
+                # print('MTCNN置信度:%f.' % confidence)
+                det.append(tmp_box)
+
+        face_nums = len(det)
+        if face_nums > 0:
+            det_arr = rank_all_faces_by_top(np.asarray(det))
+            for j, box in enumerate(det_arr):
+                (startX, startY, endX, endY) = box.astype("int")
+                faces.append({
+                    'id': j,
+                    'box': [startX / scale, startY / scale, endX / scale, endY / scale]
+                })
+
+        # print('#####:', faces)
+        return faces
 
 
 

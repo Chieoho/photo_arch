@@ -24,7 +24,6 @@ class Training(object):
         self.view = View(mw_)
 
         self.ui.train_btn.clicked.connect(static(self.start_training))
-        self.ui.train_btn.setStyleSheet(self.mw.button_style_sheet)
 
     def start_training(self):
         training_info = self.mw.interaction.start_training()

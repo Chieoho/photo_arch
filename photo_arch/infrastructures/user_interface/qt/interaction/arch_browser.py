@@ -75,7 +75,6 @@ class View(object):
             else:
                 data[fc][rp][ye].append(group_name)
         model = QtGui.QStandardItemModel()
-        model.setHorizontalHeaderItem(0, QtGui.QStandardItem("照片档案"))
         self.tv_browse_pre_sel_text = self._get_tv_browse_sel_text()
         self._fill_model_from_dict(model.invisibleRootItem(), data)
         self.ui.arch_tree_view_browse.setModel(model)

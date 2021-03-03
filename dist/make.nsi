@@ -68,11 +68,11 @@ Section "Desktop Shortcut"
   CreateShortCut "$DESKTOP\${AppName}.lnk" "$INSTDIR\${AppName}.exe" "" "$INSTDIR\icon\archives.ico"
 SectionEnd
 
-Section "Run as admin"
+Section "Compatibility Setting"
  
  	# 针对当前用户有效
-	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\${AppName}.exe" "RUNASADMIN"
+	WriteRegStr HKCU "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\${AppName}.exe" "~ RUNASADMIN DPIUNAWARE"
  
 	# 针对所有用户有效
-	# WriteRegStr HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\${AppName}.exe" "RUNASADMIN"
+	# WriteRegStr HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\${AppName}.exe" "~ RUNASADMIN DPIUNAWARE"
 SectionEnd

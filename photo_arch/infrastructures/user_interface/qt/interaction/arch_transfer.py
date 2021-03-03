@@ -90,7 +90,6 @@ class View(object):
             else:
                 data[fc][rp] = ye
         model = QtGui.QStandardItemModel()
-        model.setHorizontalHeaderItem(0, QtGui.QStandardItem("照片档案"))
         self._fill_model_from_dict(model.invisibleRootItem(), data)
         self.ui.arch_tree_view_transfer.setModel(model)
         self.ui.arch_tree_view_transfer.expandAll()
@@ -159,8 +158,6 @@ class ArchTransfer(object):
         self.ui.across_period_combo_box.currentTextChanged.connect(static(self.partition))
         self.ui.partition_list_widget.itemSelectionChanged.connect(static(self.display_cd_info))
         self.ui.packeage_btn.clicked.connect(static(self.package))
-
-        self.ui.packeage_btn.setStyleSheet(self.mw.button_style_sheet)
 
         catalog_tw = self.ui.cd_catalog_table_widget
         catalog_tw.verticalHeader().setVisible(True)

@@ -63,9 +63,6 @@ class PhotoDescription(object):
         self.ui.photo_view.resizeEvent = static(self.resize_image)
         self.ui.photo_view.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.ui.pre_btn.setStyleSheet(self.mw.button_style_sheet)
-        self.ui.next_btn.setStyleSheet(self.mw.button_style_sheet)
-
         self.ui.verifycheckBox.stateChanged.connect(static(self.checked))
 
     def resize_image(self, event):

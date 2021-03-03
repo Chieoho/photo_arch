@@ -44,6 +44,9 @@ class Special(object):
             _, arch = self.arch_transfer.controller.list_arch()
             priority_key = self.ui.order_combobox_transfer.currentText()
             self.arch_transfer.view.display_transfer_arch(arch, priority_key)
+        elif tab_id == self.ui.tabWidget.indexOf(self.ui.search_face_tab):
+            self.ui.retieve_dir.setText(self.setting.photo_path)
+            self.ui.retieve_dir.setToolTip(self.setting.photo_path)
         else:
             pass
 

@@ -7,6 +7,7 @@
 """
 import os
 import shutil
+import math
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
@@ -25,7 +26,9 @@ class SearchFaces(object):
         self.file_path = ''
         self.retrieval_path = ''
         self.retrieve_results_photo_path = []
-        self.retrieve_results_face_box = []
+        self.retrieve_results_face_boxes = []
+        self.retrieval_target_face_boxes = []
+        self.is_sel_face = 'selected'  # mark target face selected key
         self.timer = QtCore.QTimer()
 
         self.target_pixmap = None
@@ -42,6 +45,7 @@ class SearchFaces(object):
         self.ui.list_widget_search_face.itemSelectionChanged.connect(static(self.display_photo))
         self.ui.open_photo_btn.clicked.connect(static(self.select_retrieve_photo))
         self.ui.select_retrieve_dir_btn.clicked.connect(static(self.select_retrieve_dir))
+        self.ui.target_view_search_face.mousePressEvent = static(self.deal_press_photo)
         self.ui.retrieve_btn.clicked.connect(static(self.start_retrieve))
         self.timer.timeout.connect(static(self.get_retrieve_info))
         extend_slot(self.ui.target_view_search_face.resizeEvent, static(self.resize_target_image))
@@ -53,9 +57,16 @@ class SearchFaces(object):
         self.ui.list_widget_search_face.mousePressEvent = static(self.deal_press_list_widget)
 
     def select_retrieve_photo(self):
+        self.ui.open_photo_btn.setEnabled(False)
+        self.mw.overlay(self.ui.result_view_search_face)
+        self.ui.open_photo_btn.setEnabled(True)
         self.file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             self.ui.search_face_tab,
             "请选择指定待检索人物的照片", os.getcwd(), "图片(*.*)")
+        if not self.file_path:
+            self.mw.warn_msg('未选择照片')
+            return
+        self.file_path = os.path.abspath(self.file_path)
         self.target_pixmap = QtGui.QPixmap()
         self.target_pixmap.load(self.file_path)
         scaled_pixmap = self.target_pixmap.scaled(
@@ -63,8 +74,11 @@ class SearchFaces(object):
             QtGui.Qt.KeepAspectRatio,
             QtGui.Qt.SmoothTransformation)
         self.ui.target_view_search_face.setPixmap(scaled_pixmap)
+        self.ui.target_view_search_face.setToolTip('点击选择要搜索的人脸')
         self.ui.retrieve_photo_path.setText(self.file_path)
         self.ui.retrieve_photo_path.setToolTip(self.file_path)
+        QtWidgets.QApplication.processEvents()
+        self.retrieval_target_face_boxes = self.mw.interaction.get_faces_coordinates(self.file_path)
 
     def resize_target_image(self, event: QtGui.QResizeEvent):
         if not self.target_pixmap:
@@ -81,36 +95,87 @@ class SearchFaces(object):
             self.ui.search_face_tab, "请选择待检索的目录",
             options=QtWidgets.QFileDialog.ShowDirsOnly)
         if not retrieval_path:
+            self.mw.warn_msg('未选择目录')
             return
         self.retrieval_path = os.path.abspath(retrieval_path)
         self.ui.retieve_dir.setText(self.retrieval_path)
         self.ui.retieve_dir.setToolTip(self.retrieval_path)
 
+    def _mark_face(self, face_box, pixmap):
+        _ = self
+        painter = QtGui.QPainter(pixmap)
+        x1, y1, x2, y2 = face_box
+        x, y, w, h = x1, y1, (x2 - x1), (y2 - y1)
+        pen = QtGui.QPen(QtCore.Qt.red)
+        width = round(0.37 * math.log(h) + 0.024 * h)
+        pen.setWidth(width)
+        painter.setPen(pen)
+        painter.drawRect(x, y, w, h)
+
+    def deal_press_photo(self, e: QtGui.QMouseEvent):
+        x, y = e.x(), e.y()
+        if self.ui.target_view_search_face.pixmap() is None:
+            return
+        pixmap_size = self.ui.target_view_search_face.pixmap().size()
+        pw, ph = pixmap_size.width(), pixmap_size.height()
+        label_size = self.ui.target_view_search_face.size()
+        lw, lh = label_size.width(), label_size.height()
+        blank_width = (lw - lw) / 2
+        blank_height = (lh - ph) / 2
+        self.target_pixmap.load(self.file_path)
+        scale_factor = pw / self.target_pixmap.size().width()
+        for face_info in self.retrieval_target_face_boxes:
+            face_box = face_info['box']
+            x1, y1, x2, y2 = map(lambda a: scale_factor * a, face_box)
+            if (x1 + blank_width <= x <= x2 + blank_width) and \
+                    ((y1 + blank_height) <= y <= (y2 + blank_height)):
+                if face_info.get(self.is_sel_face):
+                    face_info[self.is_sel_face] = False
+                else:
+                    self._mark_face(face_box, self.target_pixmap)  # 使用原始坐标来画框，然后再缩放
+                    face_info[self.is_sel_face] = True
+            else:
+                if face_info.get(self.is_sel_face):
+                    self._mark_face(face_box, self.target_pixmap)
+        scaled_pixmap = self.target_pixmap.scaled(
+            label_size,
+            QtGui.Qt.KeepAspectRatio,
+            QtGui.Qt.SmoothTransformation)
+        self.ui.target_view_search_face.setPixmap(scaled_pixmap)
+
     def start_retrieve(self):
-        self.ui.result_view_search_face.clear()
+        self.ui.list_widget_search_face.itemSelectionChanged.connect(static(self.display_photo))
+        self.ui.list_widget_search_face.itemSelectionChanged.disconnect()
+        self.retrieve_results_photo_path.clear()
+        self.retrieve_results_face_boxes.clear()
         self.ui.list_widget_search_face.clear()
         self.ui.tree_widget_search_face.clear()
+        self.ui.result_view_search_face.clear()
+        self.retrieval_path = self.ui.retieve_dir.text()
         if self.file_path == '':
             self.mw.msg_box('请指定待检索人物的照片.')
         elif self.retrieval_path == '':
             self.mw.msg_box('请选择待检索的目录.')
         else:
-            self.mw.overlay(self.ui.result_view_search_face)
-            self.ui.retrieve_btn.setEnabled(False)
-            self.timer.start(1000)
-            ret = self.mw.interaction.start_retrieve(self.file_path, self.retrieval_path)
-            if ret == -1:
-                self.mw.msg_box('待检索的目录下面没有照片.')
+            selected_faces = [f['id'] for f in self.retrieval_target_face_boxes if f.get(self.is_sel_face)]
+            if selected_faces:
+                self.mw.overlay(self.ui.result_view_search_face)
+                self.ui.retrieve_btn.setEnabled(False)
+                self.timer.start(1000)
+                ret = self.mw.interaction.start_retrieve(self.file_path, self.retrieval_path, selected_faces)
+                if ret == -1:
+                    self.mw.msg_box('待检索的目录下面没有照片.')
+                if ret == -2:
+                    self.mw.info_msg('后台正在提取人脸特征值')
+            else:
+                self.mw.warn_msg('未选择人脸，请先选择人脸')
 
     def _list_photo_thumb(self, retrieve_results_photo_path):
-        self.ui.result_view_search_face.clear()
         self.ui.list_widget_search_face.clear()
         for i, fp in enumerate(retrieve_results_photo_path):
             photo_name = os.path.split(fp)[1]
             item = QtWidgets.QListWidgetItem(QtGui.QIcon(fp), f'☐{photo_name}')
             self.ui.list_widget_search_face.addItem(item)
-            if i in range(3):
-                QtWidgets.QApplication.processEvents()  # 前n张一张接一张显示
 
     def _attach(self, trunk, branch):
         parts = branch.split('\\', 1)
@@ -159,9 +224,10 @@ class SearchFaces(object):
         self._display_photo_tree(retrieve_results_photo_path)
 
     def _get_retrieve_result(self):
-        self.retrieve_results_photo_path, self.retrieve_results_face_box = \
-            self.mw.interaction.get_retrieve_result(self.file_path, self.retrieval_path)
-        if len(self.retrieve_results_photo_path) > 0 and len(self.retrieve_results_face_box) > 0:
+        photo_paths, face_boxes = self.mw.interaction.get_retrieve_result(self.file_path, self.retrieval_path)
+        if len(photo_paths) > 0 and len(face_boxes) > 0:
+            self.retrieve_results_photo_path.extend(photo_paths)
+            self.retrieve_results_face_boxes.extend(face_boxes)
             self._display_result(self.retrieve_results_photo_path)
 
     def get_retrieve_info(self):
@@ -173,7 +239,10 @@ class SearchFaces(object):
         if retrieved_num == total_num:
             self.ui.retrieve_btn.setEnabled(True)
             self.timer.stop()
-            self.mw.msg_box('检索完成')
+            self.ui.list_widget_search_face.itemSelectionChanged.connect(static(self.display_photo))
+            self.ui.result_view_search_face.clear()
+            if total_num != 0:
+                self.mw.msg_box('检索完成')
 
     @staticmethod
     def _get_tree_item_path(tree_item: QtWidgets.QTreeWidgetItem):
@@ -214,16 +283,6 @@ class SearchFaces(object):
             else:
                 item.setText(item.text().replace('☑', '☐'))
 
-    def _mark_face(self, face_box, pixmap):
-        _ = self
-        painter = QtGui.QPainter(pixmap)
-        x1, y1, x2, y2 = face_box
-        x, y, w, h = x1, y1, (x2 - x1), (y2 - y1)
-        pen = QtGui.QPen(QtCore.Qt.red)
-        pen.setWidth(5)
-        painter.setPen(pen)
-        painter.drawRect(x, y, w, h)
-
     def _get_corresponding_child(self, parent: QtWidgets.QTreeWidgetItem, name):
         parts = name.split(os.sep)
         part, name = parts[0], os.sep.join(parts[1:])
@@ -239,7 +298,7 @@ class SearchFaces(object):
         if not item_list:
             return
         row = self.ui.list_widget_search_face.row(item_list[0])
-        face_box = self.retrieve_results_face_box[row]
+        face_boxes = self.retrieve_results_face_boxes[row]
         self.result_pixmap = QtGui.QPixmap()
         path = self.retrieve_results_photo_path[row]
         root = self.ui.tree_widget_search_face.invisibleRootItem()
@@ -251,12 +310,12 @@ class SearchFaces(object):
         self.ui.tree_widget_search_face.itemSelectionChanged.connect(static(self.deal_tree_item_selected_changed))
 
         self.result_pixmap.load(path)
-        self._mark_face(face_box, self.result_pixmap)
+        for face_box in face_boxes:
+            self._mark_face(face_box, self.result_pixmap)
         scaled_pixmap = self.result_pixmap.scaled(
             self.ui.result_view_search_face.size(),
             QtGui.Qt.KeepAspectRatio,
-            QtGui.Qt.SmoothTransformation
-        )
+            QtGui.Qt.SmoothTransformation)
         self.ui.result_view_search_face.setPixmap(scaled_pixmap)
 
     def resize_result_image(self, event):

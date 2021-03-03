@@ -132,7 +132,11 @@ class Interaction(UiInterface):
     def get_untrained_photo_num(self) -> int:
         return 10
 
-    def start_retrieve(self, file_path, dir_path):
+    def get_faces_coordinates(self, photo_path) -> list:
+        return [{'box': [229.0, 19.0, 314.0, 77.0], 'id': 0},
+                {'box': [105.0, 79.0, 162.0, 127.0], 'id': 1}]
+
+    def start_retrieve(self, file_path, dir_path, face_list):
         pass
 
     def get_retrieve_result(self, file_path, dir_path):
@@ -141,27 +145,27 @@ class Interaction(UiInterface):
 
         retrieve_results_photo_path.append(
             os.path.abspath(r'G:\Git\photo_arch\待检索目录2\单人照\12.jpg'))
-        retrieve_results_face_box.append([142.0, 29.0, 302.0, 216.0])
+        retrieve_results_face_box.append([[142.0, 29.0, 302.0, 216.0]])
 
         retrieve_results_photo_path.append(
             os.path.abspath(r'G:\Git\photo_arch\待检索目录2\合照\两人照\13.png'))
-        retrieve_results_face_box.append([375.0, 10.0, 495.0, 163.0])
+        retrieve_results_face_box.append([[375.0, 10.0, 495.0, 163.0]])
 
         retrieve_results_photo_path.append(
             os.path.abspath(r'G:\Git\photo_arch\待检索目录2\合照\两人照\14.jpg'))
-        retrieve_results_face_box.append([248.0, 10.0, 455.0, 293.0])
+        retrieve_results_face_box.append([[248.0, 10.0, 455.0, 293.0]])
 
         retrieve_results_photo_path.append(
             os.path.abspath(r'G:\Git\photo_arch\待检索目录2\合照\两人照\15.jpg'))
-        retrieve_results_face_box.append([284.0, 8.0, 422.0, 168.0])
+        retrieve_results_face_box.append([[284.0, 8.0, 422.0, 168.0]])
 
         retrieve_results_photo_path.append(
             os.path.abspath(r'G:\Git\photo_arch\待检索目录2\合照\三人照\10.jpg'))
-        retrieve_results_face_box.append([428.0, 180.0, 695.0, 553.0])
+        retrieve_results_face_box.append([[428.0, 180.0, 695.0, 553.0]])
 
         retrieve_results_photo_path.append(
             os.path.abspath(r'G:\Git\photo_arch\待检索目录2\16.jpg'))
-        retrieve_results_face_box.append([229.0, 19.0, 314.0, 77.0])
+        retrieve_results_face_box.append([[229.0, 19.0, 314.0, 77.0]])
 
         return retrieve_results_photo_path, retrieve_results_face_box
 

@@ -48,4 +48,4 @@ def gen_lic(feature_code=None, start_date=None):
 if __name__ == '__main__':
     gen_lic()
     # gen_lic(start_date='20210101')
-    # gen_lic(feature_code='cf997a8cf771284343640550d1edd61e')
+    # gen_lic(feature_code='4a4eaf8014cbfe4b92e96b1bf26f9647')

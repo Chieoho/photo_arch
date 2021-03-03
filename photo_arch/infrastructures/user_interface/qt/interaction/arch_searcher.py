@@ -33,8 +33,6 @@ class View(object):
         self.ui.photo_list_widget_search.setWrapping(False)
         self.ui.photo_list_widget_search.setMovement(QtWidgets.QListWidget.Static)
 
-        self.ui.search_btn.setStyleSheet(self.mw.button_style_sheet)
-        self.ui.export_btn_search.setStyleSheet(self.mw.button_style_sheet)
         self.ui.start_date_search.setDate(QtCore.QDate.currentDate().addYears(-10))
         self.ui.end_date_search.setDate(QtCore.QDate.currentDate())
 

@@ -35,8 +35,6 @@ class Recognition(object):
         self.update_timer.timeout.connect(static(self.periodic_update))
         self.update_timer.start(1000)
         self.ui.recogni_btn.setEnabled(False)
-        self.ui.recogni_btn.setStyleSheet(self.mw.button_style_sheet)
-        self.ui.pausecontinue_btn.setStyleSheet(self.mw.button_style_sheet)
 
     def run(self):
         if self.setting.lic_ctrl_info.remaining_photo_num <= 0:

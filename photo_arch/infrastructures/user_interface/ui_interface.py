@@ -100,7 +100,15 @@ class UiInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def start_retrieve(self, file_path, dir_path) -> int:
+    def get_faces_coordinates(self, photo_path) -> list:
+        """
+        获取照片中人脸的坐标
+        :param photo_path:
+        :return:
+        """
+
+    @abstractmethod
+    def start_retrieve(self, file_path, dir_path, face_list) -> int:
         """
         开始检索人物
         :return:

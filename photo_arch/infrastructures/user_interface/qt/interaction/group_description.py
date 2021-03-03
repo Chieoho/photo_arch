@@ -77,10 +77,6 @@ class GroupDescription(object):
         self.ui.cancel_folder_btn.clicked.connect(static(self.cancel_folder_item))
         self.ui.save_group_btn.clicked.connect(static(self.save_and_copy_group))
 
-        self.ui.add_folder_btn.setStyleSheet(self.mw.button_style_sheet)
-        self.ui.cancel_folder_btn.setStyleSheet(self.mw.button_style_sheet)
-        self.ui.save_group_btn.setStyleSheet(self.mw.button_style_sheet)
-
         self.clear_group_info()
 
         self.ui.fonds_code_in_group.textChanged.connect(static(self.update_arch_code))
@@ -374,6 +370,7 @@ class GroupDescription(object):
         for name, arch_code in file_arch_list:
             child = QtWidgets.QTreeWidgetItem(root)
             child.setText(0, name)
+            child.setToolTip(0, name)
             child.setCheckState(0, QtGui.Qt.Unchecked)
         self.ui.tree_widget_group.expandAll()
 

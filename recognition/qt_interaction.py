@@ -64,11 +64,14 @@ class QtInteraction(object):
     def get_untrained_photo_num(self) -> int:
         return self._rcn.get_untrained_pic_num()
 
-    def start_retrieve(self, file_path, dir_path) -> int:
-        return self._rcn.start_retrieve(file_path, dir_path)
+    def start_retrieve(self, file_path, dir_path, face_list) -> int:
+        return self._rcn.start_retrieve(file_path, dir_path, face_list)
 
     def get_retrieve_result(self, file_path, dir_path) -> list:
         return self._rcn.get_retrieve_result(file_path, dir_path)
 
     def get_retrieve_info(self) -> dict:
         return self._rcn.get_retrieve_info()
+
+    def get_faces_coordinates(self, photo_path) -> list:
+        return self._rcn.get_faces_coordinates(photo_path)

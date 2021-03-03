@@ -91,10 +91,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         desktop = app.desktop()
         self.dt_width, self.dt_height = desktop.width(), desktop.height()
-        self.button_style_sheet = "padding-left: {0}px;" \
-                                  "padding-right:{0}px;" \
-                                  "padding-top:8px; " \
-                                  "padding-bottom: 8px;".format(int(30*self.dt_width/1920))
 
         self.photo_type = 1
         self.dir_type = 1
