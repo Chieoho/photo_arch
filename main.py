@@ -6,8 +6,9 @@
 @time: 2020/11/5 16:43
 """
 import sys
+from PySide2 import QtWidgets
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import catch_exception, for_all_methods
-from photo_arch.infrastructures.user_interface.qt.interaction.main_window import QtWidgets, MainWindow
+from photo_arch.infrastructures.user_interface.qt.interaction.main_window import MainWindow
 from photo_arch.infrastructures.user_interface.qt.interaction.training import Training
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_transfer import ArchTransfer
 from photo_arch.infrastructures.user_interface.qt.interaction.arch_browser import ArchBrowser

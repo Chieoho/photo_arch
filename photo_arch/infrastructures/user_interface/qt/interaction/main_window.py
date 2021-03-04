@@ -95,6 +95,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.photo_type = 1
         self.dir_type = 1
 
+        self.ui.tabWidget.setAttribute(QtGui.Qt.WA_StyledBackground)
+
     def msg_box(self, msg: str, msg_type: str = 'warn'):
         if msg_type == 'warn':
             self.warn_msg(msg)

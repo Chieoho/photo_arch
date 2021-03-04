@@ -415,7 +415,7 @@ class SearchImagesProcess(Process):
     src_embedding = None
 
 
-    def __init__(self, search_queue, retrived_queue, counter_queue, search_faceList_queue):
+    def __init__(self, search_queue, retrived_queue, counter_queue, search_faceList_queue, search_filePath_queue):
         super(SearchImagesProcess, self).__init__()
         self.event = Event()
         self.event.set()  # 设置为True
@@ -423,6 +423,7 @@ class SearchImagesProcess(Process):
         self.retrived_queue = retrived_queue
         self.counter_queue = counter_queue
         self.search_faceList_queue = search_faceList_queue
+        self.search_filePath_queue = search_filePath_queue
 
 
     def pause(self):
@@ -446,9 +447,17 @@ class SearchImagesProcess(Process):
         retriveResultInfo = []
         tmp_photo_path = []
         tmp_box = []
+        i= 0
+        indexList = []
         if flag == 'searchfaces':
             des_embedding_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(parentPath)]}, ('photo_path', 'face_box', 'embedding'))
             for ele_dict in des_embedding_list:
+                # 将每张图片里面人脸的index范围记录下来
+                indexDict = {}
+                nums = len(eval(ele_dict['face_box']))
+                indexDict[i] = i + nums
+                i += nums
+                indexList.append(indexDict)
                 for box in eval(ele_dict['face_box']):
                     retrive_des_box.append(box)
                     photo_path.append(ele_dict['photo_path'])
@@ -457,6 +466,12 @@ class SearchImagesProcess(Process):
         else:
             des_embedding_list = sql_repo.query('face', {"parent_path": [os.path.abspath(parentPath)]}, ('photo_path', 'faces', 'embeddings'))
             for ele_dict in des_embedding_list:
+                # 将每张图片里面人脸的index范围记录下来
+                indexDict = {}
+                nums = len(eval(ele_dict['face_box']))
+                indexDict[i] = i + nums
+                i += nums
+                indexList.append(indexDict)
                 for face in eval(ele_dict['faces']):
                     retrive_des_box.append(eval(face['box']))
                     photo_path.append(ele_dict['photo_path'])
@@ -466,12 +481,17 @@ class SearchImagesProcess(Process):
         for emb in retrive_src_embedding:
             dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(emb), axis=1)
             dist = list(dist)
-            sortDist = sorted(dist)
-            des_dist = [x for x in sortDist if x <= 0.9]
-            for x in des_dist:
-                index = dist.index(x)
-                tmp_photo_path.append(photo_path[index])
-                tmp_box.append(retrive_des_box[index])
+            print('###### 距离(后台):', dist)
+            for k in indexList: # indexList的大小就是图片的数量
+                f_index = list(k.keys())[0]
+                e_index = list(k.values())[0]
+                distWithSiglePhoto = dist[f_index:e_index] # 图片里面的人的距离
+                minV = min(distWithSiglePhoto)
+                if minV <= 0.8:
+                    index = dist.index(minV)
+                    tmp_photo_path.append(photo_path[index])
+                    tmp_box.append(retrive_des_box[index])
+                    print('图片index和路径:{}-{}, {}, {}'.format(list(k.keys())[0], list(k.values())[0], minV, photo_path[index]))
 
         # 将重复图片的box放在同一个list中
         d = defaultdict(list)
@@ -482,14 +502,6 @@ class SearchImagesProcess(Process):
             for index in v:
                 face_box.append(tmp_box[index])
             retriveResultInfo.append({'photo_path': k, 'face_box': face_box})
-
-        # dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(retrive_src_embedding), axis=1)
-        # dist = list(dist)
-        # sortDist = sorted(dist)
-        # des_dist = [x for x in sortDist if x <= 0.8]
-        # for x in des_dist:
-        #     index = dist.index(x)
-        #     retriveResultInfo.append({'photo_path': photo_path[index], 'face_box': retrive_des_box[index]})
 
         return retriveResultInfo
 
@@ -514,7 +526,8 @@ class SearchImagesProcess(Process):
         i = 0
         flag = False
         src_embedding = []
-        searchfacesDatas = []
+        des_path = ''
+        backedSilence_path = ''
         while 1:
             if self.search_queue.empty() == True:
                 print('#### 检索:队列空,子进程暂停')
@@ -525,8 +538,9 @@ class SearchImagesProcess(Process):
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
             imgPath = self.search_queue.get()
-            print('#####: imgPath=%s' % imgPath)
             if i == 0 :
+                des_path = self.search_filePath_queue.get()
+                backedSilence_path = self.search_filePath_queue.get()
                 srcPath = imgPath
                 face_list = eval(self.search_faceList_queue.get())
                 src_embedding_list = sql_repo.query('face', {"photo_path": [os.path.abspath(srcPath)]}, ('embeddings'))
@@ -555,7 +569,7 @@ class SearchImagesProcess(Process):
                     continue
             else:
                 if i == 1 :
-                    parentPath = os.path.abspath(os.path.join(imgPath, ".."))
+                    parentPath = des_path # os.path.abspath(os.path.join(imgPath, ".."))
                     parent_path_list = sql_repo.query('face', {"parent_path": [os.path.abspath(parentPath)]}, ('parent_path'))
                     if len(parent_path_list) == 0:
                         parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(parentPath)]}, ('parent_path'))
@@ -571,7 +585,15 @@ class SearchImagesProcess(Process):
 
                             continue
                         else:
-                            i += 1
+                            if des_path == backedSilence_path:
+                                self.counter_queue.put(imgPath)
+                                for _ in range(self.search_queue.qsize()):
+                                    imgPath = self.search_queue.get()
+                                    self.counter_queue.put(imgPath)
+
+                                continue
+                            else:
+                                i += 1
                     else:
                         retriveResultInfoList = self.calculate_euclid_distance(sql_repo, parentPath, retrive_src_embedding, 'face')
                         for ele_dict in retriveResultInfoList:
@@ -588,6 +610,7 @@ class SearchImagesProcess(Process):
 
             det = []
             rectangles = []
+            print('检索: imgPath=%s' % imgPath)
 
             scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
             img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
@@ -628,10 +651,13 @@ class SearchImagesProcess(Process):
             face_nums = len(det)
             src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
+                det_arr = rank_all_faces_by_top(np.asarray(det))
+
                 searchface = {}
                 box_list = []
                 embedding_list = []
-                for j, box in enumerate(np.asarray(det)):
+                searchfacesDatas = []
+                for j, box in enumerate(det_arr):
 
                     (startX, startY, endX, endY) = box.astype("int")
                     bb = np.zeros(4, dtype=np.int32)
@@ -656,6 +682,7 @@ class SearchImagesProcess(Process):
                 searchface['embedding'] = str(embedding_list)
                 searchface['parent_path'] = src_dir
                 searchfacesDatas.append(searchface)
+                sql_repo.add('searchfaces', searchfacesDatas)
 
                 if imgPath == srcPath and flag == False:
                     for index in face_list:
@@ -666,12 +693,13 @@ class SearchImagesProcess(Process):
                     for emb in src_embedding:
                         dist = np.linalg.norm(np.asarray(embedding_list) - np.asarray(emb), axis=1)
                         dist = list(dist)
-                        sortDist = sorted(dist)
-                        des_dist = [x for x in sortDist if x <= 0.9]
-                        for x in des_dist:
-                            index = dist.index(x)
+                        print('###### 距离(检索):', dist)
+                        minV = min(dist)
+                        if minV <= 0.8:
+                            index = dist.index(minV)
                             tmp_photo_path.append(imgPath)
                             tmp_box.append(box_list[index])
+                            print('图片路径:', imgPath)
 
                     # 将重复图片的box放在同一个list中
                     d = defaultdict(list)
@@ -684,21 +712,7 @@ class SearchImagesProcess(Process):
                         retriveResultInfo = {'photo_path': k, 'face_box': face_box}
                         self.retrived_queue.put(json.dumps(retriveResultInfo, ensure_ascii=False))
 
-                    # dist = np.linalg.norm(np.asarray(embedding_list) - np.asarray(retrive_src_embedding), axis=1)
-                    # dist = list(dist)
-                    # sortDist = sorted(dist)
-                    # des_dist = [x for x in sortDist if x <= 0.8]
-                    # for x in des_dist:
-                    #     index = dist.index(x)
-                    #     retriveResultInfo = {'photo_path': imgPath, 'face_box': box_list[index]}
-                    #     self.retrived_queue.put(json.dumps(retriveResultInfo, ensure_ascii=False))
-
-
             self.counter_queue.put(imgPath)
-            # 未在数据库中的检索目录，等待处理完了再写入数据库
-            if  self.search_queue.empty() == True:
-                sql_repo.add('searchfaces', searchfacesDatas)
-                searchfacesDatas.clear()
 
 
 
@@ -761,8 +775,9 @@ class BackedSilenceProc(Process):
             engine.dispose()
             sql_repo = RepoGeneral(make_session(engine))
             backedSilencePath_list = sql_repo.query('setting', {"setting_id": [1]}, ('photo_path'))
-            print('###### fun_timer backedSilencePath:', backedSilencePath_list[0]['photo_path'])
-            self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
+            if len(backedSilencePath_list) > 0:
+                print('###### fun_timer backedSilencePath:', backedSilencePath_list[0]['photo_path'])
+                self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
 
         # 每隔30s检查一次
         global timer
@@ -774,8 +789,9 @@ class BackedSilenceProc(Process):
         engine.dispose()
         sql_repo = RepoGeneral(make_session(engine))
         backedSilencePath_list = sql_repo.query('setting', {"setting_id": [1]}, ('photo_path',))
-        print('###### backedSilencePath:', backedSilencePath_list[0]['photo_path'])
-        self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
+        if len(backedSilencePath_list) > 0 :
+            print('###### backedSilencePath:', backedSilencePath_list[0]['photo_path'])
+            self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
 
         # 从数据库读取已存在的路径,赋给self.last_file_list
         photo_path_list = sql_repo.query('searchfaces', {}, ('photo_path',))
@@ -785,15 +801,15 @@ class BackedSilenceProc(Process):
 
         if self.graph == None:
             self.graph = tf.get_default_graph()
-            print('######:检索 graph')
+            print('######:静默 graph')
 
         with self.graph.as_default():
             if self.mtcnn_detector == None:
                 self.mtcnn_detector = MTCNN()
-                print('######:检索 mtcnn_detector')
+                print('######:静默 mtcnn_detector')
             if self.facenet_model == None:
                 self.facenet_model = load_model('model/facenet_keras.h5')
-                print('######:检索 load model')
+                print('######:静默 load model')
 
         timer = threading.Timer(5, self.fun_timer)
         timer.start()
@@ -804,7 +820,7 @@ class BackedSilenceProc(Process):
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
             imgPath = self.silence_queue.get()
-            print('@@@@@: imgPath=%s' % imgPath)
+            print('后台: imgPath=%s' % imgPath)
 
             det = []
             rectangles = []
@@ -848,11 +864,13 @@ class BackedSilenceProc(Process):
             face_nums = len(det)
             src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
+                det_arr = rank_all_faces_by_top(np.asarray(det))
+
                 backedSearchfacesDatas = []
                 backedSearchface = {}
                 box_list = []
                 embedding_list = []
-                for j, box in enumerate(np.asarray(det)):
+                for j, box in enumerate(det_arr):
                     (startX, startY, endX, endY) = box.astype("int")
                     bb = np.zeros(4, dtype=np.int32)
                     bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
@@ -889,6 +907,7 @@ class Recognition(object):
         self.verify_queue = Queue()  # 用来填充核验信息
         self.search_queue = Queue()  # 用来填充以图搜图的图片路径
         self.search_faceList_queue = Queue()  # 用来填充指定的搜索目标的序号
+        self.search_filePath_queue = Queue()  # 用来填充路径
         self.done_queue = Manager().Queue() # 返回识别结果信息
         self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
         self.counter_queue = Manager().Queue()  # 返回已检索图片个数的队列
@@ -927,6 +946,12 @@ class Recognition(object):
             self.jobs_proc.append(proc)
 
 
+        # 开启后台静默以图搜图子进程
+        self.backedSilenceProc = BackedSilenceProc(self.silence_queue)
+        self.backedSilenceProc.daemon = True
+        self.backedSilenceProc.start()
+
+
         # 开启核验子进程
         self.verifyProc = VerifyProcess(self.verify_queue)
         self.verifyProc.daemon = True
@@ -934,14 +959,10 @@ class Recognition(object):
 
 
         # 开启以图搜图子进程
-        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue, self.counter_queue, self.search_faceList_queue)
+        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue, self.counter_queue, self.search_faceList_queue, self.search_filePath_queue)
         self.searchImagesProc.daemon = True
         self.searchImagesProc.start()
 
-        # 开启后台静默以图搜图子进程
-        self.backedSilenceProc = BackedSilenceProc(self.silence_queue)
-        self.backedSilenceProc.daemon = True
-        self.backedSilenceProc.start()
 
     def initRecognitionInfo(self):
         self.noRecFaceImg = 0
@@ -1309,19 +1330,41 @@ class Recognition(object):
         self.retrived_pic_num = 0
         self.pendingRetrieveTotalImgsNum = 0
 
-        # 队列不为空, 表示后台正在进行以图搜图任务的特征提取
-        if self.silence_queue.empty() != True:
-            ret = -2
-            return ret
-
-        print('########: 开始进行人脸检索.')
+        engine.dispose()
+        sql_repo = RepoGeneral(make_session(engine))
+        backedSilencePath_list = sql_repo.query('setting', {"setting_id": [1]}, ('photo_path',))
+        # parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('parent_path'))
 
         # 判断该dir_path路径是否有照片
         img_list = glob.glob(os.path.abspath(os.path.join(dir_path, '**', '*.*[jpg,png]')), recursive=True)
         pic_num = len(img_list)
+        # if backedSilencePath_list[0]['photo_path'] == dir_path:
+        #     if pic_num == 0 and len(parent_path_list) == 0: # 目录里面没有图片，并且数据库里面也没有数据
+        #         ret = -1
+        #         return ret
+        # else:
+        #     if pic_num == 0:
+        #         ret = -1
+        #         return ret
         if pic_num == 0:
             ret = -1
             return ret
+
+        # 队列不为空, 表示后台正在进行以图搜图任务的特征提取
+        if backedSilencePath_list[0]['photo_path'] == dir_path:
+            if self.silence_queue.empty() != True: # 正在提取特征
+                ret = -2
+                return ret
+            else:
+                parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('parent_path'))
+                if len(parent_path_list) == 0: # 即将提取特征(目前数据库还没有该路径下的数据)
+                    ret = -2
+                    return ret
+
+        self.search_filePath_queue.put(dir_path)
+        self.search_filePath_queue.put(backedSilencePath_list[0]['photo_path'])
+
+        print('########: 开始进行人脸检索.')
 
         if self.search_queue.empty() == True:
             # 不管数据库没有该路径，都把待检索的人物的路径第一个放入队列

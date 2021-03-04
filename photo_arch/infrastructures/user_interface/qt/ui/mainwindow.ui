@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1237</width>
+    <width>1176</width>
     <height>905</height>
    </rect>
   </property>
@@ -63,14 +63,28 @@
         <pointsize>16</pointsize>
        </font>
       </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
       <property name="styleSheet">
-       <string notr="true">QTabBar::tab{
-    padding: 8px;
+       <string notr="true">QTabWidget{
+    background-color: rgb(4, 103, 204);
+}
+
+QTabBar::tab{
+    background-color: rgb(4, 103, 204);
 }
 
 QTabBar::tab:selected{
-    background-color: rgb(83, 166, 249);
+    background-color: rgb(3, 72, 142);
 }
+QTabBar::tab:hover{
+    background-color: #419ff9;
+}
+
 
 QLineEdit, QTextEdit{
     border: 1px solid #4ba4f9; 
@@ -101,12 +115,12 @@ QPushButton:hover {
 </string>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
-        <width>36</width>
-        <height>36</height>
+        <width>80</width>
+        <height>80</height>
        </size>
       </property>
       <widget class="QWidget" name="group_tab">
@@ -124,6 +138,9 @@ QPushButton:hover {
          <normaloff>icon/dirtree.png</normaloff>icon/dirtree.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>组著录</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
@@ -261,7 +278,7 @@ QPushButton:hover {
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;快捷键：Ctrl+O&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;打开工作目录&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="styleSheet">
                <string notr="true"/>
@@ -1600,6 +1617,9 @@ QPushButton:hover {
          <normaloff>icon/face.png</normaloff>icon/face.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>人脸识别</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
@@ -2242,6 +2262,9 @@ QPushButton:hover {
          <normaloff>icon/photo.png</normaloff>icon/photo.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>张著录</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_9">
@@ -3382,6 +3405,9 @@ QPushButton:hover {
          <normaloff>icon/training.png</normaloff>icon/training.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>模型训练</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
@@ -3738,6 +3764,9 @@ QPushButton:hover {
          <normaloff>icon/browse_arch.png</normaloff>icon/browse_arch.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>档案浏览</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_17">
@@ -4950,6 +4979,9 @@ QPushButton:hover {
          <normaloff>icon/search_face.png</normaloff>icon/search_face.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>人脸搜索</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_10">
@@ -5507,6 +5539,9 @@ QPushButton:hover {
          <normaloff>icon/search_arch.png</normaloff>icon/search_arch.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>档案搜索</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_30">
@@ -7070,6 +7105,9 @@ QPushButton:hover {
          <normaloff>icon/arch_transfer.png</normaloff>icon/arch_transfer.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>档案移交</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_23">
@@ -8063,6 +8101,9 @@ QPushButton:hover {
          <normaloff>icon/setting.png</normaloff>icon/setting.png</iconset>
        </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>系统设置</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_32">

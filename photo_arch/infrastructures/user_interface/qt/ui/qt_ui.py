@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1237, 905)
+        MainWindow.resize(1176, 905)
         MainWindow.setMinimumSize(QSize(1, 1))
         font = QFont()
         font.setFamily(u"\u5fae\u8f6f\u96c5\u9ed1")
@@ -48,13 +48,23 @@ class Ui_MainWindow(object):
         font1.setFamily(u"\u5fae\u8f6f\u96c5\u9ed1")
         font1.setPointSize(16)
         self.tabWidget.setFont(font1)
-        self.tabWidget.setStyleSheet(u"QTabBar::tab{\n"
-"    padding: 8px;\n"
+        self.tabWidget.setLayoutDirection(Qt.LeftToRight)
+        self.tabWidget.setAutoFillBackground(True)
+        self.tabWidget.setStyleSheet(u"QTabWidget{\n"
+"    background-color: rgb(4, 103, 204);\n"
+"}\n"
+"\n"
+"QTabBar::tab{\n"
+"    background-color: rgb(4, 103, 204);\n"
 "}\n"
 "\n"
 "QTabBar::tab:selected{\n"
-"    background-color: rgb(83, 166, 249);\n"
+"    background-color: rgb(3, 72, 142);\n"
 "}\n"
+"QTabBar::tab:hover{\n"
+"    background-color: #419ff9;\n"
+"}\n"
+"\n"
 "\n"
 "QLineEdit, QTextEdit{\n"
 "    border: 1px solid #4ba4f9; \n"
@@ -83,7 +93,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "")
-        self.tabWidget.setIconSize(QSize(36, 36))
+        self.tabWidget.setIconSize(QSize(80, 80))
         self.group_tab = QWidget()
         self.group_tab.setObjectName(u"group_tab")
         self.group_tab.setFont(font)
@@ -3671,7 +3681,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(0)
         self.retention_period_in_group.setCurrentIndex(-1)
         self.security_classification_in_group.setCurrentIndex(-1)
         self.opening_state_in_group.setCurrentIndex(-1)
@@ -3692,7 +3702,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.dir_lineEdit.setText("")
 #if QT_CONFIG(tooltip)
-        self.open_dir_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u5feb\u6377\u952e\uff1aCtrl+O</span></p></body></html>", None))
+        self.open_dir_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u6253\u5f00\u5de5\u4f5c\u76ee\u5f55</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.open_dir_btn.setText("")
 #if QT_CONFIG(shortcut)
@@ -3746,7 +3756,10 @@ class Ui_MainWindow(object):
         self.arch_category_code_in_group.setItemText(2, QCoreApplication.translate("MainWindow", u"LX", None))
 
         self.label_27.setText(QCoreApplication.translate("MainWindow", u"\u62cd\u6444\u8005", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.group_tab), QCoreApplication.translate("MainWindow", u"\u7ec4\u8457\u5f55", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.group_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.group_tab), QCoreApplication.translate("MainWindow", u"\u7ec4\u8457\u5f55", None))
+#endif // QT_CONFIG(tooltip)
         self.handled_photo_label.setText("")
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"\u672a\u5904\u7406\u56fe\u7247\uff1a", None))
         self.run_state_label.setText(QCoreApplication.translate("MainWindow", u"\u505c\u6b62", None))
@@ -3764,7 +3777,10 @@ class Ui_MainWindow(object):
         self.unhandled_photo_label.setText("")
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8\u8bc6\u522b\u56fe\u7247\uff1a", None))
         self.recognition_rate_label.setText("")
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.recognition_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u8bc6\u522b", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.recognition_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.recognition_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u8bc6\u522b", None))
+#endif // QT_CONFIG(tooltip)
         self.photo_view.setText("")
         self.label_30.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u53f7", None))
         self.all_recognition_radioButton.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u672c\u6b21\u8bc6\u522b\u5168\u90e8\u8bc6\u522b\u7167\u7247(Alt+E)", None))
@@ -3818,7 +3834,10 @@ class Ui_MainWindow(object):
         self.all_photo_radioButton.setShortcut(QCoreApplication.translate("MainWindow", u"Alt+Q", None))
 #endif // QT_CONFIG(shortcut)
         self.label_32.setText(QCoreApplication.translate("MainWindow", u"\u5e74\u5ea6", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.photo_tab), QCoreApplication.translate("MainWindow", u"\u5f20\u8457\u5f55", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.photo_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.photo_tab), QCoreApplication.translate("MainWindow", u"\u5f20\u8457\u5f55", None))
+#endif // QT_CONFIG(tooltip)
         self.label_12.setText(QCoreApplication.translate("MainWindow", u"\u6a21\u578b\u7cbe\u5ea6\uff1a", None))
         self.model_acc_label.setText("")
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u51c6\u786e\u5ea6\uff1a", None))
@@ -3828,7 +3847,10 @@ class Ui_MainWindow(object):
         self.untrained_num_label.setText("")
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" color:#868686;\">\u786e\u8ba4\u662f\u67d0\u67d0\u4eba\u7684\u6982\u7387\u6709\u591a\u5927\uff0c\u6982\u7387\u8d8a\u5927\u8868\u793a\u662f\u67d0\u4eba\u7684\u51e0\u7387\u5c31\u8d8a\u5927\uff0c\u9ed8\u8ba4\u503c\u4e0d\u5c0f\u4e8e90%\u3002</span></p></body></html>", None))
         self.train_btn.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u8bad\u7ec3", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.training_tab), QCoreApplication.translate("MainWindow", u"\u6a21\u578b\u8bad\u7ec3", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.training_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.training_tab), QCoreApplication.translate("MainWindow", u"\u6a21\u578b\u8bad\u7ec3", None))
+#endif // QT_CONFIG(tooltip)
         self.order_combobox_browse.setItemText(0, QCoreApplication.translate("MainWindow", u"\u5e74\u5ea6", None))
         self.order_combobox_browse.setItemText(1, QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))
 
@@ -3856,7 +3878,10 @@ class Ui_MainWindow(object):
         self.label_54.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))
         self.label_61.setText(QCoreApplication.translate("MainWindow", u"\u62cd\u6444\u65f6\u95f4", None))
         self.photo_view_in_arch.setText("")
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_browser_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u6d4f\u89c8", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_browser_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.arch_browser_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u6d4f\u89c8", None))
+#endif // QT_CONFIG(tooltip)
         self.open_photo_btn.setText("")
         self.retrieve_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
         self.export_btn_search_face.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
@@ -3871,7 +3896,10 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(whatsthis)
         self.target_view_search_face.setText("")
         self.result_view_search_face.setText("")
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_face_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u641c\u7d22", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_face_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.search_face_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u641c\u7d22", None))
+#endif // QT_CONFIG(tooltip)
         self.label_211.setText(QCoreApplication.translate("MainWindow", u"\u65f6\u95f4", None))
         self.start_date_search.setDisplayFormat(QCoreApplication.translate("MainWindow", u"yyyy/MM/dd", None))
         self.label_187.setText(QCoreApplication.translate("MainWindow", u"\u9898\u540d", None))
@@ -3914,7 +3942,10 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.photo_list_widget_search.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53cc\u51fb\u52fe\u9009\u6216\u53d6\u6d88</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_archives_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u641c\u7d22", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_archives_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.search_archives_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u641c\u7d22", None))
+#endif // QT_CONFIG(tooltip)
         self.label_68.setText(QCoreApplication.translate("MainWindow", u"\u4f18\u5148\u6392\u5e8f\uff1a", None))
         self.order_combobox_transfer.setItemText(0, QCoreApplication.translate("MainWindow", u"\u5e74\u5ea6", None))
         self.order_combobox_transfer.setItemText(1, QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))
@@ -3983,7 +4014,10 @@ class Ui_MainWindow(object):
         self.cd_type_in_transfer.setItemText(0, QCoreApplication.translate("MainWindow", u"\u5907\u4efd\u76d8", None))
 
         self.packeage_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5305", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_transfer_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u79fb\u4ea4", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_transfer_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.arch_transfer_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u79fb\u4ea4", None))
+#endif // QT_CONFIG(tooltip)
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u4fe1\u606f", None))
         self.label_92.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u540d\u79f0", None))
         self.label_93.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u53f7", None))
@@ -4015,6 +4049,9 @@ class Ui_MainWindow(object):
         self.label_95.setText(QCoreApplication.translate("MainWindow", u"\u5269\u4f59\u5f20\u6570", None))
         self.label_97.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u542fGPU", None))
         self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u5269\u4f59\u5929\u6570", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.setting_tab), QCoreApplication.translate("MainWindow", u"\u7cfb\u7edf\u8bbe\u7f6e", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.setting_tab), "")
+#if QT_CONFIG(tooltip)
+        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.setting_tab), QCoreApplication.translate("MainWindow", u"\u7cfb\u7edf\u8bbe\u7f6e", None))
+#endif // QT_CONFIG(tooltip)
     # retranslateUi
 
