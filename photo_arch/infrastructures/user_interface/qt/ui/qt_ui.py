@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         icon.addFile(u"icon/archives.png", QSize(), QIcon.Normal, QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet(u"")
-        MainWindow.setIconSize(QSize(24, 24))
+        MainWindow.setIconSize(QSize(120, 90))
         self.actionexit = QAction(MainWindow)
         self.actionexit.setObjectName(u"actionexit")
         self.action = QAction(MainWindow)
@@ -49,7 +49,7 @@ class Ui_MainWindow(object):
         font1.setPointSize(16)
         self.tabWidget.setFont(font1)
         self.tabWidget.setLayoutDirection(Qt.LeftToRight)
-        self.tabWidget.setAutoFillBackground(True)
+        self.tabWidget.setAutoFillBackground(False)
         self.tabWidget.setStyleSheet(u"QTabWidget{\n"
 "    background-color: rgb(4, 103, 204);\n"
 "}\n"
@@ -57,7 +57,6 @@ class Ui_MainWindow(object):
 "QTabBar::tab{\n"
 "    background-color: rgb(4, 103, 204);\n"
 "}\n"
-"\n"
 "QTabBar::tab:selected{\n"
 "    background-color: rgb(3, 72, 142);\n"
 "}\n"
@@ -67,10 +66,16 @@ class Ui_MainWindow(object):
 "\n"
 "\n"
 "QLineEdit, QTextEdit{\n"
+"    border: 1px solid #d4e0e3; \n"
+"    border-radius: 3px;\n"
+"    padding: 2px 5px;\n"
+"}\n"
+"QLineEdit:hover, QTextEdit:hover{\n"
 "    border: 1px solid #4ba4f9; \n"
 "    border-radius: 3px;\n"
 "    padding: 2px 5px;\n"
 "}\n"
+"\n"
 "\n"
 "QComboBox{\n"
 "    background-color: #eeeeee;\n"
@@ -79,21 +84,18 @@ class Ui_MainWindow(object):
 "    padding: 2px 5px;\n"
 "}\n"
 "\n"
+"\n"
 "QPushButton{\n"
 "    padding:5px 8px;\n"
 "    border-radius: 2px;\n"
-"    border: 1px solid #d2dee2;\n"
-"    background-color: #ffffff; /* \u80cc\u666f\u989c\u8272 */\n"
-"	color: #444444; /* \u6587\u672c\u989c\u8272 */\n"
-"}\n"
-"QPushButton:hover {\n"
 "    border: 1px solid #1872c9;\n"
-"    background-color: #419ff9; /* \u80cc\u666f\u989c\u8272 */\n"
-"	color: #ffffff; /* \u6587\u672c\u989c\u8272 */\n"
+"    background-color: #419ff9; \n"
+"	color: #ffffff; \n"
 "}\n"
 "\n"
+"\n"
 "")
-        self.tabWidget.setIconSize(QSize(80, 80))
+        self.tabWidget.setIconSize(QSize(120, 90))
         self.group_tab = QWidget()
         self.group_tab.setObjectName(u"group_tab")
         self.group_tab.setFont(font)
@@ -133,15 +135,11 @@ class Ui_MainWindow(object):
 "QPushButton{\n"
 "    padding:5px 8px;\n"
 "    border-radius: 2px;\n"
-"    border: 1px solid #d2dee2;\n"
-"    background-color: #ffffff; /* \u80cc\u666f\u989c\u8272 */\n"
-"	color: #444444; /* \u6587\u672c\u989c\u8272 */\n"
-"}\n"
-"QPushButton:hover {\n"
 "    border: 1px solid #1872c9;\n"
-"    background-color: #419ff9; /* \u80cc\u666f\u989c\u8272 */\n"
-"	color: #ffffff; /* \u6587\u672c\u989c\u8272 */\n"
-"}")
+"    background-color: #419ff9; \n"
+"	color: #ffffff; \n"
+"}\n"
+"")
         self.gridLayout_6 = QGridLayout(self.widget)
         self.gridLayout_6.setObjectName(u"gridLayout_6")
         self.gridLayout_6.setContentsMargins(10, 20, 20, 20)
@@ -216,7 +214,13 @@ class Ui_MainWindow(object):
         font3.setPointSize(11)
         self.cancel_folder_btn.setFont(font3)
         self.cancel_folder_btn.setFocusPolicy(Qt.NoFocus)
-        self.cancel_folder_btn.setStyleSheet(u"")
+        self.cancel_folder_btn.setStyleSheet(u"QPushButton{\n"
+"    padding:5px 8px;\n"
+"    border-radius: 2px;\n"
+"    border: 1px solid #d2dee2;\n"
+"    background-color: #ffffff;\n"
+"	color: #444444; \n"
+"}")
         icon2 = QIcon()
         icon2.addFile(u"icon/cancel.png", QSize(), QIcon.Normal, QIcon.Off)
         self.cancel_folder_btn.setIcon(icon2)
@@ -239,7 +243,7 @@ class Ui_MainWindow(object):
         self.add_folder_btn.setFocusPolicy(Qt.NoFocus)
         self.add_folder_btn.setStyleSheet(u"")
         icon3 = QIcon()
-        icon3.addFile(u"icon/add_file.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon3.addFile(u"icon/add.png", QSize(), QIcon.Normal, QIcon.Off)
         self.add_folder_btn.setIcon(icon3)
         self.add_folder_btn.setIconSize(QSize(20, 20))
 
@@ -670,7 +674,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addWidget(self.splitter, 0, 0, 1, 1)
 
         icon5 = QIcon()
-        icon5.addFile(u"icon/dirtree.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon5.addFile(u"icon/tab_group_desc.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.group_tab, icon5, "")
         self.recognition_tab = QWidget()
         self.recognition_tab.setObjectName(u"recognition_tab")
@@ -735,7 +739,7 @@ class Ui_MainWindow(object):
         self.recogni_btn.setFocusPolicy(Qt.NoFocus)
         self.recogni_btn.setStyleSheet(u"")
         icon6 = QIcon()
-        icon6.addFile(u"icon/run.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon6.addFile(u"icon/start.png", QSize(), QIcon.Normal, QIcon.Off)
         self.recogni_btn.setIcon(icon6)
         self.recogni_btn.setIconSize(QSize(20, 20))
 
@@ -753,7 +757,13 @@ class Ui_MainWindow(object):
         self.pausecontinue_btn.setMaximumSize(QSize(16777215, 16777215))
         self.pausecontinue_btn.setFont(font)
         self.pausecontinue_btn.setFocusPolicy(Qt.NoFocus)
-        self.pausecontinue_btn.setStyleSheet(u"")
+        self.pausecontinue_btn.setStyleSheet(u"QPushButton{\n"
+"    padding:5px 8px;\n"
+"    border-radius: 2px;\n"
+"    border: 1px solid #d2dee2;\n"
+"    background-color: #ffffff;\n"
+"	color: #444444; \n"
+"}")
         icon7 = QIcon()
         icon7.addFile(u"icon/stop.png", QSize(), QIcon.Normal, QIcon.Off)
         self.pausecontinue_btn.setIcon(icon7)
@@ -893,7 +903,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addItem(self.verticalSpacer_66, 18, 0, 1, 1)
 
         icon8 = QIcon()
-        icon8.addFile(u"icon/face.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon8.addFile(u"icon/tab_face_recog.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.recognition_tab, icon8, "")
         self.photo_tab = QWidget()
         self.photo_tab.setObjectName(u"photo_tab")
@@ -942,16 +952,17 @@ class Ui_MainWindow(object):
 
         self.taken_locations_in_photo = QLineEdit(self.widget_4)
         self.taken_locations_in_photo.setObjectName(u"taken_locations_in_photo")
-        self.taken_locations_in_photo.setEnabled(False)
+        self.taken_locations_in_photo.setEnabled(True)
         self.taken_locations_in_photo.setFont(font)
+        self.taken_locations_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.taken_locations_in_photo, 11, 4, 1, 1)
 
         self.arch_category_code_in_photo = QLineEdit(self.widget_4)
         self.arch_category_code_in_photo.setObjectName(u"arch_category_code_in_photo")
-        self.arch_category_code_in_photo.setEnabled(False)
+        self.arch_category_code_in_photo.setEnabled(True)
         self.arch_category_code_in_photo.setFont(font)
-        self.arch_category_code_in_photo.setReadOnly(False)
+        self.arch_category_code_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.arch_category_code_in_photo, 7, 1, 1, 1)
 
@@ -982,8 +993,9 @@ class Ui_MainWindow(object):
 
         self.year_in_photo = QLineEdit(self.widget_4)
         self.year_in_photo.setObjectName(u"year_in_photo")
-        self.year_in_photo.setEnabled(False)
+        self.year_in_photo.setEnabled(True)
         self.year_in_photo.setFont(font)
+        self.year_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.year_in_photo, 7, 4, 1, 1)
 
@@ -1003,8 +1015,9 @@ class Ui_MainWindow(object):
 
         self.photographer_in_photo = QLineEdit(self.widget_4)
         self.photographer_in_photo.setObjectName(u"photographer_in_photo")
-        self.photographer_in_photo.setEnabled(False)
+        self.photographer_in_photo.setEnabled(True)
         self.photographer_in_photo.setFont(font)
+        self.photographer_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.photographer_in_photo, 9, 4, 1, 1)
 
@@ -1080,8 +1093,9 @@ class Ui_MainWindow(object):
 
         self.reference_code_in_photo = QLineEdit(self.widget_4)
         self.reference_code_in_photo.setObjectName(u"reference_code_in_photo")
-        self.reference_code_in_photo.setEnabled(False)
+        self.reference_code_in_photo.setEnabled(True)
         self.reference_code_in_photo.setFont(font)
+        self.reference_code_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.reference_code_in_photo, 15, 1, 1, 1)
 
@@ -1120,9 +1134,9 @@ class Ui_MainWindow(object):
 
         self.security_classification_in_photo = QLineEdit(self.widget_4)
         self.security_classification_in_photo.setObjectName(u"security_classification_in_photo")
-        self.security_classification_in_photo.setEnabled(False)
+        self.security_classification_in_photo.setEnabled(True)
         self.security_classification_in_photo.setFont(font)
-        self.security_classification_in_photo.setReadOnly(False)
+        self.security_classification_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.security_classification_in_photo, 13, 4, 1, 1)
 
@@ -1226,8 +1240,9 @@ class Ui_MainWindow(object):
 
         self.group_code_in_photo = QLineEdit(self.widget_4)
         self.group_code_in_photo.setObjectName(u"group_code_in_photo")
-        self.group_code_in_photo.setEnabled(False)
+        self.group_code_in_photo.setEnabled(True)
         self.group_code_in_photo.setFont(font)
+        self.group_code_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.group_code_in_photo, 9, 1, 1, 1)
 
@@ -1255,8 +1270,10 @@ class Ui_MainWindow(object):
 
         self.arch_code_in_photo = QLineEdit(self.widget_4)
         self.arch_code_in_photo.setObjectName(u"arch_code_in_photo")
+        self.arch_code_in_photo.setEnabled(True)
         self.arch_code_in_photo.setMinimumSize(QSize(0, 25))
         self.arch_code_in_photo.setFont(font)
+        self.arch_code_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.arch_code_in_photo, 5, 1, 1, 1)
 
@@ -1299,8 +1316,9 @@ class Ui_MainWindow(object):
 
         self.taken_time_in_photo = QLineEdit(self.widget_4)
         self.taken_time_in_photo.setObjectName(u"taken_time_in_photo")
-        self.taken_time_in_photo.setEnabled(False)
+        self.taken_time_in_photo.setEnabled(True)
         self.taken_time_in_photo.setFont(font)
+        self.taken_time_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.taken_time_in_photo, 11, 1, 1, 1)
 
@@ -1310,9 +1328,9 @@ class Ui_MainWindow(object):
 
         self.fonds_code_in_photo = QLineEdit(self.widget_4)
         self.fonds_code_in_photo.setObjectName(u"fonds_code_in_photo")
-        self.fonds_code_in_photo.setEnabled(False)
+        self.fonds_code_in_photo.setEnabled(True)
         self.fonds_code_in_photo.setFont(font)
-        self.fonds_code_in_photo.setReadOnly(False)
+        self.fonds_code_in_photo.setReadOnly(True)
 
         self.gridLayout_15.addWidget(self.fonds_code_in_photo, 5, 4, 1, 1)
 
@@ -1340,7 +1358,7 @@ class Ui_MainWindow(object):
         self.gridLayout_9.addWidget(self.splitter_2, 0, 0, 1, 1)
 
         icon11 = QIcon()
-        icon11.addFile(u"icon/photo.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon11.addFile(u"icon/tab_photo_desc.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.photo_tab, icon11, "")
         self.training_tab = QWidget()
         self.training_tab.setObjectName(u"training_tab")
@@ -1454,7 +1472,7 @@ class Ui_MainWindow(object):
         self.train_btn.setFocusPolicy(Qt.NoFocus)
         self.train_btn.setStyleSheet(u"")
         icon12 = QIcon()
-        icon12.addFile(u"icon/start_training.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon12.addFile(u"icon/training.png", QSize(), QIcon.Normal, QIcon.Off)
         self.train_btn.setIcon(icon12)
         self.train_btn.setIconSize(QSize(20, 20))
 
@@ -1472,7 +1490,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addItem(self.verticalSpacer_65, 9, 0, 1, 1)
 
         icon13 = QIcon()
-        icon13.addFile(u"icon/training.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon13.addFile(u"icon/tab_training.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.training_tab, icon13, "")
         self.arch_browser_tab = QWidget()
         self.arch_browser_tab.setObjectName(u"arch_browser_tab")
@@ -1485,7 +1503,7 @@ class Ui_MainWindow(object):
         self.widget_5 = QWidget(self.splitter_12)
         self.widget_5.setObjectName(u"widget_5")
         self.widget_5.setMinimumSize(QSize(250, 1))
-        self.widget_5.setMaximumSize(QSize(300, 16777215))
+        self.widget_5.setMaximumSize(QSize(310, 16777215))
         self.widget_5.setFont(font)
         self.widget_5.setStyleSheet(u"QWidget {\n"
 "    background-color: #f1f5f8;\n"
@@ -1982,7 +2000,7 @@ class Ui_MainWindow(object):
         self.gridLayout_17.addWidget(self.splitter_12, 0, 0, 1, 1)
 
         icon14 = QIcon()
-        icon14.addFile(u"icon/browse_arch.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon14.addFile(u"icon/tab_browse_arch.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.arch_browser_tab, icon14, "")
         self.search_face_tab = QWidget()
         self.search_face_tab.setObjectName(u"search_face_tab")
@@ -2008,14 +2026,9 @@ class Ui_MainWindow(object):
 "QPushButton{\n"
 "    padding:5px 8px;\n"
 "    border-radius: 2px;\n"
-"    border: 1px solid #d2dee2;\n"
-"    background-color: #ffffff; /* \u80cc\u666f\u989c\u8272 */\n"
-"	color: #444444; /* \u6587\u672c\u989c\u8272 */\n"
-"}\n"
-"QPushButton:hover {\n"
 "    border: 1px solid #1872c9;\n"
-"    background-color: #419ff9; /* \u80cc\u666f\u989c\u8272 */\n"
-"	color: #ffffff; /* \u6587\u672c\u989c\u8272 */\n"
+"    background-color: #419ff9; \n"
+"	color: #ffffff; \n"
 "}")
         self.gridLayout_33 = QGridLayout(self.widget_11)
         self.gridLayout_33.setObjectName(u"gridLayout_33")
@@ -2229,7 +2242,7 @@ class Ui_MainWindow(object):
         self.gridLayout_10.addWidget(self.splitter_11, 0, 0, 1, 1)
 
         icon17 = QIcon()
-        icon17.addFile(u"icon/search_face.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon17.addFile(u"icon/tab_search_face.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.search_face_tab, icon17, "")
         self.search_archives_tab = QWidget()
         self.search_archives_tab.setObjectName(u"search_archives_tab")
@@ -2258,14 +2271,9 @@ class Ui_MainWindow(object):
 "QPushButton{\n"
 "    padding:5px 8px;\n"
 "    border-radius: 2px;\n"
-"    border: 1px solid #d2dee2;\n"
-"    background-color: #ffffff; /* \u80cc\u666f\u989c\u8272 */\n"
-"	color: #444444; /* \u6587\u672c\u989c\u8272 */\n"
-"}\n"
-"QPushButton:hover {\n"
 "    border: 1px solid #1872c9;\n"
-"    background-color: #419ff9; /* \u80cc\u666f\u989c\u8272 */\n"
-"	color: #ffffff; /* \u6587\u672c\u989c\u8272 */\n"
+"    background-color: #419ff9; \n"
+"	color: #ffffff; \n"
 "}")
         self.gridLayout_54 = QGridLayout(self.widget_21)
         self.gridLayout_54.setObjectName(u"gridLayout_54")
@@ -2854,7 +2862,7 @@ class Ui_MainWindow(object):
         self.gridLayout_30.addWidget(self.splitter_9, 0, 0, 1, 1)
 
         icon18 = QIcon()
-        icon18.addFile(u"icon/search_arch.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon18.addFile(u"icon/tab_search_arch.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.search_archives_tab, icon18, "")
         self.arch_transfer_tab = QWidget()
         self.arch_transfer_tab.setObjectName(u"arch_transfer_tab")
@@ -3280,7 +3288,7 @@ class Ui_MainWindow(object):
         self.gridLayout_23.addWidget(self.splitter_5, 0, 0, 1, 1)
 
         icon20 = QIcon()
-        icon20.addFile(u"icon/arch_transfer.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon20.addFile(u"icon/tab_hand_over.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.arch_transfer_tab, icon20, "")
         self.setting_tab = QWidget()
         self.setting_tab.setObjectName(u"setting_tab")
@@ -3582,7 +3590,7 @@ class Ui_MainWindow(object):
         self.gridLayout_32.addItem(self.verticalSpacer_11, 6, 2, 1, 1)
 
         icon22 = QIcon()
-        icon22.addFile(u"icon/setting.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon22.addFile(u"icon/tab_setting.png", QSize(), QIcon.Normal, QIcon.Off)
         self.tabWidget.addTab(self.setting_tab, icon22, "")
 
         self.gridLayout_24.addWidget(self.tabWidget, 0, 0, 1, 1)
@@ -3697,12 +3705,9 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u7167\u7247\u6863\u6848AI\u8f85\u52a9\u8457\u5f55\u7ba1\u7406\u7cfb\u7edfV2", None))
         self.actionexit.setText(QCoreApplication.translate("MainWindow", u"\u9000\u51fa(X)", None))
         self.action.setText(QCoreApplication.translate("MainWindow", u"\u5173\u4e8e...", None))
-#if QT_CONFIG(tooltip)
-        self.dir_lineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u9009\u62e9\u5de5\u4f5c\u76ee\u5f55</span></p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
         self.dir_lineEdit.setText("")
 #if QT_CONFIG(tooltip)
-        self.open_dir_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u6253\u5f00\u5de5\u4f5c\u76ee\u5f55</p></body></html>", None))
+        self.open_dir_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u9009\u62e9\u5de5\u4f5c\u76ee\u5f55</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.open_dir_btn.setText("")
 #if QT_CONFIG(shortcut)
@@ -3757,9 +3762,6 @@ class Ui_MainWindow(object):
 
         self.label_27.setText(QCoreApplication.translate("MainWindow", u"\u62cd\u6444\u8005", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.group_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.group_tab), QCoreApplication.translate("MainWindow", u"\u7ec4\u8457\u5f55", None))
-#endif // QT_CONFIG(tooltip)
         self.handled_photo_label.setText("")
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"\u672a\u5904\u7406\u56fe\u7247\uff1a", None))
         self.run_state_label.setText(QCoreApplication.translate("MainWindow", u"\u505c\u6b62", None))
@@ -3778,9 +3780,6 @@ class Ui_MainWindow(object):
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8\u8bc6\u522b\u56fe\u7247\uff1a", None))
         self.recognition_rate_label.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.recognition_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.recognition_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u8bc6\u522b", None))
-#endif // QT_CONFIG(tooltip)
         self.photo_view.setText("")
         self.label_30.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u53f7", None))
         self.all_recognition_radioButton.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u672c\u6b21\u8bc6\u522b\u5168\u90e8\u8bc6\u522b\u7167\u7247(Alt+E)", None))
@@ -3835,9 +3834,6 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(shortcut)
         self.label_32.setText(QCoreApplication.translate("MainWindow", u"\u5e74\u5ea6", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.photo_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.photo_tab), QCoreApplication.translate("MainWindow", u"\u5f20\u8457\u5f55", None))
-#endif // QT_CONFIG(tooltip)
         self.label_12.setText(QCoreApplication.translate("MainWindow", u"\u6a21\u578b\u7cbe\u5ea6\uff1a", None))
         self.model_acc_label.setText("")
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u51c6\u786e\u5ea6\uff1a", None))
@@ -3846,11 +3842,8 @@ class Ui_MainWindow(object):
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u672a\u8bad\u7ec3\u4eba\u8138\u7167\u7247\uff1a", None))
         self.untrained_num_label.setText("")
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" color:#868686;\">\u786e\u8ba4\u662f\u67d0\u67d0\u4eba\u7684\u6982\u7387\u6709\u591a\u5927\uff0c\u6982\u7387\u8d8a\u5927\u8868\u793a\u662f\u67d0\u4eba\u7684\u51e0\u7387\u5c31\u8d8a\u5927\uff0c\u9ed8\u8ba4\u503c\u4e0d\u5c0f\u4e8e90%\u3002</span></p></body></html>", None))
-        self.train_btn.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u8bad\u7ec3", None))
+        self.train_btn.setText(QCoreApplication.translate("MainWindow", u"\u8bad\u7ec3", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.training_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.training_tab), QCoreApplication.translate("MainWindow", u"\u6a21\u578b\u8bad\u7ec3", None))
-#endif // QT_CONFIG(tooltip)
         self.order_combobox_browse.setItemText(0, QCoreApplication.translate("MainWindow", u"\u5e74\u5ea6", None))
         self.order_combobox_browse.setItemText(1, QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))
 
@@ -3879,9 +3872,6 @@ class Ui_MainWindow(object):
         self.label_61.setText(QCoreApplication.translate("MainWindow", u"\u62cd\u6444\u65f6\u95f4", None))
         self.photo_view_in_arch.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_browser_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.arch_browser_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u6d4f\u89c8", None))
-#endif // QT_CONFIG(tooltip)
         self.open_photo_btn.setText("")
         self.retrieve_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
         self.export_btn_search_face.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
@@ -3897,9 +3887,6 @@ class Ui_MainWindow(object):
         self.target_view_search_face.setText("")
         self.result_view_search_face.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_face_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.search_face_tab), QCoreApplication.translate("MainWindow", u"\u4eba\u8138\u641c\u7d22", None))
-#endif // QT_CONFIG(tooltip)
         self.label_211.setText(QCoreApplication.translate("MainWindow", u"\u65f6\u95f4", None))
         self.start_date_search.setDisplayFormat(QCoreApplication.translate("MainWindow", u"yyyy/MM/dd", None))
         self.label_187.setText(QCoreApplication.translate("MainWindow", u"\u9898\u540d", None))
@@ -3943,9 +3930,6 @@ class Ui_MainWindow(object):
         self.photo_list_widget_search.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53cc\u51fb\u52fe\u9009\u6216\u53d6\u6d88</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_archives_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.search_archives_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u641c\u7d22", None))
-#endif // QT_CONFIG(tooltip)
         self.label_68.setText(QCoreApplication.translate("MainWindow", u"\u4f18\u5148\u6392\u5e8f\uff1a", None))
         self.order_combobox_transfer.setItemText(0, QCoreApplication.translate("MainWindow", u"\u5e74\u5ea6", None))
         self.order_combobox_transfer.setItemText(1, QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))
@@ -4015,9 +3999,6 @@ class Ui_MainWindow(object):
 
         self.packeage_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5305", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_transfer_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.arch_transfer_tab), QCoreApplication.translate("MainWindow", u"\u6863\u6848\u79fb\u4ea4", None))
-#endif // QT_CONFIG(tooltip)
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u4fe1\u606f", None))
         self.label_92.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u540d\u79f0", None))
         self.label_93.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u53f7", None))
@@ -4050,8 +4031,5 @@ class Ui_MainWindow(object):
         self.label_97.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u542fGPU", None))
         self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u5269\u4f59\u5929\u6570", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.setting_tab), "")
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.setting_tab), QCoreApplication.translate("MainWindow", u"\u7cfb\u7edf\u8bbe\u7f6e", None))
-#endif // QT_CONFIG(tooltip)
     # retranslateUi
 

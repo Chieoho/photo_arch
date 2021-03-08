@@ -34,8 +34,8 @@
   </property>
   <property name="iconSize">
    <size>
-    <width>24</width>
-    <height>24</height>
+    <width>120</width>
+    <height>90</height>
    </size>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -67,7 +67,7 @@
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="autoFillBackground">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="styleSheet">
        <string notr="true">QTabWidget{
@@ -77,7 +77,6 @@
 QTabBar::tab{
     background-color: rgb(4, 103, 204);
 }
-
 QTabBar::tab:selected{
     background-color: rgb(3, 72, 142);
 }
@@ -87,10 +86,16 @@ QTabBar::tab:hover{
 
 
 QLineEdit, QTextEdit{
+    border: 1px solid #d4e0e3; 
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+QLineEdit:hover, QTextEdit:hover{
     border: 1px solid #4ba4f9; 
     border-radius: 3px;
     padding: 2px 5px;
 }
+
 
 QComboBox{
     background-color: #eeeeee;
@@ -99,18 +104,15 @@ QComboBox{
     padding: 2px 5px;
 }
 
+
 QPushButton{
     padding:5px 8px;
     border-radius: 2px;
-    border: 1px solid #d2dee2;
-    background-color: #ffffff; /* 背景颜色 */
-	color: #444444; /* 文本颜色 */
-}
-QPushButton:hover {
     border: 1px solid #1872c9;
-    background-color: #419ff9; /* 背景颜色 */
-	color: #ffffff; /* 文本颜色 */
+    background-color: #419ff9; 
+	color: #ffffff; 
 }
+
 
 </string>
       </property>
@@ -119,8 +121,8 @@ QPushButton:hover {
       </property>
       <property name="iconSize">
        <size>
-        <width>80</width>
-        <height>80</height>
+        <width>120</width>
+        <height>90</height>
        </size>
       </property>
       <widget class="QWidget" name="group_tab">
@@ -135,13 +137,10 @@ QPushButton:hover {
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/dirtree.png</normaloff>icon/dirtree.png</iconset>
+         <normaloff>icon/tab_group_desc.png</normaloff>icon/tab_group_desc.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>组著录</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
@@ -203,15 +202,11 @@ QLineEdit {
 QPushButton{
     padding:5px 8px;
     border-radius: 2px;
-    border: 1px solid #d2dee2;
-    background-color: #ffffff; /* 背景颜色 */
-	color: #444444; /* 文本颜色 */
-}
-QPushButton:hover {
     border: 1px solid #1872c9;
-    background-color: #419ff9; /* 背景颜色 */
-	color: #ffffff; /* 文本颜色 */
-}</string>
+    background-color: #419ff9; 
+	color: #ffffff; 
+}
+</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_6">
             <property name="leftMargin">
@@ -239,9 +234,6 @@ QPushButton:hover {
                 <family>微软雅黑</family>
                 <pointsize>13</pointsize>
                </font>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;选择工作目录&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string/>
@@ -278,7 +270,7 @@ QPushButton:hover {
                </font>
               </property>
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;打开工作目录&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;选择工作目录&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="styleSheet">
                <string notr="true"/>
@@ -406,7 +398,13 @@ QPushButton:hover {
                   <enum>Qt::NoFocus</enum>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true"/>
+                  <string notr="true">QPushButton{
+    padding:5px 8px;
+    border-radius: 2px;
+    border: 1px solid #d2dee2;
+    background-color: #ffffff;
+	color: #444444; 
+}</string>
                  </property>
                  <property name="text">
                   <string>取消</string>
@@ -479,7 +477,7 @@ QPushButton:hover {
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>icon/add_file.png</normaloff>icon/add_file.png</iconset>
+                   <normaloff>icon/add.png</normaloff>icon/add.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -1614,13 +1612,10 @@ QPushButton:hover {
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/face.png</normaloff>icon/face.png</iconset>
+         <normaloff>icon/tab_face_recog.png</normaloff>icon/tab_face_recog.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>人脸识别</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
         <item row="4" column="1">
@@ -1806,7 +1801,7 @@ QPushButton:hover {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>icon/run.png</normaloff>icon/run.png</iconset>
+               <normaloff>icon/start.png</normaloff>icon/start.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1862,7 +1857,13 @@ QPushButton:hover {
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">QPushButton{
+    padding:5px 8px;
+    border-radius: 2px;
+    border: 1px solid #d2dee2;
+    background-color: #ffffff;
+	color: #444444; 
+}</string>
              </property>
              <property name="text">
               <string>停止</string>
@@ -2259,13 +2260,10 @@ QPushButton:hover {
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/photo.png</normaloff>icon/photo.png</iconset>
+         <normaloff>icon/tab_photo_desc.png</normaloff>icon/tab_photo_desc.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>张著录</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_9">
         <item row="0" column="0">
@@ -2377,20 +2375,7 @@ QPushButton:hover {
             <item row="11" column="4">
              <widget class="QLineEdit" name="taken_locations_in_photo">
               <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="font">
-               <font>
-                <family>微软雅黑</family>
-                <pointsize>13</pointsize>
-               </font>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QLineEdit" name="arch_category_code_in_photo">
-              <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="font">
                <font>
@@ -2399,7 +2384,23 @@ QPushButton:hover {
                </font>
               </property>
               <property name="readOnly">
-               <bool>false</bool>
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QLineEdit" name="arch_category_code_in_photo">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="font">
+               <font>
+                <family>微软雅黑</family>
+                <pointsize>13</pointsize>
+               </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -2479,13 +2480,16 @@ QPushButton:hover {
             <item row="7" column="4">
              <widget class="QLineEdit" name="year_in_photo">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="font">
                <font>
                 <family>微软雅黑</family>
                 <pointsize>13</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -2524,13 +2528,16 @@ QPushButton:hover {
             <item row="9" column="4">
              <widget class="QLineEdit" name="photographer_in_photo">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="font">
                <font>
                 <family>微软雅黑</family>
                 <pointsize>13</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -2696,13 +2703,16 @@ QPushButton:hover {
             <item row="15" column="1">
              <widget class="QLineEdit" name="reference_code_in_photo">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="font">
                <font>
                 <family>微软雅黑</family>
                 <pointsize>13</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -2795,7 +2805,7 @@ QPushButton:hover {
             <item row="13" column="4">
              <widget class="QLineEdit" name="security_classification_in_photo">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="font">
                <font>
@@ -2804,7 +2814,7 @@ QPushButton:hover {
                </font>
               </property>
               <property name="readOnly">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -3095,13 +3105,16 @@ QPushButton:hover {
             <item row="9" column="1">
              <widget class="QLineEdit" name="group_code_in_photo">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="font">
                <font>
                 <family>微软雅黑</family>
                 <pointsize>13</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -3171,6 +3184,9 @@ QPushButton:hover {
             </item>
             <item row="5" column="1">
              <widget class="QLineEdit" name="arch_code_in_photo">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -3182,6 +3198,9 @@ QPushButton:hover {
                 <family>微软雅黑</family>
                 <pointsize>13</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -3288,13 +3307,16 @@ QPushButton:hover {
             <item row="11" column="1">
              <widget class="QLineEdit" name="taken_time_in_photo">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="font">
                <font>
                 <family>微软雅黑</family>
                 <pointsize>13</pointsize>
                </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -3317,7 +3339,7 @@ QPushButton:hover {
             <item row="5" column="4">
              <widget class="QLineEdit" name="fonds_code_in_photo">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="font">
                <font>
@@ -3326,7 +3348,7 @@ QPushButton:hover {
                </font>
               </property>
               <property name="readOnly">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -3402,13 +3424,10 @@ QPushButton:hover {
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/training.png</normaloff>icon/training.png</iconset>
+         <normaloff>icon/tab_training.png</normaloff>icon/tab_training.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>模型训练</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="3" column="3">
@@ -3704,11 +3723,11 @@ QPushButton:hover {
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>开始训练</string>
+              <string>训练</string>
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>icon/start_training.png</normaloff>icon/start_training.png</iconset>
+               <normaloff>icon/training.png</normaloff>icon/training.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -3761,13 +3780,10 @@ QPushButton:hover {
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/browse_arch.png</normaloff>icon/browse_arch.png</iconset>
+         <normaloff>icon/tab_browse_arch.png</normaloff>icon/tab_browse_arch.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>档案浏览</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_17">
         <item row="0" column="0">
@@ -3784,7 +3800,7 @@ QPushButton:hover {
            </property>
            <property name="maximumSize">
             <size>
-             <width>300</width>
+             <width>310</width>
              <height>16777215</height>
             </size>
            </property>
@@ -4976,13 +4992,10 @@ QPushButton:hover {
       <widget class="QWidget" name="search_face_tab">
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/search_face.png</normaloff>icon/search_face.png</iconset>
+         <normaloff>icon/tab_search_face.png</normaloff>icon/tab_search_face.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>人脸搜索</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_10">
         <item row="0" column="0">
@@ -5017,14 +5030,9 @@ QLineEdit {
 QPushButton{
     padding:5px 8px;
     border-radius: 2px;
-    border: 1px solid #d2dee2;
-    background-color: #ffffff; /* 背景颜色 */
-	color: #444444; /* 文本颜色 */
-}
-QPushButton:hover {
     border: 1px solid #1872c9;
-    background-color: #419ff9; /* 背景颜色 */
-	color: #ffffff; /* 文本颜色 */
+    background-color: #419ff9; 
+	color: #ffffff; 
 }</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_33">
@@ -5536,13 +5544,10 @@ QPushButton:hover {
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/search_arch.png</normaloff>icon/search_arch.png</iconset>
+         <normaloff>icon/tab_search_arch.png</normaloff>icon/tab_search_arch.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>档案搜索</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_30">
         <item row="0" column="0">
@@ -5589,14 +5594,9 @@ QLineEdit {
 QPushButton{
     padding:5px 8px;
     border-radius: 2px;
-    border: 1px solid #d2dee2;
-    background-color: #ffffff; /* 背景颜色 */
-	color: #444444; /* 文本颜色 */
-}
-QPushButton:hover {
     border: 1px solid #1872c9;
-    background-color: #419ff9; /* 背景颜色 */
-	color: #ffffff; /* 文本颜色 */
+    background-color: #419ff9; 
+	color: #ffffff; 
 }</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_54">
@@ -7102,13 +7102,10 @@ QPushButton:hover {
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/arch_transfer.png</normaloff>icon/arch_transfer.png</iconset>
+         <normaloff>icon/tab_hand_over.png</normaloff>icon/tab_hand_over.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>档案移交</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_23">
         <item row="0" column="0">
@@ -8098,13 +8095,10 @@ QPushButton:hover {
        </property>
        <attribute name="icon">
         <iconset>
-         <normaloff>icon/setting.png</normaloff>icon/setting.png</iconset>
+         <normaloff>icon/tab_setting.png</normaloff>icon/tab_setting.png</iconset>
        </attribute>
        <attribute name="title">
         <string/>
-       </attribute>
-       <attribute name="toolTip">
-        <string>系统设置</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_32">
         <item row="0" column="1">

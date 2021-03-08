@@ -241,6 +241,14 @@ class PhotoDescription(object):
                 item.setTextAlignment(QtCore.Qt.AlignCenter)
                 self.ui.tableWidget.setItem(row, col, item)
             del_button = self._create_button('删除', self.del_icon_path)
+            del_button.setStyleSheet("""
+            QPushButton{
+            padding:5px 8px;
+            border-radius: 2px;
+            border: 1px solid #d2dee2;
+            background-color: #ffffff;
+            color: #444444; }
+            """)
             self._connect(del_button.clicked, row)
             self.ui.tableWidget.setCellWidget(row, 2, del_button)
         self.ui.tableWidget.insertRow(row+1)
