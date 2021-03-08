@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.tabWidget = QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setMinimumSize(QSize(1, 1))
-        self.tabWidget.setMaximumSize(QSize(1800, 16777215))
+        self.tabWidget.setMaximumSize(QSize(16777215, 16777215))
         font1 = QFont()
         font1.setFamily(u"\u5fae\u8f6f\u96c5\u9ed1")
         font1.setPointSize(16)
@@ -70,12 +70,10 @@ class Ui_MainWindow(object):
 "    border-radius: 3px;\n"
 "    padding: 2px 5px;\n"
 "}\n"
-"QLineEdit:hover, QTextEdit:hover{\n"
-"    border: 1px solid #4ba4f9; \n"
-"    border-radius: 3px;\n"
-"    padding: 2px 5px;\n"
-"}\n"
 "\n"
+"QLineEdit:read-only { /* QLineEdit\u5728\u53ea\u8bfb\u65f6\u7684\u72b6\u6001 */\n"
+"	background-color: #eeeeee;\n"
+"}\n"
 "\n"
 "QComboBox{\n"
 "    background-color: #eeeeee;\n"
@@ -84,12 +82,18 @@ class Ui_MainWindow(object):
 "    padding: 2px 5px;\n"
 "}\n"
 "\n"
+"QLineEdit:hover, QTextEdit:hover, QComboBox:hover, QLineEdit:focus, QTextEdit:focus, QComboBox:focus{\n"
+"    border: 1px solid #4ba4f9; \n"
+"    border-radius: 3px;\n"
+"    padding: 2px 5px;\n"
+"}\n"
 "\n"
 "QPushButton{\n"
 "    padding:5px 8px;\n"
 "    border-radius: 2px;\n"
 "    border: 1px solid #1872c9;\n"
-"    background-color: #419ff9; \n"
+"    background-col"
+                        "or: #419ff9; \n"
 "	color: #ffffff; \n"
 "}\n"
 "\n"
@@ -98,39 +102,50 @@ class Ui_MainWindow(object):
         self.tabWidget.setIconSize(QSize(120, 90))
         self.group_tab = QWidget()
         self.group_tab.setObjectName(u"group_tab")
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.group_tab.sizePolicy().hasHeightForWidth())
+        self.group_tab.setSizePolicy(sizePolicy)
+        self.group_tab.setMinimumSize(QSize(1, 1))
         self.group_tab.setFont(font)
         self.group_tab.setStyleSheet(u"")
         self.gridLayout_5 = QGridLayout(self.group_tab)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.splitter = QSplitter(self.group_tab)
         self.splitter.setObjectName(u"splitter")
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
-        self.splitter.setSizePolicy(sizePolicy)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
+        self.splitter.setSizePolicy(sizePolicy1)
         self.splitter.setMinimumSize(QSize(1, 1))
-        self.splitter.setMaximumSize(QSize(16777215, 16777215))
+        self.splitter.setMaximumSize(QSize(1705, 16777215))
+        self.splitter.setLayoutDirection(Qt.LeftToRight)
         self.splitter.setStyleSheet(u"")
         self.splitter.setOrientation(Qt.Horizontal)
         self.widget = QWidget(self.splitter)
         self.widget.setObjectName(u"widget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
-        self.widget.setSizePolicy(sizePolicy1)
+        sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy)
         self.widget.setMinimumSize(QSize(340, 0))
         self.widget.setMaximumSize(QSize(700, 16777215))
         self.widget.setStyleSheet(u"QWidget {\n"
 "    background-color: #f1f5f8;\n"
 "}\n"
 "\n"
-"QLineEdit {\n"
+"\n"
+"QLineEdit, QTextEdit{\n"
+"    border: 1px solid #d4e0e3; \n"
+"    border-radius: 3px;\n"
+"    padding: 2px 5px;\n"
+"}\n"
+"QLineEdit:hover, QTextEdit:hover{\n"
 "    border: 1px solid #4ba4f9; \n"
 "    border-radius: 3px;\n"
 "    padding: 2px 5px;\n"
 "}\n"
+"\n"
 "\n"
 "QPushButton{\n"
 "    padding:5px 8px;\n"
@@ -275,10 +290,10 @@ class Ui_MainWindow(object):
         self.splitter.addWidget(self.widget)
         self.group_description_widget = QWidget(self.splitter)
         self.group_description_widget.setObjectName(u"group_description_widget")
-        sizePolicy3.setHeightForWidth(self.group_description_widget.sizePolicy().hasHeightForWidth())
-        self.group_description_widget.setSizePolicy(sizePolicy3)
-        self.group_description_widget.setMinimumSize(QSize(340, 0))
-        self.group_description_widget.setMaximumSize(QSize(16777215, 16777215))
+        sizePolicy.setHeightForWidth(self.group_description_widget.sizePolicy().hasHeightForWidth())
+        self.group_description_widget.setSizePolicy(sizePolicy)
+        self.group_description_widget.setMinimumSize(QSize(340, 1))
+        self.group_description_widget.setMaximumSize(QSize(1000, 16777215))
         self.group_description_widget.setFont(font)
         self.gridLayout_8 = QGridLayout(self.group_description_widget)
         self.gridLayout_8.setObjectName(u"gridLayout_8")
@@ -293,11 +308,8 @@ class Ui_MainWindow(object):
 
         self.year_in_group = QLineEdit(self.group_description_widget)
         self.year_in_group.setObjectName(u"year_in_group")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.year_in_group.sizePolicy().hasHeightForWidth())
-        self.year_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.year_in_group.sizePolicy().hasHeightForWidth())
+        self.year_in_group.setSizePolicy(sizePolicy)
         self.year_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.year_in_group, 8, 1, 1, 1)
@@ -308,15 +320,15 @@ class Ui_MainWindow(object):
 
         self.department_in_group = QLineEdit(self.group_description_widget)
         self.department_in_group.setObjectName(u"department_in_group")
-        sizePolicy4.setHeightForWidth(self.department_in_group.sizePolicy().hasHeightForWidth())
-        self.department_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.department_in_group.sizePolicy().hasHeightForWidth())
+        self.department_in_group.setSizePolicy(sizePolicy)
 
         self.gridLayout_8.addWidget(self.department_in_group, 8, 4, 1, 1)
 
         self.taken_locations_in_group = QLineEdit(self.group_description_widget)
         self.taken_locations_in_group.setObjectName(u"taken_locations_in_group")
-        sizePolicy4.setHeightForWidth(self.taken_locations_in_group.sizePolicy().hasHeightForWidth())
-        self.taken_locations_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.taken_locations_in_group.sizePolicy().hasHeightForWidth())
+        self.taken_locations_in_group.setSizePolicy(sizePolicy)
         self.taken_locations_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.taken_locations_in_group, 14, 4, 1, 1)
@@ -398,8 +410,8 @@ class Ui_MainWindow(object):
 
         self.folder_size_in_group = QLineEdit(self.group_description_widget)
         self.folder_size_in_group.setObjectName(u"folder_size_in_group")
-        sizePolicy4.setHeightForWidth(self.folder_size_in_group.sizePolicy().hasHeightForWidth())
-        self.folder_size_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.folder_size_in_group.sizePolicy().hasHeightForWidth())
+        self.folder_size_in_group.setSizePolicy(sizePolicy)
         self.folder_size_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.folder_size_in_group, 12, 1, 1, 1)
@@ -447,8 +459,8 @@ class Ui_MainWindow(object):
 
         self.reference_code_in_group = QLineEdit(self.group_description_widget)
         self.reference_code_in_group.setObjectName(u"reference_code_in_group")
-        sizePolicy4.setHeightForWidth(self.reference_code_in_group.sizePolicy().hasHeightForWidth())
-        self.reference_code_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.reference_code_in_group.sizePolicy().hasHeightForWidth())
+        self.reference_code_in_group.setSizePolicy(sizePolicy)
         self.reference_code_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.reference_code_in_group, 18, 1, 1, 1)
@@ -492,8 +504,8 @@ class Ui_MainWindow(object):
 
         self.author_in_group = QLineEdit(self.group_description_widget)
         self.author_in_group.setObjectName(u"author_in_group")
-        sizePolicy4.setHeightForWidth(self.author_in_group.sizePolicy().hasHeightForWidth())
-        self.author_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.author_in_group.sizePolicy().hasHeightForWidth())
+        self.author_in_group.setSizePolicy(sizePolicy)
 
         self.gridLayout_8.addWidget(self.author_in_group, 10, 4, 1, 1)
 
@@ -507,8 +519,8 @@ class Ui_MainWindow(object):
 
         self.taken_time_in_group = QLineEdit(self.group_description_widget)
         self.taken_time_in_group.setObjectName(u"taken_time_in_group")
-        sizePolicy4.setHeightForWidth(self.taken_time_in_group.sizePolicy().hasHeightForWidth())
-        self.taken_time_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.taken_time_in_group.sizePolicy().hasHeightForWidth())
+        self.taken_time_in_group.setSizePolicy(sizePolicy)
         self.taken_time_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.taken_time_in_group, 14, 1, 1, 1)
@@ -525,16 +537,16 @@ class Ui_MainWindow(object):
 
         self.group_code_in_group = QLineEdit(self.group_description_widget)
         self.group_code_in_group.setObjectName(u"group_code_in_group")
-        sizePolicy4.setHeightForWidth(self.group_code_in_group.sizePolicy().hasHeightForWidth())
-        self.group_code_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.group_code_in_group.sizePolicy().hasHeightForWidth())
+        self.group_code_in_group.setSizePolicy(sizePolicy)
         self.group_code_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.group_code_in_group, 10, 1, 1, 1)
 
         self.group_title_in_group = QLineEdit(self.group_description_widget)
         self.group_title_in_group.setObjectName(u"group_title_in_group")
-        sizePolicy4.setHeightForWidth(self.group_title_in_group.sizePolicy().hasHeightForWidth())
-        self.group_title_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.group_title_in_group.sizePolicy().hasHeightForWidth())
+        self.group_title_in_group.setSizePolicy(sizePolicy)
         self.group_title_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.group_title_in_group, 2, 1, 1, 4)
@@ -575,8 +587,8 @@ class Ui_MainWindow(object):
 
         self.photo_num_in_group = QLineEdit(self.group_description_widget)
         self.photo_num_in_group.setObjectName(u"photo_num_in_group")
-        sizePolicy4.setHeightForWidth(self.photo_num_in_group.sizePolicy().hasHeightForWidth())
-        self.photo_num_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.photo_num_in_group.sizePolicy().hasHeightForWidth())
+        self.photo_num_in_group.setSizePolicy(sizePolicy)
         self.photo_num_in_group.setFont(font)
 
         self.gridLayout_8.addWidget(self.photo_num_in_group, 16, 1, 1, 1)
@@ -635,8 +647,8 @@ class Ui_MainWindow(object):
 
         self.photographer_in_group = QLineEdit(self.group_description_widget)
         self.photographer_in_group.setObjectName(u"photographer_in_group")
-        sizePolicy4.setHeightForWidth(self.photographer_in_group.sizePolicy().hasHeightForWidth())
-        self.photographer_in_group.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.photographer_in_group.sizePolicy().hasHeightForWidth())
+        self.photographer_in_group.setSizePolicy(sizePolicy)
 
         self.gridLayout_8.addWidget(self.photographer_in_group, 12, 4, 1, 1)
 
@@ -672,6 +684,10 @@ class Ui_MainWindow(object):
         self.splitter.addWidget(self.group_description_widget)
 
         self.gridLayout_5.addWidget(self.splitter, 0, 0, 1, 1)
+
+        self.horizontalSpacer_40 = QSpacerItem(200, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
+
+        self.gridLayout_5.addItem(self.horizontalSpacer_40, 0, 1, 1, 1)
 
         icon5 = QIcon()
         icon5.addFile(u"icon/tab_group_desc.png", QSize(), QIcon.Normal, QIcon.Off)
@@ -804,8 +820,8 @@ class Ui_MainWindow(object):
 
         self.progressBar = QProgressBar(self.recognition_tab)
         self.progressBar.setObjectName(u"progressBar")
-        sizePolicy4.setHeightForWidth(self.progressBar.sizePolicy().hasHeightForWidth())
-        self.progressBar.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.progressBar.sizePolicy().hasHeightForWidth())
+        self.progressBar.setSizePolicy(sizePolicy)
         self.progressBar.setMaximumSize(QSize(16777215, 16777215))
         self.progressBar.setFont(font)
         self.progressBar.setValue(0)
@@ -912,14 +928,20 @@ class Ui_MainWindow(object):
         self.gridLayout_9.setObjectName(u"gridLayout_9")
         self.splitter_2 = QSplitter(self.photo_tab)
         self.splitter_2.setObjectName(u"splitter_2")
-        sizePolicy.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
-        self.splitter_2.setSizePolicy(sizePolicy)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.splitter_2.sizePolicy().hasHeightForWidth())
+        self.splitter_2.setSizePolicy(sizePolicy4)
         self.splitter_2.setFont(font)
         self.splitter_2.setOrientation(Qt.Horizontal)
         self.widget_3 = QWidget(self.splitter_2)
         self.widget_3.setObjectName(u"widget_3")
-        sizePolicy1.setHeightForWidth(self.widget_3.sizePolicy().hasHeightForWidth())
-        self.widget_3.setSizePolicy(sizePolicy1)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.widget_3.sizePolicy().hasHeightForWidth())
+        self.widget_3.setSizePolicy(sizePolicy5)
         self.widget_3.setMinimumSize(QSize(650, 0))
         self.widget_3.setFont(font)
         self.gridLayout_14 = QGridLayout(self.widget_3)
@@ -934,8 +956,8 @@ class Ui_MainWindow(object):
         self.splitter_2.addWidget(self.widget_3)
         self.widget_4 = QWidget(self.splitter_2)
         self.widget_4.setObjectName(u"widget_4")
-        sizePolicy1.setHeightForWidth(self.widget_4.sizePolicy().hasHeightForWidth())
-        self.widget_4.setSizePolicy(sizePolicy1)
+        sizePolicy5.setHeightForWidth(self.widget_4.sizePolicy().hasHeightForWidth())
+        self.widget_4.setSizePolicy(sizePolicy5)
         self.widget_4.setMinimumSize(QSize(300, 0))
         self.widget_4.setMaximumSize(QSize(900, 16777215))
         self.widget_4.setFont(font)
@@ -1039,8 +1061,8 @@ class Ui_MainWindow(object):
         __qtablewidgetitem2.setFont(font4);
         self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         self.tableWidget.setObjectName(u"tableWidget")
-        sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
-        self.tableWidget.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
+        self.tableWidget.setSizePolicy(sizePolicy4)
         self.tableWidget.setMaximumSize(QSize(16777215, 16777215))
         self.tableWidget.setFont(font)
         self.tableWidget.setStyleSheet(u"   QHeaderView::section{\n"
@@ -1076,8 +1098,8 @@ class Ui_MainWindow(object):
 
         self.peoples_in_photo = QTextEdit(self.widget_4)
         self.peoples_in_photo.setObjectName(u"peoples_in_photo")
-        sizePolicy.setHeightForWidth(self.peoples_in_photo.sizePolicy().hasHeightForWidth())
-        self.peoples_in_photo.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.peoples_in_photo.sizePolicy().hasHeightForWidth())
+        self.peoples_in_photo.setSizePolicy(sizePolicy4)
         self.peoples_in_photo.setMaximumSize(QSize(16777215, 150))
         self.peoples_in_photo.setFont(font)
         self.peoples_in_photo.setReadOnly(True)
@@ -1176,11 +1198,11 @@ class Ui_MainWindow(object):
 
         self.pre_btn = QPushButton(self.frame_9)
         self.pre_btn.setObjectName(u"pre_btn")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.pre_btn.sizePolicy().hasHeightForWidth())
-        self.pre_btn.setSizePolicy(sizePolicy5)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.pre_btn.sizePolicy().hasHeightForWidth())
+        self.pre_btn.setSizePolicy(sizePolicy6)
         self.pre_btn.setMinimumSize(QSize(0, 0))
         self.pre_btn.setMaximumSize(QSize(16777215, 16777215))
         self.pre_btn.setBaseSize(QSize(0, 0))
@@ -1196,8 +1218,8 @@ class Ui_MainWindow(object):
 
         self.next_btn = QPushButton(self.frame_9)
         self.next_btn.setObjectName(u"next_btn")
-        sizePolicy5.setHeightForWidth(self.next_btn.sizePolicy().hasHeightForWidth())
-        self.next_btn.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.next_btn.sizePolicy().hasHeightForWidth())
+        self.next_btn.setSizePolicy(sizePolicy6)
         self.next_btn.setMinimumSize(QSize(0, 0))
         self.next_btn.setMaximumSize(QSize(16777215, 16777215))
         self.next_btn.setBaseSize(QSize(0, 0))
@@ -1387,8 +1409,8 @@ class Ui_MainWindow(object):
 
         self.model_acc_label = QLabel(self.training_tab)
         self.model_acc_label.setObjectName(u"model_acc_label")
-        sizePolicy4.setHeightForWidth(self.model_acc_label.sizePolicy().hasHeightForWidth())
-        self.model_acc_label.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.model_acc_label.sizePolicy().hasHeightForWidth())
+        self.model_acc_label.setSizePolicy(sizePolicy)
         self.model_acc_label.setMaximumSize(QSize(400, 16777215))
         self.model_acc_label.setFont(font)
         self.model_acc_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
@@ -1416,8 +1438,8 @@ class Ui_MainWindow(object):
 
         self.thresh_lineEdit = QLineEdit(self.training_tab)
         self.thresh_lineEdit.setObjectName(u"thresh_lineEdit")
-        sizePolicy4.setHeightForWidth(self.thresh_lineEdit.sizePolicy().hasHeightForWidth())
-        self.thresh_lineEdit.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.thresh_lineEdit.sizePolicy().hasHeightForWidth())
+        self.thresh_lineEdit.setSizePolicy(sizePolicy)
         self.thresh_lineEdit.setMaximumSize(QSize(400, 16777215))
         self.thresh_lineEdit.setFont(font)
 
@@ -1433,8 +1455,8 @@ class Ui_MainWindow(object):
 
         self.untrained_num_label = QLabel(self.training_tab)
         self.untrained_num_label.setObjectName(u"untrained_num_label")
-        sizePolicy4.setHeightForWidth(self.untrained_num_label.sizePolicy().hasHeightForWidth())
-        self.untrained_num_label.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.untrained_num_label.sizePolicy().hasHeightForWidth())
+        self.untrained_num_label.setSizePolicy(sizePolicy)
         self.untrained_num_label.setMaximumSize(QSize(400, 16777215))
         self.untrained_num_label.setFont(font)
 
@@ -1509,11 +1531,18 @@ class Ui_MainWindow(object):
 "    background-color: #f1f5f8;\n"
 "}\n"
 "\n"
-"QLineEdit {\n"
+"\n"
+"QLineEdit, QTextEdit{\n"
+"    border: 1px solid #d4e0e3; \n"
+"    border-radius: 3px;\n"
+"    padding: 2px 5px;\n"
+"}\n"
+"QLineEdit:hover, QTextEdit:hover{\n"
 "    border: 1px solid #4ba4f9; \n"
 "    border-radius: 3px;\n"
 "    padding: 2px 5px;\n"
 "}\n"
+"\n"
 "\n"
 "QPushButton{\n"
 "    padding:5px 8px;\n"
@@ -1585,8 +1614,8 @@ class Ui_MainWindow(object):
 
         self.photo_num_in_group_arch = QLineEdit(self.widget_6)
         self.photo_num_in_group_arch.setObjectName(u"photo_num_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.photo_num_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.photo_num_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.photo_num_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.photo_num_in_group_arch.setSizePolicy(sizePolicy)
         self.photo_num_in_group_arch.setFont(font)
         self.photo_num_in_group_arch.setReadOnly(True)
 
@@ -1594,8 +1623,8 @@ class Ui_MainWindow(object):
 
         self.peoples_in_photo_arch = QTextEdit(self.widget_6)
         self.peoples_in_photo_arch.setObjectName(u"peoples_in_photo_arch")
-        sizePolicy.setHeightForWidth(self.peoples_in_photo_arch.sizePolicy().hasHeightForWidth())
-        self.peoples_in_photo_arch.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.peoples_in_photo_arch.sizePolicy().hasHeightForWidth())
+        self.peoples_in_photo_arch.setSizePolicy(sizePolicy4)
         self.peoples_in_photo_arch.setMaximumSize(QSize(16777215, 150))
         self.peoples_in_photo_arch.setFont(font)
         self.peoples_in_photo_arch.setReadOnly(True)
@@ -1625,8 +1654,8 @@ class Ui_MainWindow(object):
 
         self.author_in_group_arch = QLineEdit(self.widget_6)
         self.author_in_group_arch.setObjectName(u"author_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.author_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.author_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.author_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.author_in_group_arch.setSizePolicy(sizePolicy)
         self.author_in_group_arch.setFont(font)
         self.author_in_group_arch.setReadOnly(True)
 
@@ -1659,8 +1688,8 @@ class Ui_MainWindow(object):
 
         self.reference_code_in_group_arch = QLineEdit(self.widget_6)
         self.reference_code_in_group_arch.setObjectName(u"reference_code_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.reference_code_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.reference_code_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.reference_code_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.reference_code_in_group_arch.setSizePolicy(sizePolicy)
         self.reference_code_in_group_arch.setFont(font)
         self.reference_code_in_group_arch.setReadOnly(True)
 
@@ -1712,8 +1741,8 @@ class Ui_MainWindow(object):
 
         self.taken_time_in_group_arch = QLineEdit(self.widget_6)
         self.taken_time_in_group_arch.setObjectName(u"taken_time_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.taken_time_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.taken_time_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.taken_time_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.taken_time_in_group_arch.setSizePolicy(sizePolicy)
         self.taken_time_in_group_arch.setFont(font)
         self.taken_time_in_group_arch.setReadOnly(True)
 
@@ -1725,8 +1754,8 @@ class Ui_MainWindow(object):
 
         self.photographer_in_group_arch = QLineEdit(self.widget_6)
         self.photographer_in_group_arch.setObjectName(u"photographer_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.photographer_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.photographer_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.photographer_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.photographer_in_group_arch.setSizePolicy(sizePolicy)
         self.photographer_in_group_arch.setFont(font)
         self.photographer_in_group_arch.setReadOnly(True)
 
@@ -1760,8 +1789,8 @@ class Ui_MainWindow(object):
 
         self.department_in_group_arch = QLineEdit(self.widget_6)
         self.department_in_group_arch.setObjectName(u"department_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.department_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.department_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.department_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.department_in_group_arch.setSizePolicy(sizePolicy)
         self.department_in_group_arch.setFont(font)
         self.department_in_group_arch.setReadOnly(True)
 
@@ -1773,8 +1802,8 @@ class Ui_MainWindow(object):
 
         self.taken_locations_in_group_arch = QLineEdit(self.widget_6)
         self.taken_locations_in_group_arch.setObjectName(u"taken_locations_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.taken_locations_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.taken_locations_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.taken_locations_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.taken_locations_in_group_arch.setSizePolicy(sizePolicy)
         self.taken_locations_in_group_arch.setFont(font)
         self.taken_locations_in_group_arch.setReadOnly(True)
 
@@ -1790,8 +1819,8 @@ class Ui_MainWindow(object):
 
         self.year_in_group_arch = QLineEdit(self.widget_6)
         self.year_in_group_arch.setObjectName(u"year_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.year_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.year_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.year_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.year_in_group_arch.setSizePolicy(sizePolicy)
         self.year_in_group_arch.setFont(font)
         self.year_in_group_arch.setReadOnly(True)
 
@@ -1828,8 +1857,8 @@ class Ui_MainWindow(object):
 
         self.group_code_in_group_arch = QLineEdit(self.widget_6)
         self.group_code_in_group_arch.setObjectName(u"group_code_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.group_code_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.group_code_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.group_code_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.group_code_in_group_arch.setSizePolicy(sizePolicy)
         self.group_code_in_group_arch.setFont(font)
         self.group_code_in_group_arch.setReadOnly(True)
 
@@ -1866,8 +1895,8 @@ class Ui_MainWindow(object):
 
         self.folder_size_in_group_arch = QLineEdit(self.widget_6)
         self.folder_size_in_group_arch.setObjectName(u"folder_size_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.folder_size_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.folder_size_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.folder_size_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.folder_size_in_group_arch.setSizePolicy(sizePolicy)
         self.folder_size_in_group_arch.setFont(font)
         self.folder_size_in_group_arch.setReadOnly(True)
 
@@ -1950,8 +1979,8 @@ class Ui_MainWindow(object):
 
         self.group_title_in_group_arch = QLineEdit(self.widget_6)
         self.group_title_in_group_arch.setObjectName(u"group_title_in_group_arch")
-        sizePolicy4.setHeightForWidth(self.group_title_in_group_arch.sizePolicy().hasHeightForWidth())
-        self.group_title_in_group_arch.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.group_title_in_group_arch.sizePolicy().hasHeightForWidth())
+        self.group_title_in_group_arch.setSizePolicy(sizePolicy)
         self.group_title_in_group_arch.setFont(font)
         self.group_title_in_group_arch.setReadOnly(True)
 
@@ -2017,11 +2046,18 @@ class Ui_MainWindow(object):
 "    background-color: #f1f5f8;\n"
 "}\n"
 "\n"
-"QLineEdit {\n"
+"\n"
+"QLineEdit, QTextEdit{\n"
+"    border: 1px solid #d4e0e3; \n"
+"    border-radius: 3px;\n"
+"    padding: 2px 5px;\n"
+"}\n"
+"QLineEdit:hover, QTextEdit:hover{\n"
 "    border: 1px solid #4ba4f9; \n"
 "    border-radius: 3px;\n"
 "    padding: 2px 5px;\n"
 "}\n"
+"\n"
 "\n"
 "QPushButton{\n"
 "    padding:5px 8px;\n"
@@ -2034,8 +2070,8 @@ class Ui_MainWindow(object):
         self.gridLayout_33.setObjectName(u"gridLayout_33")
         self.open_photo_btn = QPushButton(self.widget_11)
         self.open_photo_btn.setObjectName(u"open_photo_btn")
-        sizePolicy5.setHeightForWidth(self.open_photo_btn.sizePolicy().hasHeightForWidth())
-        self.open_photo_btn.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.open_photo_btn.sizePolicy().hasHeightForWidth())
+        self.open_photo_btn.setSizePolicy(sizePolicy6)
         self.open_photo_btn.setFont(font)
         self.open_photo_btn.setStyleSheet(u"padding: 3px; \n"
 "")
@@ -2046,8 +2082,8 @@ class Ui_MainWindow(object):
 
         self.retrieve_photo_path = QLineEdit(self.widget_11)
         self.retrieve_photo_path.setObjectName(u"retrieve_photo_path")
-        sizePolicy5.setHeightForWidth(self.retrieve_photo_path.sizePolicy().hasHeightForWidth())
-        self.retrieve_photo_path.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.retrieve_photo_path.sizePolicy().hasHeightForWidth())
+        self.retrieve_photo_path.setSizePolicy(sizePolicy6)
         self.retrieve_photo_path.setFont(font)
 
         self.gridLayout_33.addWidget(self.retrieve_photo_path, 0, 1, 1, 1)
@@ -2127,8 +2163,8 @@ class Ui_MainWindow(object):
 
         self.select_retrieve_dir_btn = QPushButton(self.widget_11)
         self.select_retrieve_dir_btn.setObjectName(u"select_retrieve_dir_btn")
-        sizePolicy5.setHeightForWidth(self.select_retrieve_dir_btn.sizePolicy().hasHeightForWidth())
-        self.select_retrieve_dir_btn.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.select_retrieve_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_retrieve_dir_btn.setSizePolicy(sizePolicy6)
         self.select_retrieve_dir_btn.setFont(font)
         self.select_retrieve_dir_btn.setStyleSheet(u"padding: 3px; \n"
 "")
@@ -2146,11 +2182,11 @@ class Ui_MainWindow(object):
 
         self.retieve_dir = QLineEdit(self.widget_11)
         self.retieve_dir.setObjectName(u"retieve_dir")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.retieve_dir.sizePolicy().hasHeightForWidth())
-        self.retieve_dir.setSizePolicy(sizePolicy6)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.retieve_dir.sizePolicy().hasHeightForWidth())
+        self.retieve_dir.setSizePolicy(sizePolicy7)
         self.retieve_dir.setFont(font)
 
         self.gridLayout_33.addWidget(self.retieve_dir, 1, 1, 1, 1)
@@ -2160,11 +2196,8 @@ class Ui_MainWindow(object):
         __qtreewidgetitem1.setText(0, u"1");
         self.tree_widget_search_face.setHeaderItem(__qtreewidgetitem1)
         self.tree_widget_search_face.setObjectName(u"tree_widget_search_face")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-        sizePolicy7.setHorizontalStretch(0)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.tree_widget_search_face.sizePolicy().hasHeightForWidth())
-        self.tree_widget_search_face.setSizePolicy(sizePolicy7)
+        sizePolicy1.setHeightForWidth(self.tree_widget_search_face.sizePolicy().hasHeightForWidth())
+        self.tree_widget_search_face.setSizePolicy(sizePolicy1)
         self.tree_widget_search_face.setFont(font)
         self.tree_widget_search_face.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tree_widget_search_face.setExpandsOnDoubleClick(False)
@@ -2203,8 +2236,8 @@ class Ui_MainWindow(object):
         self.splitter_6.addWidget(self.widget_12)
         self.widget_13 = QWidget(self.splitter_6)
         self.widget_13.setObjectName(u"widget_13")
-        sizePolicy.setHeightForWidth(self.widget_13.sizePolicy().hasHeightForWidth())
-        self.widget_13.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.widget_13.sizePolicy().hasHeightForWidth())
+        self.widget_13.setSizePolicy(sizePolicy4)
         self.widget_13.setFont(font)
         self.gridLayout_37 = QGridLayout(self.widget_13)
         self.gridLayout_37.setObjectName(u"gridLayout_37")
@@ -2222,16 +2255,16 @@ class Ui_MainWindow(object):
         self.splitter_10.addWidget(self.splitter_6)
         self.widget_14 = QWidget(self.splitter_10)
         self.widget_14.setObjectName(u"widget_14")
-        sizePolicy5.setHeightForWidth(self.widget_14.sizePolicy().hasHeightForWidth())
-        self.widget_14.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.widget_14.sizePolicy().hasHeightForWidth())
+        self.widget_14.setSizePolicy(sizePolicy6)
         self.widget_14.setMaximumSize(QSize(16777215, 160))
         self.widget_14.setFont(font)
         self.gridLayout_38 = QGridLayout(self.widget_14)
         self.gridLayout_38.setObjectName(u"gridLayout_38")
         self.list_widget_search_face = QListWidget(self.widget_14)
         self.list_widget_search_face.setObjectName(u"list_widget_search_face")
-        sizePolicy5.setHeightForWidth(self.list_widget_search_face.sizePolicy().hasHeightForWidth())
-        self.list_widget_search_face.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.list_widget_search_face.sizePolicy().hasHeightForWidth())
+        self.list_widget_search_face.setSizePolicy(sizePolicy6)
         self.list_widget_search_face.setFont(font)
 
         self.gridLayout_38.addWidget(self.list_widget_search_face, 0, 0, 1, 1)
@@ -2262,11 +2295,18 @@ class Ui_MainWindow(object):
 "    background-color: #f1f5f8;\n"
 "}\n"
 "\n"
-"QLineEdit {\n"
+"\n"
+"QLineEdit, QTextEdit{\n"
+"    border: 1px solid #d4e0e3; \n"
+"    border-radius: 3px;\n"
+"    padding: 2px 5px;\n"
+"}\n"
+"QLineEdit:hover, QTextEdit:hover{\n"
 "    border: 1px solid #4ba4f9; \n"
 "    border-radius: 3px;\n"
 "    padding: 2px 5px;\n"
 "}\n"
+"\n"
 "\n"
 "QPushButton{\n"
 "    padding:5px 8px;\n"
@@ -2434,8 +2474,8 @@ class Ui_MainWindow(object):
         self.gridLayout_55.setContentsMargins(25, 10, 18, 10)
         self.taken_time_in_group_search = QLineEdit(self.widget_22)
         self.taken_time_in_group_search.setObjectName(u"taken_time_in_group_search")
-        sizePolicy4.setHeightForWidth(self.taken_time_in_group_search.sizePolicy().hasHeightForWidth())
-        self.taken_time_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.taken_time_in_group_search.sizePolicy().hasHeightForWidth())
+        self.taken_time_in_group_search.setSizePolicy(sizePolicy)
         self.taken_time_in_group_search.setFont(font)
         self.taken_time_in_group_search.setReadOnly(True)
 
@@ -2454,8 +2494,8 @@ class Ui_MainWindow(object):
 
         self.photo_num_in_group_search = QLineEdit(self.widget_22)
         self.photo_num_in_group_search.setObjectName(u"photo_num_in_group_search")
-        sizePolicy4.setHeightForWidth(self.photo_num_in_group_search.sizePolicy().hasHeightForWidth())
-        self.photo_num_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.photo_num_in_group_search.sizePolicy().hasHeightForWidth())
+        self.photo_num_in_group_search.setSizePolicy(sizePolicy)
         self.photo_num_in_group_search.setFont(font)
         self.photo_num_in_group_search.setReadOnly(True)
 
@@ -2515,8 +2555,8 @@ class Ui_MainWindow(object):
 
         self.author_in_group_search = QLineEdit(self.widget_22)
         self.author_in_group_search.setObjectName(u"author_in_group_search")
-        sizePolicy4.setHeightForWidth(self.author_in_group_search.sizePolicy().hasHeightForWidth())
-        self.author_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.author_in_group_search.sizePolicy().hasHeightForWidth())
+        self.author_in_group_search.setSizePolicy(sizePolicy)
         self.author_in_group_search.setFont(font)
         self.author_in_group_search.setReadOnly(True)
 
@@ -2559,8 +2599,8 @@ class Ui_MainWindow(object):
 
         self.folder_size_in_group_search = QLineEdit(self.widget_22)
         self.folder_size_in_group_search.setObjectName(u"folder_size_in_group_search")
-        sizePolicy4.setHeightForWidth(self.folder_size_in_group_search.sizePolicy().hasHeightForWidth())
-        self.folder_size_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.folder_size_in_group_search.sizePolicy().hasHeightForWidth())
+        self.folder_size_in_group_search.setSizePolicy(sizePolicy)
         self.folder_size_in_group_search.setFont(font)
         self.folder_size_in_group_search.setReadOnly(True)
 
@@ -2586,8 +2626,8 @@ class Ui_MainWindow(object):
 
         self.taken_locations_in_group_search = QLineEdit(self.widget_22)
         self.taken_locations_in_group_search.setObjectName(u"taken_locations_in_group_search")
-        sizePolicy4.setHeightForWidth(self.taken_locations_in_group_search.sizePolicy().hasHeightForWidth())
-        self.taken_locations_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.taken_locations_in_group_search.sizePolicy().hasHeightForWidth())
+        self.taken_locations_in_group_search.setSizePolicy(sizePolicy)
         self.taken_locations_in_group_search.setFont(font)
         self.taken_locations_in_group_search.setReadOnly(True)
 
@@ -2616,8 +2656,8 @@ class Ui_MainWindow(object):
 
         self.department_in_group_search = QLineEdit(self.widget_22)
         self.department_in_group_search.setObjectName(u"department_in_group_search")
-        sizePolicy4.setHeightForWidth(self.department_in_group_search.sizePolicy().hasHeightForWidth())
-        self.department_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.department_in_group_search.sizePolicy().hasHeightForWidth())
+        self.department_in_group_search.setSizePolicy(sizePolicy)
         self.department_in_group_search.setFont(font)
         self.department_in_group_search.setReadOnly(True)
 
@@ -2646,8 +2686,8 @@ class Ui_MainWindow(object):
 
         self.peoples_in_photo_search = QTextEdit(self.widget_22)
         self.peoples_in_photo_search.setObjectName(u"peoples_in_photo_search")
-        sizePolicy.setHeightForWidth(self.peoples_in_photo_search.sizePolicy().hasHeightForWidth())
-        self.peoples_in_photo_search.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.peoples_in_photo_search.sizePolicy().hasHeightForWidth())
+        self.peoples_in_photo_search.setSizePolicy(sizePolicy4)
         self.peoples_in_photo_search.setMaximumSize(QSize(16777215, 150))
         self.peoples_in_photo_search.setFont(font)
         self.peoples_in_photo_search.setReadOnly(True)
@@ -2704,8 +2744,8 @@ class Ui_MainWindow(object):
 
         self.year_in_group_search = QLineEdit(self.widget_22)
         self.year_in_group_search.setObjectName(u"year_in_group_search")
-        sizePolicy4.setHeightForWidth(self.year_in_group_search.sizePolicy().hasHeightForWidth())
-        self.year_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.year_in_group_search.sizePolicy().hasHeightForWidth())
+        self.year_in_group_search.setSizePolicy(sizePolicy)
         self.year_in_group_search.setFont(font)
         self.year_in_group_search.setReadOnly(True)
 
@@ -2713,8 +2753,8 @@ class Ui_MainWindow(object):
 
         self.group_title_in_group_search = QLineEdit(self.widget_22)
         self.group_title_in_group_search.setObjectName(u"group_title_in_group_search")
-        sizePolicy4.setHeightForWidth(self.group_title_in_group_search.sizePolicy().hasHeightForWidth())
-        self.group_title_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.group_title_in_group_search.sizePolicy().hasHeightForWidth())
+        self.group_title_in_group_search.setSizePolicy(sizePolicy)
         self.group_title_in_group_search.setFont(font)
         self.group_title_in_group_search.setReadOnly(True)
 
@@ -2760,8 +2800,8 @@ class Ui_MainWindow(object):
 
         self.reference_code_in_group_search = QLineEdit(self.widget_22)
         self.reference_code_in_group_search.setObjectName(u"reference_code_in_group_search")
-        sizePolicy4.setHeightForWidth(self.reference_code_in_group_search.sizePolicy().hasHeightForWidth())
-        self.reference_code_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.reference_code_in_group_search.sizePolicy().hasHeightForWidth())
+        self.reference_code_in_group_search.setSizePolicy(sizePolicy)
         self.reference_code_in_group_search.setFont(font)
         self.reference_code_in_group_search.setReadOnly(True)
 
@@ -2776,8 +2816,8 @@ class Ui_MainWindow(object):
 
         self.photographer_in_group_search = QLineEdit(self.widget_22)
         self.photographer_in_group_search.setObjectName(u"photographer_in_group_search")
-        sizePolicy4.setHeightForWidth(self.photographer_in_group_search.sizePolicy().hasHeightForWidth())
-        self.photographer_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.photographer_in_group_search.sizePolicy().hasHeightForWidth())
+        self.photographer_in_group_search.setSizePolicy(sizePolicy)
         self.photographer_in_group_search.setFont(font)
         self.photographer_in_group_search.setReadOnly(True)
 
@@ -2815,8 +2855,8 @@ class Ui_MainWindow(object):
 
         self.group_code_in_group_search = QLineEdit(self.widget_22)
         self.group_code_in_group_search.setObjectName(u"group_code_in_group_search")
-        sizePolicy4.setHeightForWidth(self.group_code_in_group_search.sizePolicy().hasHeightForWidth())
-        self.group_code_in_group_search.setSizePolicy(sizePolicy4)
+        sizePolicy.setHeightForWidth(self.group_code_in_group_search.sizePolicy().hasHeightForWidth())
+        self.group_code_in_group_search.setSizePolicy(sizePolicy)
         self.group_code_in_group_search.setFont(font)
         self.group_code_in_group_search.setReadOnly(True)
 
@@ -2880,11 +2920,18 @@ class Ui_MainWindow(object):
 "    background-color: #f1f5f8;\n"
 "}\n"
 "\n"
-"QLineEdit {\n"
+"\n"
+"QLineEdit, QTextEdit{\n"
+"    border: 1px solid #d4e0e3; \n"
+"    border-radius: 3px;\n"
+"    padding: 2px 5px;\n"
+"}\n"
+"QLineEdit:hover, QTextEdit:hover{\n"
 "    border: 1px solid #4ba4f9; \n"
 "    border-radius: 3px;\n"
 "    padding: 2px 5px;\n"
 "}\n"
+"\n"
 "\n"
 "QPushButton{\n"
 "    padding:5px 8px;\n"
@@ -2912,8 +2959,8 @@ class Ui_MainWindow(object):
         self.order_combobox_transfer.addItem("")
         self.order_combobox_transfer.addItem("")
         self.order_combobox_transfer.setObjectName(u"order_combobox_transfer")
-        sizePolicy5.setHeightForWidth(self.order_combobox_transfer.sizePolicy().hasHeightForWidth())
-        self.order_combobox_transfer.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.order_combobox_transfer.sizePolicy().hasHeightForWidth())
+        self.order_combobox_transfer.setSizePolicy(sizePolicy6)
         self.order_combobox_transfer.setFont(font)
 
         self.gridLayout_2.addWidget(self.order_combobox_transfer, 0, 1, 1, 1)
@@ -2938,8 +2985,8 @@ class Ui_MainWindow(object):
 
         self.selected_arch_list_widget = QListWidget(self.widget_9)
         self.selected_arch_list_widget.setObjectName(u"selected_arch_list_widget")
-        sizePolicy.setHeightForWidth(self.selected_arch_list_widget.sizePolicy().hasHeightForWidth())
-        self.selected_arch_list_widget.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.selected_arch_list_widget.sizePolicy().hasHeightForWidth())
+        self.selected_arch_list_widget.setSizePolicy(sizePolicy4)
         self.selected_arch_list_widget.setFont(font)
         self.selected_arch_list_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.selected_arch_list_widget.setDragEnabled(False)
@@ -3032,8 +3079,8 @@ class Ui_MainWindow(object):
 
         self.cd_size_line_edit = QLineEdit(self.widget_10)
         self.cd_size_line_edit.setObjectName(u"cd_size_line_edit")
-        sizePolicy5.setHeightForWidth(self.cd_size_line_edit.sizePolicy().hasHeightForWidth())
-        self.cd_size_line_edit.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.cd_size_line_edit.sizePolicy().hasHeightForWidth())
+        self.cd_size_line_edit.setSizePolicy(sizePolicy6)
         self.cd_size_line_edit.setFont(font)
 
         self.gridLayout_25.addWidget(self.cd_size_line_edit, 0, 1, 1, 1)
@@ -3081,8 +3128,8 @@ class Ui_MainWindow(object):
         __qtablewidgetitem11.setFont(font4);
         self.cd_catalog_table_widget.setHorizontalHeaderItem(8, __qtablewidgetitem11)
         self.cd_catalog_table_widget.setObjectName(u"cd_catalog_table_widget")
-        sizePolicy.setHeightForWidth(self.cd_catalog_table_widget.sizePolicy().hasHeightForWidth())
-        self.cd_catalog_table_widget.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.cd_catalog_table_widget.sizePolicy().hasHeightForWidth())
+        self.cd_catalog_table_widget.setSizePolicy(sizePolicy4)
         self.cd_catalog_table_widget.setFont(font)
         self.cd_catalog_table_widget.setStyleSheet(u"   QHeaderView::section{\n"
 "            border-top:0px solid #D8D8D8;\n"
@@ -3165,8 +3212,8 @@ class Ui_MainWindow(object):
 
         self.partition_list_widget = QListWidget(self.widget_10)
         self.partition_list_widget.setObjectName(u"partition_list_widget")
-        sizePolicy.setHeightForWidth(self.partition_list_widget.sizePolicy().hasHeightForWidth())
-        self.partition_list_widget.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.partition_list_widget.sizePolicy().hasHeightForWidth())
+        self.partition_list_widget.setSizePolicy(sizePolicy4)
         self.partition_list_widget.setMinimumSize(QSize(1, 1))
         self.partition_list_widget.setFont(font)
         self.partition_list_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -3373,8 +3420,8 @@ class Ui_MainWindow(object):
 
         self.select_package_dir_btn = QPushButton(self.groupBox)
         self.select_package_dir_btn.setObjectName(u"select_package_dir_btn")
-        sizePolicy5.setHeightForWidth(self.select_package_dir_btn.sizePolicy().hasHeightForWidth())
-        self.select_package_dir_btn.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.select_package_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_package_dir_btn.setSizePolicy(sizePolicy6)
         self.select_package_dir_btn.setMinimumSize(QSize(1, 1))
         self.select_package_dir_btn.setFont(font3)
         self.select_package_dir_btn.setStyleSheet(u"")
@@ -3385,8 +3432,8 @@ class Ui_MainWindow(object):
 
         self.package_path_in_setting = QLineEdit(self.groupBox)
         self.package_path_in_setting.setObjectName(u"package_path_in_setting")
-        sizePolicy6.setHeightForWidth(self.package_path_in_setting.sizePolicy().hasHeightForWidth())
-        self.package_path_in_setting.setSizePolicy(sizePolicy6)
+        sizePolicy7.setHeightForWidth(self.package_path_in_setting.sizePolicy().hasHeightForWidth())
+        self.package_path_in_setting.setSizePolicy(sizePolicy7)
         self.package_path_in_setting.setFont(font)
 
         self.gridLayout_11.addWidget(self.package_path_in_setting, 2, 1, 1, 1)
@@ -3403,8 +3450,8 @@ class Ui_MainWindow(object):
 
         self.description_path_in_setting = QLineEdit(self.groupBox)
         self.description_path_in_setting.setObjectName(u"description_path_in_setting")
-        sizePolicy6.setHeightForWidth(self.description_path_in_setting.sizePolicy().hasHeightForWidth())
-        self.description_path_in_setting.setSizePolicy(sizePolicy6)
+        sizePolicy7.setHeightForWidth(self.description_path_in_setting.sizePolicy().hasHeightForWidth())
+        self.description_path_in_setting.setSizePolicy(sizePolicy7)
         self.description_path_in_setting.setFont(font)
 
         self.gridLayout_11.addWidget(self.description_path_in_setting, 0, 1, 1, 1)
@@ -3427,8 +3474,8 @@ class Ui_MainWindow(object):
 
         self.select_description_dir_btn = QPushButton(self.groupBox)
         self.select_description_dir_btn.setObjectName(u"select_description_dir_btn")
-        sizePolicy5.setHeightForWidth(self.select_description_dir_btn.sizePolicy().hasHeightForWidth())
-        self.select_description_dir_btn.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.select_description_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_description_dir_btn.setSizePolicy(sizePolicy6)
         self.select_description_dir_btn.setMinimumSize(QSize(1, 1))
         self.select_description_dir_btn.setFont(font3)
         self.select_description_dir_btn.setStyleSheet(u"")
@@ -3439,8 +3486,8 @@ class Ui_MainWindow(object):
 
         self.select_photo_dir_btn = QPushButton(self.groupBox)
         self.select_photo_dir_btn.setObjectName(u"select_photo_dir_btn")
-        sizePolicy5.setHeightForWidth(self.select_photo_dir_btn.sizePolicy().hasHeightForWidth())
-        self.select_photo_dir_btn.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.select_photo_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_photo_dir_btn.setSizePolicy(sizePolicy6)
         self.select_photo_dir_btn.setMinimumSize(QSize(1, 1))
         self.select_photo_dir_btn.setFont(font3)
         self.select_photo_dir_btn.setStyleSheet(u"")
@@ -3534,8 +3581,8 @@ class Ui_MainWindow(object):
 
         self.import_license_btn = QPushButton(self.groupBox_3)
         self.import_license_btn.setObjectName(u"import_license_btn")
-        sizePolicy5.setHeightForWidth(self.import_license_btn.sizePolicy().hasHeightForWidth())
-        self.import_license_btn.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.import_license_btn.sizePolicy().hasHeightForWidth())
+        self.import_license_btn.setSizePolicy(sizePolicy6)
         self.import_license_btn.setMinimumSize(QSize(1, 1))
         self.import_license_btn.setFont(font3)
         self.import_license_btn.setStyleSheet(u"")
@@ -3599,21 +3646,51 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.tabWidget, self.dir_lineEdit)
         QWidget.setTabOrder(self.dir_lineEdit, self.open_dir_btn)
         QWidget.setTabOrder(self.open_dir_btn, self.tree_widget_group)
-        QWidget.setTabOrder(self.tree_widget_group, self.group_caption_in_group)
+        QWidget.setTabOrder(self.tree_widget_group, self.group_title_in_group)
+        QWidget.setTabOrder(self.group_title_in_group, self.arch_category_code_in_group)
+        QWidget.setTabOrder(self.arch_category_code_in_group, self.retention_period_in_group)
+        QWidget.setTabOrder(self.retention_period_in_group, self.year_in_group)
+        QWidget.setTabOrder(self.year_in_group, self.department_in_group)
+        QWidget.setTabOrder(self.department_in_group, self.group_code_in_group)
+        QWidget.setTabOrder(self.group_code_in_group, self.author_in_group)
+        QWidget.setTabOrder(self.author_in_group, self.folder_size_in_group)
+        QWidget.setTabOrder(self.folder_size_in_group, self.photographer_in_group)
+        QWidget.setTabOrder(self.photographer_in_group, self.taken_time_in_group)
+        QWidget.setTabOrder(self.taken_time_in_group, self.taken_locations_in_group)
+        QWidget.setTabOrder(self.taken_locations_in_group, self.photo_num_in_group)
+        QWidget.setTabOrder(self.photo_num_in_group, self.security_classification_in_group)
+        QWidget.setTabOrder(self.security_classification_in_group, self.reference_code_in_group)
+        QWidget.setTabOrder(self.reference_code_in_group, self.opening_state_in_group)
+        QWidget.setTabOrder(self.opening_state_in_group, self.group_caption_in_group)
         QWidget.setTabOrder(self.group_caption_in_group, self.save_group_btn)
         QWidget.setTabOrder(self.save_group_btn, self.selected_dir_radioButton)
         QWidget.setTabOrder(self.selected_dir_radioButton, self.current_dir_radioButton)
         QWidget.setTabOrder(self.current_dir_radioButton, self.all_photo_radioButton)
         QWidget.setTabOrder(self.all_photo_radioButton, self.part_recognition_radioButton)
         QWidget.setTabOrder(self.part_recognition_radioButton, self.all_recognition_radioButton)
-        QWidget.setTabOrder(self.all_recognition_radioButton, self.peoples_in_photo)
+        QWidget.setTabOrder(self.all_recognition_radioButton, self.format_in_photo)
+        QWidget.setTabOrder(self.format_in_photo, self.photo_code_in_photo)
+        QWidget.setTabOrder(self.photo_code_in_photo, self.peoples_in_photo)
         QWidget.setTabOrder(self.peoples_in_photo, self.tableWidget)
         QWidget.setTabOrder(self.tableWidget, self.verifycheckBox)
-        QWidget.setTabOrder(self.verifycheckBox, self.thresh_lineEdit)
+        QWidget.setTabOrder(self.verifycheckBox, self.arch_category_code_in_photo)
+        QWidget.setTabOrder(self.arch_category_code_in_photo, self.year_in_photo)
+        QWidget.setTabOrder(self.year_in_photo, self.group_code_in_photo)
+        QWidget.setTabOrder(self.group_code_in_photo, self.photographer_in_photo)
+        QWidget.setTabOrder(self.photographer_in_photo, self.taken_time_in_photo)
+        QWidget.setTabOrder(self.taken_time_in_photo, self.taken_locations_in_photo)
+        QWidget.setTabOrder(self.taken_locations_in_photo, self.group_path_in_group)
+        QWidget.setTabOrder(self.group_path_in_group, self.security_classification_in_photo)
+        QWidget.setTabOrder(self.security_classification_in_photo, self.reference_code_in_photo)
+        QWidget.setTabOrder(self.reference_code_in_photo, self.arch_code_in_group)
+        QWidget.setTabOrder(self.arch_code_in_group, self.fonds_code_in_group)
+        QWidget.setTabOrder(self.fonds_code_in_group, self.arch_code_in_photo)
+        QWidget.setTabOrder(self.arch_code_in_photo, self.fonds_code_in_photo)
+        QWidget.setTabOrder(self.fonds_code_in_photo, self.thresh_lineEdit)
         QWidget.setTabOrder(self.thresh_lineEdit, self.order_combobox_browse)
         QWidget.setTabOrder(self.order_combobox_browse, self.arch_tree_view_browse)
-        QWidget.setTabOrder(self.arch_tree_view_browse, self.photo_list_widget)
-        QWidget.setTabOrder(self.photo_list_widget, self.arch_code_in_group_arch)
+        QWidget.setTabOrder(self.arch_tree_view_browse, self.group_title_in_group_arch)
+        QWidget.setTabOrder(self.group_title_in_group_arch, self.arch_code_in_group_arch)
         QWidget.setTabOrder(self.arch_code_in_group_arch, self.fonds_code_in_group_arch)
         QWidget.setTabOrder(self.fonds_code_in_group_arch, self.arch_category_code_in_group_arch)
         QWidget.setTabOrder(self.arch_category_code_in_group_arch, self.retention_period_in_group_arch)
@@ -3634,12 +3711,23 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.photo_code_in_photo_arch, self.format_in_photo_arch)
         QWidget.setTabOrder(self.format_in_photo_arch, self.group_caption_in_group_arch)
         QWidget.setTabOrder(self.group_caption_in_group_arch, self.peoples_in_photo_arch)
-        QWidget.setTabOrder(self.peoples_in_photo_arch, self.group_title_search)
+        QWidget.setTabOrder(self.peoples_in_photo_arch, self.photo_list_widget)
+        QWidget.setTabOrder(self.photo_list_widget, self.retrieve_photo_path)
+        QWidget.setTabOrder(self.retrieve_photo_path, self.open_photo_btn)
+        QWidget.setTabOrder(self.open_photo_btn, self.retieve_dir)
+        QWidget.setTabOrder(self.retieve_dir, self.select_retrieve_dir_btn)
+        QWidget.setTabOrder(self.select_retrieve_dir_btn, self.tree_widget_search_face)
+        QWidget.setTabOrder(self.tree_widget_search_face, self.export_btn_search_face)
+        QWidget.setTabOrder(self.export_btn_search_face, self.list_widget_search_face)
+        QWidget.setTabOrder(self.list_widget_search_face, self.group_title_search)
         QWidget.setTabOrder(self.group_title_search, self.peoples_search)
-        QWidget.setTabOrder(self.peoples_search, self.search_btn)
+        QWidget.setTabOrder(self.peoples_search, self.start_date_search)
+        QWidget.setTabOrder(self.start_date_search, self.end_date_search)
+        QWidget.setTabOrder(self.end_date_search, self.search_btn)
         QWidget.setTabOrder(self.search_btn, self.photo_tree_widget_search)
-        QWidget.setTabOrder(self.photo_tree_widget_search, self.photo_list_widget_search)
-        QWidget.setTabOrder(self.photo_list_widget_search, self.arch_code_in_group_search)
+        QWidget.setTabOrder(self.photo_tree_widget_search, self.export_btn_search)
+        QWidget.setTabOrder(self.export_btn_search, self.group_title_in_group_search)
+        QWidget.setTabOrder(self.group_title_in_group_search, self.arch_code_in_group_search)
         QWidget.setTabOrder(self.arch_code_in_group_search, self.fonds_code_in_group_search)
         QWidget.setTabOrder(self.fonds_code_in_group_search, self.arch_category_code_in_group_search)
         QWidget.setTabOrder(self.arch_category_code_in_group_search, self.retention_period_in_group_search)
@@ -3660,7 +3748,8 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.photo_code_in_photo_search, self.format_in_photo_search)
         QWidget.setTabOrder(self.format_in_photo_search, self.group_caption_in_group_search)
         QWidget.setTabOrder(self.group_caption_in_group_search, self.peoples_in_photo_search)
-        QWidget.setTabOrder(self.peoples_in_photo_search, self.order_combobox_transfer)
+        QWidget.setTabOrder(self.peoples_in_photo_search, self.photo_list_widget_search)
+        QWidget.setTabOrder(self.photo_list_widget_search, self.order_combobox_transfer)
         QWidget.setTabOrder(self.order_combobox_transfer, self.arch_tree_view_transfer)
         QWidget.setTabOrder(self.arch_tree_view_transfer, self.selected_arch_list_widget)
         QWidget.setTabOrder(self.selected_arch_list_widget, self.cd_size_line_edit)
@@ -3686,6 +3775,14 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.description_path_in_setting, self.select_description_dir_btn)
         QWidget.setTabOrder(self.select_description_dir_btn, self.package_path_in_setting)
         QWidget.setTabOrder(self.package_path_in_setting, self.select_package_dir_btn)
+        QWidget.setTabOrder(self.select_package_dir_btn, self.photo_path_in_setting)
+        QWidget.setTabOrder(self.photo_path_in_setting, self.select_photo_dir_btn)
+        QWidget.setTabOrder(self.select_photo_dir_btn, self.license_path_in_setting)
+        QWidget.setTabOrder(self.license_path_in_setting, self.import_license_btn)
+        QWidget.setTabOrder(self.import_license_btn, self.license_remaining_days)
+        QWidget.setTabOrder(self.license_remaining_days, self.license_remaining_photo_num)
+        QWidget.setTabOrder(self.license_remaining_photo_num, self.license_enable_gpu)
+        QWidget.setTabOrder(self.license_enable_gpu, self.license_enable_export)
 
         self.retranslateUi(MainWindow)
 

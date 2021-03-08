@@ -146,8 +146,8 @@ class ArchTransfer(object):
         self.current_cd = ''
 
         self.ui.partition_list_widget.setViewMode(QtWidgets.QListWidget.IconMode)
-        self.ui.partition_list_widget.setIconSize(QtCore.QSize(160, 160))
-        self.ui.partition_list_widget.setFixedHeight(218)
+        self.ui.partition_list_widget.setIconSize(QtCore.QSize(150, 150))
+        self.ui.partition_list_widget.setFixedHeight(200)
         self.ui.partition_list_widget.setWrapping(False)  # 只一行显示
 
         self.ui.order_combobox_transfer.currentTextChanged.connect(static(self.display_arch))

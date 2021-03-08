@@ -53,7 +53,7 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>1800</width>
+        <width>16777215</width>
         <height>16777215</height>
        </size>
       </property>
@@ -90,12 +90,10 @@ QLineEdit, QTextEdit{
     border-radius: 3px;
     padding: 2px 5px;
 }
-QLineEdit:hover, QTextEdit:hover{
-    border: 1px solid #4ba4f9; 
-    border-radius: 3px;
-    padding: 2px 5px;
-}
 
+QLineEdit:read-only { /* QLineEdit在只读时的状态 */
+	background-color: #eeeeee;
+}
 
 QComboBox{
     background-color: #eeeeee;
@@ -104,6 +102,11 @@ QComboBox{
     padding: 2px 5px;
 }
 
+QLineEdit:hover, QTextEdit:hover, QComboBox:hover, QLineEdit:focus, QTextEdit:focus, QComboBox:focus{
+    border: 1px solid #4ba4f9; 
+    border-radius: 3px;
+    padding: 2px 5px;
+}
 
 QPushButton{
     padding:5px 8px;
@@ -126,6 +129,18 @@ QPushButton{
        </size>
       </property>
       <widget class="QWidget" name="group_tab">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>1</width>
+         <height>1</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <family>微软雅黑</family>
@@ -146,7 +161,7 @@ QPushButton{
         <item row="0" column="0">
          <widget class="QSplitter" name="splitter">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -159,9 +174,12 @@ QPushButton{
           </property>
           <property name="maximumSize">
            <size>
-            <width>16777215</width>
+            <width>1705</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
           </property>
           <property name="styleSheet">
            <string notr="true"/>
@@ -171,7 +189,7 @@ QPushButton{
           </property>
           <widget class="QWidget" name="widget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -193,11 +211,18 @@ QPushButton{
     background-color: #f1f5f8;
 }
 
-QLineEdit {
+
+QLineEdit, QTextEdit{
+    border: 1px solid #d4e0e3; 
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+QLineEdit:hover, QTextEdit:hover{
     border: 1px solid #4ba4f9; 
     border-radius: 3px;
     padding: 2px 5px;
 }
+
 
 QPushButton{
     padding:5px 8px;
@@ -552,7 +577,7 @@ QPushButton{
           </widget>
           <widget class="QWidget" name="group_description_widget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -560,12 +585,12 @@ QPushButton{
            <property name="minimumSize">
             <size>
              <width>340</width>
-             <height>0</height>
+             <height>1</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>16777215</width>
+             <width>1000</width>
              <height>16777215</height>
             </size>
            </property>
@@ -1600,6 +1625,22 @@ QPushButton{
            </layout>
           </widget>
          </widget>
+        </item>
+        <item row="0" column="1">
+         <spacer name="horizontalSpacer_40">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>200</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -3815,11 +3856,18 @@ QPushButton{
     background-color: #f1f5f8;
 }
 
-QLineEdit {
+
+QLineEdit, QTextEdit{
+    border: 1px solid #d4e0e3; 
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+QLineEdit:hover, QTextEdit:hover{
     border: 1px solid #4ba4f9; 
     border-radius: 3px;
     padding: 2px 5px;
 }
+
 
 QPushButton{
     padding:5px 8px;
@@ -5021,11 +5069,18 @@ QPushButton:hover {
     background-color: #f1f5f8;
 }
 
-QLineEdit {
+
+QLineEdit, QTextEdit{
+    border: 1px solid #d4e0e3; 
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+QLineEdit:hover, QTextEdit:hover{
     border: 1px solid #4ba4f9; 
     border-radius: 3px;
     padding: 2px 5px;
 }
+
 
 QPushButton{
     padding:5px 8px;
@@ -5585,11 +5640,18 @@ QPushButton{
     background-color: #f1f5f8;
 }
 
-QLineEdit {
+
+QLineEdit, QTextEdit{
+    border: 1px solid #d4e0e3; 
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+QLineEdit:hover, QTextEdit:hover{
     border: 1px solid #4ba4f9; 
     border-radius: 3px;
     padding: 2px 5px;
 }
+
 
 QPushButton{
     padding:5px 8px;
@@ -7131,11 +7193,18 @@ QPushButton{
     background-color: #f1f5f8;
 }
 
-QLineEdit {
+
+QLineEdit, QTextEdit{
+    border: 1px solid #d4e0e3; 
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+QLineEdit:hover, QTextEdit:hover{
     border: 1px solid #4ba4f9; 
     border-radius: 3px;
     padding: 2px 5px;
 }
+
 
 QPushButton{
     padding:5px 8px;
@@ -8951,6 +9020,21 @@ QPushButton:hover {
   <tabstop>dir_lineEdit</tabstop>
   <tabstop>open_dir_btn</tabstop>
   <tabstop>tree_widget_group</tabstop>
+  <tabstop>group_title_in_group</tabstop>
+  <tabstop>arch_category_code_in_group</tabstop>
+  <tabstop>retention_period_in_group</tabstop>
+  <tabstop>year_in_group</tabstop>
+  <tabstop>department_in_group</tabstop>
+  <tabstop>group_code_in_group</tabstop>
+  <tabstop>author_in_group</tabstop>
+  <tabstop>folder_size_in_group</tabstop>
+  <tabstop>photographer_in_group</tabstop>
+  <tabstop>taken_time_in_group</tabstop>
+  <tabstop>taken_locations_in_group</tabstop>
+  <tabstop>photo_num_in_group</tabstop>
+  <tabstop>security_classification_in_group</tabstop>
+  <tabstop>reference_code_in_group</tabstop>
+  <tabstop>opening_state_in_group</tabstop>
   <tabstop>group_caption_in_group</tabstop>
   <tabstop>save_group_btn</tabstop>
   <tabstop>selected_dir_radioButton</tabstop>
@@ -8958,13 +9042,28 @@ QPushButton:hover {
   <tabstop>all_photo_radioButton</tabstop>
   <tabstop>part_recognition_radioButton</tabstop>
   <tabstop>all_recognition_radioButton</tabstop>
+  <tabstop>format_in_photo</tabstop>
+  <tabstop>photo_code_in_photo</tabstop>
   <tabstop>peoples_in_photo</tabstop>
   <tabstop>tableWidget</tabstop>
   <tabstop>verifycheckBox</tabstop>
+  <tabstop>arch_category_code_in_photo</tabstop>
+  <tabstop>year_in_photo</tabstop>
+  <tabstop>group_code_in_photo</tabstop>
+  <tabstop>photographer_in_photo</tabstop>
+  <tabstop>taken_time_in_photo</tabstop>
+  <tabstop>taken_locations_in_photo</tabstop>
+  <tabstop>group_path_in_group</tabstop>
+  <tabstop>security_classification_in_photo</tabstop>
+  <tabstop>reference_code_in_photo</tabstop>
+  <tabstop>arch_code_in_group</tabstop>
+  <tabstop>fonds_code_in_group</tabstop>
+  <tabstop>arch_code_in_photo</tabstop>
+  <tabstop>fonds_code_in_photo</tabstop>
   <tabstop>thresh_lineEdit</tabstop>
   <tabstop>order_combobox_browse</tabstop>
   <tabstop>arch_tree_view_browse</tabstop>
-  <tabstop>photo_list_widget</tabstop>
+  <tabstop>group_title_in_group_arch</tabstop>
   <tabstop>arch_code_in_group_arch</tabstop>
   <tabstop>fonds_code_in_group_arch</tabstop>
   <tabstop>arch_category_code_in_group_arch</tabstop>
@@ -8986,11 +9085,22 @@ QPushButton:hover {
   <tabstop>format_in_photo_arch</tabstop>
   <tabstop>group_caption_in_group_arch</tabstop>
   <tabstop>peoples_in_photo_arch</tabstop>
+  <tabstop>photo_list_widget</tabstop>
+  <tabstop>retrieve_photo_path</tabstop>
+  <tabstop>open_photo_btn</tabstop>
+  <tabstop>retieve_dir</tabstop>
+  <tabstop>select_retrieve_dir_btn</tabstop>
+  <tabstop>tree_widget_search_face</tabstop>
+  <tabstop>export_btn_search_face</tabstop>
+  <tabstop>list_widget_search_face</tabstop>
   <tabstop>group_title_search</tabstop>
   <tabstop>peoples_search</tabstop>
+  <tabstop>start_date_search</tabstop>
+  <tabstop>end_date_search</tabstop>
   <tabstop>search_btn</tabstop>
   <tabstop>photo_tree_widget_search</tabstop>
-  <tabstop>photo_list_widget_search</tabstop>
+  <tabstop>export_btn_search</tabstop>
+  <tabstop>group_title_in_group_search</tabstop>
   <tabstop>arch_code_in_group_search</tabstop>
   <tabstop>fonds_code_in_group_search</tabstop>
   <tabstop>arch_category_code_in_group_search</tabstop>
@@ -9012,6 +9122,7 @@ QPushButton:hover {
   <tabstop>format_in_photo_search</tabstop>
   <tabstop>group_caption_in_group_search</tabstop>
   <tabstop>peoples_in_photo_search</tabstop>
+  <tabstop>photo_list_widget_search</tabstop>
   <tabstop>order_combobox_transfer</tabstop>
   <tabstop>arch_tree_view_transfer</tabstop>
   <tabstop>selected_arch_list_widget</tabstop>
@@ -9038,6 +9149,14 @@ QPushButton:hover {
   <tabstop>select_description_dir_btn</tabstop>
   <tabstop>package_path_in_setting</tabstop>
   <tabstop>select_package_dir_btn</tabstop>
+  <tabstop>photo_path_in_setting</tabstop>
+  <tabstop>select_photo_dir_btn</tabstop>
+  <tabstop>license_path_in_setting</tabstop>
+  <tabstop>import_license_btn</tabstop>
+  <tabstop>license_remaining_days</tabstop>
+  <tabstop>license_remaining_photo_num</tabstop>
+  <tabstop>license_enable_gpu</tabstop>
+  <tabstop>license_enable_export</tabstop>
  </tabstops>
  <resources/>
  <connections/>
