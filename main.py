@@ -6,7 +6,7 @@
 @time: 2020/11/5 16:43
 """
 import sys
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore
 from photo_arch.infrastructures.user_interface.qt.interaction.utils import catch_exception, for_all_methods
 from photo_arch.infrastructures.user_interface.qt.interaction.main_window import MainWindow
 from photo_arch.infrastructures.user_interface.qt.interaction.training import Training
@@ -38,9 +38,10 @@ def init_modules(mw_):
 
 
 def main():
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QtWidgets.QApplication(sys.argv)
     mw = MainWindow(app)
-    mw.resize(int(mw.dt_width*SCALE), int(mw.dt_height*SCALE))
+    mw.resize(int(mw.dt_width * SCALE), int(mw.dt_height * SCALE))
     ax = int((mw.dt_width - mw.width()) / 2)
     ay = int((mw.dt_height - mw.height()) / 2) - 50
     mw.move(ax, ay)

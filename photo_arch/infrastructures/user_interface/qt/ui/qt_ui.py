@@ -685,7 +685,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.splitter, 0, 0, 1, 1)
 
-        self.horizontalSpacer_40 = QSpacerItem(200, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
+        self.horizontalSpacer_40 = QSpacerItem(180, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
 
         self.gridLayout_5.addItem(self.horizontalSpacer_40, 0, 1, 1, 1)
 

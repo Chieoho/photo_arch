@@ -1636,7 +1636,7 @@ QPushButton{
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>200</width>
+            <width>180</width>
             <height>20</height>
            </size>
           </property>
