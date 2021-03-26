@@ -80,15 +80,15 @@ class View(object):
             parent.appendRow(QtGui.QStandardItem(str(d)))
 
     def display_transfer_arch(self, arch, priority_key='年度'):
-        data = defaultdict(lambda: defaultdict(dict))
+        data = defaultdict(lambda: defaultdict(list))
         for gi in arch:
             fc = gi.get('fonds_code')
             ye = gi.get('year')
             rp = gi.get('retention_period')
             if priority_key == '年度':
-                data[fc][ye] = rp
+                data[fc][ye].append(rp)
             else:
-                data[fc][rp] = ye
+                data[fc][rp].append(ye)
         model = QtGui.QStandardItemModel()
         self._fill_model_from_dict(model.invisibleRootItem(), data)
         self.ui.arch_tree_view_transfer.setModel(model)

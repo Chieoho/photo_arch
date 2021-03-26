@@ -19,7 +19,7 @@ def control_info(start_date=None):
         'max_photo_num': 100,
         'start_date': start_date,
         'max_days': 30,
-        'enable_gpu': False,
+        'enable_gpu': True,
         'enable_export': True
     }
     return ctrl_info
@@ -48,4 +48,4 @@ def gen_lic(feature_code=None, start_date=None):
 if __name__ == '__main__':
     gen_lic()
     # gen_lic(start_date='20210101')
-    # gen_lic(feature_code='4a4eaf8014cbfe4b92e96b1bf26f9647')
+    # gen_lic(feature_code='696d16b9de1d504c4b9f3e3e0247a113')

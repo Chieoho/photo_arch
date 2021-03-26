@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
 "    background-color: rgb(3, 72, 142);\n"
 "}\n"
 "QTabBar::tab:hover{\n"
-"    background-color: #419ff9;\n"
+"    background-color: rgb(3, 72, 142);\n"
 "}\n"
 "\n"
 "\n"
@@ -92,12 +92,16 @@ class Ui_MainWindow(object):
 "    padding:5px 8px;\n"
 "    border-radius: 2px;\n"
 "    border: 1px solid #1872c9;\n"
-"    background-col"
-                        "or: #419ff9; \n"
+"    backgr"
+                        "ound-color: #419ff9; \n"
 "	color: #ffffff; \n"
 "}\n"
-"\n"
-"\n"
+"QPushButton:hover{\n"
+"    background-color: rgb(4, 103, 204);\n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color:#eeeeee;\n"
+"}\n"
 "")
         self.tabWidget.setIconSize(QSize(120, 90))
         self.group_tab = QWidget()
@@ -154,17 +158,34 @@ class Ui_MainWindow(object):
 "    background-color: #419ff9; \n"
 "	color: #ffffff; \n"
 "}\n"
+"QPushButton:hover{\n"
+"    background-color: rgb(4, 103, 204);\n"
+"}\n"
+"\n"
 "")
-        self.gridLayout_6 = QGridLayout(self.widget)
+        self.gridLayout_29 = QGridLayout(self.widget)
+        self.gridLayout_29.setObjectName(u"gridLayout_29")
+        self.label = QLabel(self.widget)
+        self.label.setObjectName(u"label")
+        self.label.setFont(font)
+
+        self.gridLayout_29.addWidget(self.label, 0, 0, 1, 1)
+
+        self.gridLayout_6 = QGridLayout()
+        self.gridLayout_6.setSpacing(0)
         self.gridLayout_6.setObjectName(u"gridLayout_6")
-        self.gridLayout_6.setContentsMargins(10, 20, 20, 20)
         self.dir_lineEdit = QLineEdit(self.widget)
         self.dir_lineEdit.setObjectName(u"dir_lineEdit")
         self.dir_lineEdit.setMinimumSize(QSize(0, 23))
         self.dir_lineEdit.setFont(font)
+        self.dir_lineEdit.setStyleSheet(u"border-top-left-radius: 2px;\n"
+"border-top-right-radius: 0px;\n"
+"border-bottom-right-radius: 0px;\n"
+"border-bottom-left-radius: 2px;\n"
+"")
         self.dir_lineEdit.setReadOnly(True)
 
-        self.gridLayout_6.addWidget(self.dir_lineEdit, 0, 1, 1, 1)
+        self.gridLayout_6.addWidget(self.dir_lineEdit, 0, 0, 1, 1)
 
         self.open_dir_btn = QPushButton(self.widget)
         self.open_dir_btn.setObjectName(u"open_dir_btn")
@@ -173,19 +194,25 @@ class Ui_MainWindow(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.open_dir_btn.sizePolicy().hasHeightForWidth())
         self.open_dir_btn.setSizePolicy(sizePolicy2)
-        self.open_dir_btn.setMaximumSize(QSize(110, 35))
+        self.open_dir_btn.setMaximumSize(QSize(42, 31))
         self.open_dir_btn.setBaseSize(QSize(110, 35))
         font2 = QFont()
         font2.setFamily(u"\u5fae\u8f6f\u96c5\u9ed1")
         font2.setPointSize(12)
         self.open_dir_btn.setFont(font2)
-        self.open_dir_btn.setStyleSheet(u"")
+        self.open_dir_btn.setStyleSheet(u"border-top-left-radius:0px;\n"
+"border-top-right-radius:2px;\n"
+"border-bottom-right-radius:2px;\n"
+"border-bottom-left-radius:0px;")
         icon1 = QIcon()
         icon1.addFile(u"icon/open.png", QSize(), QIcon.Normal, QIcon.Off)
         self.open_dir_btn.setIcon(icon1)
         self.open_dir_btn.setIconSize(QSize(20, 20))
 
-        self.gridLayout_6.addWidget(self.open_dir_btn, 0, 2, 1, 1)
+        self.gridLayout_6.addWidget(self.open_dir_btn, 0, 1, 1, 1)
+
+
+        self.gridLayout_29.addLayout(self.gridLayout_6, 0, 1, 1, 1)
 
         self.tree_widget_group = QTreeWidget(self.widget)
         __qtreewidgetitem = QTreeWidgetItem()
@@ -204,7 +231,7 @@ class Ui_MainWindow(object):
         self.tree_widget_group.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tree_widget_group.header().setVisible(False)
 
-        self.gridLayout_6.addWidget(self.tree_widget_group, 1, 0, 1, 3)
+        self.gridLayout_29.addWidget(self.tree_widget_group, 1, 0, 1, 2)
 
         self.frame_3 = QFrame(self.widget)
         self.frame_3.setObjectName(u"frame_3")
@@ -273,19 +300,13 @@ class Ui_MainWindow(object):
         self.gridLayout_7.addItem(self.horizontalSpacer_6, 0, 4, 1, 1)
 
 
-        self.gridLayout_6.addWidget(self.frame_3, 3, 0, 1, 3)
+        self.gridLayout_29.addWidget(self.frame_3, 3, 0, 1, 2)
 
         self.adding_processing = QLabel(self.widget)
         self.adding_processing.setObjectName(u"adding_processing")
-        self.adding_processing.setMinimumSize(QSize(0, 35))
+        self.adding_processing.setMinimumSize(QSize(1, 35))
 
-        self.gridLayout_6.addWidget(self.adding_processing, 2, 0, 1, 3)
-
-        self.label = QLabel(self.widget)
-        self.label.setObjectName(u"label")
-        self.label.setFont(font)
-
-        self.gridLayout_6.addWidget(self.label, 0, 0, 1, 1)
+        self.gridLayout_29.addWidget(self.adding_processing, 2, 0, 1, 2)
 
         self.splitter.addWidget(self.widget)
         self.group_description_widget = QWidget(self.splitter)
@@ -2065,28 +2086,103 @@ class Ui_MainWindow(object):
 "    border: 1px solid #1872c9;\n"
 "    background-color: #419ff9; \n"
 "	color: #ffffff; \n"
-"}")
-        self.gridLayout_33 = QGridLayout(self.widget_11)
-        self.gridLayout_33.setObjectName(u"gridLayout_33")
-        self.open_photo_btn = QPushButton(self.widget_11)
-        self.open_photo_btn.setObjectName(u"open_photo_btn")
-        sizePolicy6.setHeightForWidth(self.open_photo_btn.sizePolicy().hasHeightForWidth())
-        self.open_photo_btn.setSizePolicy(sizePolicy6)
-        self.open_photo_btn.setFont(font)
-        self.open_photo_btn.setStyleSheet(u"padding: 3px; \n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color:#eeeeee;\n"
+"}\n"
+"QPushButton:hover{\n"
+"    background-color: rgb(4, 103, 204);\n"
+"}\n"
+"\n"
 "")
-        self.open_photo_btn.setIcon(icon1)
-        self.open_photo_btn.setIconSize(QSize(20, 20))
+        self.gridLayout_40 = QGridLayout(self.widget_11)
+        self.gridLayout_40.setObjectName(u"gridLayout_40")
+        self.label_100 = QLabel(self.widget_11)
+        self.label_100.setObjectName(u"label_100")
+        self.label_100.setFont(font)
+        self.label_100.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.gridLayout_33.addWidget(self.open_photo_btn, 0, 2, 1, 1)
+        self.gridLayout_40.addWidget(self.label_100, 0, 0, 1, 1)
 
+        self.gridLayout_33 = QGridLayout()
+        self.gridLayout_33.setSpacing(0)
+        self.gridLayout_33.setObjectName(u"gridLayout_33")
         self.retrieve_photo_path = QLineEdit(self.widget_11)
         self.retrieve_photo_path.setObjectName(u"retrieve_photo_path")
         sizePolicy6.setHeightForWidth(self.retrieve_photo_path.sizePolicy().hasHeightForWidth())
         self.retrieve_photo_path.setSizePolicy(sizePolicy6)
         self.retrieve_photo_path.setFont(font)
+        self.retrieve_photo_path.setStyleSheet(u"border-top-left-radius: 2px;\n"
+"border-top-right-radius: 0px;\n"
+"border-bottom-right-radius: 0px;\n"
+"border-bottom-left-radius: 2px;\n"
+"")
 
-        self.gridLayout_33.addWidget(self.retrieve_photo_path, 0, 1, 1, 1)
+        self.gridLayout_33.addWidget(self.retrieve_photo_path, 0, 0, 1, 1)
+
+        self.open_photo_btn = QPushButton(self.widget_11)
+        self.open_photo_btn.setObjectName(u"open_photo_btn")
+        sizePolicy6.setHeightForWidth(self.open_photo_btn.sizePolicy().hasHeightForWidth())
+        self.open_photo_btn.setSizePolicy(sizePolicy6)
+        self.open_photo_btn.setMaximumSize(QSize(42, 31))
+        self.open_photo_btn.setFont(font)
+        self.open_photo_btn.setStyleSheet(u"border-top-left-radius: 0px;\n"
+"border-top-right-radius: 2px;\n"
+"border-bottom-right-radius: 2px;\n"
+"border-bottom-left-radius: 0px;\n"
+"")
+        self.open_photo_btn.setIcon(icon1)
+        self.open_photo_btn.setIconSize(QSize(20, 20))
+
+        self.gridLayout_33.addWidget(self.open_photo_btn, 0, 1, 1, 1)
+
+
+        self.gridLayout_40.addLayout(self.gridLayout_33, 0, 1, 1, 1)
+
+        self.label_99 = QLabel(self.widget_11)
+        self.label_99.setObjectName(u"label_99")
+        self.label_99.setFont(font)
+        self.label_99.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.gridLayout_40.addWidget(self.label_99, 1, 0, 1, 1)
+
+        self.gridLayout_39 = QGridLayout()
+        self.gridLayout_39.setSpacing(0)
+        self.gridLayout_39.setObjectName(u"gridLayout_39")
+        self.retieve_dir = QLineEdit(self.widget_11)
+        self.retieve_dir.setObjectName(u"retieve_dir")
+        sizePolicy7 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.retieve_dir.sizePolicy().hasHeightForWidth())
+        self.retieve_dir.setSizePolicy(sizePolicy7)
+        self.retieve_dir.setFont(font)
+        self.retieve_dir.setStyleSheet(u"border-top-left-radius: 2px;\n"
+"border-top-right-radius: 0px;\n"
+"border-bottom-right-radius: 0px;\n"
+"border-bottom-left-radius: 2px;\n"
+"")
+
+        self.gridLayout_39.addWidget(self.retieve_dir, 0, 0, 1, 1)
+
+        self.select_retrieve_dir_btn = QPushButton(self.widget_11)
+        self.select_retrieve_dir_btn.setObjectName(u"select_retrieve_dir_btn")
+        sizePolicy6.setHeightForWidth(self.select_retrieve_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_retrieve_dir_btn.setSizePolicy(sizePolicy6)
+        self.select_retrieve_dir_btn.setMaximumSize(QSize(42, 31))
+        self.select_retrieve_dir_btn.setFont(font)
+        self.select_retrieve_dir_btn.setStyleSheet(u"border-top-left-radius: 0px;\n"
+"border-top-right-radius: 2px;\n"
+"border-bottom-right-radius: 2px;\n"
+"border-bottom-left-radius: 0px;\n"
+"")
+        self.select_retrieve_dir_btn.setIcon(icon1)
+        self.select_retrieve_dir_btn.setIconSize(QSize(20, 20))
+
+        self.gridLayout_39.addWidget(self.select_retrieve_dir_btn, 0, 1, 1, 1)
+
+
+        self.gridLayout_40.addLayout(self.gridLayout_39, 1, 1, 1, 1)
 
         self.frame_6 = QFrame(self.widget_11)
         self.frame_6.setObjectName(u"frame_6")
@@ -2097,6 +2193,7 @@ class Ui_MainWindow(object):
         self.gridLayout_34.setObjectName(u"gridLayout_34")
         self.retrieve_btn = QPushButton(self.frame_6)
         self.retrieve_btn.setObjectName(u"retrieve_btn")
+        self.retrieve_btn.setEnabled(True)
         sizePolicy3.setHeightForWidth(self.retrieve_btn.sizePolicy().hasHeightForWidth())
         self.retrieve_btn.setSizePolicy(sizePolicy3)
         self.retrieve_btn.setMinimumSize(QSize(1, 1))
@@ -2120,7 +2217,21 @@ class Ui_MainWindow(object):
         self.gridLayout_34.addItem(self.horizontalSpacer_37, 0, 0, 1, 1)
 
 
-        self.gridLayout_33.addWidget(self.frame_6, 2, 0, 1, 3)
+        self.gridLayout_40.addWidget(self.frame_6, 2, 0, 1, 2)
+
+        self.tree_widget_search_face = QTreeWidget(self.widget_11)
+        __qtreewidgetitem1 = QTreeWidgetItem()
+        __qtreewidgetitem1.setText(0, u"1");
+        self.tree_widget_search_face.setHeaderItem(__qtreewidgetitem1)
+        self.tree_widget_search_face.setObjectName(u"tree_widget_search_face")
+        sizePolicy1.setHeightForWidth(self.tree_widget_search_face.sizePolicy().hasHeightForWidth())
+        self.tree_widget_search_face.setSizePolicy(sizePolicy1)
+        self.tree_widget_search_face.setFont(font)
+        self.tree_widget_search_face.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tree_widget_search_face.setExpandsOnDoubleClick(False)
+        self.tree_widget_search_face.header().setVisible(False)
+
+        self.gridLayout_40.addWidget(self.tree_widget_search_face, 3, 0, 1, 2)
 
         self.frame_12 = QFrame(self.widget_11)
         self.frame_12.setObjectName(u"frame_12")
@@ -2152,58 +2263,7 @@ class Ui_MainWindow(object):
         self.gridLayout_35.addItem(self.horizontalSpacer_39, 0, 2, 1, 1)
 
 
-        self.gridLayout_33.addWidget(self.frame_12, 4, 0, 1, 3)
-
-        self.label_99 = QLabel(self.widget_11)
-        self.label_99.setObjectName(u"label_99")
-        self.label_99.setFont(font)
-        self.label_99.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.gridLayout_33.addWidget(self.label_99, 1, 0, 1, 1)
-
-        self.select_retrieve_dir_btn = QPushButton(self.widget_11)
-        self.select_retrieve_dir_btn.setObjectName(u"select_retrieve_dir_btn")
-        sizePolicy6.setHeightForWidth(self.select_retrieve_dir_btn.sizePolicy().hasHeightForWidth())
-        self.select_retrieve_dir_btn.setSizePolicy(sizePolicy6)
-        self.select_retrieve_dir_btn.setFont(font)
-        self.select_retrieve_dir_btn.setStyleSheet(u"padding: 3px; \n"
-"")
-        self.select_retrieve_dir_btn.setIcon(icon1)
-        self.select_retrieve_dir_btn.setIconSize(QSize(20, 20))
-
-        self.gridLayout_33.addWidget(self.select_retrieve_dir_btn, 1, 2, 1, 1)
-
-        self.label_100 = QLabel(self.widget_11)
-        self.label_100.setObjectName(u"label_100")
-        self.label_100.setFont(font)
-        self.label_100.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.gridLayout_33.addWidget(self.label_100, 0, 0, 1, 1)
-
-        self.retieve_dir = QLineEdit(self.widget_11)
-        self.retieve_dir.setObjectName(u"retieve_dir")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy7.setHorizontalStretch(0)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.retieve_dir.sizePolicy().hasHeightForWidth())
-        self.retieve_dir.setSizePolicy(sizePolicy7)
-        self.retieve_dir.setFont(font)
-
-        self.gridLayout_33.addWidget(self.retieve_dir, 1, 1, 1, 1)
-
-        self.tree_widget_search_face = QTreeWidget(self.widget_11)
-        __qtreewidgetitem1 = QTreeWidgetItem()
-        __qtreewidgetitem1.setText(0, u"1");
-        self.tree_widget_search_face.setHeaderItem(__qtreewidgetitem1)
-        self.tree_widget_search_face.setObjectName(u"tree_widget_search_face")
-        sizePolicy1.setHeightForWidth(self.tree_widget_search_face.sizePolicy().hasHeightForWidth())
-        self.tree_widget_search_face.setSizePolicy(sizePolicy1)
-        self.tree_widget_search_face.setFont(font)
-        self.tree_widget_search_face.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tree_widget_search_face.setExpandsOnDoubleClick(False)
-        self.tree_widget_search_face.header().setVisible(False)
-
-        self.gridLayout_33.addWidget(self.tree_widget_search_face, 3, 0, 1, 3)
+        self.gridLayout_40.addWidget(self.frame_12, 4, 0, 1, 2)
 
         self.splitter_11.addWidget(self.widget_11)
         self.splitter_10 = QSplitter(self.splitter_11)
@@ -2314,7 +2374,11 @@ class Ui_MainWindow(object):
 "    border: 1px solid #1872c9;\n"
 "    background-color: #419ff9; \n"
 "	color: #ffffff; \n"
-"}")
+"}\n"
+"QPushButton:hover{\n"
+"    background-color: rgb(4, 103, 204);\n"
+"}\n"
+"")
         self.gridLayout_54 = QGridLayout(self.widget_21)
         self.gridLayout_54.setObjectName(u"gridLayout_54")
         self.label_211 = QLabel(self.widget_21)
@@ -3360,6 +3424,8 @@ class Ui_MainWindow(object):
         self.gridLayout_28.setContentsMargins(-1, 12, -1, 20)
         self.fonds_code_in_setting = QLineEdit(self.groupBox_2)
         self.fonds_code_in_setting.setObjectName(u"fonds_code_in_setting")
+        sizePolicy7.setHeightForWidth(self.fonds_code_in_setting.sizePolicy().hasHeightForWidth())
+        self.fonds_code_in_setting.setSizePolicy(sizePolicy7)
         self.fonds_code_in_setting.setFont(font)
 
         self.gridLayout_28.addWidget(self.fonds_code_in_setting, 2, 1, 1, 1)
@@ -3376,12 +3442,14 @@ class Ui_MainWindow(object):
 
         self.gridLayout_28.addWidget(self.label_93, 2, 0, 1, 1)
 
-        self.horizontalSpacer_21 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_21 = QSpacerItem(280, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
 
         self.gridLayout_28.addItem(self.horizontalSpacer_21, 0, 2, 1, 1)
 
         self.fonds_name_in_setting = QLineEdit(self.groupBox_2)
         self.fonds_name_in_setting.setObjectName(u"fonds_name_in_setting")
+        sizePolicy7.setHeightForWidth(self.fonds_name_in_setting.sizePolicy().hasHeightForWidth())
+        self.fonds_name_in_setting.setSizePolicy(sizePolicy7)
         self.fonds_name_in_setting.setFont(font)
 
         self.gridLayout_28.addWidget(self.fonds_name_in_setting, 0, 1, 1, 1)
@@ -3405,104 +3473,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_32.addItem(self.horizontalSpacer_34, 3, 0, 1, 1)
 
-        self.groupBox = QGroupBox(self.setting_tab)
-        self.groupBox.setObjectName(u"groupBox")
-        sizePolicy3.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
-        self.groupBox.setSizePolicy(sizePolicy3)
-        self.groupBox.setFont(font)
-        self.gridLayout_11 = QGridLayout(self.groupBox)
-        self.gridLayout_11.setObjectName(u"gridLayout_11")
-        self.label_75 = QLabel(self.groupBox)
-        self.label_75.setObjectName(u"label_75")
-        self.label_75.setFont(font)
-
-        self.gridLayout_11.addWidget(self.label_75, 0, 0, 1, 1)
-
-        self.select_package_dir_btn = QPushButton(self.groupBox)
-        self.select_package_dir_btn.setObjectName(u"select_package_dir_btn")
-        sizePolicy6.setHeightForWidth(self.select_package_dir_btn.sizePolicy().hasHeightForWidth())
-        self.select_package_dir_btn.setSizePolicy(sizePolicy6)
-        self.select_package_dir_btn.setMinimumSize(QSize(1, 1))
-        self.select_package_dir_btn.setFont(font3)
-        self.select_package_dir_btn.setStyleSheet(u"")
-        self.select_package_dir_btn.setIcon(icon1)
-        self.select_package_dir_btn.setIconSize(QSize(20, 20))
-
-        self.gridLayout_11.addWidget(self.select_package_dir_btn, 2, 2, 1, 1)
-
-        self.package_path_in_setting = QLineEdit(self.groupBox)
-        self.package_path_in_setting.setObjectName(u"package_path_in_setting")
-        sizePolicy7.setHeightForWidth(self.package_path_in_setting.sizePolicy().hasHeightForWidth())
-        self.package_path_in_setting.setSizePolicy(sizePolicy7)
-        self.package_path_in_setting.setFont(font)
-
-        self.gridLayout_11.addWidget(self.package_path_in_setting, 2, 1, 1, 1)
-
-        self.photo_path_in_setting = QLineEdit(self.groupBox)
-        self.photo_path_in_setting.setObjectName(u"photo_path_in_setting")
-        self.photo_path_in_setting.setFont(font)
-
-        self.gridLayout_11.addWidget(self.photo_path_in_setting, 4, 1, 1, 1)
-
-        self.horizontalSpacer_22 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout_11.addItem(self.horizontalSpacer_22, 0, 3, 1, 1)
-
-        self.description_path_in_setting = QLineEdit(self.groupBox)
-        self.description_path_in_setting.setObjectName(u"description_path_in_setting")
-        sizePolicy7.setHeightForWidth(self.description_path_in_setting.sizePolicy().hasHeightForWidth())
-        self.description_path_in_setting.setSizePolicy(sizePolicy7)
-        self.description_path_in_setting.setFont(font)
-
-        self.gridLayout_11.addWidget(self.description_path_in_setting, 0, 1, 1, 1)
-
-        self.label_76 = QLabel(self.groupBox)
-        self.label_76.setObjectName(u"label_76")
-        self.label_76.setFont(font)
-
-        self.gridLayout_11.addWidget(self.label_76, 2, 0, 1, 1)
-
-        self.label_101 = QLabel(self.groupBox)
-        self.label_101.setObjectName(u"label_101")
-        self.label_101.setFont(font)
-
-        self.gridLayout_11.addWidget(self.label_101, 4, 0, 1, 1)
-
-        self.verticalSpacer_51 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.gridLayout_11.addItem(self.verticalSpacer_51, 1, 0, 1, 1)
-
-        self.select_description_dir_btn = QPushButton(self.groupBox)
-        self.select_description_dir_btn.setObjectName(u"select_description_dir_btn")
-        sizePolicy6.setHeightForWidth(self.select_description_dir_btn.sizePolicy().hasHeightForWidth())
-        self.select_description_dir_btn.setSizePolicy(sizePolicy6)
-        self.select_description_dir_btn.setMinimumSize(QSize(1, 1))
-        self.select_description_dir_btn.setFont(font3)
-        self.select_description_dir_btn.setStyleSheet(u"")
-        self.select_description_dir_btn.setIcon(icon1)
-        self.select_description_dir_btn.setIconSize(QSize(20, 20))
-
-        self.gridLayout_11.addWidget(self.select_description_dir_btn, 0, 2, 1, 1)
-
-        self.select_photo_dir_btn = QPushButton(self.groupBox)
-        self.select_photo_dir_btn.setObjectName(u"select_photo_dir_btn")
-        sizePolicy6.setHeightForWidth(self.select_photo_dir_btn.sizePolicy().hasHeightForWidth())
-        self.select_photo_dir_btn.setSizePolicy(sizePolicy6)
-        self.select_photo_dir_btn.setMinimumSize(QSize(1, 1))
-        self.select_photo_dir_btn.setFont(font3)
-        self.select_photo_dir_btn.setStyleSheet(u"")
-        self.select_photo_dir_btn.setIcon(icon1)
-        self.select_photo_dir_btn.setIconSize(QSize(24, 24))
-
-        self.gridLayout_11.addWidget(self.select_photo_dir_btn, 4, 2, 1, 1)
-
-        self.verticalSpacer_52 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.gridLayout_11.addItem(self.verticalSpacer_52, 3, 0, 1, 1)
-
-
-        self.gridLayout_32.addWidget(self.groupBox, 3, 1, 1, 1)
-
         self.horizontalSpacer_31 = QSpacerItem(345, 140, QSizePolicy.Preferred, QSizePolicy.Minimum)
 
         self.gridLayout_32.addItem(self.horizontalSpacer_31, 3, 2, 1, 1)
@@ -3520,16 +3490,81 @@ class Ui_MainWindow(object):
         sizePolicy3.setHeightForWidth(self.groupBox_3.sizePolicy().hasHeightForWidth())
         self.groupBox_3.setSizePolicy(sizePolicy3)
         self.groupBox_3.setFont(font)
-        self.gridLayout_29 = QGridLayout(self.groupBox_3)
-        self.gridLayout_29.setObjectName(u"gridLayout_29")
-        self.gridLayout_29.setContentsMargins(-1, 12, -1, 20)
+        self.gridLayout_43 = QGridLayout(self.groupBox_3)
+        self.gridLayout_43.setObjectName(u"gridLayout_43")
+        self.label_94 = QLabel(self.groupBox_3)
+        self.label_94.setObjectName(u"label_94")
+        self.label_94.setFont(font)
+
+        self.gridLayout_43.addWidget(self.label_94, 0, 0, 1, 1)
+
+        self.gridLayout_26 = QGridLayout()
+        self.gridLayout_26.setSpacing(0)
+        self.gridLayout_26.setObjectName(u"gridLayout_26")
+        self.license_path_in_setting = QLineEdit(self.groupBox_3)
+        self.license_path_in_setting.setObjectName(u"license_path_in_setting")
+        self.license_path_in_setting.setFont(font)
+        self.license_path_in_setting.setStyleSheet(u"border-top-left-radius: 2px;\n"
+"border-top-right-radius: 0px;\n"
+"border-bottom-right-radius: 0px;\n"
+"border-bottom-left-radius: 2px;\n"
+"")
+
+        self.gridLayout_26.addWidget(self.license_path_in_setting, 0, 0, 1, 1)
+
+        self.import_license_btn = QPushButton(self.groupBox_3)
+        self.import_license_btn.setObjectName(u"import_license_btn")
+        sizePolicy6.setHeightForWidth(self.import_license_btn.sizePolicy().hasHeightForWidth())
+        self.import_license_btn.setSizePolicy(sizePolicy6)
+        self.import_license_btn.setMinimumSize(QSize(1, 1))
+        self.import_license_btn.setMaximumSize(QSize(72, 31))
+        self.import_license_btn.setFont(font3)
+        self.import_license_btn.setStyleSheet(u"border-top-left-radius: 0px;\n"
+"border-top-right-radius: 2px;\n"
+"border-bottom-right-radius: 2px;\n"
+"border-bottom-left-radius: 0px;\n"
+"")
+        icon21 = QIcon()
+        icon21.addFile(u"icon/import.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.import_license_btn.setIcon(icon21)
+        self.import_license_btn.setIconSize(QSize(20, 20))
+
+        self.gridLayout_26.addWidget(self.import_license_btn, 0, 1, 1, 1)
+
+
+        self.gridLayout_43.addLayout(self.gridLayout_26, 0, 2, 1, 1)
+
+        self.horizontalSpacer_23 = QSpacerItem(280, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
+
+        self.gridLayout_43.addItem(self.horizontalSpacer_23, 0, 3, 1, 1)
+
+        self.label_96 = QLabel(self.groupBox_3)
+        self.label_96.setObjectName(u"label_96")
+        self.label_96.setFont(font)
+
+        self.gridLayout_43.addWidget(self.label_96, 1, 0, 1, 1)
+
+        self.verticalSpacer_53 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.gridLayout_43.addItem(self.verticalSpacer_53, 1, 1, 1, 1)
+
         self.license_remaining_days = QLineEdit(self.groupBox_3)
         self.license_remaining_days.setObjectName(u"license_remaining_days")
         self.license_remaining_days.setEnabled(True)
         self.license_remaining_days.setFont(font)
         self.license_remaining_days.setReadOnly(True)
 
-        self.gridLayout_29.addWidget(self.license_remaining_days, 2, 1, 1, 1)
+        self.gridLayout_43.addWidget(self.license_remaining_days, 1, 2, 1, 1)
+
+        self.label_95 = QLabel(self.groupBox_3)
+        self.label_95.setObjectName(u"label_95")
+        self.label_95.setFont(font)
+
+        self.gridLayout_43.addWidget(self.label_95, 2, 0, 1, 1)
+
+        self.verticalSpacer_54 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.gridLayout_43.addItem(self.verticalSpacer_54, 2, 1, 1, 1)
 
         self.license_remaining_photo_num = QLineEdit(self.groupBox_3)
         self.license_remaining_photo_num.setObjectName(u"license_remaining_photo_num")
@@ -3537,7 +3572,17 @@ class Ui_MainWindow(object):
         self.license_remaining_photo_num.setFont(font)
         self.license_remaining_photo_num.setReadOnly(True)
 
-        self.gridLayout_29.addWidget(self.license_remaining_photo_num, 4, 1, 1, 1)
+        self.gridLayout_43.addWidget(self.license_remaining_photo_num, 2, 2, 1, 1)
+
+        self.label_97 = QLabel(self.groupBox_3)
+        self.label_97.setObjectName(u"label_97")
+        self.label_97.setFont(font)
+
+        self.gridLayout_43.addWidget(self.label_97, 3, 0, 1, 1)
+
+        self.verticalSpacer_55 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.gridLayout_43.addItem(self.verticalSpacer_55, 3, 1, 1, 1)
 
         self.license_enable_gpu = QLineEdit(self.groupBox_3)
         self.license_enable_gpu.setObjectName(u"license_enable_gpu")
@@ -3545,31 +3590,17 @@ class Ui_MainWindow(object):
         self.license_enable_gpu.setFont(font)
         self.license_enable_gpu.setReadOnly(True)
 
-        self.gridLayout_29.addWidget(self.license_enable_gpu, 6, 1, 1, 1)
+        self.gridLayout_43.addWidget(self.license_enable_gpu, 3, 2, 1, 1)
 
         self.label_98 = QLabel(self.groupBox_3)
         self.label_98.setObjectName(u"label_98")
         self.label_98.setFont(font)
 
-        self.gridLayout_29.addWidget(self.label_98, 8, 0, 1, 1)
+        self.gridLayout_43.addWidget(self.label_98, 4, 0, 1, 1)
 
-        self.verticalSpacer_53 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.verticalSpacer_56 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
 
-        self.gridLayout_29.addItem(self.verticalSpacer_53, 1, 0, 1, 1)
-
-        self.verticalSpacer_55 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.gridLayout_29.addItem(self.verticalSpacer_55, 5, 0, 1, 1)
-
-        self.horizontalSpacer_23 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout_29.addItem(self.horizontalSpacer_23, 0, 3, 1, 1)
-
-        self.label_94 = QLabel(self.groupBox_3)
-        self.label_94.setObjectName(u"label_94")
-        self.label_94.setFont(font)
-
-        self.gridLayout_29.addWidget(self.label_94, 0, 0, 1, 1)
+        self.gridLayout_43.addItem(self.verticalSpacer_56, 4, 1, 1, 1)
 
         self.license_enable_export = QLineEdit(self.groupBox_3)
         self.license_enable_export.setObjectName(u"license_enable_export")
@@ -3577,53 +3608,7 @@ class Ui_MainWindow(object):
         self.license_enable_export.setFont(font)
         self.license_enable_export.setReadOnly(True)
 
-        self.gridLayout_29.addWidget(self.license_enable_export, 8, 1, 1, 1)
-
-        self.import_license_btn = QPushButton(self.groupBox_3)
-        self.import_license_btn.setObjectName(u"import_license_btn")
-        sizePolicy6.setHeightForWidth(self.import_license_btn.sizePolicy().hasHeightForWidth())
-        self.import_license_btn.setSizePolicy(sizePolicy6)
-        self.import_license_btn.setMinimumSize(QSize(1, 1))
-        self.import_license_btn.setFont(font3)
-        self.import_license_btn.setStyleSheet(u"")
-        icon21 = QIcon()
-        icon21.addFile(u"icon/import.png", QSize(), QIcon.Normal, QIcon.Off)
-        self.import_license_btn.setIcon(icon21)
-        self.import_license_btn.setIconSize(QSize(20, 20))
-
-        self.gridLayout_29.addWidget(self.import_license_btn, 0, 2, 1, 1)
-
-        self.license_path_in_setting = QLineEdit(self.groupBox_3)
-        self.license_path_in_setting.setObjectName(u"license_path_in_setting")
-        self.license_path_in_setting.setFont(font)
-
-        self.gridLayout_29.addWidget(self.license_path_in_setting, 0, 1, 1, 1)
-
-        self.label_95 = QLabel(self.groupBox_3)
-        self.label_95.setObjectName(u"label_95")
-        self.label_95.setFont(font)
-
-        self.gridLayout_29.addWidget(self.label_95, 4, 0, 1, 1)
-
-        self.verticalSpacer_54 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.gridLayout_29.addItem(self.verticalSpacer_54, 3, 0, 1, 1)
-
-        self.label_97 = QLabel(self.groupBox_3)
-        self.label_97.setObjectName(u"label_97")
-        self.label_97.setFont(font)
-
-        self.gridLayout_29.addWidget(self.label_97, 6, 0, 1, 1)
-
-        self.label_96 = QLabel(self.groupBox_3)
-        self.label_96.setObjectName(u"label_96")
-        self.label_96.setFont(font)
-
-        self.gridLayout_29.addWidget(self.label_96, 2, 0, 1, 1)
-
-        self.verticalSpacer_56 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.gridLayout_29.addItem(self.verticalSpacer_56, 7, 0, 1, 1)
+        self.gridLayout_43.addWidget(self.license_enable_export, 4, 2, 1, 1)
 
 
         self.gridLayout_32.addWidget(self.groupBox_3, 5, 1, 1, 1)
@@ -3635,6 +3620,152 @@ class Ui_MainWindow(object):
         self.verticalSpacer_11 = QSpacerItem(20, 184, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.gridLayout_32.addItem(self.verticalSpacer_11, 6, 2, 1, 1)
+
+        self.groupBox = QGroupBox(self.setting_tab)
+        self.groupBox.setObjectName(u"groupBox")
+        sizePolicy3.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        self.groupBox.setSizePolicy(sizePolicy3)
+        self.groupBox.setFont(font)
+        self.gridLayout_44 = QGridLayout(self.groupBox)
+        self.gridLayout_44.setObjectName(u"gridLayout_44")
+        self.label_75 = QLabel(self.groupBox)
+        self.label_75.setObjectName(u"label_75")
+        self.label_75.setFont(font)
+
+        self.gridLayout_44.addWidget(self.label_75, 0, 0, 1, 1)
+
+        self.gridLayout_11 = QGridLayout()
+        self.gridLayout_11.setSpacing(0)
+        self.gridLayout_11.setObjectName(u"gridLayout_11")
+        self.description_path_in_setting = QLineEdit(self.groupBox)
+        self.description_path_in_setting.setObjectName(u"description_path_in_setting")
+        sizePolicy7.setHeightForWidth(self.description_path_in_setting.sizePolicy().hasHeightForWidth())
+        self.description_path_in_setting.setSizePolicy(sizePolicy7)
+        self.description_path_in_setting.setFont(font)
+        self.description_path_in_setting.setStyleSheet(u"border-top-left-radius: 2px;\n"
+"border-top-right-radius: 0px;\n"
+"border-bottom-right-radius: 0px;\n"
+"border-bottom-left-radius: 2px;\n"
+"")
+
+        self.gridLayout_11.addWidget(self.description_path_in_setting, 0, 0, 1, 1)
+
+        self.select_description_dir_btn = QPushButton(self.groupBox)
+        self.select_description_dir_btn.setObjectName(u"select_description_dir_btn")
+        sizePolicy6.setHeightForWidth(self.select_description_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_description_dir_btn.setSizePolicy(sizePolicy6)
+        self.select_description_dir_btn.setMinimumSize(QSize(1, 1))
+        self.select_description_dir_btn.setMaximumSize(QSize(72, 31))
+        self.select_description_dir_btn.setFont(font3)
+        self.select_description_dir_btn.setStyleSheet(u"border-top-left-radius: 0px;\n"
+"border-top-right-radius: 2px;\n"
+"border-bottom-right-radius: 2px;\n"
+"border-bottom-left-radius: 0px;\n"
+"")
+        self.select_description_dir_btn.setIcon(icon1)
+        self.select_description_dir_btn.setIconSize(QSize(20, 20))
+
+        self.gridLayout_11.addWidget(self.select_description_dir_btn, 0, 1, 1, 1)
+
+
+        self.gridLayout_44.addLayout(self.gridLayout_11, 0, 2, 1, 1)
+
+        self.horizontalSpacer_22 = QSpacerItem(280, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
+
+        self.gridLayout_44.addItem(self.horizontalSpacer_22, 0, 3, 1, 1)
+
+        self.label_76 = QLabel(self.groupBox)
+        self.label_76.setObjectName(u"label_76")
+        self.label_76.setFont(font)
+
+        self.gridLayout_44.addWidget(self.label_76, 1, 0, 1, 1)
+
+        self.verticalSpacer_51 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.gridLayout_44.addItem(self.verticalSpacer_51, 1, 1, 1, 1)
+
+        self.gridLayout_41 = QGridLayout()
+        self.gridLayout_41.setSpacing(0)
+        self.gridLayout_41.setObjectName(u"gridLayout_41")
+        self.package_path_in_setting = QLineEdit(self.groupBox)
+        self.package_path_in_setting.setObjectName(u"package_path_in_setting")
+        sizePolicy7.setHeightForWidth(self.package_path_in_setting.sizePolicy().hasHeightForWidth())
+        self.package_path_in_setting.setSizePolicy(sizePolicy7)
+        self.package_path_in_setting.setFont(font)
+        self.package_path_in_setting.setStyleSheet(u"border-top-left-radius: 2px;\n"
+"border-top-right-radius: 0px;\n"
+"border-bottom-right-radius: 0px;\n"
+"border-bottom-left-radius: 2px;\n"
+"")
+
+        self.gridLayout_41.addWidget(self.package_path_in_setting, 0, 0, 1, 1)
+
+        self.select_package_dir_btn = QPushButton(self.groupBox)
+        self.select_package_dir_btn.setObjectName(u"select_package_dir_btn")
+        sizePolicy6.setHeightForWidth(self.select_package_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_package_dir_btn.setSizePolicy(sizePolicy6)
+        self.select_package_dir_btn.setMinimumSize(QSize(1, 1))
+        self.select_package_dir_btn.setMaximumSize(QSize(72, 31))
+        self.select_package_dir_btn.setFont(font3)
+        self.select_package_dir_btn.setStyleSheet(u"border-top-left-radius: 0px;\n"
+"border-top-right-radius: 2px;\n"
+"border-bottom-right-radius: 2px;\n"
+"border-bottom-left-radius: 0px;\n"
+"")
+        self.select_package_dir_btn.setIcon(icon1)
+        self.select_package_dir_btn.setIconSize(QSize(20, 20))
+
+        self.gridLayout_41.addWidget(self.select_package_dir_btn, 0, 1, 1, 1)
+
+
+        self.gridLayout_44.addLayout(self.gridLayout_41, 1, 2, 1, 1)
+
+        self.label_101 = QLabel(self.groupBox)
+        self.label_101.setObjectName(u"label_101")
+        self.label_101.setFont(font)
+
+        self.gridLayout_44.addWidget(self.label_101, 2, 0, 1, 1)
+
+        self.verticalSpacer_52 = QSpacerItem(20, 3, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.gridLayout_44.addItem(self.verticalSpacer_52, 2, 1, 1, 1)
+
+        self.gridLayout_42 = QGridLayout()
+        self.gridLayout_42.setSpacing(0)
+        self.gridLayout_42.setObjectName(u"gridLayout_42")
+        self.photo_path_in_setting = QLineEdit(self.groupBox)
+        self.photo_path_in_setting.setObjectName(u"photo_path_in_setting")
+        self.photo_path_in_setting.setFont(font)
+        self.photo_path_in_setting.setStyleSheet(u"border-top-left-radius: 2px;\n"
+"border-top-right-radius: 0px;\n"
+"border-bottom-right-radius: 0px;\n"
+"border-bottom-left-radius: 2px;\n"
+"")
+
+        self.gridLayout_42.addWidget(self.photo_path_in_setting, 0, 0, 1, 1)
+
+        self.select_photo_dir_btn = QPushButton(self.groupBox)
+        self.select_photo_dir_btn.setObjectName(u"select_photo_dir_btn")
+        sizePolicy6.setHeightForWidth(self.select_photo_dir_btn.sizePolicy().hasHeightForWidth())
+        self.select_photo_dir_btn.setSizePolicy(sizePolicy6)
+        self.select_photo_dir_btn.setMinimumSize(QSize(1, 1))
+        self.select_photo_dir_btn.setMaximumSize(QSize(72, 31))
+        self.select_photo_dir_btn.setFont(font3)
+        self.select_photo_dir_btn.setStyleSheet(u"border-top-left-radius: 0px;\n"
+"border-top-right-radius: 2px;\n"
+"border-bottom-right-radius: 2px;\n"
+"border-bottom-left-radius: 0px;\n"
+"")
+        self.select_photo_dir_btn.setIcon(icon1)
+        self.select_photo_dir_btn.setIconSize(QSize(24, 24))
+
+        self.gridLayout_42.addWidget(self.select_photo_dir_btn, 0, 1, 1, 1)
+
+
+        self.gridLayout_44.addLayout(self.gridLayout_42, 2, 2, 1, 1)
+
+
+        self.gridLayout_32.addWidget(self.groupBox, 3, 1, 1, 1)
 
         icon22 = QIcon()
         icon22.addFile(u"icon/tab_setting.png", QSize(), QIcon.Normal, QIcon.Off)
@@ -3713,9 +3844,9 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.group_caption_in_group_arch, self.peoples_in_photo_arch)
         QWidget.setTabOrder(self.peoples_in_photo_arch, self.photo_list_widget)
         QWidget.setTabOrder(self.photo_list_widget, self.retrieve_photo_path)
-        QWidget.setTabOrder(self.retrieve_photo_path, self.open_photo_btn)
-        QWidget.setTabOrder(self.open_photo_btn, self.retieve_dir)
-        QWidget.setTabOrder(self.retieve_dir, self.select_retrieve_dir_btn)
+        QWidget.setTabOrder(self.retrieve_photo_path, self.retieve_dir)
+        QWidget.setTabOrder(self.retieve_dir, self.open_photo_btn)
+        QWidget.setTabOrder(self.open_photo_btn, self.select_retrieve_dir_btn)
         QWidget.setTabOrder(self.select_retrieve_dir_btn, self.tree_widget_search_face)
         QWidget.setTabOrder(self.tree_widget_search_face, self.export_btn_search_face)
         QWidget.setTabOrder(self.export_btn_search_face, self.list_widget_search_face)
@@ -3799,9 +3930,10 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u7167\u7247\u6863\u6848AI\u8f85\u52a9\u8457\u5f55\u7ba1\u7406\u7cfb\u7edfV2", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u7167\u7247\u6863\u6848AI\u8f85\u52a9\u8457\u5f55\u7ba1\u7406\u7cfb\u7edfV3", None))
         self.actionexit.setText(QCoreApplication.translate("MainWindow", u"\u9000\u51fa(X)", None))
         self.action.setText(QCoreApplication.translate("MainWindow", u"\u5173\u4e8e...", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"\u76ee\u5f55", None))
         self.dir_lineEdit.setText("")
 #if QT_CONFIG(tooltip)
         self.open_dir_btn.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u9009\u62e9\u5de5\u4f5c\u76ee\u5f55</span></p></body></html>", None))
@@ -3816,7 +3948,6 @@ class Ui_MainWindow(object):
         self.cancel_folder_btn.setText(QCoreApplication.translate("MainWindow", u"\u53d6\u6d88", None))
         self.add_folder_btn.setText(QCoreApplication.translate("MainWindow", u"\u6dfb\u52a0", None))
         self.adding_processing.setText("")
-        self.label.setText(QCoreApplication.translate("MainWindow", u"\u76ee\u5f55", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u53f7", None))
         self.label_18.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u7ba1\u671f\u9650", None))
         self.retention_period_in_group.setItemText(0, QCoreApplication.translate("MainWindow", u"D10", None))
@@ -3969,18 +4100,18 @@ class Ui_MainWindow(object):
         self.label_61.setText(QCoreApplication.translate("MainWindow", u"\u62cd\u6444\u65f6\u95f4", None))
         self.photo_view_in_arch.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.arch_browser_tab), "")
+        self.label_100.setText(QCoreApplication.translate("MainWindow", u"\u7167\u7247", None))
         self.open_photo_btn.setText("")
-        self.retrieve_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
-        self.export_btn_search_face.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
         self.label_99.setText(QCoreApplication.translate("MainWindow", u"\u76ee\u5f55", None))
         self.select_retrieve_dir_btn.setText("")
-        self.label_100.setText(QCoreApplication.translate("MainWindow", u"\u7167\u7247", None))
+        self.retrieve_btn.setText(QCoreApplication.translate("MainWindow", u"\u641c\u7d22", None))
 #if QT_CONFIG(tooltip)
         self.tree_widget_search_face.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u53ef\u52fe\u9009\u5bfc\u51fa</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(whatsthis)
         self.tree_widget_search_face.setWhatsThis(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><br/></p></body></html>", None))
 #endif // QT_CONFIG(whatsthis)
+        self.export_btn_search_face.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u51fa", None))
         self.target_view_search_face.setText("")
         self.result_view_search_face.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.search_face_tab), "")
@@ -4099,34 +4230,34 @@ class Ui_MainWindow(object):
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u4fe1\u606f", None))
         self.label_92.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u540d\u79f0", None))
         self.label_93.setText(QCoreApplication.translate("MainWindow", u"\u5168\u5b97\u53f7", None))
-        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u8bbe\u7f6e", None))
-        self.label_75.setText(QCoreApplication.translate("MainWindow", u"\u8457\u5f55\u8def\u5f84", None))
-        self.select_package_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00", None))
-#if QT_CONFIG(tooltip)
-        self.photo_path_in_setting.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u6b64\u8def\u5f84\u4e0b\u7684\u7167\u7247\uff0c\u7cfb\u7edf\u4f1a\u8fdb\u884c\u9884\u5904\u7406\uff0c\u4ee5\u63d0\u9ad8\u8bc6\u522b\u901f\u5ea6</span></p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.label_76.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5305\u8def\u5f84", None))
-#if QT_CONFIG(tooltip)
-        self.label_101.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u6b64\u8def\u5f84\u4e0b\u7684\u7167\u7247\uff0c\u7cfb\u7edf\u4f1a\u8fdb\u884c\u9884\u5904\u7406\uff0c\u4ee5\u63d0\u9ad8\u8bc6\u522b\u901f\u5ea6</span></p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.label_101.setText(QCoreApplication.translate("MainWindow", u"\u7167\u7247\u8def\u5f84", None))
-        self.select_description_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00", None))
-        self.select_photo_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"License\u4fe1\u606f", None))
-#if QT_CONFIG(tooltip)
-        self.license_remaining_photo_num.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u8fd8\u53ef\u4ee5\u8bc6\u522b\u7684\u7167\u7247\u5f20\u6570</span></p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.license_enable_gpu.setText("")
-        self.label_98.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u653e\u5bfc\u51fa", None))
         self.label_94.setText(QCoreApplication.translate("MainWindow", u"\u8def\u5f84", None))
-        self.license_enable_export.setText("")
         self.import_license_btn.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u5165", None))
+        self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u5269\u4f59\u5929\u6570", None))
 #if QT_CONFIG(tooltip)
         self.label_95.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u8fd8\u53ef\u4ee5\u8bc6\u522b\u7684\u7167\u7247\u5f20\u6570</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.label_95.setText(QCoreApplication.translate("MainWindow", u"\u5269\u4f59\u5f20\u6570", None))
+#if QT_CONFIG(tooltip)
+        self.license_remaining_photo_num.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u8fd8\u53ef\u4ee5\u8bc6\u522b\u7684\u7167\u7247\u5f20\u6570</span></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
         self.label_97.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u542fGPU", None))
-        self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u5269\u4f59\u5929\u6570", None))
+        self.license_enable_gpu.setText("")
+        self.label_98.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u653e\u5bfc\u51fa", None))
+        self.license_enable_export.setText("")
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u8bbe\u7f6e", None))
+        self.label_75.setText(QCoreApplication.translate("MainWindow", u"\u8457\u5f55\u8def\u5f84", None))
+        self.select_description_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00", None))
+        self.label_76.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5305\u8def\u5f84", None))
+        self.select_package_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00", None))
+#if QT_CONFIG(tooltip)
+        self.label_101.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u6b64\u8def\u5f84\u4e0b\u7684\u7167\u7247\uff0c\u7cfb\u7edf\u4f1a\u8fdb\u884c\u9884\u5904\u7406\uff0c\u4ee5\u63d0\u9ad8\u8bc6\u522b\u901f\u5ea6</span></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.label_101.setText(QCoreApplication.translate("MainWindow", u"\u7167\u7247\u8def\u5f84", None))
+#if QT_CONFIG(tooltip)
+        self.photo_path_in_setting.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:10pt;\">\u6b64\u8def\u5f84\u4e0b\u7684\u7167\u7247\uff0c\u7cfb\u7edf\u4f1a\u8fdb\u884c\u9884\u5904\u7406\uff0c\u4ee5\u63d0\u9ad8\u8bc6\u522b\u901f\u5ea6</span></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.select_photo_dir_btn.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.setting_tab), "")
     # retranslateUi
 

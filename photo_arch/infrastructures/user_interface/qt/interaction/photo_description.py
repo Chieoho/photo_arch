@@ -181,7 +181,7 @@ class PhotoDescription(object):
 
     def _display_peoples(self):
         name_list = self.get_name_info()
-        names = ','.join([n[1] for n in name_list if n[1].strip()])
+        names = ','.join([f'{n[1]}[{n[0]}]' for n in name_list if n[1].strip()])
         self.ui.peoples_in_photo.setText(names)
 
     def _connect(self, signal, row):

@@ -131,6 +131,7 @@ class Interaction(UiInterface):
 
     def get_untrained_photo_num(self) -> int:
         return 10
+        # return 0
 
     def get_faces_coordinates(self, photo_path) -> list:
         return [{'box': [229.0, 19.0, 314.0, 77.0], 'id': 0},
@@ -167,7 +168,7 @@ class Interaction(UiInterface):
             os.path.abspath(r'G:\Git\photo_arch\待检索目录2\16.jpg'))
         retrieve_results_face_box.append([[229.0, 19.0, 314.0, 77.0]])
 
-        return retrieve_results_photo_path, retrieve_results_face_box
+        return retrieve_results_photo_path, retrieve_results_face_box, [0]
 
     def get_retrieve_info(self):
         info = {

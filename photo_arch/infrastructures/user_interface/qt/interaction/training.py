@@ -26,6 +26,10 @@ class Training(object):
         self.ui.train_btn.clicked.connect(static(self.start_training))
 
     def start_training(self):
+        untrained_photo_num = int(self.ui.untrained_num_label.text())
+        if untrained_photo_num == 0:
+            self.mw.warn_msg('未训练照片数量为0')
+            return
         training_info = self.mw.interaction.start_training()
         model_acc = training_info.get('model_acc')
         if model_acc == -1:

@@ -299,7 +299,7 @@ class GroupDescription(object):
                 item_value.child(i).setCheckState(0, QtGui.Qt.Unchecked)
 
     def add_folder_item(self):
-        self.mw.overlay(self.ui.tree_widget_group)
+        self.mw.overlay(self.ui.adding_processing)
         arch_code_info = {
             "root": {},
             "children": {}
@@ -321,7 +321,7 @@ class GroupDescription(object):
         if not arch_code_info["children"]:
             self.mw.warn_msg('未勾选文件夹')
             return
-        overlay = Overlay(self.ui.adding_processing, '处理中...')
+        overlay = Overlay(self.ui.adding_processing, '处理中')
         overlay.show()
         QtWidgets.QApplication.processEvents()
         if self.mw.interaction.set_arch_code(arch_code_info):

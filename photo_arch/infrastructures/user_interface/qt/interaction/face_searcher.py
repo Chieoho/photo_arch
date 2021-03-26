@@ -166,7 +166,7 @@ class SearchFaces(object):
                 if ret == -1:
                     self.mw.msg_box('待检索的目录下面没有照片.')
                 if ret == -2:
-                    self.mw.info_msg('后台正在提取人脸特征值')
+                    self.mw.info_msg('后台定时任务即将开始提取特征')
             else:
                 self.mw.warn_msg('未选择人脸，请先选择人脸')
 
@@ -224,18 +224,27 @@ class SearchFaces(object):
         self._display_photo_tree(retrieve_results_photo_path)
 
     def _get_retrieve_result(self):
-        photo_paths, face_boxes = self.mw.interaction.get_retrieve_result(self.file_path, self.retrieval_path)
+        photo_paths, face_boxes, photo_unhandled_list = \
+            self.mw.interaction.get_retrieve_result(self.file_path, self.retrieval_path)
         if len(photo_paths) > 0 and len(face_boxes) > 0:
-            self.retrieve_results_photo_path.extend(photo_paths)
-            self.retrieve_results_face_boxes.extend(face_boxes)
+            for pp in photo_paths:
+                if pp not in self.retrieve_results_photo_path:
+                    self.retrieve_results_photo_path.append(pp)
+            for fb in face_boxes:
+                if fb not in self.retrieve_results_face_boxes:
+                    self.retrieve_results_face_boxes.append(fb)
             self._display_result(self.retrieve_results_photo_path)
+        return photo_unhandled_list[0] if photo_unhandled_list else -1
 
     def get_retrieve_info(self):
         retrieve_info = self.mw.interaction.get_retrieve_info()
         total_num = retrieve_info.get('total_to_retrieve_photo_num')
         retrieved_num = retrieve_info.get('retrieved_photo_num')
-        self.ui.result_view_search_face.setText(f'已检索{retrieved_num}/{total_num}')
-        self._get_retrieve_result()
+        unhandled_num = self._get_retrieve_result()
+        unhandled_info = f'，{unhandled_num}张待提取特征' if unhandled_num > 0 else f''
+        retrieved_info = f'已对比{retrieved_num}/{total_num}张' + unhandled_info
+        self.ui.result_view_search_face.setText(retrieved_info)
+        QtWidgets.QApplication.processEvents()
         if retrieved_num == total_num:
             self.ui.retrieve_btn.setEnabled(True)
             self.timer.stop()
