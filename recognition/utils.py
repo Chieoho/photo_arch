@@ -2,12 +2,18 @@
 import math
 import os
 
+from sklearn.manifold import TSNE
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
 import cv2
 import joblib
 import platform
 import numpy as np
 from PIL import Image
 from sklearn.preprocessing import Normalizer, LabelEncoder
+from insightface.utils import face_align
 
 
 # calculate a face embedding for each face in the dataset using facenet.
@@ -36,7 +42,7 @@ def l2_normalize(x, axis=-1, epsilon=1e-10):
     output = x / np.sqrt(np.maximum(np.sum(np.square(x), axis=axis, keepdims=True), epsilon))
     return output
 
-# 满足距离的不太名字的数量是否一样多.
+# 判断名字的数量是否一样多，如果一样多，就找距离最小或者相似度最高的名字.
 def findBestName(counts, name):
     for key, value in counts.items():
         if key != name and value == counts[name]:
@@ -79,7 +85,44 @@ def get_name_by_euclid_distance(unknown_embedding, euclideanDist, data_path):
 
     return who_name
 
-def get_name_by_embedding(imgPath, unknown_embedding, faceProp, euclideanDist):
+def get_name_by_simular(unknown_embedding, simular, data_path):
+    # Preparation for calculating Euclidean distance.
+    if os.path.exists(data_path):
+        data = np.load(data_path, allow_pickle=True)
+        faces_embedding = data['faces_embedding']
+        faces_name = data['faces_name']
+
+        simL = np.dot(faces_embedding, unknown_embedding)
+        simL = simL.reshape(-1)
+        simL = list(simL)
+        print('#####:',simL)
+        max_sim = np.max(simL)
+        if max_sim > simular: #simular>0.4
+            # max_sim_index = np.argmax(sim)
+            # who_name = faces_name[max_sim_index]
+            # print('max_sim: %s, name is %s' % (max_sim, who_name))
+            matchedIdxs = [i for (i, sim) in enumerate(simL) if sim > simular]
+            counts = {}
+            for i in matchedIdxs:
+                name = faces_name[i]
+                counts[name] = counts.get(name, 0) + 1
+            who_name = max(counts, key=counts.get)
+            if findBestName(counts, who_name): # 人数一样多，就找最大的相似度
+                max_sim_index = np.argmax(simL)
+                who_name = faces_name[max_sim_index]
+                print('max_sim: %s, name is %s' % (max_sim, who_name))
+            else:
+                print('counts: %s, selected name is %s' % (counts, who_name))
+        else:
+            who_name = ''
+            print('max_sim: %s 已经小于阈值%s了.' % (max_sim, simular))
+    else:
+        who_name = ''
+        # print('{}文件不存在.'.format(data_path))
+
+    return who_name
+
+def get_name_by_embedding(imgPath, unknown_embedding, faceProp, threshold, flag):
     if os.path.exists('data/model/custom_faceRecognize.h5'):
         print('#####:pid=%d, imgPath=%s' % (os.getpid(), imgPath))
         model = joblib.load('data/model/custom_faceRecognize.h5')
@@ -94,19 +137,28 @@ def get_name_by_embedding(imgPath, unknown_embedding, faceProp, euclideanDist):
         label_encoder.fit_transform(last_trainy)
         proba = yhat_proba[0][yhat[0]]
 
-        if proba > faceProp: # 默认faceProp=0.8
+        if proba > faceProp: # 默认faceProp=0.9
             who_name = label_encoder.inverse_transform(yhat)[0]
             print('模型预测的proba:%f, predicted name: %s' % (proba, who_name))
-        else: # 模型识别的概率低于0.8时,使用欧式距离计算.
-            print('模型预测的proba:%f,小于阈值%s,使用欧式距离:' % (proba, faceProp))
-            # if os.path.exists('data/last_no_train_data.npz'):
-            #     data_path = 'data/last_no_train_data.npz'
-            # else:
-            #     data_path = 'data/data.npz'
-            who_name = get_name_by_euclid_distance(unknown_embedding, euclideanDist, 'data/data.npz')
-    else: # 模型不存在时,使用欧式距离计算.
+        else: # 模型识别的概率低于0.9时,使用欧式距离计算.
+            if flag == 1:
+                print('模型预测的proba:%f,小于阈值%s,使用欧式距离:' % (proba, faceProp))
+                # if os.path.exists('data/last_no_train_data.npz'):
+                #     data_path = 'data/last_no_train_data.npz'
+                # else:
+                #     data_path = 'data/data.npz'
+                who_name = get_name_by_euclid_distance(unknown_embedding, threshold, 'data/data.npz')
+            else:
+                print('模型预测的proba:%f,小于阈值%s,使用相似度计算:' % (proba, faceProp))
+                who_name = get_name_by_simular(unknown_embedding, threshold, 'data/data.npz')
+
+    else:
+        # 模型不存在时,使用欧式距离计算.
         print('#####:pid=%d, imgPath=%s' % (os.getpid(), imgPath))
-        who_name = get_name_by_euclid_distance(unknown_embedding, euclideanDist, 'data/data.npz')
+        if flag == 1:
+            who_name = get_name_by_euclid_distance(unknown_embedding, threshold, 'data/data.npz')
+        else:
+            who_name = get_name_by_simular(unknown_embedding, threshold, 'data/data.npz')
 
     return  who_name
 
@@ -521,11 +573,17 @@ def alignFace(img, rectangles, squareRect, box):
     return new_img
 
 
-std_landmark = [[54.80897114,59.00365493],
+std_160_landmark = [[54.80897114,59.00365493], # 160x160的目标点
                [112.01078961,55.16622207],
                [86.90572522,91.41657571],
                [55.78746897,114.90062758],
                [113.15320624,111.08135986]]
+
+std_112_landmark = [[30.2946+8.0000, 51.6963], # 112x112的目标点
+               [65.5318+8.0000, 51.6963],
+               [48.0252+8.0000, 71.7366],
+               [33.5493+8.0000, 92.3655],
+               [62.7299+8.0000, 92.3655]]
 
 def transformation_from_points(points1, points2):
     points1 = points1.astype(np.float64)
@@ -554,19 +612,54 @@ def warp_im(img_im, orgi_landmarks,tar_landmarks):
 def alignFace2(img, rectangles, rectanglesExd, squareRect, box):
     index = selectedRectIndex(rectangles, box)
     margin = int((rectanglesExd[index][0] - squareRect[index][0]) / 2)
+    # margin = int((rectanglesExd[index][0] - squareRect[index][0]))
     # print('#### alignFace2:', margin)
     imgSize = [160, 160 + margin]
     face_landmarks = np.reshape(rectanglesExd[index][5:15], (5, 2)).tolist()
-    warpImg = warp_im(img, face_landmarks, std_landmark)
+    warpImg = warp_im(img, face_landmarks, std_160_landmark)
     new_img = warpImg[0:imgSize[0], margin:imgSize[1]]
+    return new_img, face_landmarks
+
+def alignFace3(img, rectangles, rectanglesExd, squareRect, box):
+    index = selectedRectIndex(rectangles, box)
+    margin = int((rectanglesExd[index][0] - squareRect[index][0]) / 2)
+    # margin = int((rectanglesExd[index][0] - squareRect[index][0]))
+    # print('#### alignFace2:', margin)
+    imgSize = [112, 112 + margin]
+    face_landmarks = np.reshape(rectanglesExd[index][5:15], (5, 2)).tolist()
+    warpImg = warp_im(img, face_landmarks, std_112_landmark)
+    new_img = warpImg[0:imgSize[0], margin:imgSize[1]]
+    return new_img, face_landmarks
+
+def alignFace4(img, rectangles, box):
+    index = selectedRectIndex(rectangles, box)
+    face_landmarks = np.reshape(rectangles[index][5:15], (5, 2))
+    new_img = face_align.norm_crop(img, face_landmarks)
     return new_img, face_landmarks
 
 
 def alignFace2WithVerify(img, margin, face_landmarks):
     imgSize = [160, 160 + margin]
-    warpImg = warp_im(img, face_landmarks, std_landmark)
+    warpImg = warp_im(img, face_landmarks, std_160_landmark)
     new_img = warpImg[0:imgSize[0], margin:imgSize[1]]
     return new_img
+
+
+def  visualTsne(embeddings, y_train):
+    tsne = TSNE(learning_rate=100)
+
+    tsne_features = tsne.fit_transform(embeddings)
+
+    X = tsne_features[:, 0]
+    y = tsne_features[:, 1]
+
+    dataset = pd.DataFrame(data=y_train, columns=['label'])
+    dataset['X'] = X
+    dataset['y'] = y
+
+    plt.figure(figsize=(13, 8))
+    sns.scatterplot(data=dataset, x='X', y='y', hue='label', s=120)
+    plt.show()
 
 
 

@@ -16,16 +16,18 @@ import glob
 import time
 import threading
 import numpy as np
-import tensorflow as tf
-from keras.models import load_model
-from mtcnn import MTCNN
+# import tensorflow as tf
+# from keras.models import load_model
+# from mtcnn import MTCNN
+
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.model_selection import cross_val_score
-from multiprocessing import Process, Event, Queue, Manager
+from multiprocessing import Process, Event, Queue
 import multiprocessing as mp
-import platform
+import recognition.face_model as face_model
+import recognition.mtcnn_detector as mtcnn_detector
 
 from recognition.utils import *
 
@@ -51,26 +53,26 @@ def get_gpu_state():
     return gpu_state
 
 # 禁用GPU后,下面的config代码也就无效了
-gpu_state = get_gpu_state()
-os.environ['CUDA_VISIBLE_DEVICES'] = '0' if gpu_state else '-1'
-if tf.__version__.startswith('1.'):  # tensorflow 1
-    config = tf.ConfigProto()  # allow_soft_placement=True
-    config.gpu_options.allow_growth = True #不全部占满显存, 按需分配
-    sess = tf.Session(config=config)
-else:  # tensorflow 2
-    gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
-    for gpu in gpus:
-        tf.config.experimental.set_memory_growth(gpu, True)
+# gpu_state = get_gpu_state()
+# os.environ['CUDA_VISIBLE_DEVICES'] = '0' if gpu_state else '-1'
+# if tf.__version__.startswith('1.'):  # tensorflow 1
+#     config = tf.ConfigProto()  # allow_soft_placement=True
+#     config.gpu_options.allow_growth = True #不全部占满显存, 按需分配
+#     sess = tf.Session(config=config)
+# else:  # tensorflow 2
+#     gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
+#     for gpu in gpus:
+#         tf.config.experimental.set_memory_growth(gpu, True)
 
 
 class RecognizeProcess(Process):
-    graph = None
     mtcnn_detector = None
     facenet_model = None
     margin = 32
 
     faceProp = 0.9
     euclideanDist = 0.74
+    simular = 0.4
     canvasW = 2000
     canvasH = 2000
 
@@ -101,16 +103,15 @@ class RecognizeProcess(Process):
 
 
     def run(self):
-        if self.graph == None:
-            self.graph = tf.get_default_graph()
-            print('######:识别 graph')
-        with self.graph.as_default():
-            if self.mtcnn_detector == None:
-                self.mtcnn_detector = MTCNN()
-                print('######:识别 mtcnn_detector')
-            if self.facenet_model == None:
-                self.facenet_model = load_model('model/facenet_keras.h5')
-                print('######:识别 load model')
+        if self.mtcnn_detector == None:
+            # myKwargs = {'root': 'model'}
+            # self.mtcnn_detector = insightface.model_zoo.get_model('retinaface_mnet025_v2', **myKwargs)
+            # self.mtcnn_detector.prepare(ctx_id=-1)
+            self.mtcnn_detector = mtcnn_detector.MtcnnDetector(model_folder='model/mtcnn-model') # 图像格式bgr
+            print('######:识别 mtcnn_detector')
+        if self.facenet_model == None:
+            self.facenet_model = face_model.FaceModel(-1, 'model/model-r100-ii/model', 0)
+            print('######:识别 load model')
 
 
         engine.dispose()
@@ -129,9 +130,7 @@ class RecognizeProcess(Process):
             imgPath = self.data_queue.get()
             # print('#####:pid=%d, imgPath=%s' %(os.getpid(), imgPath))
             det = []
-            rectangles = []
-            # cf = []
-            tupFData = []
+            lmk = []
 
             if not self.param_queue.empty():
                 try:
@@ -143,48 +142,34 @@ class RecognizeProcess(Process):
                     self.faceProp = 0.9
 
             scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
-            img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+            img = cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR)
             (h, w) = img.shape[:2]
-            test_img = cv2.resize(img, (int(w*scale), int(h*scale)))
+            imgCopy = cv2.resize(img, (int(w*scale), int(h*scale)))
+            test_img = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2RGB)
             (h, w) = test_img.shape[:2]
-            with self.graph.as_default():
-                detect_faces = self.mtcnn_detector.detect_faces(test_img)
-
-            for face in detect_faces:
-                confidence = face['confidence']
-                if confidence > 0.9:
-                    box = face['box']
-                    (startX, startY, endX, endY) = box[0] , box[1], box[0] + box[2], box[1] + box[3]
-                    tmp_box = [startX, startY, endX, endY]
-
+            bbox, pts5 = self.mtcnn_detector.detect_face(imgCopy)
+            bbox[:, 0] = np.maximum(bbox[:, 0], 0)  # x1
+            bbox[:, 1] = np.maximum(bbox[:, 1], 0)  # y1
+            bbox[:, 2] = np.minimum(bbox[:, 2], w)  # x2
+            bbox[:, 3] = np.minimum(bbox[:, 3], h)  # y2
+            for box, pt5 in zip(bbox,pts5):
+                confidence = box[4]
+                if confidence > 0.98: # 0.93
                     # 将超出图像边框的检测框过滤掉
-                    if endX > w or endY > h:
-                        print('检测框超出了图像边框的.')
-                        continue
+                    # if endX > w or endY > h:
+                    #     print('检测框超出了图像边框的.')
+                    #     continue
 
                     # print('MTCNN置信度:%f.' % confidence)
-                    det.append(tmp_box)
-                    # cf.append(confidence)
-                    rectangle = tmp_box + [face['confidence']] + list(face['keypoints']['left_eye']) + list(face['keypoints']['right_eye']) + list(face['keypoints']['nose']) + list(face['keypoints']['mouth_left']) + list(face['keypoints']['mouth_right'])
-                    crop_img = test_img[int(rectangle[1]):int(rectangle[3]), int(rectangle[0]):int(rectangle[2])]
-                    rectangles.append(rectangle)
+                    det.append(list(box[0:4].astype('int')))
+                    lmk.append(np.array([pt5[0:5], pt5[5:10]]).T)
 
-            rectangles_array = np.array(rectangles)
-            rectangles_array[:, 0] = np.maximum(rectangles_array[:, 0] - self.margin / 2, 0)  # x1
-            rectangles_array[:, 1] = np.maximum(rectangles_array[:, 1] - self.margin / 2, 0)  # y1
-            rectangles_array[:, 2] = np.minimum(rectangles_array[:, 2] + self.margin / 2, w)  # x2
-            rectangles_array[:, 3] = np.minimum(rectangles_array[:, 3] + self.margin / 2, h)  # y2
-            rectanglesExd = rectangles_array.tolist()
-            squareRect = rect2square(np.array(rectanglesExd)) # 将长方形调整为正方形
             face_nums = len(det)
-            src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
-                # src_det_x1 = np.asarray(det)[:, 0].tolist()
                 if self.face_rank_rule_by_top:
                     det_arr = rank_all_faces_by_top(np.asarray(det))
                 else:
                     det_arr = rank_all_faces_by_bottom(np.asarray(det))
-                # cf_arr = rank_confidence(src_det_x1, det_arr, cf)
 
                 faces = []
                 embeddings = []
@@ -192,29 +177,21 @@ class RecognizeProcess(Process):
                 curFaceRecNum = 0  # 当前图片里面的人脸数
                 faceRecNum = 0
                 for j, box in enumerate(det_arr):
-                    (startX, startY, endX, endY) = box.astype("int")
-                    bb = np.zeros(4, dtype=np.int32)
-                    bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
-                    bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
-                    bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
-                    bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
-                    # cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
-                    # scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
-                    # scaled = alignFace(test_img, rectangles, squareRect, box)
-                    scaled, face_landmarks = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
-                    # cv2.imwrite("reco_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
-                    # cv2.rectangle(test_img, (startX, startY), (endX, endY), (0,255,0), 2)
-                    with self.graph.as_default():
-                        unknown_embedding = get_embedding(self.facenet_model, scaled)
-                    who_name = get_name_by_embedding(imgPath, unknown_embedding, self.faceProp, self.euclideanDist)
+                    index = det.index(box.tolist())
+                    (startX, startY, endX, endY) = box
+                    scaled = face_align.norm_crop(test_img, lmk[index])
+                    # cv2.imwrite("zp/reco_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
+                    unknown_embedding = self.facenet_model.get_feature(scaled)
+                    # who_name = get_name_by_embedding(imgPath, unknown_embedding, self.faceProp, self.euclideanDist, 1)
+                    who_name = get_name_by_embedding(imgPath, unknown_embedding, self.faceProp, self.simular, 0)
                     if who_name != '':
                         faceRecNum += 1
                         curFaceRecNum += 1
                     faces.append({
                         'id': j,
                         'box': str([startX / scale, startY / scale, endX / scale, endY / scale]),
-                        'name': who_name,
-                        'landmark': str((np.asarray(face_landmarks)/scale).tolist())
+                        'name': who_name
+                        # 'landmark': str((lmk[index]/scale).tolist())
                         # 'embedding':str(list(unknown_embedding))
                     })  # box和embedding如果不转换成str,json.dumps就会报错(目前没有找到解决方法)
 
@@ -240,7 +217,6 @@ class RecognizeProcess(Process):
                 jsonEmbeddings = ''
                 peoples = ''
 
-            # cv2.imwrite("img_{}.jpg".format(time.time()), cv2.cvtColor(test_img, cv2.COLOR_RGB2BGR))
             recognizedResultInfo = {'face_nums': face_nums, 'face_recog_state': face_recog_state, 'faceRecNum': faceRecNum, 'img_path': imgPath}
             self.done_queue.put(json.dumps(recognizedResultInfo, ensure_ascii=False))
 
@@ -254,15 +230,9 @@ class RecognizeProcess(Process):
 
 
 class VerifyProcess(Process):
-    # graph = None
-    # mtcnn_detector = None
-    # facenet_model = None
-    # margin = 32
     img_path = ''
     faces_list = []
     table_widget = []
-    # canvasW = 0
-    # canvasH = 0
 
 
     def __init__(self, verify_queue):
@@ -288,20 +258,12 @@ class VerifyProcess(Process):
 
 
     def run(self):
-        # if self.graph == None:
-        #     self.graph = tf.get_default_graph()
-        #     print('###### VerifyProcess:graph')
-        # with self.graph.as_default():
-        #     if self.facenet_model == None:
-        #         self.facenet_model = load_model('model/facenet_keras.h5')
-        #         print('###### VerifyProcess:load model')
-
         engine.dispose()
         sql_repo = RepoGeneral(make_session(engine))
 
         while 1:
             if self.verify_queue.empty() == True:
-                print('#### VerifyProcess :队列空,子进程暂停')
+                print('#### 核验 :队列空,子进程暂停')
                 self.pause()
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
@@ -310,11 +272,7 @@ class VerifyProcess(Process):
 
             self.img_path = checkedInfoDict['path']
             self.faces_list = eval(checkedInfoDict['faces'])
-            # self.archivalNum = checkedInfoDict['arch_num']
-            # self.subject = checkedInfoDict['theme']
             self.table_widget = checkedInfoDict['table_widget']
-            # self.canvasW = checkedInfoDict['label_size'][0]
-            # self.canvasH = checkedInfoDict['label_size'][1]
 
 
             faces_name = []
@@ -326,12 +284,6 @@ class VerifyProcess(Process):
             new_faces_id = []
 
             orig_faces_id = list(range(len(self.faces_list)))
-
-            # scale = calculate_img_scaling(self.img_path, self.canvasH, self.canvasW)
-            # img = cv2.cvtColor(cv2.imdecode(np.fromfile(self.img_path, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
-            # (h, w) = img.shape[:2]
-            # test_img = cv2.resize(img, (int(w*scale), int(h*scale)))
-            # (h, w) = test_img.shape[:2]
 
             for item in self.table_widget:
                 if item['id'] == '':
@@ -347,60 +299,31 @@ class VerifyProcess(Process):
                     index = new_faces_id.index(id)
                     name = new_faces_name[index]
                 else:
-                    name = '已删除'
+                    name = ''
 
-                new_faces.append({
-                    'id':id,
-                    'box':self.faces_list[id]['box'],
-                    'name': name,
-                    'landmark': self.faces_list[id]['landmark']
-                })
+                if name != '' :
+                    new_faces.append({
+                        'id':id,
+                        'box':self.faces_list[id]['box'],
+                        'name': name
+                        # 'landmark': self.faces_list[id]['landmark']
+                    })
 
-                embedding = np.asarray(eval(embeddings_dict[id][str(id)]))
-                faces_embedding.append(embedding)
-                faces_name.append(name)
+                    embedding = np.asarray(eval(embeddings_dict[id][str(id)]))
+                    faces_embedding.append(embedding)
+                    faces_name.append(name)
+                    peoples += '{},'.format(name)
 
-                if id < len(orig_faces_id) :
-                    if name != '' and name != '已删除':
-                        peoples += '{},'.format(name)
+            # 只记录有名字的人
+            if len(faces_name) > 0 :
+                saveData('data/data.npz', faces_name, faces_embedding)
+                jsonFaces = json.dumps(new_faces, ensure_ascii=False)
+                verifyState = 1
+                sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})
 
-
-                # if name != '':
-                    # (startX, startY, endX, endY) = eval(self.faces_list[id]['box'])
-                    # (startX, startY, endX, endY) = startX*scale, startY*scale, endX*scale, endY*scale
-                    # bb = np.zeros(4, dtype=np.int32)
-                    # bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
-                    # bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
-                    # bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
-                    # bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
-
-                    # squareRect = rect2square(np.array([[bb[0], bb[1], bb[2], bb[3]]]))
-                    # marginValue = int((bb[0] - squareRect[0][0])/2)
-                    # print('#### verify_margin:', marginValue)
-                    # face_landmark = (np.asarray(eval(self.faces_list[id]['landmark']))*scale).tolist()
-                    # scaled = alignFace2WithVerify(test_img, marginValue, face_landmark)
-                    # cv2.imwrite("verify_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
-
-                    # cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
-                    # scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
-                    # with self.graph.as_default():
-                    #     embedding = get_embedding(self.facenet_model, scaled)
-
-                    # embedding = embeddings_dict[0][id]
-
-                    # faces_embedding.append(embedding)
-                    # faces_name.append(name)
-                # else:
-                #     print('核验---id:{},name:{}'.format(id, name))
-
-            saveData('data/data.npz', faces_name, faces_embedding)
-            jsonFaces = json.dumps(new_faces, ensure_ascii=False)
-            verifyState = 1
-            sql_repo.update('face', {"photo_path": [self.img_path]}, new_info={'faces': jsonFaces, 'verify_state': verifyState})
-
-            if peoples.endswith(','):
-                peoples = peoples[0:-1]
-            sql_repo.update('photo', {"photo_path": [self.img_path]}, new_info={'peoples': peoples})
+                if peoples.endswith(','):
+                    peoples = peoples[0:-1]
+                sql_repo.update('photo', {"photo_path": [self.img_path]}, new_info={'peoples': peoples})
 
 
 class SearchImagesProcess(Process):
@@ -415,7 +338,7 @@ class SearchImagesProcess(Process):
     src_embedding = None
 
 
-    def __init__(self, search_queue, retrived_queue, counter_queue, search_faceList_queue, search_filePath_queue):
+    def __init__(self, search_queue, retrived_queue, counter_queue, search_faceList_queue, search_filePath_queue, silence_queue, backedWorkIsOver_queue):
         super(SearchImagesProcess, self).__init__()
         self.event = Event()
         self.event.set()  # 设置为True
@@ -424,6 +347,8 @@ class SearchImagesProcess(Process):
         self.counter_queue = counter_queue
         self.search_faceList_queue = search_faceList_queue
         self.search_filePath_queue = search_filePath_queue
+        self.silence_queue = silence_queue
+        self.backedWorkIsOver_queue = backedWorkIsOver_queue
 
 
     def pause(self):
@@ -444,7 +369,9 @@ class SearchImagesProcess(Process):
         photo_path = []
         retrive_des_box = []
         retrive_des_embedding = []
+        #tsneEmbedding = []
         retriveResultInfo = []
+        retriveResultPhotoPath = []
         tmp_photo_path = []
         tmp_box = []
         i= 0
@@ -478,20 +405,27 @@ class SearchImagesProcess(Process):
                 for i, emd in enumerate(eval(ele_dict['embeddings'])):
                     retrive_des_embedding.append(eval(emd[str(i)]))
 
+        # tsneEmbedding.append(np.asarray(retrive_src_embedding[0]))
+        # tsneEmbedding.append(np.asarray(retrive_des_embedding[3]))
+        # lable = list(range(len(tsneEmbedding)))
+        # visualTsne(tsneEmbedding, lable)
         for emb in retrive_src_embedding:
-            dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(emb), axis=1)
-            dist = list(dist)
-            print('###### 距离(后台):', dist)
+            # dist = np.linalg.norm(np.asarray(retrive_des_embedding) - np.asarray(emb), axis=1)
+            # dist = list(dist)
+            sim = np.dot(np.asarray(retrive_des_embedding), np.asarray(emb))
+            sim = sim.reshape(-1)
+            sim = list(sim)
+            # print('###### 相似度(后台):', sim)
             for k in indexList: # indexList的大小就是图片的数量
                 f_index = list(k.keys())[0]
                 e_index = list(k.values())[0]
-                distWithSiglePhoto = dist[f_index:e_index] # 图片里面的人的距离
-                minV = min(distWithSiglePhoto)
-                if minV <= 0.8:
-                    index = dist.index(minV)
+                simWithSiglePhoto = sim[f_index:e_index] # 图片里面的人的相似度
+                maxV = max(simWithSiglePhoto)
+                if maxV >= 0.4:
+                    index = sim.index(maxV)
                     tmp_photo_path.append(photo_path[index])
                     tmp_box.append(retrive_des_box[index])
-                    print('图片index和路径:{}-{}, {}, {}'.format(list(k.keys())[0], list(k.values())[0], minV, photo_path[index]))
+                    # print('图片index和路径:{}-{}, {}, {}'.format(list(k.keys())[0], list(k.values())[0], maxV, photo_path[index]))
 
         # 将重复图片的box放在同一个list中
         d = defaultdict(list)
@@ -502,23 +436,19 @@ class SearchImagesProcess(Process):
             for index in v:
                 face_box.append(tmp_box[index])
             retriveResultInfo.append({'photo_path': k, 'face_box': face_box})
+            retriveResultPhotoPath.append(k)
 
-        return retriveResultInfo
+        return retriveResultInfo, retriveResultPhotoPath
 
 
 
     def run(self):
-        if self.graph == None:
-            self.graph = tf.get_default_graph()
-            print('######:检索 graph')
-
-        with self.graph.as_default():
-            if self.mtcnn_detector == None:
-                self.mtcnn_detector = MTCNN()
-                print('######:检索 mtcnn_detector')
-            if self.facenet_model == None:
-                self.facenet_model = load_model('model/facenet_keras.h5')
-                print('######:检索 load model')
+        if self.mtcnn_detector == None:
+            self.mtcnn_detector = mtcnn_detector.MtcnnDetector(model_folder='model/mtcnn-model')  # 图像格式bgr
+            print('######:检索 mtcnn_detector')
+        if self.facenet_model == None:
+            self.facenet_model = face_model.FaceModel(-1, 'model/model-r100-ii/model', 0)
+            print('######:检索 load model')
 
         engine.dispose()
         sql_repo = RepoGeneral(make_session(engine))
@@ -572,24 +502,69 @@ class SearchImagesProcess(Process):
                     parentPath = des_path # os.path.abspath(os.path.join(imgPath, ".."))
                     parent_path_list = sql_repo.query('face', {"parent_path": [os.path.abspath(parentPath)]}, ('parent_path'))
                     if len(parent_path_list) == 0:
-                        parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(parentPath)]}, ('parent_path'))
+                        parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(parentPath)]}, ('searchfaces_id','parent_path'))
                         if len(parent_path_list) > 0:
-                            retriveResultInfoList = self.calculate_euclid_distance(sql_repo, parentPath, src_embedding, 'searchfaces')
+                            retriveResultPhotoPathTmp =[]
+                            retriveResultInfoList, retriveResultPhotoPath = self.calculate_euclid_distance(sql_repo, parentPath, src_embedding, 'searchfaces')
+                            retriveResultPhotoPathTmp.extend(retriveResultPhotoPath)
                             for ele_dict in retriveResultInfoList:
                                 self.retrived_queue.put(json.dumps(ele_dict, ensure_ascii=False))
+                            backedRestNums = self.silence_queue.qsize()
+                            self.retrived_queue.put('{}'.format(backedRestNums))  # 后台剩余未提取的特征的照片数量
 
-                            self.counter_queue.put(imgPath)
-                            for _ in range(self.search_queue.qsize()):
-                                imgPath = self.search_queue.get()
+                            if backedRestNums > 0 :
                                 self.counter_queue.put(imgPath)
+                                initTmpNums = backedRestNums
+                                while True:
+                                    time.sleep(2)
+                                    backedRestNums = self.silence_queue.qsize()
+                                    if backedRestNums < initTmpNums:
+                                        if backedRestNums == 0:
+                                            if self.backedWorkIsOver_queue.empty() == True: # 后台最后一张图片提取的特征还没有写入数据库
+                                                continue
+                                            else:
+                                                flag = self.backedWorkIsOver_queue.get()
+                                                print('后台最后一张图片提取的特征已经写入数据库了：',flag)
+                                        parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(parentPath)]}, ('parent_path'))
+                                        if len(parent_path_list) > 0:
+                                            retriveResultInfoList, retriveResultPhotoPath = self.calculate_euclid_distance(sql_repo, parentPath, src_embedding, 'searchfaces')
+                                            if len(retriveResultPhotoPath) > 0:
+                                                retriveResultPhotoPathDiff = list(set(retriveResultPhotoPath).difference(set(retriveResultPhotoPathTmp)))
+                                                if len(retriveResultPhotoPathDiff) > 0:
+                                                    retriveResultPhotoPathTmp.extend(retriveResultPhotoPathDiff)
+                                                    for item in retriveResultPhotoPathDiff:
+                                                        index = retriveResultPhotoPath.index(item)
+                                                        self.retrived_queue.put(json.dumps(retriveResultInfoList[index], ensure_ascii=False))
+                                                    self.retrived_queue.put('{}'.format(backedRestNums))  # 后台剩余未提取的特征的照片数量
+                                                    imgPath = self.search_queue.get()
+                                                    self.counter_queue.put(imgPath)
+                                        initTmpNums = backedRestNums
+                                    elif backedRestNums == 0:
+                                        break
 
-                            continue
-                        else:
-                            if des_path == backedSilence_path:
+                                for _ in range(self.search_queue.qsize()):
+                                    imgPath = self.search_queue.get()
+                                    self.counter_queue.put(imgPath)
+                                i += 1
+                                continue
+                            else:
                                 self.counter_queue.put(imgPath)
                                 for _ in range(self.search_queue.qsize()):
                                     imgPath = self.search_queue.get()
                                     self.counter_queue.put(imgPath)
+                                i += 1
+                                continue
+                        else:
+                            if des_path == backedSilence_path:
+                                if self.silence_queue.empty() != True: # 后台正在提取图片特征
+                                    time.sleep(6) # 等待后台特征入库
+                                    self.counter_queue.put(imgPath)
+                                    i = 1
+                                else: # 在数据库中没有检索到该路径下的数据
+                                    self.counter_queue.put(imgPath)
+                                    for _ in range(self.search_queue.qsize()):
+                                        imgPath = self.search_queue.get()
+                                        self.counter_queue.put(imgPath)
 
                                 continue
                             else:
@@ -598,6 +573,8 @@ class SearchImagesProcess(Process):
                         retriveResultInfoList = self.calculate_euclid_distance(sql_repo, parentPath, retrive_src_embedding, 'face')
                         for ele_dict in retriveResultInfoList:
                             self.retrived_queue.put(json.dumps(ele_dict, ensure_ascii=False))
+                        self.retrived_queue.put('0') # 保持处理的统一性
+
 
                         self.counter_queue.put(imgPath)
                         for _ in range(self.search_queue.qsize()):
@@ -609,45 +586,36 @@ class SearchImagesProcess(Process):
                     i += 1
 
             det = []
+            lmk = []
             rectangles = []
             print('检索: imgPath=%s' % imgPath)
 
             scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
-            img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+            img = cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR)
             (h, w) = img.shape[:2]
-            test_img = cv2.resize(img, (int(w * scale), int(h * scale)))
+            imgCopy = cv2.resize(img, (int(w * scale), int(h * scale)))
+            test_img = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2RGB)
             (h, w) = test_img.shape[:2]
-            with self.graph.as_default():
-                detect_faces = self.mtcnn_detector.detect_faces(test_img)
+            bbox, pts5 = self.mtcnn_detector.detect_face(imgCopy)
+            bbox[:, 0] = np.maximum(bbox[:, 0], 0)  # x1
+            bbox[:, 1] = np.maximum(bbox[:, 1], 0)  # y1
+            bbox[:, 2] = np.minimum(bbox[:, 2], w)  # x2
+            bbox[:, 3] = np.minimum(bbox[:, 3], h)  # y2
 
-            for face in detect_faces:
-                confidence = face['confidence']
-                if confidence > 0.9:
-                    box = face['box']
-                    (startX, startY, endX, endY) = box[0], box[1], box[0] + box[2], box[1] + box[3]
-                    tmp_box = [startX, startY, endX, endY]
-
+            for box, pt5 in zip(bbox, pts5):
+                confidence = box[4]
+                if confidence > 0.98:  # 0.93
                     # 将超出图像边框的检测框过滤掉
-                    if endX > w or endY > h:
-                        print('检测框超出了图像边框的.')
-                        continue
+                    # if endX > w or endY > h:
+                    #     print('检测框超出了图像边框的.')
+                    #     continue
 
                     # print('MTCNN置信度:%f.' % confidence)
-                    det.append(tmp_box)
-                    # cf.append(confidence)
-                    rectangle = tmp_box + [face['confidence']] + list(face['keypoints']['left_eye']) + list(
-                        face['keypoints']['right_eye']) + list(face['keypoints']['nose']) + list(
-                        face['keypoints']['mouth_left']) + list(face['keypoints']['mouth_right'])
-                    # crop_img = test_img[int(rectangle[1]):int(rectangle[3]), int(rectangle[0]):int(rectangle[2])]
-                    rectangles.append(rectangle)
+                    det.append(list(box[0:4].astype('int')))
+                    lmk.append(np.array([pt5[0:5], pt5[5:10]]).T)
 
-            rectangles_array = np.array(rectangles)
-            rectangles_array[:, 0] = np.maximum(rectangles_array[:, 0] - self.margin / 2, 0)  # x1
-            rectangles_array[:, 1] = np.maximum(rectangles_array[:, 1] - self.margin / 2, 0)  # y1
-            rectangles_array[:, 2] = np.minimum(rectangles_array[:, 2] + self.margin / 2, w)  # x2
-            rectangles_array[:, 3] = np.minimum(rectangles_array[:, 3] + self.margin / 2, h)  # y2
-            rectanglesExd = rectangles_array.tolist()
-            squareRect = rect2square(np.array(rectanglesExd))  # 将长方形调整为正方形
+
+
             face_nums = len(det)
             src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
@@ -658,22 +626,11 @@ class SearchImagesProcess(Process):
                 embedding_list = []
                 searchfacesDatas = []
                 for j, box in enumerate(det_arr):
-
-                    (startX, startY, endX, endY) = box.astype("int")
-                    bb = np.zeros(4, dtype=np.int32)
-                    bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
-                    bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
-                    bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
-                    bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
-                    # cropped = test_img[bb[1]:bb[3], bb[0]:bb[2], :]
-                    # scaled = np.array(Image.fromarray(cropped).resize((160, 160)))
-                    # scaled = alignFace(test_img, rectangles, squareRect, box)
-                    scaled, face_landmarks = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
-                    # cv2.imwrite("reco_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
-                    # cv2.rectangle(test_img, (startX, startY), (endX, endY), (0,255,0), 2)
-                    with self.graph.as_default():
-                        embedding = get_embedding(self.facenet_model, scaled)
-
+                    index = det.index(box.tolist())
+                    (startX, startY, endX, endY) = box
+                    scaled = face_align.norm_crop(test_img, lmk[index])
+                    # cv2.imwrite("zpj/reco_align_{}.jpg".format(time.time()), cv2.cvtColor(scaled, cv2.COLOR_RGB2BGR))
+                    embedding = self.facenet_model.get_feature(scaled)
                     box_list.append([startX / scale, startY / scale, endX / scale, endY / scale])
                     embedding_list.append(list(embedding))
 
@@ -691,12 +648,13 @@ class SearchImagesProcess(Process):
                     tmp_photo_path = []
                     tmp_box = []
                     for emb in src_embedding:
-                        dist = np.linalg.norm(np.asarray(embedding_list) - np.asarray(emb), axis=1)
-                        dist = list(dist)
-                        print('###### 距离(检索):', dist)
-                        minV = min(dist)
-                        if minV <= 0.8:
-                            index = dist.index(minV)
+                        sim = np.dot(np.asarray(embedding_list), np.asarray(emb))
+                        sim = sim.reshape(-1)
+                        sim = list(sim)
+                        print('###### 相似度(检索):', sim)
+                        maxV = max(sim)
+                        if maxV >= 0.4:
+                            index = sim.index(maxV)
                             tmp_photo_path.append(imgPath)
                             tmp_box.append(box_list[index])
                             print('图片路径:', imgPath)
@@ -711,6 +669,8 @@ class SearchImagesProcess(Process):
                             face_box.append(tmp_box[index])
                         retriveResultInfo = {'photo_path': k, 'face_box': face_box}
                         self.retrived_queue.put(json.dumps(retriveResultInfo, ensure_ascii=False))
+                    if len(d) > 0:
+                        self.retrived_queue.put('0') # 再追加一项
 
             self.counter_queue.put(imgPath)
 
@@ -729,7 +689,7 @@ class BackedSilenceProc(Process):
 
     timer = None
 
-    def __init__(self, silence_queue):
+    def __init__(self, silence_queue, backedWorkIsOver_queue):
         super(BackedSilenceProc, self).__init__()
         self.event = Event()
         self.event.set()  # 设置为True
@@ -738,6 +698,7 @@ class BackedSilenceProc(Process):
         self.backedSilenceDir = ''
 
         self.silence_queue = silence_queue
+        self.backedWorkIsOver_queue = backedWorkIsOver_queue
 
 
     def pause(self):
@@ -799,17 +760,12 @@ class BackedSilenceProc(Process):
             for item in photo_path_list:
                 self.last_file_list.append(item['photo_path'])
 
-        if self.graph == None:
-            self.graph = tf.get_default_graph()
-            print('######:静默 graph')
-
-        with self.graph.as_default():
-            if self.mtcnn_detector == None:
-                self.mtcnn_detector = MTCNN()
-                print('######:静默 mtcnn_detector')
-            if self.facenet_model == None:
-                self.facenet_model = load_model('model/facenet_keras.h5')
-                print('######:静默 load model')
+        if self.mtcnn_detector == None:
+            self.mtcnn_detector = mtcnn_detector.MtcnnDetector(model_folder='model/mtcnn-model')  # 图像格式bgr
+            print('######:静默 mtcnn_detector')
+        if self.facenet_model == None:
+            self.facenet_model = face_model.FaceModel(-1, 'model/model-r100-ii/model', 0)
+            print('######:静默 load model')
 
         timer = threading.Timer(5, self.fun_timer)
         timer.start()
@@ -823,44 +779,33 @@ class BackedSilenceProc(Process):
             print('后台: imgPath=%s' % imgPath)
 
             det = []
+            lmk = []
             rectangles = []
 
             scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
-            img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+            img = cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR)
             (h, w) = img.shape[:2]
-            test_img = cv2.resize(img, (int(w * scale), int(h * scale)))
+            imgCopy = cv2.resize(img, (int(w * scale), int(h * scale)))
+            test_img = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2RGB)
             (h, w) = test_img.shape[:2]
-            with self.graph.as_default():
-                detect_faces = self.mtcnn_detector.detect_faces(test_img)
+            bbox, pts5 = self.mtcnn_detector.detect_face(imgCopy)
+            bbox[:, 0] = np.maximum(bbox[:, 0], 0)  # x1
+            bbox[:, 1] = np.maximum(bbox[:, 1], 0)  # y1
+            bbox[:, 2] = np.minimum(bbox[:, 2], w)  # x2
+            bbox[:, 3] = np.minimum(bbox[:, 3], h)  # y2
 
-            for face in detect_faces:
-                confidence = face['confidence']
-                if confidence > 0.9:
-                    box = face['box']
-                    (startX, startY, endX, endY) = box[0], box[1], box[0] + box[2], box[1] + box[3]
-                    tmp_box = [startX, startY, endX, endY]
-
+            for box, pt5 in zip(bbox, pts5):
+                confidence = box[4]
+                if confidence > 0.98:  # 0.93
                     # 将超出图像边框的检测框过滤掉
-                    if endX > w or endY > h:
-                        print('检测框超出了图像边框的.')
-                        continue
+                    # if endX > w or endY > h:
+                    #     print('检测框超出了图像边框的.')
+                    #     continue
 
                     # print('MTCNN置信度:%f.' % confidence)
-                    det.append(tmp_box)
-                    # cf.append(confidence)
-                    rectangle = tmp_box + [face['confidence']] + list(face['keypoints']['left_eye']) + list(
-                        face['keypoints']['right_eye']) + list(face['keypoints']['nose']) + list(
-                        face['keypoints']['mouth_left']) + list(face['keypoints']['mouth_right'])
-                    # crop_img = test_img[int(rectangle[1]):int(rectangle[3]), int(rectangle[0]):int(rectangle[2])]
-                    rectangles.append(rectangle)
+                    det.append(list(box[0:4].astype('int')))
+                    lmk.append(np.array([pt5[0:5], pt5[5:10]]).T)
 
-            rectangles_array = np.array(rectangles)
-            rectangles_array[:, 0] = np.maximum(rectangles_array[:, 0] - self.margin / 2, 0)  # x1
-            rectangles_array[:, 1] = np.maximum(rectangles_array[:, 1] - self.margin / 2, 0)  # y1
-            rectangles_array[:, 2] = np.minimum(rectangles_array[:, 2] + self.margin / 2, w)  # x2
-            rectangles_array[:, 3] = np.minimum(rectangles_array[:, 3] + self.margin / 2, h)  # y2
-            rectanglesExd = rectangles_array.tolist()
-            squareRect = rect2square(np.array(rectanglesExd))  # 将长方形调整为正方形
             face_nums = len(det)
             src_dir = os.path.abspath(os.path.join(imgPath, ".."))
             if face_nums > 0:
@@ -871,16 +816,10 @@ class BackedSilenceProc(Process):
                 box_list = []
                 embedding_list = []
                 for j, box in enumerate(det_arr):
-                    (startX, startY, endX, endY) = box.astype("int")
-                    bb = np.zeros(4, dtype=np.int32)
-                    bb[0] = np.maximum(startX - self.margin / 2, 0)  # x1
-                    bb[1] = np.maximum(startY - self.margin / 2, 0)  # y1
-                    bb[2] = np.minimum(endX + self.margin / 2, w)  # x2
-                    bb[3] = np.minimum(endY + self.margin / 2, h)  # y2
-                    scaled, face_landmarks = alignFace2(test_img, rectangles, rectanglesExd, squareRect, box)
-                    with self.graph.as_default():
-                        embedding = get_embedding(self.facenet_model, scaled)
-
+                    index = det.index(box.tolist())
+                    (startX, startY, endX, endY) = box
+                    scaled = face_align.norm_crop(test_img, lmk[index])
+                    embedding = self.facenet_model.get_feature(scaled)
                     box_list.append([startX / scale, startY / scale, endX / scale, endY / scale])
                     embedding_list.append(list(embedding))
 
@@ -890,6 +829,8 @@ class BackedSilenceProc(Process):
                 backedSearchface['parent_path'] = src_dir
                 backedSearchfacesDatas.append(backedSearchface)
                 sql_repo.add('searchfaces', backedSearchfacesDatas)
+                if self.silence_queue.empty() == True:
+                    self.backedWorkIsOver_queue.put('True')
 
 
 
@@ -908,10 +849,13 @@ class Recognition(object):
         self.search_queue = Queue()  # 用来填充以图搜图的图片路径
         self.search_faceList_queue = Queue()  # 用来填充指定的搜索目标的序号
         self.search_filePath_queue = Queue()  # 用来填充路径
-        self.done_queue = Manager().Queue() # 返回识别结果信息
-        self.retrived_queue = Manager().Queue()  # 返回已检索信息的队列
-        self.counter_queue = Manager().Queue()  # 返回已检索图片个数的队列
         self.silence_queue = Queue()  # 后台静默队列
+
+        self.done_queue = Queue() # 返回识别结果信息
+        self.retrived_queue = Queue()  # 返回已检索信息的队列
+        self.counter_queue = Queue()  # 返回已检索图片个数的队列
+        self.backedWorkIsOver_queue = Queue()  # 后台特征提取的工作是否已经完成的队列(用来存放标志位)
+
         self.jobs_proc = []   # 将进程对象放进list
         self.pendingTotalImgsNum = 0 #待处理的图片总数量
 
@@ -933,12 +877,14 @@ class Recognition(object):
 
         self.sql_repo = RepoGeneral(session)
 
-        self.graph = tf.get_default_graph()
         # mtcnn方法检测人脸
-        self.mtcnn_detector = MTCNN()
+        self.mtcnn_detector = mtcnn_detector.MtcnnDetector(model_folder='model/mtcnn-model')  # 图像格式bgr
 
         # 实例化识别子进程
-        for i in range(os.cpu_count()):
+        cpus = os.cpu_count()
+        if cpus > 4:
+            cpus = 4
+        for i in range(cpus):
             proc = RecognizeProcess(self.done_queue, self.data_queue, self.param_queue, self.from_queue)
             proc.daemon = True
             proc.start()
@@ -947,19 +893,17 @@ class Recognition(object):
 
 
         # 开启后台静默以图搜图子进程
-        self.backedSilenceProc = BackedSilenceProc(self.silence_queue)
+        self.backedSilenceProc = BackedSilenceProc(self.silence_queue, self.backedWorkIsOver_queue)
         self.backedSilenceProc.daemon = True
         self.backedSilenceProc.start()
-
 
         # 开启核验子进程
         self.verifyProc = VerifyProcess(self.verify_queue)
         self.verifyProc.daemon = True
         self.verifyProc.start()
 
-
         # 开启以图搜图子进程
-        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue, self.counter_queue, self.search_faceList_queue, self.search_filePath_queue)
+        self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue, self.counter_queue, self.search_faceList_queue, self.search_filePath_queue, self.silence_queue, self.backedWorkIsOver_queue)
         self.searchImagesProc.daemon = True
         self.searchImagesProc.start()
 
@@ -1263,7 +1207,13 @@ class Recognition(object):
             # print('Accuracy: train=%0.3f' % (acc*100))
 
             strKFold = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
-            scores = cross_val_score(model, trainX, trainy, cv=strKFold)
+            try:
+                scores = cross_val_score(model, trainX, trainy, cv=strKFold)
+            except Exception as e:
+                print(str(e))
+                acc = -2.0  # The number of classes has to be greater than one; got 1 class
+                return {"model_acc": acc}
+
             acc_mean = scores.mean()
             print('cross_val_score scores:', scores)
             print('CV mean accuracy: train=%0.3f' % (acc_mean * 100))
@@ -1289,24 +1239,24 @@ class Recognition(object):
     def get_untrained_pic_num(self):
         length = 0
 
-        faces_name = []
-        faces_embedding = []
+        # faces_name = []
+        # faces_embedding = []
 
-        embeddings_dict = self.sql_repo.query('face', {"verify_state": [1], 'trained_state': [0]}, ('faces', 'embeddings'))
-        for ele_dict in embeddings_dict:
-            faces = eval(ele_dict['faces'])
-            embeddings = eval(ele_dict['embeddings'])
-            for face in faces:
-                id = face['id']
-                name = face['name']
-                embedding = np.asarray(eval(embeddings[id][str(id)]))
-                faces_embedding.append(embedding)
-                faces_name.append(name)
+        # embeddings_dict = self.sql_repo.query('face', {"verify_state": [1], 'trained_state': [0]}, ('faces', 'embeddings'))
+        # for ele_dict in embeddings_dict:
+        #     faces = eval(ele_dict['faces'])
+        #     embeddings = eval(ele_dict['embeddings'])
+        #     for face in faces:
+        #         id = face['id']
+        #         name = face['name']
+        #         embedding = np.asarray(eval(embeddings[id][str(id)]))
+        #         faces_embedding.append(embedding)
+        #         faces_name.append(name)
 
-        if len(embeddings_dict) != 0:
-            self.sql_repo.update('face', {"verify_state": [1], 'trained_state': [0]}, new_info={'trained_state': 1})
-        if len(faces_name) != 0 :
-            saveData('data/data.npz', faces_name, faces_embedding)
+        # if len(embeddings_dict) != 0:
+        #     self.sql_repo.update('face', {"verify_state": [1], 'trained_state': [0]}, new_info={'trained_state': 1})
+        # if len(faces_name) != 0 :
+        #     saveData('data/data.npz', faces_name, faces_embedding)
 
         if os.path.exists('data/model/last_data.npz'):
             last_data = np.load('data/model/last_data.npz', allow_pickle=True)
@@ -1353,13 +1303,18 @@ class Recognition(object):
         # 队列不为空, 表示后台正在进行以图搜图任务的特征提取
         if backedSilencePath_list[0]['photo_path'] == dir_path:
             if self.silence_queue.empty() != True: # 正在提取特征
-                ret = -2
-                return ret
+                # 清空该队列，以便放置新的后台特征提取完成的标志位
+                for _ in range(self.backedWorkIsOver_queue.qsize()):
+                    self.backedWorkIsOver_queue.get()
             else:
                 parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(dir_path)]}, ('parent_path'))
-                if len(parent_path_list) == 0: # 即将提取特征(目前数据库还没有该路径下的数据)
+                if len(parent_path_list) == 0: # 后台定时任务即将提取特征(目前数据库还没有该路径下的数据)
                     ret = -2
                     return ret
+                # else:
+                #     self.search_filePath_queue.put('False_0')
+        # else:
+        #     self.search_filePath_queue.put('NoCare_0')
 
         self.search_filePath_queue.put(dir_path)
         self.search_filePath_queue.put(backedSilencePath_list[0]['photo_path'])
@@ -1386,17 +1341,23 @@ class Recognition(object):
 
         retrive_results_photo_path = []
         retrive_results_face_box = []
+        backedRestExtractPicCount = []
 
-        for _ in range(self.retrived_queue.qsize()):
+        num = self.retrived_queue.qsize()
+        for i in range(num):
             retriveResultInfo = self.retrived_queue.get()
             retriveResultInfo = eval(retriveResultInfo)
 
-            retrive_results_photo_path.append(retriveResultInfo['photo_path'])
-            retrive_results_face_box.append( retriveResultInfo['face_box'])
+            if i != (num - 1):
+                retrive_results_photo_path.append(retriveResultInfo['photo_path'])
+                retrive_results_face_box.append( retriveResultInfo['face_box'])
+            else:
+                backedRestExtractPicCount.append(retriveResultInfo)
 
         # print('########  retrive_results_photo_path: ',retrive_results_photo_path)
         # print('########  retrive_results_face_box: ', retrive_results_face_box)
-        return retrive_results_photo_path, retrive_results_face_box
+        # print('########  backedRestExtractPicCount: ', backedRestExtractPicCount)
+        return retrive_results_photo_path, retrive_results_face_box, backedRestExtractPicCount
 
 
     def get_retrieve_info(self) -> dict:
@@ -1421,33 +1382,32 @@ class Recognition(object):
             return faces
 
         scale = calculate_img_scaling(imgPath, canvasH, canvasW)
-        img = cv2.cvtColor(cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+        img = cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR)
         (h, w) = img.shape[:2]
         test_img = cv2.resize(img, (int(w * scale), int(h * scale)))
         (h, w) = test_img.shape[:2]
-        with self.graph.as_default():
-            detect_faces = self.mtcnn_detector.detect_faces(test_img)
+        bbox, pts5 = self.mtcnn_detector.detect_face(test_img)
+        bbox[:, 0] = np.maximum(bbox[:, 0], 0)  # x1
+        bbox[:, 1] = np.maximum(bbox[:, 1], 0)  # y1
+        bbox[:, 2] = np.minimum(bbox[:, 2], w)  # x2
+        bbox[:, 3] = np.minimum(bbox[:, 3], h)  # y2
 
-        for face in detect_faces:
-            confidence = face['confidence']
-            if confidence > 0.9:
-                box = face['box']
-                (startX, startY, endX, endY) = box[0], box[1], box[0] + box[2], box[1] + box[3]
-                tmp_box = [startX, startY, endX, endY]
-
+        for box in bbox:
+            confidence = box[4]
+            if confidence > 0.98:  # 0.93
                 # 将超出图像边框的检测框过滤掉
-                if endX > w or endY > h:
-                    print('检测框超出了图像边框的.')
-                    continue
+                # if endX > w or endY > h:
+                #     print('检测框超出了图像边框的.')
+                #     continue
 
                 # print('MTCNN置信度:%f.' % confidence)
-                det.append(tmp_box)
+                det.append(list(box[0:4].astype('int')))
 
         face_nums = len(det)
         if face_nums > 0:
             det_arr = rank_all_faces_by_top(np.asarray(det))
             for j, box in enumerate(det_arr):
-                (startX, startY, endX, endY) = box.astype("int")
+                (startX, startY, endX, endY) = box
                 faces.append({
                     'id': j,
                     'box': [startX / scale, startY / scale, endX / scale, endY / scale]
