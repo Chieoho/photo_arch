@@ -8,10 +8,20 @@
 import importlib
 from threading import Thread
 import sys
+import os
 from flask import Flask
 from photo_arch.infrastructures.user_interface.ui_interface import UiInterface
 
-app = Flask(__name__)
+path = os.path.abspath('./webapp')
+app = Flask(__name__, static_folder=path, static_url_path='')
+
+
+@app.route('/')
+def root():
+    """
+    web app
+    """
+    return app.send_static_file('index.html')
 
 
 class Container:

@@ -16,10 +16,10 @@ def control_info(start_date=None):
     if not start_date:
         start_date = datetime.strftime(datetime.now(), '%Y%m%d')
     ctrl_info = {
-        'max_photo_num': 100,
+        'max_photo_num': 3000,
         'start_date': start_date,
-        'max_days': 30,
-        'enable_gpu': True,
+        'max_days': 90,
+        'enable_gpu': False,
         'enable_export': True
     }
     return ctrl_info
@@ -46,6 +46,6 @@ def gen_lic(feature_code=None, start_date=None):
 
 
 if __name__ == '__main__':
-    gen_lic()
+    # gen_lic()
     # gen_lic(start_date='20210101')
-    # gen_lic(feature_code='696d16b9de1d504c4b9f3e3e0247a113')
+    gen_lic(feature_code='3d122897eaea27e69cedca0ce5d29628')

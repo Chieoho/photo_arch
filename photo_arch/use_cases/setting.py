@@ -27,3 +27,15 @@ class Setting(object):
 
     def get_used_photo_num(self):
         return self.repo.get_used_photo_num()
+
+    def get_remaining_days(self):
+        days_list = self.repo.query_remaining_days()
+        return days_list[0] if days_list else {}
+
+    def add_remaining_days(self, remaining_days_info: dict):
+        res = self.repo.add_remaining_days(remaining_days_info)
+        return res
+
+    def update_remaining_days(self, remaining_days_info: dict):
+        res = self.repo.update_remaining_days(remaining_days_info)
+        return res

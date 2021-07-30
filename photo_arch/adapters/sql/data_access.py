@@ -9,7 +9,7 @@ from typing import List
 from sqlalchemy import or_
 from photo_arch.domains.photo_group import Group, Photo
 from photo_arch.use_cases.interfaces.repositories_if import RepoIf
-from photo_arch.adapters.sql.repo import RepoGeneral, PhotoGroupModel, PhotoModel, SettingModel
+from photo_arch.adapters.sql.repo import RepoGeneral, PhotoGroupModel, PhotoModel, SettingModel, VerifyModel
 
 
 class Repo(RepoIf):
@@ -123,3 +123,17 @@ class Repo(RepoIf):
     def get_used_photo_num(self):
         query_obj = self.session.query(PhotoModel)
         return query_obj.count()
+
+    def query_remaining_days(self):
+        remaining_days_list = self.repo_general.query('verify', cond={'verify_id': [1]})
+        return remaining_days_list
+
+    def update_remaining_days(self, days_info: dict) -> bool:
+        self.repo_general.update('verify', {'verify_id': [1]}, days_info)
+        return True
+
+    def add_remaining_days(self, days_info: dict) -> bool:
+        new_days = VerifyModel(**days_info)
+        self.session.add(new_days)
+        self.session.commit()
+        return True

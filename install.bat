@@ -2,4 +2,5 @@ pyinstaller -w -n 照片档案AI辅助著录管理系统 -i .\icon\archives.ico --noconfirm 
 echo d | xcopy .\icon .\dist\照片档案AI辅助著录管理系统\icon /s /e
 echo d | xcopy .\model .\dist\照片档案AI辅助著录管理系统\model /s /e
 echo d | xcopy .\mtcnn .\dist\照片档案AI辅助著录管理系统\mtcnn /s /e
+echo d | xcopy .\config .\dist\照片档案AI辅助著录管理系统\config /s /e
 del .\dist\照片档案AI辅助著录管理系统\photo_arch.db

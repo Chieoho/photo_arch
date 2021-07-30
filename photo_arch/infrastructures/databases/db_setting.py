@@ -37,6 +37,9 @@ session = make_session(engine)
 
 
 class UpdateProcess(Process):
+    """
+    for test
+    """
     def __init__(self, path):
         self.path = path
         super().__init__()

@@ -13,8 +13,8 @@ import hashlib
 import xlwt
 from PIL import Image
 
-
 from photo_arch.infrastructures.user_interface.qt.ui import slot_wrapper
+from photo_arch.pa_log.log import create_logger
 
 
 def make_thumb(img_path, thumb_path, sizes=(100, 100)):
@@ -91,14 +91,21 @@ def extend_slot(original_slot, func):
     setattr(original_slot.__self__, original_slot.__name__, new_slot)
 
 
+logger = create_logger()
+
+
 def catch_exception(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
+            func_name = func.__name__
+            if func_name != 'periodic_update':
+                logger.info(func.__name__)
             return func(*args, **kwargs)
         except Exception as e:
             _ = e
             print(traceback.format_exc())
+            logger.error(traceback.format_exc())
     return wrapper
 
 

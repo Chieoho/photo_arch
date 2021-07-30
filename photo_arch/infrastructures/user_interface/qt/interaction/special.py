@@ -53,21 +53,29 @@ class Special(object):
         if tab_id != self.ui.tabWidget.indexOf(self.ui.setting_tab):
             if self.setting.lic_ctrl_info.is_import is False:
                 self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
-                self.mw.warn_msg('未导入license，请导入有效license')
+                self.mw.warn_msg('未导入license，请导入有效license！')
                 return
             if self.setting.lic_ctrl_info.is_exist is False:
                 self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
-                self.mw.warn_msg('license不存在，请导入有效license')
+                self.mw.warn_msg('license不存在，请导入有效license！')
                 return
             if self.setting.lic_ctrl_info.is_valid is False:
                 self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
-                self.mw.warn_msg('license无效，请导入有效license')
+                self.mw.warn_msg('license无效，请导入有效license！')
+                return
+            if self.setting.lic_ctrl_info.is_time_correct is False:
+                self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
+                self.mw.warn_msg('电脑时间不对，请修正时间！')
+                return
+            if self.setting.lic_ctrl_info.is_modify_data is True:
+                self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
+                self.mw.warn_msg('数据库数据异常！')
                 return
             if self.setting.lic_ctrl_info.remaining_days <= 0:
                 self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
-                self.mw.warn_msg('license已到期，请导入有效license')
+                self.mw.warn_msg('license已到期，请导入有效license！')
                 return
             setting_data = SettingData().__dict__
             if not all([getattr(self.setting, k) for k in setting_data]):
                 self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
-                self.mw.warn_msg('请完成系统设置')
+                self.mw.warn_msg('请完成系统设置！')

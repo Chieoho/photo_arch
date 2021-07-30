@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import math
 import os
 
@@ -660,6 +661,24 @@ def  visualTsne(embeddings, y_train):
     plt.figure(figsize=(13, 8))
     sns.scatterplot(data=dataset, x='X', y='y', hue='label', s=120)
     plt.show()
+
+
+class OperationJson:
+    def __init__(self, file_name=None):
+        if file_name:
+            self.file_name = file_name
+        else:
+            self.file_name = './config/cfg.json'
+        self.data = self.get_data()
+
+    def get_data(self):
+        fp = open(self.file_name)
+        data = json.load(fp)
+        fp.close()
+        return data
+
+    def get_value(self, id):
+        return self.data[id]
 
 
 

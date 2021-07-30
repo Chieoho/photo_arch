@@ -81,6 +81,12 @@ class SettingModel(Base):
     photo_path = Column(String(2048))
 
 
+class VerifyModel(Base):
+    __tablename__ = 'verify'
+    verify_id = Column(Integer, primary_key=True)
+    remaining_days_hash = Column(String(32))
+
+
 class SearchFacesModel(Base):
     __tablename__ = 'searchfaces'
     searchfaces_id = Column(Integer, primary_key=True)
@@ -95,6 +101,7 @@ table_model_dict = {
     'photo': PhotoModel,
     'face': FaceModel,
     'setting': SettingModel,
+    'verify': VerifyModel,
     'searchfaces': SearchFacesModel
 }
 

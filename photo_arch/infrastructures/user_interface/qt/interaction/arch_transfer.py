@@ -86,9 +86,11 @@ class View(object):
             ye = gi.get('year')
             rp = gi.get('retention_period')
             if priority_key == '年度':
-                data[fc][ye].append(rp)
+                if rp not in data[fc][ye]:
+                    data[fc][ye].append(rp)
             else:
-                data[fc][rp].append(ye)
+                if ye not in data[fc][rp]:
+                    data[fc][rp].append(ye)
         model = QtGui.QStandardItemModel()
         self._fill_model_from_dict(model.invisibleRootItem(), data)
         self.ui.arch_tree_view_transfer.setModel(model)

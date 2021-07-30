@@ -8,6 +8,7 @@
 import os
 from dataclasses import dataclass
 from datetime import datetime
+from hashlib import md5
 
 from PySide2 import QtWidgets, QtCore
 
@@ -20,6 +21,9 @@ from photo_arch.adapters.controller.setting import Controller, Repo
 from photo_arch.infrastructures.databases.db_setting import session
 
 
+VERIFY_KEY = '青蛙'
+
+
 @dataclass
 class SettingData:
     fonds_name: str = ''
@@ -28,6 +32,11 @@ class SettingData:
     package_path: str = ''
     license_path: str = ''
     photo_path: str = ''
+
+
+@dataclass
+class VerifyData:
+    remaining_days_hash: str = ''
 
 
 class View(object):
@@ -48,6 +57,8 @@ class LicenseCtrlInfo:
     is_import: bool = False
     is_exist: bool = False
     is_valid: bool = False
+    is_time_correct: bool = True
+    is_modify_data: bool = False
     remaining_days: int = 0
     remaining_photo_num: int = 0
     enable_gpu: bool = False
@@ -85,7 +96,7 @@ class Setting(object):
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.display_license_info)
-        self.check_license_interval = 1800 * 1000
+        self.check_license_interval = 10 * 60 * 1000  # 10 min
         self.timer.start(self.check_license_interval)
         self.display_license_info()
 
@@ -139,6 +150,24 @@ class Setting(object):
         self.__dict__.update(setting_info)
         self.controller.save_setting(setting_info)
 
+    def mark_remaining_days(self, remaining_days, save_remaining_days_func):
+        _ = self
+        remaining_days_info = {'days': remaining_days, 'key': VERIFY_KEY}
+        remaining_days_hash = md5(str(remaining_days_info).encode('utf8')).hexdigest()
+        verify_data = VerifyData()
+        verify_data.remaining_days_hash = remaining_days_hash
+        save_remaining_days_func(verify_data.__dict__)
+
+    def find_remaining_days(self, max_days, remaining_days_info):
+        _ = self
+        remaining_days_hash = remaining_days_info.get('remaining_days_hash', '')
+        for d in range(max_days+1):
+            remaining_days_info = {'days': d, 'key': VERIFY_KEY}
+            if md5(str(remaining_days_info).encode('utf8')).hexdigest() == remaining_days_hash:
+                return d
+        else:
+            return -1
+
     def display_license_info(self):
         self.lic_ctrl_info.is_import = bool(self.ui.license_path_in_setting.text())
         if self.lic_ctrl_info.is_import is False:
@@ -156,31 +185,57 @@ class Setting(object):
                 used_num = self.controller.get_used_photo_num()
                 max_days = lic_info.get('max_days', 0)
                 max_photo_num = lic_info.get('max_photo_num', 0)
-                self.lic_ctrl_info.remaining_days = max_days - passed_days
+                self.lic_ctrl_info.remaining_days = (max_days - passed_days) if (max_days > passed_days) else 0
                 self.lic_ctrl_info.remaining_photo_num = max_photo_num - used_num
                 self.lic_ctrl_info.enable_gpu = lic_info.get('enable_gpu')
                 self.lic_ctrl_info.enable_export = lic_info.get('enable_export')
-                days = self.lic_ctrl_info.remaining_days
-                num = self.lic_ctrl_info.remaining_photo_num
+
+                remaining_days = self.lic_ctrl_info.remaining_days
+                if remaining_days > max_days:
+                    self.lic_ctrl_info.is_time_correct = False
+                    self.mw.warn_msg('电脑时间不对，请修正时间！')
+                    return False
+                remaining_days_info = self.controller.get_remaining_days()
+                if remaining_days_info:
+                    find_remaining_days = self.find_remaining_days(max_days, remaining_days_info)
+                    if find_remaining_days == -1:
+                        self.lic_ctrl_info.is_modify_data = True
+                        self.mw.warn_msg('数据库数据异常！')
+                        return False
+                    elif remaining_days > find_remaining_days:
+                        self.lic_ctrl_info.is_time_correct = False
+                        self.mw.warn_msg('电脑时间不对，请修正时间！')
+                        return False
+                    else:
+                        pass
+                    save_remaining_days_func = self.controller.update_remaining_days
+                else:
+                    save_remaining_days_func = self.controller.add_remaining_days
+                self.mark_remaining_days(remaining_days, save_remaining_days_func)
+
+                remaining_num = self.lic_ctrl_info.remaining_photo_num
                 enable_gpu = self.lic_ctrl_info.enable_gpu
                 enable_export = self.lic_ctrl_info.enable_export
-                self.ui.license_remaining_days.setText(f'{days if days > 0 else 0}/{max_days}')
-                self.ui.license_remaining_photo_num.setText(f'{num if num > 0 else 0}/{max_photo_num}')
+                self.ui.license_remaining_days.setText(
+                    f'{remaining_days if remaining_days > 0 else 0}/{max_days}')
+                self.ui.license_remaining_photo_num.setText(
+                    f'{remaining_num if remaining_num > 0 else 0}/{max_photo_num}')
                 self.ui.license_enable_gpu.setText('是' if enable_gpu else '否')
                 self.ui.license_enable_export.setText('是' if enable_export else '否')
                 self.ui.license_path_in_setting.setToolTip(self.license_path)
-                over_days = self.lic_ctrl_info.remaining_days <= 0
-                over_num = self.lic_ctrl_info.remaining_photo_num <= 0
-                if over_days or over_num:
+                is_days_up = self.lic_ctrl_info.remaining_days <= 0
+                is_photos_up = self.lic_ctrl_info.remaining_photo_num <= 0
+                if is_days_up or is_photos_up:
                     self.ui.tabWidget.setCurrentWidget(self.ui.setting_tab)
                     self.timer.stop()
-                    if over_days and over_num:
+                    if is_days_up and is_photos_up:
                         self.mw.warn_msg('license已到期，可识别照片数量为0，请导入有效license！')
                     else:
-                        if over_num:
+                        if is_photos_up:
                             self.mw.warn_msg('可识别照片数量为0，请导入有效license！')
                         else:
                             self.mw.warn_msg('license已到期，请导入有效license！')
+                    return False
                 else:
                     return True
             else:
@@ -202,6 +257,7 @@ class Setting(object):
             self.license_path = os.path.abspath(license_path)
             self.ui.license_path_in_setting.setText(self.license_path)
             if self.display_license_info():
+                self.lic_ctrl_info.is_time_correct = True
                 if self.lic_ctrl_info.enable_gpu:
                     self.mw.info_msg('license导入成功，请重新启动软件以便使用GPU！')
                 else:

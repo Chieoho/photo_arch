@@ -130,3 +130,23 @@ class RepoIf(metaclass=ABCMeta):
         获取识别照片数量
         :return:
         """
+
+    @abstractmethod
+    def query_remaining_days(self):
+        """
+        :return:
+        """
+
+    @abstractmethod
+    def update_remaining_days(self, days_info: dict) -> bool:
+        """
+        :param days_info:
+        :return:
+        """
+
+    @abstractmethod
+    def add_remaining_days(self, days_info: dict) -> bool:
+        """
+        :param days_info:
+        :return:
+        """

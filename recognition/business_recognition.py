@@ -7,6 +7,7 @@
 """
 import hashlib
 import json
+import logging
 import os
 import shutil
 from collections import defaultdict
@@ -34,7 +35,13 @@ from recognition.utils import *
 from photo_arch.adapters.sql.repo import RepoGeneral
 from photo_arch.infrastructures.databases.db_setting import engine, make_session, session
 from license.check_license import get_lic_info
+from photo_arch.pa_log.log import create_logger
 
+opers = OperationJson()
+logLevel = opers.get_value('logLevel')
+logger = create_logger()
+if logLevel == 'INFO': # 默认debug
+    logger.setLevel(logging.INFO)
 
 def get_gpu_state():
     engine.dispose()
@@ -49,11 +56,11 @@ def get_gpu_state():
             gpu_state = False
     else:
         gpu_state = False
-    print('@@@@@@@ gpu state:',gpu_state)
+    logger.info('@@@@@@@ gpu state = {}'.format(gpu_state))
     return gpu_state
 
 # 禁用GPU后,下面的config代码也就无效了
-# gpu_state = get_gpu_state()
+gpu_state = get_gpu_state()
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0' if gpu_state else '-1'
 # if tf.__version__.startswith('1.'):  # tensorflow 1
 #     config = tf.ConfigProto()  # allow_soft_placement=True
@@ -87,19 +94,20 @@ class RecognizeProcess(Process):
         self.param_queue = param_queue
         self.from_queue = from_queue
 
+
     def pause(self):
         if self.is_alive():
-            print("识别子进程休眠")
+            logger.info("识别子进程休眠")
             self.event.clear()  # 设置为False, 让进程阻塞
         else:
-            print("识别子进程结束")
+            logger.info("识别子进程结束")
 
     def resume(self):
         if self.is_alive():
             self.event.set()  # 设置为True, 进程唤醒
-            print("识别子进程唤醒")
+            logger.info("识别子进程唤醒")
         else:
-            print("识别子进程结束")
+            logger.info("识别子进程结束")
 
 
     def run(self):
@@ -108,10 +116,13 @@ class RecognizeProcess(Process):
             # self.mtcnn_detector = insightface.model_zoo.get_model('retinaface_mnet025_v2', **myKwargs)
             # self.mtcnn_detector.prepare(ctx_id=-1)
             self.mtcnn_detector = mtcnn_detector.MtcnnDetector(model_folder='model/mtcnn-model') # 图像格式bgr
-            print('######:识别 mtcnn_detector')
+            logger.info('######:识别 mtcnn_detector')
         if self.facenet_model == None:
-            self.facenet_model = face_model.FaceModel(-1, 'model/model-r100-ii/model', 0)
-            print('######:识别 load model')
+            gpuDevice = -1
+            if gpu_state == True:
+                gpuDevice = 0
+            self.facenet_model = face_model.FaceModel(gpuDevice, 'model/model-r100-ii/model', 0)
+            logger.info('######:识别 load model')
 
 
         engine.dispose()
@@ -119,12 +130,12 @@ class RecognizeProcess(Process):
 
         while 1:
             if self.data_queue.empty() == True:
-                print('#### 识别:队列空,子进程暂停')
+                logger.info('#### 识别:队列空,子进程暂停')
                 self.pause()
             else:
                 if self.from_queue.empty(): # 如果为空，说明不是通过‘识别’按钮进来的
                     self.pause()
-                    print('#### 识别:等待点击识别按钮')
+                    logger.info('#### 识别:等待点击识别按钮')
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
             imgPath = self.data_queue.get()
@@ -138,7 +149,7 @@ class RecognizeProcess(Process):
                     params = eval(params)
                     self.faceProp = params['threshold']
                 except Exception as e:
-                    print(repr(e))
+                    logger.error(repr(e))
                     self.faceProp = 0.9
 
             scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
@@ -244,17 +255,17 @@ class VerifyProcess(Process):
 
     def pause(self):
         if self.is_alive():
-            print("核验子进程休眠")
+            logger.info("核验子进程休眠")
             self.event.clear()  # 设置为False, 让进程阻塞
         else:
-            print("核验子进程结束")
+            logger.info("核验子进程结束")
 
     def resume(self):
         if self.is_alive():
             self.event.set()  # 设置为True, 进程唤醒
-            print("核验子进程唤醒")
+            logger.info("核验子进程唤醒")
         else:
-            print("核验子进程结束")
+            logger.info("核验子进程结束")
 
 
     def run(self):
@@ -263,7 +274,7 @@ class VerifyProcess(Process):
 
         while 1:
             if self.verify_queue.empty() == True:
-                print('#### 核验 :队列空,子进程暂停')
+                logger.info('#### 核验 :队列空,子进程暂停')
                 self.pause()
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
@@ -353,17 +364,17 @@ class SearchImagesProcess(Process):
 
     def pause(self):
         if self.is_alive():
-            print("检索子进程休眠")
+            logger.info("检索子进程休眠")
             self.event.clear()  # 设置为False, 让进程阻塞
         else:
-            print("检索子进程结束")
+            logger.info("检索子进程结束")
 
     def resume(self):
         if self.is_alive():
             self.event.set()  # 设置为True, 进程唤醒
-            print("检索子进程唤醒")
+            logger.info("检索子进程唤醒")
         else:
-            print("检索子进程结束")
+            logger.info("检索子进程结束")
 
     def calculate_euclid_distance(self, sql_repo, parentPath, retrive_src_embedding, flag):
         photo_path = []
@@ -445,10 +456,13 @@ class SearchImagesProcess(Process):
     def run(self):
         if self.mtcnn_detector == None:
             self.mtcnn_detector = mtcnn_detector.MtcnnDetector(model_folder='model/mtcnn-model')  # 图像格式bgr
-            print('######:检索 mtcnn_detector')
+            logger.info('######:检索 mtcnn_detector')
         if self.facenet_model == None:
-            self.facenet_model = face_model.FaceModel(-1, 'model/model-r100-ii/model', 0)
-            print('######:检索 load model')
+            gpuDevice = -1
+            if gpu_state == True:
+                gpuDevice = 0
+            self.facenet_model = face_model.FaceModel(gpuDevice, 'model/model-r100-ii/model', 0)
+            logger.info('######:检索 load model')
 
         engine.dispose()
         sql_repo = RepoGeneral(make_session(engine))
@@ -460,7 +474,7 @@ class SearchImagesProcess(Process):
         backedSilence_path = ''
         while 1:
             if self.search_queue.empty() == True:
-                print('#### 检索:队列空,子进程暂停')
+                logger.info('#### 检索:队列空,子进程暂停')
                 i = 0
                 flag = False
                 src_embedding.clear()
@@ -524,7 +538,7 @@ class SearchImagesProcess(Process):
                                                 continue
                                             else:
                                                 flag = self.backedWorkIsOver_queue.get()
-                                                print('后台最后一张图片提取的特征已经写入数据库了：',flag)
+                                                logger.info('后台最后一张图片提取的特征已经写入数据库了：',flag)
                                         parent_path_list = sql_repo.query('searchfaces', {"parent_path": [os.path.abspath(parentPath)]}, ('parent_path'))
                                         if len(parent_path_list) > 0:
                                             retriveResultInfoList, retriveResultPhotoPath = self.calculate_euclid_distance(sql_repo, parentPath, src_embedding, 'searchfaces')
@@ -588,7 +602,7 @@ class SearchImagesProcess(Process):
             det = []
             lmk = []
             rectangles = []
-            print('检索: imgPath=%s' % imgPath)
+            logger.info('检索: imgPath=%s' % imgPath)
 
             scale = calculate_img_scaling(imgPath, self.canvasH, self.canvasW)
             img = cv2.imdecode(np.fromfile(imgPath, dtype=np.uint8), cv2.IMREAD_COLOR)
@@ -651,13 +665,13 @@ class SearchImagesProcess(Process):
                         sim = np.dot(np.asarray(embedding_list), np.asarray(emb))
                         sim = sim.reshape(-1)
                         sim = list(sim)
-                        print('###### 相似度(检索):', sim)
+                        # print('###### 相似度(检索):', sim)
                         maxV = max(sim)
                         if maxV >= 0.4:
                             index = sim.index(maxV)
                             tmp_photo_path.append(imgPath)
                             tmp_box.append(box_list[index])
-                            print('图片路径:', imgPath)
+                            # print('图片路径:', imgPath)
 
                     # 将重复图片的box放在同一个list中
                     d = defaultdict(list)
@@ -683,13 +697,14 @@ class BackedSilenceProc(Process):
     margin = 32
     canvasH = 0
     canvasW = 0
+    dataQueueFlag = False
 
     search_src_img_path = ''
     src_embedding = None
 
     timer = None
 
-    def __init__(self, silence_queue, backedWorkIsOver_queue):
+    def __init__(self, silence_queue, backedWorkIsOver_queue, data_queue):
         super(BackedSilenceProc, self).__init__()
         self.event = Event()
         self.event.set()  # 设置为True
@@ -699,46 +714,54 @@ class BackedSilenceProc(Process):
 
         self.silence_queue = silence_queue
         self.backedWorkIsOver_queue = backedWorkIsOver_queue
+        self.data_queue = data_queue  #用来判断识别进程是否正在进行，如果正在进行识别，则暂停后台静默特征提取
 
 
     def pause(self):
         if self.is_alive():
-            print("后台静默子进程休眠")
+            logger.info("后台静默子进程休眠")
             self.event.clear()  # 设置为False, 让进程阻塞
         else:
-            print("后台静默子进程结束")
+            logger.info("后台静默子进程结束")
 
     def resume(self):
         if self.is_alive():
             self.event.set()  # 设置为True, 进程唤醒
-            print("后台静默子进程唤醒")
+            logger.info("后台静默子进程唤醒")
         else:
-            print("后台静默子进程结束")
+            logger.info("后台静默子进程结束")
 
     def fun_timer(self):
         flag = False # 是否唤醒该进程的标志
         if self.silence_queue.empty() == True:
             flag = True
 
-        # print('检查目标目录是否有添加新照片!')
-        if self.backedSilenceDir != '':
-            fileData = glob.glob(os.path.abspath(os.path.join(self.backedSilenceDir, '**', '*.*[jpg,png]')), recursive=True)
-            if len(fileData) > 0:
-                des_files_list = list(set(fileData).difference(set(self.last_file_list)))
-                self.last_file_list.extend(des_files_list)
-                #print('#####  :', des_files_list)
-                if len(des_files_list) > 0:
-                    for file in des_files_list:
-                        self.silence_queue.put(file)
-                    if flag:
-                        self.resume()
+        if self.dataQueueFlag == True:
+            if self.data_queue.empty() == True and flag== False:
+                self.dataQueueFlag = False
+                logger.info("后台静默子进程唤醒,继续进行特征提取")
+                self.resume()
         else:
-            engine.dispose()
-            sql_repo = RepoGeneral(make_session(engine))
-            backedSilencePath_list = sql_repo.query('setting', {"setting_id": [1]}, ('photo_path'))
-            if len(backedSilencePath_list) > 0:
-                print('###### fun_timer backedSilencePath:', backedSilencePath_list[0]['photo_path'])
-                self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
+            # print('检查目标目录是否有添加新照片!')
+            if self.backedSilenceDir != '':
+                fileData = glob.glob(os.path.abspath(os.path.join(self.backedSilenceDir, '**', '*.*[jpg,png]')), recursive=True)
+                if len(fileData) > 0:
+                    des_files_list = list(set(fileData).difference(set(self.last_file_list)))
+                    self.last_file_list.extend(des_files_list)
+                    #print('#####  :', des_files_list)
+                    if len(des_files_list) > 0:
+                        for file in des_files_list:
+                            self.silence_queue.put(file)
+                        if flag:
+                            self.resume()
+            else:
+                engine.dispose()
+                sql_repo = RepoGeneral(make_session(engine))
+                backedSilencePath_list = sql_repo.query('setting', {"setting_id": [1]}, ('photo_path'))
+                if len(backedSilencePath_list) > 0:
+                    logger.info('###### fun_timer backedSilencePath:', backedSilencePath_list[0]['photo_path'])
+                    self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
+
 
         # 每隔30s检查一次
         global timer
@@ -747,11 +770,16 @@ class BackedSilenceProc(Process):
 
 
     def run(self):
+        # 60s后再执行，防止低配置版本的电脑内存分配不足
+        lowCfgComputer = opers.get_value('lowCfgComputer')
+        if lowCfgComputer == 'True':
+            time.sleep(60)
+
         engine.dispose()
         sql_repo = RepoGeneral(make_session(engine))
         backedSilencePath_list = sql_repo.query('setting', {"setting_id": [1]}, ('photo_path',))
         if len(backedSilencePath_list) > 0 :
-            print('###### backedSilencePath:', backedSilencePath_list[0]['photo_path'])
+            logger.info('###### backedSilencePath:{}'.format(backedSilencePath_list[0]['photo_path']))
             self.backedSilenceDir = backedSilencePath_list[0]['photo_path']
 
         # 从数据库读取已存在的路径,赋给self.last_file_list
@@ -762,21 +790,30 @@ class BackedSilenceProc(Process):
 
         if self.mtcnn_detector == None:
             self.mtcnn_detector = mtcnn_detector.MtcnnDetector(model_folder='model/mtcnn-model')  # 图像格式bgr
-            print('######:静默 mtcnn_detector')
+            logger.info('######:静默 mtcnn_detector')
         if self.facenet_model == None:
-            self.facenet_model = face_model.FaceModel(-1, 'model/model-r100-ii/model', 0)
-            print('######:静默 load model')
+            gpuDevice = -1
+            if gpu_state == True:
+                gpuDevice = 0
+            self.facenet_model = face_model.FaceModel(gpuDevice, 'model/model-r100-ii/model', 0)
+            logger.info('######:静默 load model')
 
         timer = threading.Timer(5, self.fun_timer)
         timer.start()
         while 1:
             if self.silence_queue.empty() == True:
-                print('#### 后台静默:队列空,子进程暂停')
+                logger.info('#### 后台静默:队列空,子进程暂停')
                 self.pause()
+            else:
+                if self.data_queue.empty() != True:
+                    logger.info('#### 因为识别子进程正在进行识别，后台静默子进程先暂停')
+                    self.dataQueueFlag = True
+                    self.pause()
+
             self.event.wait()  # 为True时立即返回, 为False时阻塞直到内部的标识位为True后才立即返回
 
             imgPath = self.silence_queue.get()
-            print('后台: imgPath=%s' % imgPath)
+            logger.info('后台: imgPath=%s' % imgPath)
 
             det = []
             lmk = []
@@ -838,7 +875,10 @@ class Recognition(object):
     def __init__(self):
         os.makedirs('data', exist_ok=True)
         self.pending_dirs_list = []
-        
+
+        # self.opers = OperationJson()
+        lowCfgComputer = opers.get_value('lowCfgComputer')
+
         # # to ake sure multiprocess running on CUDA, you have to set start method as "spawn".解決CUDA error: initialization error.
         mp.set_start_method('spawn') #设置进程启动方式,Windows平台默认使用的也是该启动方式.
 
@@ -881,31 +921,37 @@ class Recognition(object):
         self.mtcnn_detector = mtcnn_detector.MtcnnDetector(model_folder='model/mtcnn-model')  # 图像格式bgr
 
         # 实例化识别子进程
-        cpus = os.cpu_count()
-        if cpus > 4:
-            cpus = 4
+        logger.info('@@@@@@:lowCfgComputer=%s' % lowCfgComputer)
+        if lowCfgComputer == 'True': #低配置的电脑下运行
+            cpus = 1
+        else:
+            cpus = os.cpu_count()
+            if cpus > 4:
+                cpus = 4
         for i in range(cpus):
             proc = RecognizeProcess(self.done_queue, self.data_queue, self.param_queue, self.from_queue)
             proc.daemon = True
             proc.start()
-            print('### pid %d will start' % i)
+            logger.info('### pid %d will start' % i)
             self.jobs_proc.append(proc)
 
-
-        # 开启后台静默以图搜图子进程
-        self.backedSilenceProc = BackedSilenceProc(self.silence_queue, self.backedWorkIsOver_queue)
-        self.backedSilenceProc.daemon = True
-        self.backedSilenceProc.start()
 
         # 开启核验子进程
         self.verifyProc = VerifyProcess(self.verify_queue)
         self.verifyProc.daemon = True
         self.verifyProc.start()
 
+
         # 开启以图搜图子进程
         self.searchImagesProc = SearchImagesProcess(self.search_queue, self.retrived_queue, self.counter_queue, self.search_faceList_queue, self.search_filePath_queue, self.silence_queue, self.backedWorkIsOver_queue)
         self.searchImagesProc.daemon = True
         self.searchImagesProc.start()
+
+
+        # 开启后台静默以图搜图子进程
+        self.backedSilenceProc = BackedSilenceProc(self.silence_queue, self.backedWorkIsOver_queue, self.data_queue)
+        self.backedSilenceProc.daemon = True
+        self.backedSilenceProc.start()
 
 
     def initRecognitionInfo(self):
@@ -950,7 +996,7 @@ class Recognition(object):
         for job in self.jobs_proc:
             if not self.data_queue.empty():
                 job.resume()
-                print('### pid will resume')
+                logger.info('### pid will resume')
 
         return ret
 
@@ -974,7 +1020,7 @@ class Recognition(object):
         for _ in range(self.data_queue.qsize()):
             self.data_queue.get()
 
-        print('########:', arch_num_info)
+        logger.info('########:{}'.format(arch_num_info))
 
         if len(arch_num_info['children']) == 0:
             return False
@@ -1210,18 +1256,18 @@ class Recognition(object):
             try:
                 scores = cross_val_score(model, trainX, trainy, cv=strKFold)
             except Exception as e:
-                print(str(e))
+                logger.error(str(e))
                 acc = -2.0  # The number of classes has to be greater than one; got 1 class
                 return {"model_acc": acc}
 
             acc_mean = scores.mean()
-            print('cross_val_score scores:', scores)
-            print('CV mean accuracy: train=%0.3f' % (acc_mean * 100))
+            logger.info('cross_val_score scores:{}'.format(scores))
+            logger.info('CV mean accuracy: train=%0.3f' % (acc_mean * 100))
             if acc_mean > max_acc:
                 try:
                     model.fit(trainX, trainy)
                 except Exception as e:
-                    print(str(e))
+                    logger.error(str(e))
                     acc = -2.0 # The number of classes has to be greater than one; got 1 class
                     return {"model_acc": acc}
 
@@ -1231,7 +1277,11 @@ class Recognition(object):
 
                 yhat_train = model.predict(trainX)
                 acc = accuracy_score(trainy, yhat_train)
-                print('Accuracy: train=%0.3f' % (acc*100))
+                logger.info('Accuracy: train=%0.3f' % (acc*100))
+            else:
+                acc = -2.0
+        else:
+            logger.info('The path(data/data.npz) is not find!')
 
         return {"model_acc": acc}
 
@@ -1319,7 +1369,7 @@ class Recognition(object):
         self.search_filePath_queue.put(dir_path)
         self.search_filePath_queue.put(backedSilencePath_list[0]['photo_path'])
 
-        print('########: 开始进行人脸检索.')
+        logger.info('########: 开始进行人脸检索.')
 
         if self.search_queue.empty() == True:
             # 不管数据库没有该路径，都把待检索的人物的路径第一个放入队列

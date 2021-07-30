@@ -26,3 +26,14 @@ class Controller(object):
     def get_used_photo_num(self):
         used_photo_num = self.setting.get_used_photo_num()
         return used_photo_num
+
+    def get_remaining_days(self):
+        return self.setting.get_remaining_days()
+
+    def add_remaining_days(self, remaining_days_info: dict):
+        res = self.setting.add_remaining_days(remaining_days_info)
+        return res
+
+    def update_remaining_days(self, remaining_days_info: dict):
+        res = self.setting.update_remaining_days(remaining_days_info)
+        return res

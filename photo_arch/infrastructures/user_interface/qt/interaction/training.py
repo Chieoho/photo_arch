@@ -35,7 +35,7 @@ class Training(object):
         if model_acc == -1:
             self.mw.msg_box('训练数据不存在，请核验人脸信息，收集数据')
         elif model_acc == -2:
-            self.mw.msg_box('数据只有一类标签，至少需要两类标签')
+            self.mw.msg_box('训练数据太少，请继续核验人脸信息，收集数据')
         else:
             self.ui.model_acc_label.setText(str(model_acc))
         untrained_photo_num = self.mw.interaction.get_untrained_photo_num()
